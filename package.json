@@ -1,0 +1,30 @@
+{
+  "private": true,
+  "scripts": {
+    "serve:pwa": "npx serve dukan_restro_pwa/build/web -l 4173 --no-clipboard",
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:report": "npx playwright show-report",
+    "cloud:up": "docker compose -f local-cloud/docker-compose.yml up -d",
+    "cloud:down": "docker compose -f local-cloud/docker-compose.yml down",
+    "cloud:logs": "docker compose -f local-cloud/docker-compose.yml logs -f localstack",
+    "cloud:status": "docker compose -f local-cloud/docker-compose.yml ps",
+    "cloud:seed": "bash local-cloud/init/02-seed-data.sh",
+    "cloud:smoke": "node local-cloud/scripts/smoke-test.mjs",
+    "cloud:auth": "node local-cloud/scripts/local-auth.mjs token",
+    "cloud:invoke": "node local-cloud/scripts/invoke-lambda.mjs",
+    "cloud:test": "node local-cloud/tests/integration.mjs"
+  },
+  "dependencies": {
+    "aws": "^0.0.3-2",
+    "cli": "^1.0.1",
+    "graphify": "^1.0.0",
+    "razorpay": "^2.9.6",
+    "vscode": "^1.1.36"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.3",
+    "@playwright/test": "^1.60.0",
+    "serve": "^14.2.4"
+  }
+}

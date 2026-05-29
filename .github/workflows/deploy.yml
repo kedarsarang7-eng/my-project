@@ -1,0 +1,253 @@
+name: Deploy SaaS Platform
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}
+  DOMAIN_NAME: yourdomain.com
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  dashboard-contract-guard:
+    name: Dashboard Contract Guard
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: Dukan_x/my-backend/package-lock.json
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+
+      - name: Run frontend strict contract tests
+        run: |
+          cd Dukan_x
+          flutter pub get
+          flutter test test/features/dashboard/logic/strict_dashboard_contract_test.dart test/features/dashboard/logic/strict_dashboard_contract_sync_test.dart
+
+      - name: Run backend strict contract tests
+        run: |
+          cd Dukan_x/my-backend
+          npm ci
+          npm run openapi:check
+          npm run serverless:check-handlers
+          npx jest tests/dashboard-strict-contract-sync.test.js src/services/dashboard-analytics.contract.test.ts
+
+  backend:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+    needs: dashboard-contract-guard
+    outputs:
+      api-url: ${{ steps.deploy.outputs.api-url }}
+      admin-client-id: ${{ steps.deploy.outputs.admin-client-id }}
+      app-client-id: ${{ steps.deploy.outputs.app-client-id }}
+      mobile-client-id: ${{ steps.deploy.outputs.mobile-client-id }}
+      desktop-client-id: ${{ steps.deploy.outputs.desktop-client-id }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: lambda/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd lambda
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd lambda
+          npm test
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Build SAM application
+        run: |
+          cd lambda
+          sam build
+
+      - name: Deploy SAM application
+        id: deploy
+        run: |
+          cd lambda
+          sam deploy \
+            --stack-name saas-platform-${{ env.ENVIRONMENT }} \
+            --parameter-overrides Environment=${{ env.ENVIRONMENT }} DomainName=${{ env.DOMAIN_NAME }} \
+            --capabilities CAPABILITY_IAM \
+            --no-confirm-changeset \
+            --output-template-file packaged.yaml
+
+      - name: Get stack outputs
+        id: outputs
+        run: |
+          echo "api-url=$(aws cloudformation describe-stacks --stack-name saas-platform-${{ env.ENVIRONMENT }} --query 'Stacks[0].Outputs[?OutputKey==`ApiGatewayUrl`].OutputValue' --output text)" >> $GITHUB_OUTPUT
+          echo "admin-client-id=$(aws cloudformation describe-stacks --stack-name saas-platform-${{ env.ENVIRONMENT }} --query 'Stacks[0].Outputs[?OutputKey==`AdminClientId`].OutputValue' --output text)" >> $GITHUB_OUTPUT
+          echo "app-client-id=$(aws cloudformation describe-stacks --stack-name saas-platform-${{ env.ENVIRONMENT }} --query 'Stacks[0].Outputs[?OutputKey==`AppClientId`].OutputValue' --output text)" >> $GITHUB_OUTPUT
+          echo "mobile-client-id=$(aws cloudformation describe-stacks --stack-name saas-platform-${{ env.ENVIRONMENT }} --query 'Stacks[0].Outputs[?OutputKey==`MobileClientId`].OutputValue' --output text)" >> $GITHUB_OUTPUT
+          echo "desktop-client-id=$(aws cloudformation describe-stacks --stack-name saas-platform-${{ env.ENVIRONMENT }} --query 'Stacks[0].Outputs[?OutputKey==`DesktopClientId`].OutputValue' --output text)" >> $GITHUB_OUTPUT
+
+  flutter-web-admin:
+    name: Build Flutter Web (Admin)
+    runs-on: ubuntu-latest
+    needs: backend
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+
+      - name: Create .env file
+        run: |
+          echo "API_BASE_URL=${{ needs.backend.outputs.api-url }}" > Dukan_x/.env
+          echo "COGNITO_ADMIN_CLIENT_ID=${{ needs.backend.outputs.admin-client-id }}" >> Dukan_x/.env
+          echo "COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" >> Dukan_x/.env
+          echo "AWS_REGION=${{ env.AWS_REGION }}" >> Dukan_x/.env
+
+      - name: Build Flutter Web
+        run: |
+          cd Dukan_x
+          flutter pub get
+          flutter build web --dart-define=COGNITO_CLIENT_ID=${{ needs.backend.outputs.admin-client-id }}
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync Dukan_x/build/web s3://admin.${{ env.DOMAIN_NAME }} --delete
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.ADMIN_CLOUDFRONT_ID }} --paths "/*"
+
+  flutter-android:
+    name: Build Flutter Android
+    runs-on: ubuntu-latest
+    needs: backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Create .env file
+        run: |
+          echo "API_BASE_URL=${{ needs.backend.outputs.api-url }}" > Dukan_x/.env
+          echo "COGNITO_APP_CLIENT_ID=${{ needs.backend.outputs.app-client-id }}" >> Dukan_x/.env
+          echo "COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" >> Dukan_x/.env
+          echo "AWS_REGION=${{ env.AWS_REGION }}" >> Dukan_x/.env
+
+      - name: Build Android APK
+        run: |
+          cd Dukan_x
+          flutter pub get
+          flutter build apk --dart-define=COGNITO_CLIENT_ID=${{ needs.backend.outputs.app-client-id }}
+
+      - name: Upload APK to releases
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: Dukan_x/build/app/outputs/flutter-apk/app-release.apk
+
+  flutter-desktop:
+    name: Build Flutter Desktop
+    runs-on: ubuntu-latest
+    needs: backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+
+      - name: Create .env file
+        run: |
+          echo "API_BASE_URL=${{ needs.backend.outputs.api-url }}" > Dukan_x/.env
+          echo "COGNITO_DESKTOP_CLIENT_ID=${{ needs.backend.outputs.desktop-client-id }}" >> Dukan_x/.env
+          echo "COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" >> Dukan_x/.env
+          echo "AWS_REGION=${{ env.AWS_REGION }}" >> Dukan_x/.env
+
+      - name: Build Linux desktop
+        run: |
+          cd Dukan_x
+          flutter pub get
+          flutter build linux --dart-define=COGNITO_CLIENT_ID=${{ needs.backend.outputs.desktop-client-id }}
+
+      - name: Upload desktop build to releases
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-desktop
+          path: Dukan_x/build/linux/x64/release/bundle/
+
+  flutter-mobile:
+    name: Build Flutter Mobile
+    runs-on: ubuntu-latest
+    needs: backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+
+      - name: Create .env file
+        run: |
+          echo "API_BASE_URL=${{ needs.backend.outputs.api-url }}" > Dukan_x/.env
+          echo "COGNITO_MOBILE_CLIENT_ID=${{ needs.backend.outputs.mobile-client-id }}" >> Dukan_x/.env
+          echo "COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" >> Dukan_x/.env
+          echo "AWS_REGION=${{ env.AWS_REGION }}" >> Dukan_x/.env
+
+      - name: Build Android AAB (for mobile)
+        run: |
+          cd Dukan_x
+          flutter pub get
+          flutter build appbundle --dart-define=COGNITO_CLIENT_ID=${{ needs.backend.outputs.mobile-client-id }}
+
+      - name: Upload AAB to releases
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: Dukan_x/build/app/outputs/bundle/release/app-release.aab

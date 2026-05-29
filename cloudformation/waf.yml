@@ -1,0 +1,174 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: WAF Rules for DukanX API - Production Security
+
+Parameters:
+  ApiGatewayRestApiId:
+    Type: String
+    Description: API Gateway REST API ID to associate with WAF
+
+Resources:
+  # WAF WebACL
+  DukanXWebACL:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: DukanX-API-WAF
+      Scope: REGIONAL
+      DefaultAction:
+        Allow: {}
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: DukanXWebACL
+      Rules:
+        # Rule 1: Rate limiting per IP
+        - Name: RateLimitRule
+          Priority: 1
+          Statement:
+            RateBasedStatement:
+              Limit: 2000  # requests per 5 minutes per IP
+              AggregateKeyType: IP
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: RateLimitRule
+
+        # Rule 2: Require X-Request-ID header (RID tracking)
+        - Name: RequireRequestId
+          Priority: 2
+          Statement:
+            NotStatement:
+              Statement:
+                RegexPatternSetReferenceStatement:
+                  ARN: !Ref RequestIdPatternSet
+                  FieldToMatch:
+                    SingleHeader:
+                      Name: x-request-id
+                  TextTransformations:
+                    - Priority: 0
+                      Type: LOWERCASE
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: RequireRequestId
+
+        # Rule 3: SQL injection protection
+        - Name: SQLInjectionProtection
+          Priority: 3
+          Statement:
+            OrStatement:
+              Statements:
+                - SqliMatchStatement:
+                    FieldToMatch:
+                      Body: {}
+                    TextTransformations:
+                      - Priority: 0
+                        Type: URL_DECODE
+                      - Priority: 1
+                        Type: HTML_ENTITY_DECODE
+                - SqliMatchStatement:
+                    FieldToMatch:
+                      QueryString: {}
+                    TextTransformations:
+                      - Priority: 0
+                        Type: URL_DECODE
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: SQLInjectionProtection
+
+        # Rule 4: XSS protection
+        - Name: XSSProtection
+          Priority: 4
+          Statement:
+            XssMatchStatement:
+              FieldToMatch:
+                Body: {}
+              TextTransformations:
+                - Priority: 0
+                  Type: URL_DECODE
+                - Priority: 1
+                  Type: HTML_ENTITY_DECODE
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: XSSProtection
+
+        # Rule 5: AWS Managed Rules - Common Rule Set
+        - Name: AWSManagedRulesCommonRuleSet
+          Priority: 5
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesCommonRuleSet
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWSManagedRulesCommonRuleSet
+
+        # Rule 6: AWS Managed Rules - Known Bad Inputs
+        - Name: AWSManagedRulesKnownBadInputsRuleSet
+          Priority: 6
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesKnownBadInputsRuleSet
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWSManagedRulesKnownBadInputsRuleSet
+
+  # Regex pattern set for RID validation
+  RequestIdPatternSet:
+    Type: AWS::WAFv2::RegexPatternSet
+    Properties:
+      Name: DukanX-RequestId-Pattern
+      Scope: REGIONAL
+      RegularExpressions:
+        - ^[a-z0-9_-]+-\d{13}-[a-z0-9]{6}$  # tenant-timestamp-uuid format
+      Description: Validates X-Request-ID header format
+
+  # Associate WAF with API Gateway
+  WAFAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties:
+      ResourceArn: !Sub 'arn:aws:apigateway:${AWS::Region}::/restapis/${ApiGatewayRestApiId}/stages/prod'
+      WebACLArn: !GetAtt DukanXWebACL.Arn
+
+  # WAF Logging to CloudWatch
+  WAFLoggingConfiguration:
+    Type: AWS::WAFv2::LoggingConfiguration
+    Properties:
+      ResourceArn: !GetAtt DukanXWebACL.Arn
+      LogDestinationConfigs:
+        - !GetAtt WAFLogGroup.Arn
+
+  WAFLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/waf/DukanX-API-WAF'
+      RetentionInDays: 30
+
+Outputs:
+  WebACLArn:
+    Description: WAF WebACL ARN
+    Value: !GetAtt DukanXWebACL.Arn
+    Export:
+      Name: DukanX-WAF-ARN
+
+  WebACLId:
+    Description: WAF WebACL ID
+    Value: !Ref DukanXWebACL
+    Export:
+      Name: DukanX-WAF-ID

@@ -1,0 +1,121 @@
+{
+  "common": {
+    "success": "ಕ್ರಿಯೆ ಯಶಸ್ವಿಯಾಯಿತು",
+    "error": "ದೋಷ ಸಂಭವಿಸಿದೆ",
+    "notFound": "{{resource}} ಕಂಡುಬಂದಿಲ್ಲ",
+    "conflict": "{{resource}} ಈಗಾಗಲೇ ಅಸ್ತಿತ್ವದಲ್ಲಿದೆ",
+    "forbidden": "ಈ ಕ್ರಿಯೆ ಮಾಡಲು ನಿಮಗೆ ಅನುಮತಿ ಇಲ್ಲ",
+    "unauthorized": "ದೃಢೀಕರಣ ಅಗತ್ಯ",
+    "badRequest": "ಅಮಾನ್ಯ ವಿನಂತಿ",
+    "limitExceeded": "ಮಿತಿ ಮೀರಿದೆ. ನಿಮ್ಮ ಯೋಜನೆಯನ್ನು ಅಪ್‌ಗ್ರೇಡ್ ಮಾಡಿ",
+    "planExpired": "ನಿಮ್ಮ ಯೋಜನೆ ಅವಧಿ ಮೀರಿದೆ. ಮುಂದುವರಿಯಲು ನವೀಕರಿಸಿ",
+    "serverError": "ಅನಿರೀಕ್ಷಿತ ದೋಷ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+    "timeout": "ವಿನಂತಿ ಸಮಯ ಮೀರಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ"
+  },
+  "auth": {
+    "loginSuccess": "ಲಾಗಿನ್ ಯಶಸ್ವಿ",
+    "logoutSuccess": "ಯಶಸ್ವಿಯಾಗಿ ಲಾಗ್ ಔಟ್",
+    "invalidCredentials": "ಇಮೇಲ್ ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್ ತಪ್ಪು",
+    "accountLocked": "ಖಾತೆ ಲಾಕ್ ಆಗಿದೆ. ಬೆಂಬಲ ಸಂಪರ್ಕಿಸಿ",
+    "sessionExpired": "ಸೆಶನ್ ಅವಧಿ ಮೀರಿದೆ. ಮತ್ತೆ ಲಾಗಿನ್ ಮಾಡಿ",
+    "tokenInvalid": "ಅಮಾನ್ಯ ಅಥವಾ ಅವಧಿ ಮೀರಿದ ಟೋಕನ್",
+    "otpSent": "OTP {{destination}} ಗೆ ಕಳುಹಿಸಲಾಗಿದೆ",
+    "otpExpired": "OTP ಅವಧಿ ಮೀರಿದೆ. ಹೊಸ OTP ವಿನಂತಿಸಿ",
+    "otpInvalid": "OTP ತಪ್ಪು. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ"
+  },
+  "billing": {
+    "invoiceCreated": "ಇನ್‌ವಾಯ್ಸ್ #{{invoiceNo}} ಯಶಸ್ವಿಯಾಗಿ ರಚಿಸಲಾಗಿದೆ",
+    "invoiceUpdated": "ಇನ್‌ವಾಯ್ಸ್ #{{invoiceNo}} ನವೀಕರಿಸಲಾಗಿದೆ",
+    "invoiceDeleted": "ಇನ್‌ವಾಯ್ಸ್ #{{invoiceNo}} ಅಳಿಸಲಾಗಿದೆ",
+    "paymentRecorded": "₹{{amount}} ಪಾವತಿ ಯಶಸ್ವಿಯಾಗಿ ದಾಖಲಾಗಿದೆ",
+    "stockInsufficient": "{{productName}} ಗೆ ಸಾಕಷ್ಟು ಸ್ಟಾಕ್ ಇಲ್ಲ. ಲಭ್ಯ: {{available}} {{unit}}",
+    "invoiceNotFound": "ಇನ್‌ವಾಯ್ಸ್ ಕಂಡುಬಂದಿಲ್ಲ",
+    "duplicateInvoice": "ಈ ಸಂಖ್ಯೆಯ ಇನ್‌ವಾಯ್ಸ್ ಈಗಾಗಲೇ ಇದೆ"
+  },
+  "inventory": {
+    "productCreated": "ಉತ್ಪನ್ನ {{productName}} ಯಶಸ್ವಿಯಾಗಿ ಸೇರಿಸಲಾಗಿದೆ",
+    "productUpdated": "ಉತ್ಪನ್ನ {{productName}} ನವೀಕರಿಸಲಾಗಿದೆ",
+    "productDeleted": "ಉತ್ಪನ್ನ {{productName}} ಅಳಿಸಲಾಗಿದೆ",
+    "stockUpdated": "{{productName}} ಸ್ಟಾಕ್ ನವೀಕರಿಸಲಾಗಿದೆ",
+    "lowStockAlert": "{{productName}} ಸ್ಟಾಕ್ ಕಡಿಮೆ. ಲಭ್ಯ: {{quantity}} {{unit}}",
+    "outOfStock": "{{productName}} ಸ್ಟಾಕ್ ಮುಗಿದಿದೆ",
+    "expiryWarning": "{{productName}} ಅವಧಿ ಮೀರುವ ದಿನಾಂಕ {{date}}",
+    "expiredProduct": "{{productName}} ಅವಧಿ ಮೀರಿದೆ, ಮಾರಾಟ ಮಾಡಲಾಗದು",
+    "barcodeNotFound": "ಬಾರ್‌ಕೋಡ್ {{barcode}} ಗೆ ಉತ್ಪನ್ನ ಕಂಡುಬಂದಿಲ್ಲ",
+    "importComplete": "ಆಮದು ಪೂರ್ಣ: {{success}} ಉತ್ಪನ್ನಗಳು, {{failed}} ವಿಫಲ"
+  },
+  "customers": {
+    "customerCreated": "ಗ್ರಾಹಕ {{name}} ಯಶಸ್ವಿಯಾಗಿ ಸೇರಿಸಲಾಗಿದ್ದಾರೆ",
+    "customerUpdated": "ಗ್ರಾಹಕ {{name}} ನವೀಕರಿಸಲಾಗಿದ್ದಾರೆ",
+    "customerDeleted": "ಗ್ರಾಹಕ {{name}} ಅಳಿಸಲಾಗಿದ್ದಾರೆ",
+    "creditLimitExceeded": "{{name}} ಕ್ರೆಡಿಟ್ ಮಿತಿ ಮೀರಿದೆ. ಮಿತಿ: ₹{{limit}}",
+    "outstandingBalance": "{{name}} ಬಾಕಿ: ₹{{amount}}"
+  },
+  "notifications": {
+    "billCreated": "{{customerName}} ಗಾಗಿ ಬಿಲ್ #{{invoiceNo}} ರಚಿಸಲಾಗಿದೆ",
+    "paymentReceived": "{{customerName}} ರಿಂದ ₹{{amount}} ಪಾವತಿ ಸ್ವೀಕರಿಸಲಾಗಿದೆ",
+    "lowStock": "{{productName}} ಸ್ಟಾಕ್ ಕಡಿಮೆ ({{quantity}} {{unit}} ಉಳಿದಿದೆ)",
+    "expiryWarning": "{{productName}} ಅವಧಿ {{date}}",
+    "planExpiring": "ನಿಮ್ಮ ಯೋಜನೆ {{days}} ದಿನಗಳಲ್ಲಿ ಅವಧಿ ಮೀರುತ್ತದೆ. ಈಗ ನವೀಕರಿಸಿ",
+    "newOrder": "{{customerName}} ರಿಂದ ಹೊಸ ಆರ್ಡರ್",
+    "backupComplete": "ಬ್ಯಾಕಪ್ ಯಶಸ್ವಿಯಾಗಿ ಪೂರ್ಣ",
+    "syncComplete": "ಡೇಟಾ ಯಶಸ್ವಿಯಾಗಿ ಸಿಂಕ್",
+    "dailySummary": "ಇಂದಿನ ಮಾರಾಟ: ₹{{sales}} | ಬಿಲ್‌ಗಳು: {{bills}} | ಹೊಸ ಗ್ರಾಹಕರು: {{customers}}"
+  },
+  "whatsapp": {
+    "billCreated": "ಪ್ರಿಯ {{customerName}},\nನಿಮ್ಮ ಬಿಲ್ #{{invoiceNo}} ₹{{amount}} ರಚಿಸಲಾಗಿದೆ.\n{{shopName}} ನಲ್ಲಿ ಖರೀದಿಗೆ ಧನ್ಯವಾದ!\n\nಇನ್‌ವಾಯ್ಸ್ ನೋಡಿ: {{link}}",
+    "paymentReceived": "ಪ್ರಿಯ {{customerName}},\n{{date}} ರಂದು ₹{{amount}} ಸ್ವೀಕರಿಸಲಾಗಿದೆ.\nಉಳಿದ: ₹{{balance}}.\nಧನ್ಯವಾದ, {{shopName}}",
+    "paymentReminder": "ಪ್ರಿಯ {{customerName}},\n{{dueDate}} ರಿಂದ ₹{{amount}} ಬಾಕಿ.\n{{phone}} ಸಂಪರ್ಕಿಸಿ.\nಧನ್ಯವಾದ, {{shopName}}",
+    "orderConfirmation": "ಪ್ರಿಯ {{customerName}},\nಆರ್ಡರ್ #{{orderNo}} ದೃಢಪಡಿಸಲಾಗಿದೆ.\nಡೆಲಿವರಿ: {{date}}.\nಧನ್ಯವಾದ, {{shopName}}"
+  },
+  "sms": {
+    "billCreated": "{{shopName}}: ಬಿಲ್ #{{invoiceNo}} Rs.{{amount}}. ಧನ್ಯವಾದ!",
+    "paymentReceived": "{{shopName}}: Rs.{{amount}} ಸ್ವೀಕರಿಸಲಾಗಿದೆ. ಬಾಕಿ: Rs.{{balance}}.",
+    "paymentReminder": "{{shopName}}: Rs.{{amount}} ಬಾಕಿ. {{phone}} ಸಂಪರ್ಕಿಸಿ.",
+    "otpMessage": "DukanX OTP {{otp}}. {{minutes}} ನಿಮಿಷ. ಯಾರಿಗೂ ಹೇಳಬೇಡಿ."
+  },
+  "pdf": {
+    "invoiceTitle": "ತೆರಿಗೆ ಇನ್‌ವಾಯ್ಸ್",
+    "billTo": "ಬಿಲ್ ಯಾರಿಗೆ",
+    "shipTo": "ಕಳುಹಿಸುವ ವಿಳಾಸ",
+    "description": "ವಿವರಣೆ",
+    "qty": "ಪ್ರಮಾಣ",
+    "rate": "ದರ",
+    "amount": "ಮೊತ್ತ",
+    "taxableAmount": "ತೆರಿಗೆಯ ಮೊತ್ತ",
+    "grandTotal": "ಒಟ್ಟು",
+    "amountInWords": "ಮಾತುಗಳಲ್ಲಿ ಮೊತ್ತ",
+    "authorizedSignatory": "ಅಧಿಕೃತ ಸಹಿಗಾರರು",
+    "thankYou": "ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಧನ್ಯವಾದ!",
+    "termsConditions": "ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳು",
+    "notes": "ಟಿಪ್ಪಣಿಗಳು",
+    "originalForRecipient": "ಸ್ವೀಕರ್ತರಿಗೆ ಮೂಲ",
+    "computerGeneratedInvoice": "ಇದು ಕಂಪ್ಯೂಟರ್ ರಚಿಸಿದ ಇನ್‌ವಾಯ್ಸ್"
+  },
+  "reports": {
+    "dailySales": "ದೈನಂದಿನ ಮಾರಾಟ ವರದಿ",
+    "monthlySales": "ಮಾಸಿಕ ಮಾರಾಟ ವರದಿ",
+    "gstR1": "GSTR-1 ವರದಿ",
+    "inventory": "ದಾಸ್ತಾನು ವರದಿ",
+    "profitLoss": "ಲಾಭ ಮತ್ತು ನಷ್ಟ",
+    "periodLabel": "ಅವಧಿ: {{from}} ರಿಂದ {{to}} ವರೆಗೆ",
+    "generatedOn": "ರಚಿಸಲಾಗಿದೆ: {{date}}",
+    "noDataFound": "ಆಯ್ಕೆ ಮಾಡಿದ ಅವಧಿಗೆ ಡೇಟಾ ಇಲ್ಲ",
+    "totalSales": "ಒಟ್ಟು ಮಾರಾಟ",
+    "totalPurchase": "ಒಟ್ಟು ಖರೀದಿ",
+    "grossProfit": "ಒಟ್ಟು ಲಾಭ",
+    "netProfit": "ನಿವ್ವಳ ಲಾಭ"
+  },
+  "validation": {
+    "required": "{{field}} ಅಗತ್ಯ",
+    "minLength": "{{field}} ಕನಿಷ್ಠ {{min}} ಅಕ್ಷರಗಳಾಗಿರಬೇಕು",
+    "maxLength": "{{field}} {{max}} ಅಕ್ಷರಗಳನ್ನು ಮೀರಬಾರದು",
+    "invalidEmail": "ಮಾನ್ಯ ಇಮೇಲ್ ನಮೂದಿಸಿ",
+    "invalidPhone": "10 ಅಂಕಿ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ",
+    "invalidGstin": "15 ಅಂಕಿ GSTIN ನಮೂದಿಸಿ",
+    "invalidPan": "10 ಅಕ್ಷರ PAN ನಮೂದಿಸಿ",
+    "positiveNumber": "{{field}} ಧನಾತ್ಮಕ ಸಂಖ್ಯೆಯಾಗಿರಬೇಕು",
+    "amountZero": "ಮೊತ್ತ ಶೂನ್ಯಕ್ಕಿಂತ ಹೆಚ್ಚಾಗಿರಬೇಕು",
+    "passwordWeak": "ಪಾಸ್‌ವರ್ಡ್ ಕನಿಷ್ಠ 8 ಅಕ್ಷರಗಳು, ಒಂದು ದೊಡ್ಡ ಅಕ್ಷರ, ಒಂದು ಸಂಖ್ಯೆ ಹೊಂದಿರಬೇಕು"
+  }
+}

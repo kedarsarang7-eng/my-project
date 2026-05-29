@@ -1,0 +1,148 @@
+
+Initializing
+Initializing
+Resolving variables
+Authenticating
+Resolving variables
+Checking AWS credentials
+Resolving variables
+Loading service details
+Deploying "dukanx-websocket" to stage "dev" (ap-south-1)
+Packaging
+(node:2992) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Excluding development dependencies for service package
+Packaging
+Retrieving AWS CloudFormation stack
+Uploading
+Uploading (4.46 MB)
+Uploading CloudFormation file to S3
+Uploading State file to S3
+Uploading service dukanx-websocket.zip file to S3 (4.46 MB)
+Updating AWS CloudFormation stack
+  UPDATE_IN_PROGRESS - AWS::CloudFormation::Stack - dukanx-websocket-dev
+  CREATE_IN_PROGRESS - AWS::SQS::Queue - WebSocketDLQ
+  CREATE_IN_PROGRESS - AWS::Events::EventBus - EventBus
+  CREATE_IN_PROGRESS - AWS::DynamoDB::Table - OfflineMessagesTable
+  CREATE_IN_PROGRESS - AWS::Logs::LogGroup - WsBroadcasterLogGroup
+  UPDATE_IN_PROGRESS - AWS::DynamoDB::Table - WebsocketConnectionsTable
+  CREATE_IN_PROGRESS - AWS::Events::EventBus - EventBus
+  CREATE_IN_PROGRESS - AWS::SQS::Queue - WebSocketDLQ
+  CREATE_IN_PROGRESS - AWS::Logs::LogGroup - WsBroadcasterLogGroup
+  CREATE_IN_PROGRESS - AWS::DynamoDB::Table - OfflineMessagesTable
+  CREATE_COMPLETE - AWS::Events::EventBus - EventBus
+  CREATE_COMPLETE - AWS::Logs::LogGroup - WsBroadcasterLogGroup
+  CREATE_COMPLETE - AWS::DynamoDB::Table - OfflineMessagesTable
+  UPDATE_COMPLETE - AWS::DynamoDB::Table - WebsocketConnectionsTable
+  CREATE_COMPLETE - AWS::SQS::Queue - WebSocketDLQ
+  UPDATE_IN_PROGRESS - AWS::IAM::Role - IamRoleLambdaExecution
+  UPDATE_COMPLETE - AWS::IAM::Role - IamRoleLambdaExecution
+  CREATE_IN_PROGRESS - AWS::Lambda::Function - WsBroadcasterLambdaFunction
+  UPDATE_IN_PROGRESS - AWS::Lambda::Function - WsConnectLambdaFunction
+  UPDATE_IN_PROGRESS - AWS::Lambda::Function - WsDefaultLambdaFunction
+  UPDATE_IN_PROGRESS - AWS::Lambda::Function - WsDisconnectLambdaFunction
+  CREATE_IN_PROGRESS - AWS::Lambda::Function - WsBroadcasterLambdaFunction
+  CREATE_COMPLETE - AWS::Lambda::Function - WsBroadcasterLambdaFunction
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule7EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission8
+  CREATE_IN_PROGRESS - AWS::Lambda::Version - WsBroadcasterLambdaVersionfuVDEokUa3TSyH4vv7YTZ5XWKXx0APIOlhbkCLm89zU
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule6EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission9
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission7
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule2EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission2
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule1EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission4
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission3
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule8EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule9EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule3EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule5EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission1
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule4EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission6
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission5
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule6EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule7EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule2EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission3
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission7
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule9EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule8EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule5EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule1EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule3EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Lambda::Version - WsBroadcasterLambdaVersionfuVDEokUa3TSyH4vv7YTZ5XWKXx0APIOlhbkCLm89zU
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission8
+  CREATE_IN_PROGRESS - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule4EventBridgeRule
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission6
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission5
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission4
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission2
+  CREATE_COMPLETE - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission7
+  CREATE_COMPLETE - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission3
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission1
+  CREATE_COMPLETE - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission8
+  CREATE_COMPLETE - AWS::Lambda::Version - WsBroadcasterLambdaVersionfuVDEokUa3TSyH4vv7YTZ5XWKXx0APIOlhbkCLm89zU
+  CREATE_COMPLETE - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission6
+  CREATE_COMPLETE - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission5
+  CREATE_IN_PROGRESS - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission9
+  CREATE_COMPLETE - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission2
+  CREATE_COMPLETE - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission4
+  CREATE_COMPLETE - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission1
+  CREATE_COMPLETE - AWS::Lambda::Permission - WsBroadcasterEventBridgeLambdaPermission9
+  UPDATE_COMPLETE - AWS::Lambda::Function - WsDefaultLambdaFunction
+  UPDATE_COMPLETE - AWS::Lambda::Function - WsConnectLambdaFunction
+  UPDATE_COMPLETE - AWS::Lambda::Function - WsDisconnectLambdaFunction
+  CREATE_IN_PROGRESS - AWS::Lambda::Version - WsDefaultLambdaVersionAF83BNIU2pbSRUNKZ2uyBaMpo4YL7hMs7NQ0H7xjTo
+  CREATE_IN_PROGRESS - AWS::Lambda::Version - WsConnectLambdaVersionTv8b901OO0EOmNq5CBmKx0jHjL1fxuWpKJaVfNnj00
+  CREATE_IN_PROGRESS - AWS::Lambda::Version - WsDisconnectLambdaVersion5yUkeWjQE4u1hH8Ik2sESY5pJ878JdTGUb5mz6g9PU
+  CREATE_IN_PROGRESS - AWS::Lambda::Version - WsConnectLambdaVersionTv8b901OO0EOmNq5CBmKx0jHjL1fxuWpKJaVfNnj00
+  CREATE_IN_PROGRESS - AWS::Lambda::Version - WsDefaultLambdaVersionAF83BNIU2pbSRUNKZ2uyBaMpo4YL7hMs7NQ0H7xjTo
+  CREATE_IN_PROGRESS - AWS::Lambda::Version - WsDisconnectLambdaVersion5yUkeWjQE4u1hH8Ik2sESY5pJ878JdTGUb5mz6g9PU
+  CREATE_COMPLETE - AWS::Lambda::Version - WsDefaultLambdaVersionAF83BNIU2pbSRUNKZ2uyBaMpo4YL7hMs7NQ0H7xjTo
+  CREATE_COMPLETE - AWS::Lambda::Version - WsConnectLambdaVersionTv8b901OO0EOmNq5CBmKx0jHjL1fxuWpKJaVfNnj00
+  CREATE_COMPLETE - AWS::Lambda::Version - WsDisconnectLambdaVersion5yUkeWjQE4u1hH8Ik2sESY5pJ878JdTGUb5mz6g9PU
+  CREATE_COMPLETE - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule6EventBridgeRule
+  CREATE_COMPLETE - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule2EventBridgeRule
+  CREATE_COMPLETE - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule7EventBridgeRule
+  CREATE_COMPLETE - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule9EventBridgeRule
+  CREATE_COMPLETE - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule1EventBridgeRule
+  CREATE_COMPLETE - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule8EventBridgeRule
+  CREATE_COMPLETE - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule3EventBridgeRule
+  CREATE_COMPLETE - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule5EventBridgeRule
+  CREATE_COMPLETE - AWS::Events::Rule - DukanxwebsocketdevwsBroadcasterrule4EventBridgeRule
+  UPDATE_COMPLETE_CLEANUP_IN_PROGRESS - AWS::CloudFormation::Stack - dukanx-websocket-dev
+  DELETE_SKIPPED - AWS::Lambda::Version - WsDefaultLambdaVersionZ7vTbwhhQX9xpxfZ71VhzTEV4d5kzowFFY7EA56kI
+  DELETE_SKIPPED - AWS::Lambda::Version - WsConnectLambdaVersionIk0Q7WE8CVPdzIKOn1YqpkCoYEAqpM15MJb3hJYnLaE
+  DELETE_SKIPPED - AWS::Lambda::Version - WsDisconnectLambdaVersionJ8zYk6RU6uNtoswytuevJWa2RzlGZa8pvoy28kwpu5g
+  UPDATE_COMPLETE - AWS::CloudFormation::Stack - dukanx-websocket-dev
+Fetching service information
+Updating
+Removing old service artifacts from S3
+✔ Service deployed to stack dukanx-websocket-dev (245s)
+endpoint: wss://chfkfh81zf.execute-api.ap-south-1.amazonaws.com/dev
+
+functions:
+  wsConnect: dukanx-websocket-dev-wsConnect (4.5 MB)
+  wsDisconnect: dukanx-websocket-dev-wsDisconnect (4.5 MB)
+  wsDefault: dukanx-websocket-dev-wsDefault (4.5 MB)
+  wsBroadcaster: dukanx-websocket-dev-wsBroadcaster (4.5 MB)
+
+Stack Outputs:
+  WebsocketConnectionsTableArn: arn:aws:dynamodb:ap-south-1:928341811981:table/dukanx-ws-connections-dev
+  EventBusName: dukanx-events-dev
+  WsDefaultLambdaFunctionQualifiedArn: arn:aws:lambda:ap-south-1:928341811981:function:dukanx-websocket-dev-wsDefault:4
+  OfflineMessagesTableName: dukanx-ws-offline-messages-dev
+  WsDisconnectLambdaFunctionQualifiedArn: arn:aws:lambda:ap-south-1:928341811981:function:dukanx-websocket-dev-wsDisconnect:4
+  WebSocketDLQUrl: https://sqs.ap-south-1.amazonaws.com/928341811981/dukanx-ws-dlq-dev
+  WebsocketApiEndpoint: wss://chfkfh81zf.execute-api.ap-south-1.amazonaws.com/dev
+  WsConnectLambdaFunctionQualifiedArn: arn:aws:lambda:ap-south-1:928341811981:function:dukanx-websocket-dev-wsConnect:4
+  WsBroadcasterLambdaFunctionQualifiedArn: arn:aws:lambda:ap-south-1:928341811981:function:dukanx-websocket-dev-wsBroadcaster:1
+  ServerlessDeploymentBucketName: serverless-framework-deployments-ap-south-1-3ec19ca0-0fd1
+  EventBusArn: arn:aws:events:ap-south-1:928341811981:event-bus/dukanx-events-dev
+  WebsocketConnectionsTableName: dukanx-ws-connections-dev
+  ServiceEndpointWebsocket: wss://chfkfh81zf.execute-api.ap-south-1.amazonaws.com/dev
+  WebSocketDLQArn: arn:aws:sqs:ap-south-1:928341811981:dukanx-ws-dlq-dev
+
+Finalizing

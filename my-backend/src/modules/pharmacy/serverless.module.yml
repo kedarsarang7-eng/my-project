@@ -1,0 +1,109 @@
+# ============================================================================
+# Pharmacy Module — Lambda Function Definitions
+# Split from the original 102KB pharmacy.ts monolith
+# ============================================================================
+
+pharmacyBatchIntake:
+  handler: src/handlers/modules/pharmacy/pharmacy-batch.batchIntake
+  description: Pharmacy — Medicine batch intake & stock update
+  memorySize: 256
+  timeout: 15
+  events:
+    - httpApi:
+        path: /pharmacy/batch-intake
+        method: POST
+    - httpApi:
+        path: /pharmacy/batches
+        method: GET
+    - httpApi:
+        path: /pharmacy/batches/{batchId}
+        method: GET
+
+pharmacyNarcotic:
+  handler: src/handlers/modules/pharmacy/pharmacy-narcotic.createNarcoticEntry
+  description: Pharmacy — Schedule X / H1 narcotic register
+  events:
+    - httpApi:
+        path: /pharmacy/narcotic-register
+        method: GET
+    - httpApi:
+        path: /pharmacy/narcotic-register
+        method: POST
+    - httpApi:
+        path: /pharmacy/narcotic-register/export
+        method: GET
+    - httpApi:
+        path: /pharmacy/h1-register
+        method: GET
+    - httpApi:
+        path: /pharmacy/h1-register
+        method: POST
+    - httpApi:
+        path: /pharmacy/h1-register/export
+        method: GET
+
+pharmacyRefills:
+  handler: src/handlers/modules/pharmacy/pharmacy-refills.createRefillRequest
+  description: Pharmacy — Prescription refill workflow
+  events:
+    - httpApi:
+        path: /pharmacy/prescriptions/refills
+        method: GET
+    - httpApi:
+        path: /pharmacy/prescriptions/refills
+        method: POST
+    - httpApi:
+        path: /pharmacy/prescriptions/refills/{id}
+        method: PUT
+    - httpApi:
+        path: /pharmacy/prescriptions/refills/{id}/partial-fill
+        method: POST
+    - httpApi:
+        path: /pharmacy/prescriptions/refills/backfill
+        method: POST
+    - httpApi:
+        path: /pharmacy/prescriptions/refills/bulk-backfill
+        method: POST
+    - httpApi:
+        path: /pharmacy/prescriptions/refills/incomplete
+        method: GET
+
+pharmacyClaims:
+  handler: src/handlers/modules/pharmacy/pharmacy-claims.transmitNcpdpClaim
+  description: Pharmacy — Insurance claims & prior authorization
+  events:
+    - httpApi:
+        path: /pharmacy/claims
+        method: GET
+    - httpApi:
+        path: /pharmacy/claims
+        method: POST
+    - httpApi:
+        path: /pharmacy/claims/{id}
+        method: GET
+    - httpApi:
+        path: /pharmacy/claims/{id}/adjudicate
+        method: POST
+    - httpApi:
+        path: /pharmacy/claims/{id}/cob
+        method: POST
+    - httpApi:
+        path: /pharmacy/prior-auth
+        method: POST
+    - httpApi:
+        path: /pharmacy/prior-auth/{id}
+        method: PUT
+
+pharmacyCompliance:
+  handler: src/handlers/modules/pharmacy/pharmacy-compliance.uploadPrescriptionEvidence
+  description: Pharmacy — Compliance, evidence & return policy
+  events:
+    - httpApi:
+        path: /pharmacy/compliance/evidence
+        method: POST
+    - httpApi:
+        path: /pharmacy/compliance/evidence
+        method: GET
+    - httpApi:
+        path: /pharmacy/compliance/return-policy
+        method: POST

@@ -1,0 +1,153 @@
+# =============================================================================
+# DukanX Local AWS Cloud — Docker Compose
+# =============================================================================
+# Usage:
+#   docker compose up -d              # Start all services
+#   docker compose up localstack -d   # Start LocalStack only
+#   docker compose down -v            # Stop and remove volumes
+#   docker compose logs -f localstack # Follow LocalStack logs
+# =============================================================================
+
+x-common-env: &common-env
+  AWS_DEFAULT_REGION: ap-south-1
+  AWS_ACCESS_KEY_ID: test
+  AWS_SECRET_ACCESS_KEY: test
+
+services:
+  # ─── LocalStack — Core AWS Emulation ──────────────────────────────────
+  localstack:
+    image: localstack/localstack:3.8
+    container_name: dukan-localstack
+    ports:
+      - "4566:4566"            # Gateway (all services)
+      - "4510-4559:4510-4559"  # External service ports
+    environment:
+      <<: *common-env
+      # Services to emulate
+      SERVICES: >-
+        lambda,apigateway,apigatewayv2,dynamodb,s3,sqs,sns,
+        events,stepfunctions,cognito-idp,cognito-identity,
+        secretsmanager,ssm,cloudwatch,logs,iam,sts,ses
+      # Lambda configuration
+      LAMBDA_EXECUTOR: docker-reuse
+      LAMBDA_DOCKER_NETWORK: dukan-local-net
+      LAMBDA_REMOVE_CONTAINERS: false
+      LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT: 60
+      # Persistence
+      PERSISTENCE: 1
+      # Debug
+      DEBUG: ${LOCALSTACK_DEBUG:-0}
+      LS_LOG: ${LOCALSTACK_LOG_LEVEL:-warn}
+      # Docker socket
+      DOCKER_HOST: unix:///var/run/docker.sock
+      # Edge port
+      GATEWAY_LISTEN: 0.0.0.0:4566
+      # Pro features (set LOCALSTACK_AUTH_TOKEN in .env.local)
+      LOCALSTACK_AUTH_TOKEN: ${LOCALSTACK_AUTH_TOKEN:-}
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      # Init hooks — run after LocalStack is ready
+      - "./init:/etc/localstack/init/ready.d"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - dukan-local-net
+    restart: unless-stopped
+
+  # ─── Redis — Caching & Rate Limiting ──────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: dukan-redis
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --appendonly yes
+      --save 60 100
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - dukan-local-net
+    restart: unless-stopped
+
+  # ─── Jaeger — Distributed Tracing (X-Ray Alternative) ─────────────────
+  jaeger:
+    image: jaegertracing/all-in-one:1.62
+    container_name: dukan-jaeger
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "4317:4317"    # OTLP gRPC
+      - "4318:4318"    # OTLP HTTP
+      - "14268:14268"  # Jaeger collector
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - SPAN_STORAGE_TYPE=badger
+      - BADGER_EPHEMERAL=false
+      - BADGER_DIRECTORY_VALUE=/badger/data
+      - BADGER_DIRECTORY_KEY=/badger/key
+    volumes:
+      - jaeger-data:/badger
+    networks:
+      - dukan-local-net
+    restart: unless-stopped
+    profiles:
+      - observability
+
+  # ─── Mailhog — Email Trap (SES Simulation) ───────────────────────────
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: dukan-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - dukan-local-net
+    restart: unless-stopped
+
+  # ─── PostgreSQL — Optional Reporting/Analytics ────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: dukan-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: dukan_analytics
+      POSTGRES_USER: dukan
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev123}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dukan"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - dukan-local-net
+    restart: unless-stopped
+    profiles:
+      - analytics
+
+volumes:
+  redis-data:
+    driver: local
+  jaeger-data:
+    driver: local
+  postgres-data:
+    driver: local
+
+networks:
+  dukan-local-net:
+    name: dukan-local-net
+    driver: bridge

@@ -1,0 +1,51 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'cognito_auth_service.dart';
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(authService)
+final authServiceProvider = AuthServiceProvider._();
+
+final class AuthServiceProvider extends $FunctionalProvider<CognitoAuthService,
+    CognitoAuthService, CognitoAuthService> with $Provider<CognitoAuthService> {
+  AuthServiceProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'authServiceProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$authServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<CognitoAuthService> $createElement(
+          $ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  CognitoAuthService create(Ref ref) {
+    return authService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(CognitoAuthService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<CognitoAuthService>(value),
+    );
+  }
+}
+
+String _$authServiceHash() => r'97911fdb8a745931b7979019cffd364cb0a3ab6a';

@@ -1,0 +1,46 @@
+name: notifications_sdk
+description: >
+  Shared Dart/Flutter SDK for the Unified Notification System (UNS).
+  Provides the four canonical client methods (subscribe, emit,
+  onNotification, replay), client-side Event_Contract validation, an
+  offline outbox that survives a process restart, and JWT-bearer auth
+  identical to existing DukanX / Sub_App APIs.
+publish_to: 'none'
+
+version: 0.1.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  # HTTP transport for emit() and replay()
+  http: ^1.2.0
+
+  # WebSocket transport for onNotification()
+  web_socket_channel: ">=2.4.5 <4.0.0"
+
+  # Event_Contract JSON Schema validation (Draft 2020-12)
+  json_schema: ^5.1.7
+
+  # Outbox persistence (kept lightweight — no Hive)
+  shared_preferences: ^2.2.0
+
+  # Path resolution for the file-backed outbox fallback
+  path: ^1.9.0
+  path_provider: ^2.1.0
+
+  # UUIDs for client-generated event ids
+  uuid: ^4.4.0
+
+  # Async utilities (StreamController helpers)
+  async: ^2.11.0
+
+dev_dependencies:
+  test: ^1.25.0
+
+# Bundle the canonical Event_Contract schema as a package asset so every
+# consumer of this package validates against the same schema file shipped
+# at packages/notifications-sdk/event-contract.schema.json.
+flutter:
+  assets:
+    - event-contract.schema.json

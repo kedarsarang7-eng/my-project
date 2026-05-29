@@ -1,0 +1,114 @@
+--- a/src/handlers/resto.ts
++++ b/src/handlers/resto.ts
+@@ -240,6 +240,95 @@ async function validateManagerOverride(
+     return { approvedBy: override.managerUserId, reason: override.reason || null };
+ }
+ 
++/**
++ * CRITICAL-1 FIX: Pre-flight BOM stock validation for restaurant bills
++ */
++async function validateBomStockForBill(
++    tenantId: string,
++    pk: string,
++    kotItems: Array<Record<string, any>>,
++): Promise<{ sufficient: boolean; message?: string }> {
++    try {
++        const menuItemQty = new Map<string, number>();
++        for (const item of kotItems) {
++            const menuId = item.menuItemId;
++            if (!menuId) continue;
++            const current = menuItemQty.get(menuId) || 0;
++            menuItemQty.set(menuId, current + (Number(item.quantity) || 0));
++        }
++        if (menuItemQty.size === 0) return { sufficient: true };
++        const menuKeys = Array.from(menuItemQty.keys()).map(id => ({ PK: pk, SK: `FOODMENUITEM#${id}` }));
++        const menuItems = await batchGetItems<Record<string, any>>(menuKeys);
++        const menuToProduct = new Map<string, string>();
++        for (const m of menuItems) {
++            const menuId = m.id || String(m.SK || '').replace('FOODMENUITEM#', '');
++            if (m.productId) menuToProduct.set(menuId, m.productId);
++        }
++        const productIds = Array.from(new Set(menuToProduct.values()));
++        if (productIds.length === 0) return { sufficient: true };
++        const recipeKeys = productIds.map(id => ({ PK: pk, SK: `RECIPE#${id}` }));
++        const recipes = await batchGetItems<Record<string, any>>(recipeKeys);
++        const recipeMap = new Map<string, Record<string, any>>();
++        for (const r of recipes) {
++            const prodId = String(r.SK || '').replace('RECIPE#', '');
++            recipeMap.set(prodId, r);
++        }
++        const ingredientNeeds = new Map<string, { name: string; qtyNeeded: number; currentStock: number }>();
++        for (const [menuId, qty] of menuItemQty.entries()) {
++            const productId = menuToProduct.get(menuId);
++            if (!productId) continue;
++            const recipe = recipeMap.get(productId);
++            if (!recipe || !Array.isArray(recipe.ingredients)) continue;
++            for (const ing of recipe.ingredients) {
++                const ingId = ing.inventoryId || ing.productId;
++                if (!ingId) continue;
++                const ingQty = (ing.quantityPerUnit || 1) * qty;
++                const existing = ingredientNeeds.get(ingId);
++                if (existing) { existing.qtyNeeded += ingQty; }
++                else { ingredientNeeds.set(ingId, { name: ing.name || ingId, qtyNeeded: ingQty, currentStock: 0 }); }
++            }
++        }
++        if (ingredientNeeds.size === 0) return { sufficient: true };
++        const ingKeys = Array.from(ingredientNeeds.keys()).map(id => ({ PK: pk, SK: Keys.productSK(id) }));
++        const ingProducts = await batchGetItems<Record<string, any>>(ingKeys);
++        const stockMap = new Map<string, number>();
++        for (const p of ingProducts) {
++            const pId = p.id || String(p.SK || '').replace('PRODUCT#', '');
++            stockMap.set(pId, p.currentStock || 0);
++            const need = ingredientNeeds.get(pId);
++            if (need && p.name) need.name = p.name;
++        }
++        for (const [ingId, need] of ingredientNeeds.entries()) {
++            const available = stockMap.get(ingId) || 0;
++            if (available < need.qtyNeeded) {
++                return { sufficient: false, message: `Insufficient stock for '${need.name}': available=${available}, needed=${need.qtyNeeded}` };
++            }
++        }
++        return { sufficient: true };
++    } catch (err: any) {
++        logger.warn('BOM stock validation failed, allowing settlement', { error: err.message, tenantId });
++        return { sufficient: true };
++    }
++}
++
+ /**
+  * GET /resto/tables - Real-time table status
+  */
+@@ -2899,6 +2988,13 @@ export const settleBill = authorizedHandler(
+             return response.badRequest('No active items on this bill. Nothing to settle.');
+         }
+ 
++        // -- 2b. PRE-FLIGHT STOCK VALIDATION (CRITICAL-1 FIX)
++        const stockValidation = await validateBomStockForBill(auth.tenantId, pk, kotItems.items);
++        if (!stockValidation.sufficient) {
++            return response.error(409, 'INSUFFICIENT_RAW_MATERIAL_STOCK', `Cannot settle bill: ${stockValidation.message}`);
++        }
++
+         const preDiscountTotalCents = kotItems.items.reduce((sum, x) => sum + (Number(x.lineTotalCents) || 0), 0);
+ 
+         // -- 3. Resolve KOT items to invoice items
+@@ -3109,6 +3205,20 @@ export const settleBill = authorizedHandler(
+             },
+         ).catch(err => logger.warn('WS broadcast failed', { error: (err as Error).message }));
+ 
++        // CRITICAL-2 FIX: Broadcast table status change notification
++        if (bill.tableId) {
++            wsService.broadcastToClientType(
++                auth.tenantId, ClientType.RESTAURANT_STAFF_APP,
++                WSEventName.BILL_UPDATED,
++                {
++                    action: 'table_status_changed',
++                    tableId: bill.tableId,
++                    billId,
++                    status: 'settled',
++                    message: 'Bill settled - table ready for release',
++                },
++            ).catch(err => logger.warn('WS broadcast failed', { error: (err as Error).message }));
++        }
++
+         return response.success({
+             message: 'Bill settled and invoice created',

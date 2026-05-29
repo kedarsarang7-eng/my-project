@@ -1,0 +1,32 @@
+name: school_common
+description: Shared Flutter package for School ERP sub-apps (student, teacher, admin)
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.4.9
+  dio: ^5.3.3
+  amazon_cognito_identity_dart_2: ^3.7.0
+  flutter_secure_storage: ^9.0.0
+  shared_preferences: ^2.2.2
+  hive_flutter: ^1.1.0
+  connectivity_plus: ^5.0.2
+  intl: ^0.20.2
+  shimmer: ^3.0.0
+  google_fonts: ^6.2.1
+  flutter_dotenv: ^5.2.1
+  uuid: ^4.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,17 @@
+{
+    "extends": "../../../tsconfig.json",
+    "compilerOptions": {
+        "rootDir": "../..",
+        "noEmit": true,
+        "types": ["node"],
+        "skipLibCheck": true
+    },
+    "include": [
+        "shim/**/*.ts",
+        "k6/lib/**/*.ts",
+        "seed-data.ts"
+    ],
+    "exclude": [
+        "../../../node_modules"
+    ]
+}

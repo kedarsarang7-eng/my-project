@@ -1,0 +1,77 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "S3TenantStorage",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:DeleteObject"
+            ],
+            "Resource": "arn:aws:s3:::ultra-billing-storage-2026/*"
+        },
+        {
+            "Sid": "S3ListBucket",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": "arn:aws:s3:::ultra-billing-storage-2026"
+        },
+        {
+            "Sid": "CognitoUserManagement",
+            "Effect": "Allow",
+            "Action": [
+                "cognito-idp:AdminGetUser",
+                "cognito-idp:AdminUpdateUserAttributes",
+                "cognito-idp:AdminCreateUser",
+                "cognito-idp:AdminSetUserPassword",
+                "cognito-idp:AdminDisableUser",
+                "cognito-idp:AdminEnableUser",
+                "cognito-idp:AdminDeleteUser",
+                "cognito-idp:AdminAddUserToGroup",
+                "cognito-idp:AdminRemoveUserFromGroup",
+                "cognito-idp:ListUsers",
+                "cognito-idp:ListUsersInGroup"
+            ],
+            "Resource": "arn:aws:cognito-idp:ap-south-1:*:userpool/ap-south-1_7iuDWbz7i"
+        },
+        {
+            "Sid": "DynamoDBLicenseKeys",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:GetItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:Query",
+                "dynamodb:Scan"
+            ],
+            "Resource": [
+                "arn:aws:dynamodb:ap-south-1:*:table/LicenseKeys",
+                "arn:aws:dynamodb:ap-south-1:*:table/LicenseKeys/index/*"
+            ]
+        },
+        {
+            "Sid": "SNSPushNotifications",
+            "Effect": "Allow",
+            "Action": [
+                "sns:CreatePlatformEndpoint",
+                "sns:Publish",
+                "sns:DeleteEndpoint"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "CloudWatchLogs",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "arn:aws:logs:ap-south-1:*:*"
+        }
+    ]
+}

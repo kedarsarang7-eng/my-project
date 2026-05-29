@@ -1,0 +1,121 @@
+{
+  "common": {
+    "success": "কাজ সফল হয়েছে",
+    "error": "একটি ত্রুটি ঘটেছে",
+    "notFound": "{{resource}} পাওয়া যায়নি",
+    "conflict": "{{resource}} ইতিমধ্যে বিদ্যমান",
+    "forbidden": "এই কাজটি করার অনুমতি নেই",
+    "unauthorized": "প্রমাণীকরণ প্রয়োজন",
+    "badRequest": "অবৈধ অনুরোধ",
+    "limitExceeded": "সীমা অতিক্রান্ত। আপনার প্ল্যান আপগ্রেড করুন",
+    "planExpired": "আপনার প্ল্যান মেয়াদ শেষ। চালিয়ে যেতে নবায়ন করুন",
+    "serverError": "অপ্রত্যাশিত ত্রুটি। পরে আবার চেষ্টা করুন",
+    "timeout": "অনুরোধের সময় শেষ। আবার চেষ্টা করুন"
+  },
+  "auth": {
+    "loginSuccess": "লগইন সফল",
+    "logoutSuccess": "সফলভাবে লগ আউট",
+    "invalidCredentials": "ইমেল বা পাসওয়ার্ড ভুল",
+    "accountLocked": "অ্যাকাউন্ট লক। সহায়তা যোগাযোগ করুন",
+    "sessionExpired": "সেশন মেয়াদ শেষ। আবার লগইন করুন",
+    "tokenInvalid": "অবৈধ বা মেয়াদোত্তীর্ণ টোকেন",
+    "otpSent": "OTP {{destination}} এ পাঠানো হয়েছে",
+    "otpExpired": "OTP মেয়াদ শেষ। নতুন OTP চাইুন",
+    "otpInvalid": "OTP ভুল। আবার চেষ্টা করুন"
+  },
+  "billing": {
+    "invoiceCreated": "ইনভয়েস #{{invoiceNo}} সফলভাবে তৈরি হয়েছে",
+    "invoiceUpdated": "ইনভয়েস #{{invoiceNo}} আপডেট হয়েছে",
+    "invoiceDeleted": "ইনভয়েস #{{invoiceNo}} মুছে ফেলা হয়েছে",
+    "paymentRecorded": "₹{{amount}} পেমেন্ট সফলভাবে রেকর্ড হয়েছে",
+    "stockInsufficient": "{{productName}} এর যথেষ্ট স্টক নেই। পাওয়া যাচ্ছে: {{available}} {{unit}}",
+    "invoiceNotFound": "ইনভয়েস পাওয়া যায়নি",
+    "duplicateInvoice": "এই নম্বরের ইনভয়েস ইতিমধ্যে আছে"
+  },
+  "inventory": {
+    "productCreated": "পণ্য {{productName}} সফলভাবে যোগ হয়েছে",
+    "productUpdated": "পণ্য {{productName}} আপডেট হয়েছে",
+    "productDeleted": "পণ্য {{productName}} মুছে ফেলা হয়েছে",
+    "stockUpdated": "{{productName}} এর স্টক আপডেট হয়েছে",
+    "lowStockAlert": "{{productName}} এর স্টক কম। পাওয়া যাচ্ছে: {{quantity}} {{unit}}",
+    "outOfStock": "{{productName}} এর স্টক শেষ",
+    "expiryWarning": "{{productName}} এর মেয়াদ শেষের তারিখ {{date}}",
+    "expiredProduct": "{{productName}} মেয়াদ শেষ, বিক্রয় করা যাবে না",
+    "barcodeNotFound": "বারকোড {{barcode}} এর কোন পণ্য পাওয়া যায়নি",
+    "importComplete": "আমদানি সম্পন্ন: {{success}} পণ্য, {{failed}} ব্যর্থ"
+  },
+  "customers": {
+    "customerCreated": "গ্রাহক {{name}} সফলভাবে যোগ হয়েছেন",
+    "customerUpdated": "গ্রাহক {{name}} আপডেট হয়েছেন",
+    "customerDeleted": "গ্রাহক {{name}} মুছে ফেলা হয়েছে",
+    "creditLimitExceeded": "{{name}} ক্রেডিট সীমা অতিক্রান্ত। সীমা: ₹{{limit}}",
+    "outstandingBalance": "{{name}} বকেয়া: ₹{{amount}}"
+  },
+  "notifications": {
+    "billCreated": "{{customerName}} এর জন্য বিল #{{invoiceNo}} তৈরি হয়েছে",
+    "paymentReceived": "{{customerName}} থেকে ₹{{amount}} পেমেন্ট পাওয়া গেছে",
+    "lowStock": "{{productName}} স্টক কম ({{quantity}} {{unit}} বাকি)",
+    "expiryWarning": "{{productName}} মেয়াদ {{date}}",
+    "planExpiring": "আপনার প্ল্যান {{days}} দিনে মেয়াদ শেষ হবে। এখনই নবায়ন করুন",
+    "newOrder": "{{customerName}} থেকে নতুন অর্ডার",
+    "backupComplete": "ব্যাকআপ সফলভাবে সম্পন্ন",
+    "syncComplete": "ডেটা সফলভাবে সিঙ্ক হয়েছে",
+    "dailySummary": "আজকের বিক্রয়: ₹{{sales}} | বিল: {{bills}} | নতুন গ্রাহক: {{customers}}"
+  },
+  "whatsapp": {
+    "billCreated": "প্রিয় {{customerName}},\nআপনার বিল #{{invoiceNo}} ₹{{amount}} তৈরি হয়েছে।\n{{shopName}} এ কেনাকাটার জন্য ধন্যবাদ!\n\nইনভয়েস দেখুন: {{link}}",
+    "paymentReceived": "প্রিয় {{customerName}},\n{{date}} তারিখে ₹{{amount}} পাওয়া গেছে।\nবাকি: ₹{{balance}}।\nধন্যবাদ, {{shopName}}",
+    "paymentReminder": "প্রিয় {{customerName}},\n{{dueDate}} থেকে ₹{{amount}} বকেয়া।\n{{phone}} এ যোগাযোগ করুন।\nধন্যবাদ, {{shopName}}",
+    "orderConfirmation": "প্রিয় {{customerName}},\nঅর্ডার #{{orderNo}} নিশ্চিত হয়েছে।\nডেলিভারি: {{date}}।\nধন্যবাদ, {{shopName}}"
+  },
+  "sms": {
+    "billCreated": "{{shopName}}: বিল #{{invoiceNo}} Rs.{{amount}}। ধন্যবাদ!",
+    "paymentReceived": "{{shopName}}: Rs.{{amount}} পাওয়া গেছে। বাকি: Rs.{{balance}}।",
+    "paymentReminder": "{{shopName}}: Rs.{{amount}} বকেয়া। {{phone}} যোগাযোগ করুন।",
+    "otpMessage": "DukanX OTP {{otp}}। {{minutes}} মিনিট। কাউকে জানাবেন না।"
+  },
+  "pdf": {
+    "invoiceTitle": "কর চালান",
+    "billTo": "বিল প্রাপক",
+    "shipTo": "প্রেরণ ঠিকানা",
+    "description": "বিবরণ",
+    "qty": "পরিমাণ",
+    "rate": "মূল্য",
+    "amount": "পরিমাণ",
+    "taxableAmount": "করযোগ্য পরিমাণ",
+    "grandTotal": "মোট",
+    "amountInWords": "কথায় পরিমাণ",
+    "authorizedSignatory": "অনুমোদিত স্বাক্ষরকারী",
+    "thankYou": "আপনার ব্যবসার জন্য ধন্যবাদ!",
+    "termsConditions": "শর্তাবলী",
+    "notes": "নোট",
+    "originalForRecipient": "প্রাপকের জন্য মূল",
+    "computerGeneratedInvoice": "এটি কম্পিউটার-জেনারেটেড চালান"
+  },
+  "reports": {
+    "dailySales": "দৈনিক বিক্রয় প্রতিবেদন",
+    "monthlySales": "মাসিক বিক্রয় প্রতিবেদন",
+    "gstR1": "GSTR-1 প্রতিবেদন",
+    "inventory": "ইনভেন্টরি প্রতিবেদন",
+    "profitLoss": "লাভ ও ক্ষতির বিবরণ",
+    "periodLabel": "সময়কাল: {{from}} থেকে {{to}}",
+    "generatedOn": "তৈরি: {{date}}",
+    "noDataFound": "নির্বাচিত সময়কালের জন্য কোনো ডেটা নেই",
+    "totalSales": "মোট বিক্রয়",
+    "totalPurchase": "মোট ক্রয়",
+    "grossProfit": "মোট লাভ",
+    "netProfit": "নিট লাভ"
+  },
+  "validation": {
+    "required": "{{field}} প্রয়োজন",
+    "minLength": "{{field}} কমপক্ষে {{min}} অক্ষর হতে হবে",
+    "maxLength": "{{field}} {{max}} অক্ষরের বেশি হতে পারবে না",
+    "invalidEmail": "সঠিক ইমেল দিন",
+    "invalidPhone": "১০ সংখ্যার মোবাইল নম্বর দিন",
+    "invalidGstin": "১৫ সংখ্যার GSTIN দিন",
+    "invalidPan": "১০ অক্ষরের PAN দিন",
+    "positiveNumber": "{{field}} ধনাত্মক সংখ্যা হতে হবে",
+    "amountZero": "পরিমাণ শূন্যের চেয়ে বেশি হতে হবে",
+    "passwordWeak": "পাসওয়ার্ডে কমপক্ষে ৮ অক্ষর, একটি বড় হাতের অক্ষর, একটি সংখ্যা থাকতে হবে"
+  }
+}

@@ -1,0 +1,44 @@
+name: dukan_restro_pwa CI
+
+on:
+  push:
+    paths:
+      - 'dukan_restro_pwa/**'
+  pull_request:
+    paths:
+      - 'dukan_restro_pwa/**'
+
+defaults:
+  run:
+    working-directory: dukan_restro_pwa
+
+jobs:
+  analyze-test-build:
+    name: Analyze · Test · Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.x'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --no-pub
+
+      - name: Test
+        run: flutter test --no-pub
+
+      - name: Build web (release)
+        run: |
+          flutter build web --release \
+            --dart-define=DUKANX_API_URL=https://api.dukanx.com \
+            --dart-define=DUKANX_WS_URL=wss://placeholder.execute-api.ap-south-1.amazonaws.com/prod \
+            --dart-define=COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID || 'ap-south-1_PLACEHOLDER' }} \
+            --dart-define=COGNITO_RESTRO_CLIENT_ID=${{ secrets.COGNITO_RESTRO_CLIENT_ID || 'placeholder' }}

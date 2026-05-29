@@ -1,0 +1,9 @@
+# Local Cloud — gitignore
+volume/
+.keys/
+node_modules/
+.env.local
+terraform/.terraform/
+terraform/terraform.tfstate*
+terraform/.terraform.lock.hcl
+*.tfplan

@@ -1,0 +1,121 @@
+{
+  "common": {
+    "success": "చర్య విజయవంతమైంది",
+    "error": "లోపం సంభవించింది",
+    "notFound": "{{resource}} కనుగొనబడలేదు",
+    "conflict": "{{resource}} ఇప్పటికే ఉంది",
+    "forbidden": "ఈ చర్య చేయడానికి మీకు అనుమతి లేదు",
+    "unauthorized": "ప్రమాణీకరణ అవసరం",
+    "badRequest": "చెల్లని అభ్యర్థన",
+    "limitExceeded": "పరిమితి మించిపోయింది. మీ ప్లాన్‌ని అప్‌గ్రేడ్ చేయండి",
+    "planExpired": "మీ ప్లాన్ గడువు తీరింది. కొనసాగించడానికి రెన్యూ చేయండి",
+    "serverError": "ఆశించని లోపం. దయచేసి తర్వాత మళ్లీ ప్రయత్నించండి",
+    "timeout": "అభ్యర్థన సమయం ముగిసింది. మళ్లీ ప్రయత్నించండి"
+  },
+  "auth": {
+    "loginSuccess": "లాగిన్ విజయవంతమైంది",
+    "logoutSuccess": "విజయవంతంగా లాగ్ అవుట్ అయ్యారు",
+    "invalidCredentials": "ఇమెయిల్ లేదా పాస్‌వర్డ్ తప్పు",
+    "accountLocked": "ఖాతా లాక్ చేయబడింది. సహాయం కోసం సంప్రదించండి",
+    "sessionExpired": "సెషన్ గడువు తీరింది. మళ్లీ లాగిన్ అవ్వండి",
+    "tokenInvalid": "చెల్లని లేదా గడువు తీరిన టోకెన్",
+    "otpSent": "OTP {{destination}} కి పంపబడింది",
+    "otpExpired": "OTP గడువు తీరింది. కొత్త OTP అభ్యర్థించండి",
+    "otpInvalid": "OTP తప్పు. మళ్లీ ప్రయత్నించండి"
+  },
+  "billing": {
+    "invoiceCreated": "ఇన్వాయిస్ #{{invoiceNo}} విజయవంతంగా సృష్టించబడింది",
+    "invoiceUpdated": "ఇన్వాయిస్ #{{invoiceNo}} అప్‌డేట్ చేయబడింది",
+    "invoiceDeleted": "ఇన్వాయిస్ #{{invoiceNo}} తొలగించబడింది",
+    "paymentRecorded": "₹{{amount}} చెల్లింపు విజయవంతంగా నమోదైంది",
+    "stockInsufficient": "{{productName}} కి తగినంత స్టాక్ లేదు. అందుబాటులో: {{available}} {{unit}}",
+    "invoiceNotFound": "ఇన్వాయిస్ కనుగొనబడలేదు",
+    "duplicateInvoice": "ఈ నంబర్‌తో ఇన్వాయిస్ ఇప్పటికే ఉంది"
+  },
+  "inventory": {
+    "productCreated": "ఉత్పత్తి {{productName}} విజయవంతంగా జోడించబడింది",
+    "productUpdated": "ఉత్పత్తి {{productName}} అప్‌డేట్ చేయబడింది",
+    "productDeleted": "ఉత్పత్తి {{productName}} తొలగించబడింది",
+    "stockUpdated": "{{productName}} స్టాక్ అప్‌డేట్ అయింది",
+    "lowStockAlert": "{{productName}} స్టాక్ తక్కువగా ఉంది. అందుబాటులో: {{quantity}} {{unit}}",
+    "outOfStock": "{{productName}} స్టాక్ అయిపోయింది",
+    "expiryWarning": "{{productName}} గడువు తేదీ {{date}}",
+    "expiredProduct": "{{productName}} గడువు తీరింది, విక్రయించడం సాధ్యం కాదు",
+    "barcodeNotFound": "బార్‌కోడ్ {{barcode}} కి ఉత్పత్తి కనుగొనబడలేదు",
+    "importComplete": "దిగుమతి పూర్తైంది: {{success}} ఉత్పత్తులు, {{failed}} విఫలమైనవి"
+  },
+  "customers": {
+    "customerCreated": "కస్టమర్ {{name}} విజయవంతంగా జోడించబడ్డారు",
+    "customerUpdated": "కస్టమర్ {{name}} అప్‌డేట్ అయ్యారు",
+    "customerDeleted": "కస్టమర్ {{name}} తొలగించబడ్డారు",
+    "creditLimitExceeded": "{{name}} క్రెడిట్ పరిమితి మించిపోయింది. పరిమితి: ₹{{limit}}",
+    "outstandingBalance": "{{name}} బకాయి: ₹{{amount}}"
+  },
+  "notifications": {
+    "billCreated": "{{customerName}} కోసం బిల్లు #{{invoiceNo}} సృష్టించబడింది",
+    "paymentReceived": "{{customerName}} నుండి ₹{{amount}} చెల్లింపు అందింది",
+    "lowStock": "{{productName}} స్టాక్ తక్కువగా ఉంది ({{quantity}} {{unit}} మిగిలింది)",
+    "expiryWarning": "{{productName}} గడువు {{date}}",
+    "planExpiring": "మీ ప్లాన్ {{days}} రోజులలో గడువు తీరుతుంది. ఇప్పుడే రెన్యూ చేయండి",
+    "newOrder": "{{customerName}} నుండి కొత్త ఆర్డర్",
+    "backupComplete": "బ్యాకప్ విజయవంతంగా పూర్తైంది",
+    "syncComplete": "డేటా విజయవంతంగా సమకాలీకరించబడింది",
+    "dailySummary": "నేటి అమ్మకాలు: ₹{{sales}} | బిల్లులు: {{bills}} | కొత్త కస్టమర్లు: {{customers}}"
+  },
+  "whatsapp": {
+    "billCreated": "ప్రియమైన {{customerName}},\nమీ బిల్లు #{{invoiceNo}} ₹{{amount}} సృష్టించబడింది.\n{{shopName}} లో కొనుగోలుకు ధన్యవాదాలు!\n\nఇన్వాయిస్ చూడండి: {{link}}",
+    "paymentReceived": "ప్రియమైన {{customerName}},\n{{date}} న ₹{{amount}} అందింది.\nమిగిలింది: ₹{{balance}}.\nధన్యవాదాలు, {{shopName}}",
+    "paymentReminder": "ప్రియమైన {{customerName}},\n{{dueDate}} నుండి ₹{{amount}} బకాయి.\n{{phone}} లో సంప్రదించండి.\nధన్యవాదాలు, {{shopName}}",
+    "orderConfirmation": "ప్రియమైన {{customerName}},\nఆర్డర్ #{{orderNo}} నిర్ధారించబడింది.\nడెలివరీ అంచనా: {{date}}.\nధన్యవాదాలు, {{shopName}}"
+  },
+  "sms": {
+    "billCreated": "{{shopName}}: బిల్లు #{{invoiceNo}} Rs.{{amount}}. ధన్యవాదాలు!",
+    "paymentReceived": "{{shopName}}: Rs.{{amount}} అందింది. మిగిలింది: Rs.{{balance}}.",
+    "paymentReminder": "{{shopName}}: Rs.{{amount}} బకాయి. {{phone}} సంప్రదించండి.",
+    "otpMessage": "DukanX OTP {{otp}}. {{minutes}} నిమిషాలు. ఎవరికీ చెప్పకండి."
+  },
+  "pdf": {
+    "invoiceTitle": "పన్ను ఇన్వాయిస్",
+    "billTo": "బిల్లు ఎవరికి",
+    "shipTo": "పంపు చిరునామా",
+    "description": "వివరణ",
+    "qty": "పరిమాణం",
+    "rate": "రేటు",
+    "amount": "మొత్తం",
+    "taxableAmount": "పన్ను విధించదగిన మొత్తం",
+    "grandTotal": "గ్రాండ్ టోటల్",
+    "amountInWords": "మాటలలో మొత్తం",
+    "authorizedSignatory": "అధికృత సంతకదారు",
+    "thankYou": "మీ వ్యాపారానికి ధన్యవాదాలు!",
+    "termsConditions": "నిబంధనలు",
+    "notes": "గమనికలు",
+    "originalForRecipient": "స్వీకర్తకు మూలం",
+    "computerGeneratedInvoice": "ఇది కంప్యూటర్ రూపొందించిన ఇన్వాయిస్"
+  },
+  "reports": {
+    "dailySales": "రోజువారీ అమ్మకాల నివేదిక",
+    "monthlySales": "నెలవారీ అమ్మకాల నివేదిక",
+    "gstR1": "GSTR-1 నివేదిక",
+    "inventory": "ఇన్వెంటరీ నివేదిక",
+    "profitLoss": "లాభనష్ట వివరణ",
+    "periodLabel": "కాలం: {{from}} నుండి {{to}} వరకు",
+    "generatedOn": "రూపొందించబడింది: {{date}}",
+    "noDataFound": "ఎంచుకున్న కాలానికి డేటా లేదు",
+    "totalSales": "మొత్తం అమ్మకాలు",
+    "totalPurchase": "మొత్తం కొనుగోళ్లు",
+    "grossProfit": "స్థూల లాభం",
+    "netProfit": "నికర లాభం"
+  },
+  "validation": {
+    "required": "{{field}} అవసరం",
+    "minLength": "{{field}} కనీసం {{min}} అక్షరాలు ఉండాలి",
+    "maxLength": "{{field}} {{max}} అక్షరాలకు మించకూడదు",
+    "invalidEmail": "చెల్లుబాటు అయ్యే ఇమెయిల్ నమోదు చేయండి",
+    "invalidPhone": "10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి",
+    "invalidGstin": "15 అంకెల GSTIN నమోదు చేయండి",
+    "invalidPan": "10 అక్షరాల PAN నమోదు చేయండి",
+    "positiveNumber": "{{field}} ధనాత్మక సంఖ్య అయి ఉండాలి",
+    "amountZero": "మొత్తం సున్నా కంటే ఎక్కువగా ఉండాలి",
+    "passwordWeak": "పాస్‌వర్డ్ కనీసం 8 అక్షరాలు, ఒక పెద్ద అక్షరం, ఒక నంబర్ కలిగి ఉండాలి"
+  }
+}

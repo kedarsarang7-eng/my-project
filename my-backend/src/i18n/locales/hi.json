@@ -1,0 +1,121 @@
+{
+  "common": {
+    "success": "कार्य सफल रहा",
+    "error": "कोई त्रुटि हुई",
+    "notFound": "{{resource}} नहीं मिला",
+    "conflict": "{{resource}} पहले से मौजूद है",
+    "forbidden": "आपको यह कार्य करने की अनुमति नहीं है",
+    "unauthorized": "प्रमाणीकरण आवश्यक है",
+    "badRequest": "अमान्य अनुरोध",
+    "limitExceeded": "सीमा पार हो गई। कृपया अपना प्लान अपग्रेड करें",
+    "planExpired": "आपका प्लान समाप्त हो गया। जारी रखने के लिए नवीनीकृत करें",
+    "serverError": "अप्रत्याशित त्रुटि हुई। कृपया बाद में पुनः प्रयास करें",
+    "timeout": "अनुरोध समाप्त हो गया। कृपया पुनः प्रयास करें"
+  },
+  "auth": {
+    "loginSuccess": "लॉगिन सफल रहा",
+    "logoutSuccess": "सफलतापूर्वक लॉगआउट हुआ",
+    "invalidCredentials": "ईमेल या पासवर्ड गलत है",
+    "accountLocked": "खाता लॉक है। कृपया सहायता से संपर्क करें",
+    "sessionExpired": "सत्र समाप्त हो गया। कृपया फिर से लॉग इन करें",
+    "tokenInvalid": "अमान्य या समाप्त टोकन",
+    "otpSent": "OTP {{destination}} पर भेजा गया",
+    "otpExpired": "OTP समाप्त हो गया। कृपया नया OTP मंगाएं",
+    "otpInvalid": "OTP गलत है। कृपया पुनः प्रयास करें"
+  },
+  "billing": {
+    "invoiceCreated": "इनवॉइस #{{invoiceNo}} सफलतापूर्वक बनाया गया",
+    "invoiceUpdated": "इनवॉइस #{{invoiceNo}} अपडेट किया गया",
+    "invoiceDeleted": "इनवॉइस #{{invoiceNo}} हटाया गया",
+    "paymentRecorded": "₹{{amount}} का भुगतान सफलतापूर्वक दर्ज हुआ",
+    "stockInsufficient": "{{productName}} का पर्याप्त स्टॉक नहीं है। उपलब्ध: {{available}} {{unit}}",
+    "invoiceNotFound": "इनवॉइस नहीं मिला",
+    "duplicateInvoice": "इस नंबर का इनवॉइस पहले से मौजूद है"
+  },
+  "inventory": {
+    "productCreated": "उत्पाद {{productName}} सफलतापूर्वक जोड़ा गया",
+    "productUpdated": "उत्पाद {{productName}} अपडेट किया गया",
+    "productDeleted": "उत्पाद {{productName}} हटाया गया",
+    "stockUpdated": "{{productName}} का स्टॉक अपडेट हुआ",
+    "lowStockAlert": "{{productName}} का स्टॉक कम है। उपलब्ध: {{quantity}} {{unit}}",
+    "outOfStock": "{{productName}} का स्टॉक खत्म हो गया",
+    "expiryWarning": "{{productName}} की समाप्ति तारीख {{date}} है",
+    "expiredProduct": "{{productName}} की समाप्ति हो चुकी है, इसे नहीं बेचा जा सकता",
+    "barcodeNotFound": "बारकोड {{barcode}} का कोई उत्पाद नहीं मिला",
+    "importComplete": "आयात पूर्ण: {{success}} उत्पाद आयात हुए, {{failed}} विफल"
+  },
+  "customers": {
+    "customerCreated": "ग्राहक {{name}} सफलतापूर्वक जोड़ा गया",
+    "customerUpdated": "ग्राहक {{name}} अपडेट किया गया",
+    "customerDeleted": "ग्राहक {{name}} हटाया गया",
+    "creditLimitExceeded": "{{name}} की क्रेडिट सीमा पार हो गई। सीमा: ₹{{limit}}",
+    "outstandingBalance": "{{name}} का बकाया: ₹{{amount}}"
+  },
+  "notifications": {
+    "billCreated": "{{customerName}} के लिए बिल #{{invoiceNo}} बनाया गया",
+    "paymentReceived": "{{customerName}} से ₹{{amount}} का भुगतान मिला",
+    "lowStock": "{{productName}} का स्टॉक कम है ({{quantity}} {{unit}} बचा है)",
+    "expiryWarning": "{{productName}} की समाप्ति तारीख {{date}} है",
+    "planExpiring": "आपका प्लान {{days}} दिनों में समाप्त होगा। अभी नवीनीकृत करें",
+    "newOrder": "{{customerName}} से नया ऑर्डर मिला",
+    "backupComplete": "बैकअप सफलतापूर्वक पूर्ण हुआ",
+    "syncComplete": "डेटा सफलतापूर्वक सिंक हुआ",
+    "dailySummary": "आज की बिक्री: ₹{{sales}} | बिल: {{bills}} | नए ग्राहक: {{customers}}"
+  },
+  "whatsapp": {
+    "billCreated": "प्रिय {{customerName}},\nआपका बिल #{{invoiceNo}} ₹{{amount}} का बनाया गया है।\n{{shopName}} में खरीदारी के लिए धन्यवाद!\n\nइनवॉइस देखें: {{link}}",
+    "paymentReceived": "प्रिय {{customerName}},\n{{date}} को ₹{{amount}} का भुगतान मिला।\nशेष राशि: ₹{{balance}}।\nधन्यवाद, {{shopName}}",
+    "paymentReminder": "प्रिय {{customerName}},\n{{dueDate}} से ₹{{amount}} बकाया है।\nकृपया {{phone}} पर संपर्क करें।\nधन्यवाद, {{shopName}}",
+    "orderConfirmation": "प्रिय {{customerName}},\nआपका ऑर्डर #{{orderNo}} कन्फर्म हो गया।\nअनुमानित डिलीवरी: {{date}}।\nधन्यवाद, {{shopName}}"
+  },
+  "sms": {
+    "billCreated": "{{shopName}}: बिल #{{invoiceNo}} Rs.{{amount}} बनाया गया। धन्यवाद!",
+    "paymentReceived": "{{shopName}}: Rs.{{amount}} भुगतान मिला। बकाया: Rs.{{balance}}।",
+    "paymentReminder": "{{shopName}}: Rs.{{amount}} बकाया है। {{phone}} पर संपर्क करें।",
+    "otpMessage": "आपका DukanX OTP {{otp}} है। {{minutes}} मिनट में समाप्त होगा। किसी से साझा न करें।"
+  },
+  "pdf": {
+    "invoiceTitle": "कर चालान",
+    "billTo": "बिल प्राप्तकर्ता",
+    "shipTo": "भेजने का पता",
+    "description": "विवरण",
+    "qty": "मात्रा",
+    "rate": "दर",
+    "amount": "राशि",
+    "taxableAmount": "कर योग्य राशि",
+    "grandTotal": "कुल योग",
+    "amountInWords": "राशि शब्दों में",
+    "authorizedSignatory": "अधिकृत हस्ताक्षरकर्ता",
+    "thankYou": "आपके व्यापार के लिए धन्यवाद!",
+    "termsConditions": "नियम और शर्तें",
+    "notes": "टिप्पणियां",
+    "originalForRecipient": "प्राप्तकर्ता के लिए मूल",
+    "computerGeneratedInvoice": "यह कंप्यूटर द्वारा तैयार चालान है"
+  },
+  "reports": {
+    "dailySales": "दैनिक बिक्री रिपोर्ट",
+    "monthlySales": "मासिक बिक्री रिपोर्ट",
+    "gstR1": "GSTR-1 रिपोर्ट",
+    "inventory": "इन्वेंटरी रिपोर्ट",
+    "profitLoss": "लाभ और हानि विवरण",
+    "periodLabel": "अवधि: {{from}} से {{to}}",
+    "generatedOn": "तैयार तारीख: {{date}}",
+    "noDataFound": "चुनी गई अवधि के लिए कोई डेटा नहीं मिला",
+    "totalSales": "कुल बिक्री",
+    "totalPurchase": "कुल खरीद",
+    "grossProfit": "सकल लाभ",
+    "netProfit": "शुद्ध लाभ"
+  },
+  "validation": {
+    "required": "{{field}} आवश्यक है",
+    "minLength": "{{field}} कम से कम {{min}} अक्षर का होना चाहिए",
+    "maxLength": "{{field}} {{max}} से अधिक अक्षर नहीं हो सकता",
+    "invalidEmail": "कृपया एक वैध ईमेल पता दर्ज करें",
+    "invalidPhone": "कृपया 10 अंकों का मोबाइल नंबर दर्ज करें",
+    "invalidGstin": "कृपया 15 अंकों का वैध GSTIN दर्ज करें",
+    "invalidPan": "कृपया 10 अक्षरों का वैध PAN दर्ज करें",
+    "positiveNumber": "{{field}} एक सकारात्मक संख्या होनी चाहिए",
+    "amountZero": "राशि शून्य से अधिक होनी चाहिए",
+    "passwordWeak": "पासवर्ड में कम से कम 8 अक्षर, एक अपरकेस और एक नंबर होना चाहिए"
+  }
+}

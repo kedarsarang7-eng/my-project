@@ -1,0 +1,52 @@
+name: Deploy Core Infrastructure
+
+on:
+  push:
+    branches: [main, staging]
+    paths:
+      - 'my-backend/src/core/**'
+      - 'my-backend/src/middleware/**'
+      - 'my-backend/src/config/**'
+      - 'my-backend/src/types/**'
+      - 'my-backend/src/utils/**'
+      - 'my-backend/serverless.yml'
+      - 'my-backend/package.json'
+  workflow_dispatch:
+
+jobs:
+  deploy-core:
+    name: Deploy Core Stack
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: my-backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: my-backend
+
+      - name: Run core tests
+        run: npm test -- --testPathPattern='src/__tests__/(core|middleware|config)'
+        working-directory: my-backend
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Deploy core stack
+        run: npx serverless deploy --stage ${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}
+        working-directory: my-backend
+        env:
+          INTERNAL_API_SECRET: ${{ secrets.INTERNAL_API_SECRET }}
+          MANIFEST_JWT_SECRET: ${{ secrets.MANIFEST_JWT_SECRET }}

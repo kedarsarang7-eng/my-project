@@ -1,0 +1,375 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: DukanX Razorpay Payment Integration API
+
+# ============================================================================
+# Parameters
+# ============================================================================
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+  CognitoUserPoolArn:
+    Type: String
+    Description: ARN of the Cognito User Pool for JWT authorization
+  RazorpayKeyId:
+    Type: String
+    Description: Razorpay API Key ID
+    NoEcho: true
+  RazorpayKeySecret:
+    Type: String
+    Description: Razorpay API Key Secret
+    NoEcho: true
+  RazorpayWebhookSecret:
+    Type: String
+    Description: Razorpay Webhook Secret for signature verification
+    NoEcho: true
+
+# ============================================================================
+# Globals
+# ============================================================================
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 256
+    Runtime: nodejs20.x
+    Architectures: [x86_64]
+    Environment:
+      Variables:
+        NODE_ENV: !Ref Environment
+        RAZORPAY_KEY_ID: !Ref RazorpayKeyId
+        RAZORPAY_KEY_SECRET: !Ref RazorpayKeySecret
+        RAZORPAY_WEBHOOK_SECRET: !Ref RazorpayWebhookSecret
+    Tracing: Active
+
+# ============================================================================
+# Resources
+# ============================================================================
+Resources:
+
+  # -------------------------------------------------------------------------
+  # API Gateway
+  # -------------------------------------------------------------------------
+  PaymentApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Environment
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !Ref CognitoUserPoolArn
+            Identity:
+              Header: Authorization
+              ValidationExpression: Bearer (.*)
+              ReauthorizeEvery: 300
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization,X-Api-Key,X-Amz-Date,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+        MaxAge: 600
+      TracingEnabled: true
+      AccessLogSetting:
+        DestinationArn: !GetAtt ApiGatewayAccessLogGroup.Arn
+        Format: '{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","requestTime":"$context.requestTime","httpMethod":"$context.httpMethod","routeKey":"$context.routeKey","status":"$context.status","protocol":"$context.protocol","responseLength":"$context.responseLength"}'
+      MethodSettings:
+        - ResourcePath: /*
+          HttpMethod: '*'
+          LoggingLevel: INFO
+          DataTraceEnabled: true
+          MetricsEnabled: true
+          ThrottlingBurstLimit: 100
+          ThrottlingRateLimit: 50
+
+  # -------------------------------------------------------------------------
+  # API Gateway Access Log Group
+  # -------------------------------------------------------------------------
+  ApiGatewayAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/apigateway/payment-api-${Environment}
+      RetentionInDays: 30
+
+  # -------------------------------------------------------------------------
+  # Lambda Functions
+  # -------------------------------------------------------------------------
+
+  # 2.1: Merchant Onboarding
+  CreateMerchantFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub dukanx-create-merchant-${Environment}
+      Handler: dist/handlers/payment/create-merchant.handler
+      CodeUri: ./
+      Description: Create Razorpay linked account for merchant onboarding
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PaymentApi
+            Path: /billing/merchants/onboard
+            Method: POST
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+              Resource: 
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-BusinessOwners-${Environment}
+
+  # 2.2: Generate Payment QR
+  GenerateQRFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub dukanx-generate-qr-${Environment}
+      Handler: dist/handlers/payment/generate-qr.handler
+      CodeUri: ./
+      Description: Generate Razorpay QR code for bill payment
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PaymentApi
+            Path: /billing/payment/generate-qr
+            Method: POST
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:Query
+              Resource:
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-Bills-${Environment}
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-Bills-${Environment}/index/GSI2
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-BusinessOwners-${Environment}
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-PaymentEvents-${Environment}
+
+  # 2.3: Get Payment Status
+  GetPaymentStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub dukanx-get-payment-status-${Environment}
+      Handler: dist/handlers/payment/get-payment-status.handler
+      CodeUri: ./
+      Description: Poll payment status for QR payments
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PaymentApi
+            Path: /billing/payment/status/{billId}
+            Method: GET
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:UpdateItem
+                - dynamodb:Query
+              Resource:
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-Bills-${Environment}
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-Bills-${Environment}/index/GSI2
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-Bills-${Environment}/index/GSI3
+
+  # 2.4: Razorpay Webhook Handler (NO AUTH - Public)
+  WebhookHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub dukanx-webhook-handler-${Environment}
+      Handler: dist/handlers/payment/webhook-handler.handler
+      CodeUri: ./
+      Description: Process Razorpay webhooks with signature verification
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PaymentApi
+            Path: /billing/webhook/razorpay
+            Method: POST
+            Auth:
+              Authorizer: NONE
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:Query
+              Resource:
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-Bills-${Environment}
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-Bills-${Environment}/index/GSI2
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-Bills-${Environment}/index/GSI3
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-PaymentEvents-${Environment}
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-PaymentEvents-${Environment}/index/GSI1
+
+  # 2.5: Process Cash Payment
+  ProcessCashFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub dukanx-process-cash-${Environment}
+      Handler: dist/handlers/payment/process-cash.handler
+      CodeUri: ./
+      Description: Process immediate cash payments
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PaymentApi
+            Path: /billing/payment/cash
+            Method: POST
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+              Resource:
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-Bills-${Environment}
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-PaymentEvents-${Environment}
+
+  # 2.6: Cleanup Expired QR (EventBridge Scheduled)
+  CleanupExpiredQRFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub dukanx-cleanup-expired-qr-${Environment}
+      Handler: dist/handlers/payment/cleanup-expired-qr.handler
+      CodeUri: ./
+      Description: Background cleanup of expired QR codes
+      Events:
+        ScheduledEvent:
+          Type: Schedule
+          Properties:
+            Schedule: rate(15 minutes)
+            Name: !Sub dukanx-qr-cleanup-${Environment}
+            Description: Run QR cleanup every 15 minutes
+            Enabled: true
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:UpdateItem
+                - dynamodb:Query
+              Resource:
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-Bills-${Environment}
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/SaasBilling-Bills-${Environment}/index/GSI3
+
+  # -------------------------------------------------------------------------
+  # CloudWatch Log Groups
+  # -------------------------------------------------------------------------
+  CreateMerchantLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/dukanx-create-merchant-${Environment}
+      RetentionInDays: 30
+
+  GenerateQRLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/dukanx-generate-qr-${Environment}
+      RetentionInDays: 30
+
+  GetPaymentStatusLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/dukanx-get-payment-status-${Environment}
+      RetentionInDays: 7
+
+  WebhookHandlerLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/dukanx-webhook-handler-${Environment}
+      RetentionInDays: 30
+
+  ProcessCashLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/dukanx-process-cash-${Environment}
+      RetentionInDays: 30
+
+  CleanupExpiredQRLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/dukanx-cleanup-expired-qr-${Environment}
+      RetentionInDays: 7
+
+  # -------------------------------------------------------------------------
+  # WAF WebACL (for webhook endpoint protection)
+  # -------------------------------------------------------------------------
+  PaymentApiWAF:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: !Sub payment-api-waf-${Environment}
+      Scope: REGIONAL
+      DefaultAction:
+        Allow: {}
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: !Sub payment-api-waf-${Environment}
+      Rules:
+        # Rate limit for webhook endpoint
+        - Name: WebhookRateLimit
+          Priority: 1
+          Statement:
+            RateBasedStatement:
+              Limit: 100
+              AggregateKeyType: IP
+              ScopeDownStatement:
+                ByteMatchStatement:
+                  SearchString: /billing/webhook/razorpay
+                  FieldToMatch:
+                    UriPath: {}
+                  TextTransformations:
+                    - Priority: 0
+                      Type: LOWERCASE
+                  PositionalConstraint: CONTAINS
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: WebhookRateLimit
+
+  PaymentApiWAFAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties:
+      ResourceArn: !Sub arn:aws:apigateway:${AWS::Region}::/restapis/${PaymentApi}/stages/${Environment}
+      WebACLArn: !GetAtt PaymentApiWAF.Arn
+
+# ============================================================================
+# Outputs
+# ============================================================================
+Outputs:
+  PaymentApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub https://${PaymentApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}
+    Export:
+      Name: !Sub ${AWS::StackName}-PaymentApiUrl
+
+  CreateMerchantFunctionArn:
+    Description: ARN of the Create Merchant Lambda function
+    Value: !GetAtt CreateMerchantFunction.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-CreateMerchantFunctionArn
+
+  WebhookEndpoint:
+    Description: Public webhook endpoint (configure in Razorpay dashboard)
+    Value: !Sub https://${PaymentApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/billing/webhook/razorpay
+    Export:
+      Name: !Sub ${AWS::StackName}-WebhookEndpoint
+
+  CleanupScheduleName:
+    Description: EventBridge schedule name for cleanup job
+    Value: !Sub dukanx-qr-cleanup-${Environment}

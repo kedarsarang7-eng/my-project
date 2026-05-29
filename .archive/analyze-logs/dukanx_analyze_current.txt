@@ -1,0 +1,37 @@
+﻿Analyzing Dukan_x...                                            
+
+   info - Unnecessary braces in a string interpolation - lib\core\config\app_config.dart:246:36 - unnecessary_brace_in_string_interps
+   info - Unnecessary use of multiple underscores - lib\features\in_store\presentation\screens\active_sessions_screen.dart:187:41 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\features\in_store\presentation\screens\in_store_orders_screen.dart:149:41 - unnecessary_underscores
+warning - Unused import: 'dart:convert' - lib\features\inventory\presentation\screens\import_inventory_screen.dart:14:8 - unused_import
+warning - Unused import: 'dart:io' - lib\features\inventory\presentation\screens\import_inventory_screen.dart:15:8 - unused_import
+warning - Unused import: '../../../../widgets/modern_ui_components.dart' - lib\features\inventory\presentation\screens\import_inventory_screen.dart:30:8 - unused_import
+  error - The getter 'platform' isn't defined for the type 'FilePicker' - lib\features\inventory\presentation\screens\import_inventory_screen.dart:123:37 - undefined_getter
+  error - The getter 'errorMessage' isn't defined for the type 'ApiResponse<Map<String, dynamic>>' - lib\features\inventory\presentation\screens\import_inventory_screen.dart:203:27 - undefined_getter
+   info - Unnecessary braces in a string interpolation - lib\features\inventory\presentation\screens\import_inventory_screen.dart:672:20 - unnecessary_brace_in_string_interps
+   info - Unnecessary braces in a string interpolation - lib\features\inventory\presentation\screens\import_inventory_screen.dart:672:38 - unnecessary_brace_in_string_interps
+   info - Unnecessary use of multiple underscores - lib\features\inventory\presentation\screens\import_inventory_screen.dart:701:37 - unnecessary_underscores
+  error - The argument type 'Value<String>' can't be assigned to the parameter type 'String'.  - test\core\repository\bills_repository_stock_reservation_test.dart:40:20 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\core\repository\bills_repository_stock_reservation_test.dart:64:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\core\repository\bills_repository_stock_reservation_test.dart:168:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\core\repository\bills_repository_stock_reservation_test.dart:262:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\core\repository\bills_repository_stock_reservation_test.dart:325:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\features\inventory\services\stock_reservation_service_test.dart:42:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\features\inventory\services\stock_reservation_service_test.dart:78:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\features\inventory\services\stock_reservation_service_test.dart:111:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\features\inventory\services\stock_reservation_service_test.dart:122:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\features\inventory\services\stock_reservation_service_test.dart:162:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\features\inventory\services\stock_reservation_service_test.dart:200:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\features\inventory\services\stock_reservation_service_test.dart:244:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\features\inventory\services\stock_reservation_service_test.dart:285:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\features\inventory\services\stock_reservation_service_test.dart:324:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\features\inventory\services\stock_reservation_service_test.dart:428:27 - argument_type_not_assignable
+  error - The argument type 'Value<double>' can't be assigned to the parameter type 'double'.  - test\features\inventory\services\stock_reservation_service_test.dart:440:27 - argument_type_not_assignable
+
+flutter : 27 issues found. (ran in 17.3s)
+At line:1 char:1
++ flutter analyze --no-pub 2>&1 | Out-File -FilePath analyze_current.tx ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (27 issues found. (ran in 17.3s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

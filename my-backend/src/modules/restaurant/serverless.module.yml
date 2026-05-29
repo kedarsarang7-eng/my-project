@@ -1,0 +1,161 @@
+# ============================================================================
+# Restaurant Module — Lambda Function Definitions
+# Split from the original 103KB resto.ts monolith
+# ============================================================================
+
+restaurantMenu:
+  handler: src/handlers/modules/restaurant/restaurant-menu.getMenu
+  description: Restaurant — Menu & item management
+  events:
+    - httpApi:
+        path: /restaurant/menu
+        method: GET
+    - httpApi:
+        path: /restaurant/menu
+        method: POST
+    - httpApi:
+        path: /restaurant/menu/{itemId}
+        method: PUT
+    - httpApi:
+        path: /restaurant/menu/{itemId}
+        method: DELETE
+    - httpApi:
+        path: /restaurant/categories
+        method: GET
+    - httpApi:
+        path: /restaurant/categories
+        method: POST
+
+restaurantTables:
+  handler: src/handlers/modules/restaurant/restaurant-tables.getTables
+  description: Restaurant — Table management
+  events:
+    - httpApi:
+        path: /restaurant/tables
+        method: GET
+    - httpApi:
+        path: /restaurant/tables
+        method: POST
+    - httpApi:
+        path: /restaurant/tables/{tableId}
+        method: GET
+    - httpApi:
+        path: /restaurant/tables/{tableId}
+        method: PUT
+    - httpApi:
+        path: /restaurant/tables/{tableId}/status
+        method: PUT
+
+restaurantOrders:
+  handler: src/handlers/modules/restaurant/restaurant-kot.listActiveKots
+  description: Restaurant — Order management
+  events:
+    - httpApi:
+        path: /restaurant/orders
+        method: GET
+    - httpApi:
+        path: /restaurant/orders
+        method: POST
+    - httpApi:
+        path: /restaurant/orders/{orderId}
+        method: GET
+    - httpApi:
+        path: /restaurant/orders/{orderId}
+        method: PUT
+    - httpApi:
+        path: /restaurant/orders/{orderId}/status
+        method: PUT
+
+restaurantKot:
+  handler: src/handlers/modules/restaurant/restaurant-kot.createKOT
+  description: Restaurant — KOT management (real-time)
+  memorySize: 512
+  timeout: 15
+  events:
+    - httpApi:
+        path: /restaurant/kot
+        method: POST
+    - httpApi:
+        path: /restaurant/kot
+        method: GET
+    - httpApi:
+        path: /restaurant/kot/{kotId}
+        method: PUT
+    - httpApi:
+        path: /restaurant/kot/{kotId}/status
+        method: PUT
+
+restaurantBilling:
+  handler: src/handlers/modules/restaurant/restaurant-billing.settleBill
+  description: Restaurant — Bill creation and settlement
+  events:
+    - httpApi:
+        path: /restaurant/bills
+        method: POST
+    - httpApi:
+        path: /restaurant/bills
+        method: GET
+    - httpApi:
+        path: /restaurant/bills/{billId}
+        method: GET
+    - httpApi:
+        path: /restaurant/bills/{billId}/settle
+        method: POST
+    - httpApi:
+        path: /restaurant/bills/{billId}/split
+        method: POST
+
+restaurantAnalytics:
+  handler: src/handlers/modules/restaurant/restaurant-billing.getSalesSummary
+  description: Restaurant — Analytics and dashboard
+  events:
+    - httpApi:
+        path: /restaurant/analytics
+        method: GET
+    - httpApi:
+        path: /restaurant/dashboard
+        method: GET
+
+restaurantDelivery:
+  handler: src/handlers/modules/restaurant/restaurant-delivery.assignDeliveryRider
+  description: Restaurant — Delivery order management
+  events:
+    - httpApi:
+        path: /restaurant/delivery
+        method: GET
+    - httpApi:
+        path: /restaurant/delivery
+        method: POST
+    - httpApi:
+        path: /restaurant/delivery/{orderId}
+        method: GET
+    - httpApi:
+        path: /restaurant/delivery/{orderId}/status
+        method: PUT
+
+restaurantReports:
+  handler: src/handlers/modules/restaurant/restaurant-billing.getSalesSummary
+  description: Restaurant — Reports
+  events:
+    - httpApi:
+        path: /restaurant/reports
+        method: GET
+    - httpApi:
+        path: /restaurant/reports/sales
+        method: GET
+    - httpApi:
+        path: /restaurant/reports/items
+        method: GET
+
+restaurantV1Public:
+  handler: src/handlers/modules/restaurant/restaurant-menu.getMenu
+  description: Restaurant — Public PWA order endpoint (legacy v1)
+  events:
+    - httpApi:
+        path: /api/v1/restaurant/menu
+        method: GET
+        authorizer: none
+    - httpApi:
+        path: /api/v1/restaurant/order
+        method: POST
+        authorizer: none

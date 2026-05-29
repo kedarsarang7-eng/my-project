@@ -1,0 +1,121 @@
+{
+  "common": {
+    "success": "कार्य यशस्वी झाले",
+    "error": "काहीतरी चुकले",
+    "notFound": "{{resource}} सापडला नाही",
+    "conflict": "{{resource}} आधीच अस्तित्वात आहे",
+    "forbidden": "हे कार्य करण्याची तुम्हाला परवानगी नाही",
+    "unauthorized": "प्रमाणीकरण आवश्यक आहे",
+    "badRequest": "अवैध विनंती",
+    "limitExceeded": "मर्यादा ओलांडली. कृपया तुमचा प्लान अपग्रेड करा",
+    "planExpired": "तुमचा प्लान संपला. सुरू ठेवण्यासाठी नूतनीकरण करा",
+    "serverError": "अनपेक्षित त्रुटी आली. कृपया नंतर पुन्हा प्रयत्न करा",
+    "timeout": "विनंती कालबाह्य झाली. कृपया पुन्हा प्रयत्न करा"
+  },
+  "auth": {
+    "loginSuccess": "लॉगिन यशस्वी झाले",
+    "logoutSuccess": "यशस्वीरित्या लॉगआउट झाले",
+    "invalidCredentials": "ईमेल किंवा पासवर्ड चुकीचा आहे",
+    "accountLocked": "खाते लॉक आहे. कृपया सहाय्याशी संपर्क करा",
+    "sessionExpired": "सत्र संपले. कृपया पुन्हा लॉग इन करा",
+    "tokenInvalid": "अवैध किंवा कालबाह्य टोकन",
+    "otpSent": "OTP {{destination}} वर पाठवला",
+    "otpExpired": "OTP कालबाह्य झाला. कृपया नवीन OTP मागवा",
+    "otpInvalid": "OTP चुकीचा आहे. कृपया पुन्हा प्रयत्न करा"
+  },
+  "billing": {
+    "invoiceCreated": "इनव्हॉइस #{{invoiceNo}} यशस्वीरित्या तयार झाले",
+    "invoiceUpdated": "इनव्हॉइस #{{invoiceNo}} अपडेट केले",
+    "invoiceDeleted": "इनव्हॉइस #{{invoiceNo}} हटवले",
+    "paymentRecorded": "₹{{amount}} चे पेमेंट यशस्वीरित्या नोंदवले",
+    "stockInsufficient": "{{productName}} चा पुरेसा साठा नाही. उपलब्ध: {{available}} {{unit}}",
+    "invoiceNotFound": "इनव्हॉइस सापडले नाही",
+    "duplicateInvoice": "या क्रमांकाचे इनव्हॉइस आधीच अस्तित्वात आहे"
+  },
+  "inventory": {
+    "productCreated": "उत्पादन {{productName}} यशस्वीरित्या जोडले",
+    "productUpdated": "उत्पादन {{productName}} अपडेट केले",
+    "productDeleted": "उत्पादन {{productName}} हटवले",
+    "stockUpdated": "{{productName}} चा साठा अपडेट झाला",
+    "lowStockAlert": "{{productName}} चा साठा कमी आहे. उपलब्ध: {{quantity}} {{unit}}",
+    "outOfStock": "{{productName}} चा साठा संपला",
+    "expiryWarning": "{{productName}} ची समाप्ती तारीख {{date}} आहे",
+    "expiredProduct": "{{productName}} ची मुदत संपली आहे, विक्री करता येणार नाही",
+    "barcodeNotFound": "बारकोड {{barcode}} साठी कोणतेही उत्पादन सापडले नाही",
+    "importComplete": "आयात पूर्ण: {{success}} उत्पादने आयात झाली, {{failed}} अयशस्वी"
+  },
+  "customers": {
+    "customerCreated": "ग्राहक {{name}} यशस्वीरित्या जोडला",
+    "customerUpdated": "ग्राहक {{name}} अपडेट केला",
+    "customerDeleted": "ग्राहक {{name}} हटवला",
+    "creditLimitExceeded": "{{name}} ची क्रेडिट मर्यादा ओलांडली. मर्यादा: ₹{{limit}}",
+    "outstandingBalance": "{{name}} ची थकबाकी: ₹{{amount}}"
+  },
+  "notifications": {
+    "billCreated": "{{customerName}} साठी बिल #{{invoiceNo}} तयार केले",
+    "paymentReceived": "{{customerName}} कडून ₹{{amount}} चे पेमेंट मिळाले",
+    "lowStock": "{{productName}} चा साठा कमी आहे ({{quantity}} {{unit}} शिल्लक)",
+    "expiryWarning": "{{productName}} ची समाप्ती तारीख {{date}} आहे",
+    "planExpiring": "तुमचा प्लान {{days}} दिवसांत संपेल. आता नूतनीकरण करा",
+    "newOrder": "{{customerName}} कडून नवीन ऑर्डर मिळाला",
+    "backupComplete": "बॅकअप यशस्वीरित्या पूर्ण झाले",
+    "syncComplete": "डेटा यशस्वीरित्या सिंक झाला",
+    "dailySummary": "आजची विक्री: ₹{{sales}} | बिले: {{bills}} | नवीन ग्राहक: {{customers}}"
+  },
+  "whatsapp": {
+    "billCreated": "प्रिय {{customerName}},\nतुमचे बिल #{{invoiceNo}} ₹{{amount}} तयार केले आहे.\n{{shopName}} मध्ये खरेदीसाठी धन्यवाद!\n\nइनव्हॉइस पहा: {{link}}",
+    "paymentReceived": "प्रिय {{customerName}},\n{{date}} रोजी ₹{{amount}} चे पेमेंट मिळाले.\nशिल्लक रक्कम: ₹{{balance}}.\nधन्यवाद, {{shopName}}",
+    "paymentReminder": "प्रिय {{customerName}},\n{{dueDate}} पासून ₹{{amount}} थकबाकी आहे.\nकृपया {{phone}} वर संपर्क करा.\nधन्यवाद, {{shopName}}",
+    "orderConfirmation": "प्रिय {{customerName}},\nतुमचा ऑर्डर #{{orderNo}} कन्फर्म झाला.\nअंदाजे डिलीव्हरी: {{date}}.\nधन्यवाद, {{shopName}}"
+  },
+  "sms": {
+    "billCreated": "{{shopName}}: बिल #{{invoiceNo}} Rs.{{amount}} तयार. धन्यवाद!",
+    "paymentReceived": "{{shopName}}: Rs.{{amount}} पेमेंट मिळाले. बाकी: Rs.{{balance}}.",
+    "paymentReminder": "{{shopName}}: Rs.{{amount}} थकबाकी. {{phone}} वर संपर्क करा.",
+    "otpMessage": "तुमचा DukanX OTP {{otp}} आहे. {{minutes}} मिनिटांत कालबाह्य होईल. कुणाशीही शेअर करू नका."
+  },
+  "pdf": {
+    "invoiceTitle": "कर चालान",
+    "billTo": "बिल प्राप्तकर्ता",
+    "shipTo": "पाठवण्याचा पत्ता",
+    "description": "वर्णन",
+    "qty": "प्रमाण",
+    "rate": "दर",
+    "amount": "रक्कम",
+    "taxableAmount": "करपात्र रक्कम",
+    "grandTotal": "एकूण बेरीज",
+    "amountInWords": "शब्दांत रक्कम",
+    "authorizedSignatory": "अधिकृत स्वाक्षरीकर्ता",
+    "thankYou": "तुमच्या व्यवसायासाठी धन्यवाद!",
+    "termsConditions": "अटी व शर्ती",
+    "notes": "नोंदी",
+    "originalForRecipient": "प्राप्तकर्त्यासाठी मूळ",
+    "computerGeneratedInvoice": "हे संगणकाद्वारे तयार केलेले चालान आहे"
+  },
+  "reports": {
+    "dailySales": "दैनंदिन विक्री अहवाल",
+    "monthlySales": "मासिक विक्री अहवाल",
+    "gstR1": "GSTR-1 अहवाल",
+    "inventory": "इन्व्हेंटरी अहवाल",
+    "profitLoss": "नफा आणि तोटा विवरण",
+    "periodLabel": "कालावधी: {{from}} ते {{to}}",
+    "generatedOn": "तयार केलेली तारीख: {{date}}",
+    "noDataFound": "निवडलेल्या कालावधीसाठी कोणताही डेटा सापडला नाही",
+    "totalSales": "एकूण विक्री",
+    "totalPurchase": "एकूण खरेदी",
+    "grossProfit": "एकूण नफा",
+    "netProfit": "निव्वळ नफा"
+  },
+  "validation": {
+    "required": "{{field}} आवश्यक आहे",
+    "minLength": "{{field}} किमान {{min}} अक्षरांचे असणे आवश्यक आहे",
+    "maxLength": "{{field}} {{max}} पेक्षा जास्त अक्षरे असू शकत नाहीत",
+    "invalidEmail": "कृपया वैध ईमेल पत्ता प्रविष्ट करा",
+    "invalidPhone": "कृपया 10 अंकांचा मोबाइल नंबर प्रविष्ट करा",
+    "invalidGstin": "कृपया 15 अंकांचा वैध GSTIN प्रविष्ट करा",
+    "invalidPan": "कृपया 10 अक्षरांचा वैध PAN प्रविष्ट करा",
+    "positiveNumber": "{{field}} एक धन संख्या असणे आवश्यक आहे",
+    "amountZero": "रक्कम शून्यापेक्षा जास्त असणे आवश्यक आहे",
+    "passwordWeak": "पासवर्डमध्ये किमान 8 अक्षरे, एक अपरकेस आणि एक संख्या असणे आवश्यक आहे"
+  }
+}

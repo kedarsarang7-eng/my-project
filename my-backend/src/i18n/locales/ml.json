@@ -1,0 +1,121 @@
+{
+  "common": {
+    "success": "പ്രവർത്തനം വിജയകരമായി",
+    "error": "ഒരു പിശക് സംഭവിച്ചു",
+    "notFound": "{{resource}} കണ്ടെത്തിയില്ല",
+    "conflict": "{{resource}} നിലവിലുണ്ട്",
+    "forbidden": "ഈ പ്രവർത്തനം നടത്താൻ നിങ്ങൾക്ക് അനുമതിയില്ല",
+    "unauthorized": "പ്രാമാണീകരണം ആവശ്യമാണ്",
+    "badRequest": "അസാധുവായ അഭ്യർത്ഥന",
+    "limitExceeded": "പരിധി കഴിഞ്ഞു. നിങ്ങളുടെ പ്ലാൻ അപ്‌ഗ്രേഡ് ചെയ്യുക",
+    "planExpired": "നിങ്ങളുടെ പ്ലാൻ കാലഹരണപ്പെട്ടു. തുടരാൻ പുതുക്കുക",
+    "serverError": "അപ്രതീക്ഷിത പിശക്. പിന്നീട് വീണ്ടും ശ്രമിക്കുക",
+    "timeout": "അഭ്യർത്ഥന സമയം കഴിഞ്ഞു. വീണ്ടും ശ്രമിക്കുക"
+  },
+  "auth": {
+    "loginSuccess": "ലോഗിൻ വിജയകരം",
+    "logoutSuccess": "വിജയകരമായി ലോഗ് ഔട്ട്",
+    "invalidCredentials": "ഇമെയിൽ അല്ലെങ്കിൽ പാസ്‌വേഡ് തെറ്റ്",
+    "accountLocked": "അക്കൗണ്ട് ലോക്ക് ചെയ്തു. പിന്തുണ ബന്ധപ്പെടുക",
+    "sessionExpired": "സെഷൻ കാലഹരണപ്പെട്ടു. വീണ്ടും ലോഗിൻ ചെയ്യുക",
+    "tokenInvalid": "അസാധുവായ അല്ലെങ്കിൽ കാലഹരണപ്പെട്ട ടോക്കൺ",
+    "otpSent": "OTP {{destination}} ലേക്ക് അയച്ചു",
+    "otpExpired": "OTP കാലഹരണപ്പെട്ടു. പുതിയ OTP ആവശ്യപ്പെടുക",
+    "otpInvalid": "OTP തെറ്റ്. വീണ്ടും ശ്രമിക്കുക"
+  },
+  "billing": {
+    "invoiceCreated": "ഇൻവോയ്‌സ് #{{invoiceNo}} വിജയകരമായി സൃഷ്ടിച്ചു",
+    "invoiceUpdated": "ഇൻവോയ്‌സ് #{{invoiceNo}} അപ്‌ഡേറ്റ് ചെയ്തു",
+    "invoiceDeleted": "ഇൻവോയ്‌സ് #{{invoiceNo}} ഇല്ലാതാക്കി",
+    "paymentRecorded": "₹{{amount}} പേയ്‌മെന്റ് വിജയകരമായി രേഖപ്പെടുത്തി",
+    "stockInsufficient": "{{productName}} ക്ക് ആവശ്യമായ സ്റ്റോക്കില്ല. ലഭ്യം: {{available}} {{unit}}",
+    "invoiceNotFound": "ഇൻവോയ്‌സ് കണ്ടെത്തിയില്ല",
+    "duplicateInvoice": "ഈ നമ്പരിൽ ഇൻവോയ്‌സ് ഇതിനകം ഉണ്ട്"
+  },
+  "inventory": {
+    "productCreated": "ഉൽപ്പന്നം {{productName}} വിജയകരമായി ചേർത്തു",
+    "productUpdated": "ഉൽപ്പന്നം {{productName}} അപ്‌ഡേറ്റ് ചെയ്തു",
+    "productDeleted": "ഉൽപ്പന്നം {{productName}} ഇല്ലാതാക്കി",
+    "stockUpdated": "{{productName}} സ്റ്റോക്ക് അപ്‌ഡേറ്റ് ചെയ്തു",
+    "lowStockAlert": "{{productName}} സ്റ്റോക്ക് കുറവ്. ലഭ്യം: {{quantity}} {{unit}}",
+    "outOfStock": "{{productName}} സ്റ്റോക്ക് തീർന്നു",
+    "expiryWarning": "{{productName}} കാലഹരണ തീയതി {{date}}",
+    "expiredProduct": "{{productName}} കാലഹരണപ്പെട്ടു, വിൽക്കാൻ കഴിയില്ല",
+    "barcodeNotFound": "ബാർകോഡ് {{barcode}} ന് ഉൽപ്പന്നം കണ്ടെത്തിയില്ല",
+    "importComplete": "ഇറക്കുമതി പൂർത്തി: {{success}} ഉൽപ്പന്നങ്ങൾ, {{failed}} പരാജയം"
+  },
+  "customers": {
+    "customerCreated": "ഉപഭോക്താവ് {{name}} വിജയകരമായി ചേർത്തു",
+    "customerUpdated": "ഉപഭോക്താവ് {{name}} അപ്‌ഡേറ്റ് ചെയ്തു",
+    "customerDeleted": "ഉപഭോക്താവ് {{name}} ഇല്ലാതാക്കി",
+    "creditLimitExceeded": "{{name}} ക്രെഡിറ്റ് പരിധി കഴിഞ്ഞു. പരിധി: ₹{{limit}}",
+    "outstandingBalance": "{{name}} ബാക്കി: ₹{{amount}}"
+  },
+  "notifications": {
+    "billCreated": "{{customerName}} ക്കായി ബിൽ #{{invoiceNo}} സൃഷ്ടിച്ചു",
+    "paymentReceived": "{{customerName}} ൽ നിന്ന് ₹{{amount}} പേയ്‌മെന്റ് ലഭിച്ചു",
+    "lowStock": "{{productName}} സ്റ്റോക്ക് കുറവ് ({{quantity}} {{unit}} ബാക്കി)",
+    "expiryWarning": "{{productName}} കാലഹരണം {{date}}",
+    "planExpiring": "നിങ്ങളുടെ പ്ലാൻ {{days}} ദിവസത്തിൽ കാലഹരണപ്പെടും. ഇപ്പോൾ പുതുക്കുക",
+    "newOrder": "{{customerName}} ൽ നിന്ന് പുതിയ ഓർഡർ",
+    "backupComplete": "ബാക്കപ്പ് വിജയകരമായി പൂർത്തി",
+    "syncComplete": "ഡാറ്റ വിജയകരമായി സമന്വയിച്ചു",
+    "dailySummary": "ഇന്നത്തെ വിൽപ്പന: ₹{{sales}} | ബില്ലുകൾ: {{bills}} | പുതിയ ഉപഭോക്താക്കൾ: {{customers}}"
+  },
+  "whatsapp": {
+    "billCreated": "പ്രിയ {{customerName}},\nനിങ്ങളുടെ ബിൽ #{{invoiceNo}} ₹{{amount}} സൃഷ്ടിച്ചു.\n{{shopName}} ൽ വാങ്ങിയതിന് നന്ദി!\n\nഇൻവോയ്‌സ് കാണുക: {{link}}",
+    "paymentReceived": "പ്രിയ {{customerName}},\n{{date}} ന് ₹{{amount}} ലഭിച്ചു.\nബാക്കി: ₹{{balance}}.\nനന്ദി, {{shopName}}",
+    "paymentReminder": "പ്രിയ {{customerName}},\n{{dueDate}} മുതൽ ₹{{amount}} ബാക്കി.\n{{phone}} ബന്ധപ്പെടുക.\nനന്ദി, {{shopName}}",
+    "orderConfirmation": "പ്രിയ {{customerName}},\nഓർഡർ #{{orderNo}} സ്ഥിരീകരിച്ചു.\nഡെലിവറി: {{date}}.\nനന്ദി, {{shopName}}"
+  },
+  "sms": {
+    "billCreated": "{{shopName}}: ബിൽ #{{invoiceNo}} Rs.{{amount}}. നന്ദി!",
+    "paymentReceived": "{{shopName}}: Rs.{{amount}} ലഭിച്ചു. ബാക്കി: Rs.{{balance}}.",
+    "paymentReminder": "{{shopName}}: Rs.{{amount}} ബാക്കി. {{phone}} ബന്ധപ്പെടുക.",
+    "otpMessage": "DukanX OTP {{otp}}. {{minutes}} മിനിറ്റ്. ആരോടും പറയരുത്."
+  },
+  "pdf": {
+    "invoiceTitle": "നികുതി ഇൻവോയ്‌സ്",
+    "billTo": "ബിൽ ആർക്ക്",
+    "shipTo": "അയക്കുന്ന വിലാസം",
+    "description": "വിവരണം",
+    "qty": "അളവ്",
+    "rate": "നിരക്ക്",
+    "amount": "തുക",
+    "taxableAmount": "നികുതിയോഗ്യ തുക",
+    "grandTotal": "ആകെ",
+    "amountInWords": "വാക്കുകളിൽ തുക",
+    "authorizedSignatory": "അംഗീകൃത ഒപ്പിടുന്നയാൾ",
+    "thankYou": "നിങ്ങളുടെ ബിസിനസ്സിന് നന്ദി!",
+    "termsConditions": "നിബന്ധനകൾ",
+    "notes": "കുറിപ്പുകൾ",
+    "originalForRecipient": "സ്വീകർത്താവിന് മൂലം",
+    "computerGeneratedInvoice": "ഇത് കമ്പ്യൂട്ടർ സൃഷ്ടിച്ച ഇൻവോയ്‌സ് ആണ്"
+  },
+  "reports": {
+    "dailySales": "ദൈനംദിന വിൽപ്പന റിപ്പോർട്ട്",
+    "monthlySales": "മാസിക വിൽപ്പന റിപ്പോർട്ട്",
+    "gstR1": "GSTR-1 റിപ്പോർട്ട്",
+    "inventory": "ഇൻവെന്ററി റിപ്പോർട്ട്",
+    "profitLoss": "ലാഭനഷ്ട വിവരണം",
+    "periodLabel": "കാലഘട്ടം: {{from}} മുതൽ {{to}} വരെ",
+    "generatedOn": "സൃഷ്ടിച്ചത്: {{date}}",
+    "noDataFound": "തിരഞ്ഞെടുത്ത കാലഘട്ടത്തിന് ഡാറ്റ ഇല്ല",
+    "totalSales": "മൊത്തം വിൽപ്പന",
+    "totalPurchase": "മൊത്തം വാങ്ങൽ",
+    "grossProfit": "മൊത്ത ലാഭം",
+    "netProfit": "അറ്റ ലാഭം"
+  },
+  "validation": {
+    "required": "{{field}} ആവശ്യമാണ്",
+    "minLength": "{{field}} കുറഞ്ഞത് {{min}} അക്ഷരങ്ങൾ ഉണ്ടായിരിക്കണം",
+    "maxLength": "{{field}} {{max}} അക്ഷരങ്ങൾ കവിയരുത്",
+    "invalidEmail": "സാധുവായ ഇമെയിൽ നൽകുക",
+    "invalidPhone": "10 അക്ക മൊബൈൽ നമ്പർ നൽകുക",
+    "invalidGstin": "15 അക്ക GSTIN നൽകുക",
+    "invalidPan": "10 അക്ഷര PAN നൽകുക",
+    "positiveNumber": "{{field}} ഒരു ധനാത്മക സംഖ്യ ആയിരിക്കണം",
+    "amountZero": "തുക പൂജ്യത്തിൽ കൂടുതൽ ആയിരിക്കണം",
+    "passwordWeak": "പാസ്‌വേഡിൽ കുറഞ്ഞത് 8 അക്ഷരങ്ങൾ, ഒരു വലിയ അക്ഷരം, ഒരു അക്കം ഉണ്ടായിരിക്കണം"
+  }
+}

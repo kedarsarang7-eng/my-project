@@ -1,0 +1,62 @@
+# ============================================================================
+# Grocery Module — Lambda Function Definitions
+# Imported by root serverless.yml via ${file(...)}
+# ============================================================================
+
+groceryBatches:
+  handler: src/handlers/grocery-batches.handler
+  description: Grocery batch tracking and expiry management
+  events:
+    - httpApi:
+        path: /grocery/batches
+        method: GET
+    - httpApi:
+        path: /grocery/batches
+        method: POST
+    - httpApi:
+        path: /grocery/batches/{batchId}
+        method: PUT
+    - httpApi:
+        path: /grocery/batches/{batchId}
+        method: DELETE
+
+groceryExpiry:
+  handler: src/handlers/grocery-expiry.handler
+  description: Grocery expiry alerts and tracking
+  events:
+    - httpApi:
+        path: /grocery/expiry
+        method: GET
+    - httpApi:
+        path: /grocery/expiry/alerts
+        method: GET
+
+groceryBilling:
+  handler: src/handlers/v1-bills.handler
+  description: Grocery fast billing POS
+  events:
+    - httpApi:
+        path: /grocery/billing
+        method: POST
+    - httpApi:
+        path: /grocery/billing/{billId}
+        method: GET
+
+groceryInventory:
+  handler: src/handlers/inventory.handler
+  description: Grocery inventory management
+  events:
+    - httpApi:
+        path: /grocery/inventory
+        method: GET
+    - httpApi:
+        path: /grocery/inventory/{productId}
+        method: PUT
+
+groceryReports:
+  handler: src/handlers/reports.handler
+  description: Grocery reports
+  events:
+    - httpApi:
+        path: /grocery/reports
+        method: GET

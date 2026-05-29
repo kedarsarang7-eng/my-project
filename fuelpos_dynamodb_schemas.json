@@ -1,0 +1,296 @@
+{
+  "description": "DynamoDB Table Schemas for FuelPOS - Petrol Pump Management System",
+  "tables": {
+    "FuelPOS_Transactions": {
+      "TableName": "{StackName}-fuelpos-transactions",
+      "AttributeDefinitions": [
+        { "AttributeName": "PK", "AttributeType": "S" },
+        { "AttributeName": "SK", "AttributeType": "S" },
+        { "AttributeName": "GSI1PK", "AttributeType": "S" },
+        { "AttributeName": "GSI1SK", "AttributeType": "S" },
+        { "AttributeName": "GSI2PK", "AttributeType": "S" },
+        { "AttributeName": "GSI2SK", "AttributeType": "S" }
+      ],
+      "KeySchema": [
+        { "AttributeName": "PK", "KeyType": "HASH" },
+        { "AttributeName": "SK", "KeyType": "RANGE" }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI_DateRange",
+          "KeySchema": [
+            { "AttributeName": "GSI1PK", "KeyType": "HASH" },
+            { "AttributeName": "GSI1SK", "KeyType": "RANGE" }
+          ],
+          "Projection": { "ProjectionType": "ALL" }
+        },
+        {
+          "IndexName": "GSI_Vehicle",
+          "KeySchema": [
+            { "AttributeName": "GSI2PK", "KeyType": "HASH" },
+            { "AttributeName": "GSI2SK", "KeyType": "RANGE" }
+          ],
+          "Projection": { "ProjectionType": "ALL" }
+        }
+      ],
+      "BillingMode": "PAY_PER_REQUEST",
+      "StreamSpecification": { "StreamViewType": "NEW_AND_OLD_IMAGES" },
+      "PointInTimeRecoverySpecification": { "PointInTimeRecoveryEnabled": true }
+    },
+    "FuelPOS_Inventory": {
+      "TableName": "{StackName}-fuelpos-inventory",
+      "AttributeDefinitions": [
+        { "AttributeName": "PK", "AttributeType": "S" },
+        { "AttributeName": "SK", "AttributeType": "S" },
+        { "AttributeName": "GSI1PK", "AttributeType": "S" }
+      ],
+      "KeySchema": [
+        { "AttributeName": "PK", "KeyType": "HASH" },
+        { "AttributeName": "SK", "KeyType": "RANGE" }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI_AlertStatus",
+          "KeySchema": [
+            { "AttributeName": "GSI1PK", "KeyType": "HASH" }
+          ],
+          "Projection": { "ProjectionType": "ALL" }
+        }
+      ],
+      "BillingMode": "PAY_PER_REQUEST",
+      "StreamSpecification": { "StreamViewType": "NEW_AND_OLD_IMAGES" },
+      "PointInTimeRecoverySpecification": { "PointInTimeRecoveryEnabled": true }
+    },
+    "FuelPOS_DailySummary": {
+      "TableName": "{StackName}-fuelpos-daily-summary",
+      "AttributeDefinitions": [
+        { "AttributeName": "PK", "AttributeType": "S" },
+        { "AttributeName": "SK", "AttributeType": "S" },
+        { "AttributeName": "GSI1PK", "AttributeType": "S" },
+        { "AttributeName": "GSI1SK", "AttributeType": "S" }
+      ],
+      "KeySchema": [
+        { "AttributeName": "PK", "KeyType": "HASH" },
+        { "AttributeName": "SK", "KeyType": "RANGE" }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI_MonthlyReport",
+          "KeySchema": [
+            { "AttributeName": "GSI1PK", "KeyType": "HASH" },
+            { "AttributeName": "GSI1SK", "KeyType": "RANGE" }
+          ],
+          "Projection": { "ProjectionType": "ALL" }
+        }
+      ],
+      "BillingMode": "PAY_PER_REQUEST",
+      "PointInTimeRecoverySpecification": { "PointInTimeRecoveryEnabled": true }
+    },
+    "FuelPOS_FuelChart": {
+      "TableName": "{StackName}-fuelpos-fuel-chart",
+      "AttributeDefinitions": [
+        { "AttributeName": "PK", "AttributeType": "S" },
+        { "AttributeName": "SK", "AttributeType": "S" }
+      ],
+      "KeySchema": [
+        { "AttributeName": "PK", "KeyType": "HASH" },
+        { "AttributeName": "SK", "KeyType": "RANGE" }
+      ],
+      "BillingMode": "PAY_PER_REQUEST",
+      "PointInTimeRecoverySpecification": { "PointInTimeRecoveryEnabled": true }
+    },
+    "FuelPOS_Prices": {
+      "TableName": "{StackName}-fuelpos-prices",
+      "AttributeDefinitions": [
+        { "AttributeName": "PK", "AttributeType": "S" },
+        { "AttributeName": "SK", "AttributeType": "S" },
+        { "AttributeName": "GSI1PK", "AttributeType": "S" }
+      ],
+      "KeySchema": [
+        { "AttributeName": "PK", "KeyType": "HASH" },
+        { "AttributeName": "SK", "KeyType": "RANGE" }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI_EffectiveDate",
+          "KeySchema": [
+            { "AttributeName": "GSI1PK", "KeyType": "HASH" }
+          ],
+          "Projection": { "ProjectionType": "ALL" }
+        }
+      ],
+      "BillingMode": "PAY_PER_REQUEST"
+    },
+    "FuelPOS_Employees": {
+      "TableName": "{StackName}-fuelpos-employees",
+      "AttributeDefinitions": [
+        { "AttributeName": "PK", "AttributeType": "S" },
+        { "AttributeName": "SK", "AttributeType": "S" },
+        { "AttributeName": "GSI1PK", "AttributeType": "S" }
+      ],
+      "KeySchema": [
+        { "AttributeName": "PK", "KeyType": "HASH" },
+        { "AttributeName": "SK", "KeyType": "RANGE" }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI_OnDuty",
+          "KeySchema": [
+            { "AttributeName": "GSI1PK", "KeyType": "HASH" }
+          ],
+          "Projection": { "ProjectionType": "ALL" }
+        }
+      ],
+      "BillingMode": "PAY_PER_REQUEST"
+    },
+    "FuelPOS_LicenseProfiles": {
+      "TableName": "{StackName}-fuelpos-license-profiles",
+      "AttributeDefinitions": [
+        { "AttributeName": "PK", "AttributeType": "S" },
+        { "AttributeName": "SK", "AttributeType": "S" },
+        { "AttributeName": "GSI1PK", "AttributeType": "S" }
+      ],
+      "KeySchema": [
+        { "AttributeName": "PK", "KeyType": "HASH" },
+        { "AttributeName": "SK", "KeyType": "RANGE" }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI_LicenseKey",
+          "KeySchema": [
+            { "AttributeName": "GSI1PK", "KeyType": "HASH" }
+          ],
+          "Projection": { "ProjectionType": "ALL" }
+        }
+      ],
+      "BillingMode": "PAY_PER_REQUEST"
+    }
+  },
+  "itemExamples": {
+    "FuelPOS_Transactions": {
+      "PK": "STATION#STN402",
+      "SK": "TXN#2024-10-26#8432",
+      "transactionId": "8432",
+      "stationId": "STN402",
+      "tenantId": "TENANT#bpcl-stn402",
+      "date": "2024-10-26",
+      "timestamp": "2024-10-26T16:45:00+05:30",
+      "vehicleNumber": "MH01AB1234",
+      "fuelType": "Petrol",
+      "liters": 35.5,
+      "amount": 65.70,
+      "status": "paid_green_tag",
+      "pumpNumber": "P01",
+      "attendantId": "EMP001",
+      "paymentMethod": "cash",
+      "pricePerLiter": 1.85,
+      "GSI1PK": "DATE#2024-10-26#STN402",
+      "GSI1SK": "16:45#8432",
+      "GSI2PK": "VEHICLE#MH01AB1234",
+      "GSI2SK": "2024-10-26#16:45"
+    },
+    "FuelPOS_Inventory": {
+      "PK": "STATION#STN402",
+      "SK": "INVENTORY#PETROL",
+      "stationId": "STN402",
+      "tenantId": "TENANT#bpcl-stn402",
+      "fuelType": "Petrol",
+      "currentLiters": 8200,
+      "capacityLiters": 12600,
+      "percentFull": 65,
+      "alertThresholdPercent": 35,
+      "lastRefillTimestamp": "2024-10-20T08:00:00+05:30",
+      "lastRefillLiters": 10000,
+      "pricePerLiter": 1.85,
+      "GSI1PK": "ALERT#LOW"
+    },
+    "FuelPOS_DailySummary": {
+      "PK": "STATION#STN402",
+      "SK": "DATE#2024-10-26",
+      "stationId": "STN402",
+      "tenantId": "TENANT#bpcl-stn402",
+      "date": "2024-10-26",
+      "totalSales": 28540.60,
+      "totalLiters": 5420,
+      "petrolLiters": 2150,
+      "dieselLiters": 3270,
+      "transactionCount": 418,
+      "revenueBySegment": {
+        "petrol": { "amount": 11416.00, "percent": 40 },
+        "diesel": { "amount": 14270.00, "percent": 50 },
+        "lubricants": { "amount": 1712.00, "percent": 6 },
+        "shopItems": { "amount": 1142.60, "percent": 4 }
+      },
+      "hourlyBreakdown": {
+        "06:00": { "petrol": 120, "diesel": 80 },
+        "07:00": { "petrol": 200, "diesel": 140 },
+        "08:00": { "petrol": 340, "diesel": 220 }
+      },
+      "GSI1PK": "MONTH#2024-10#STN402",
+      "GSI1SK": "2024-10-26"
+    },
+    "FuelPOS_FuelChart": {
+      "PK": "STATION#STN402#DATE#2024-10-26",
+      "SK": "HOUR#16",
+      "stationId": "STN402",
+      "tenantId": "TENANT#bpcl-stn402",
+      "date": "2024-10-26",
+      "hour": 16,
+      "hourLabel": "16:00",
+      "petrolLiters": 580,
+      "dieselLiters": 420,
+      "transactionCount": 45
+    },
+    "FuelPOS_Prices": {
+      "PK": "STATION#STN402",
+      "SK": "PRICE#2024-10-26",
+      "stationId": "STN402",
+      "tenantId": "TENANT#bpcl-stn402",
+      "effectiveDate": "2024-10-26",
+      "petrolPrice": 1.85,
+      "dieselPrice": 1.92,
+      "lubricantsMargin": 0.25,
+      "updatedBy": "ADMIN001",
+      "updatedAt": "2024-10-26T00:00:00+05:30",
+      "GSI1PK": "ACTIVE#STN402"
+    },
+    "FuelPOS_Employees": {
+      "PK": "STATION#STN402",
+      "SK": "EMP#EMP001",
+      "employeeId": "EMP001",
+      "stationId": "STN402",
+      "tenantId": "TENANT#bpcl-stn402",
+      "name": "Ramesh Kumar",
+      "role": "attendant",
+      "phone": "+91-98765-43210",
+      "onDuty": true,
+      "shiftStart": "2024-10-26T08:00:00+05:30",
+      "GSI1PK": "ONDUTY#STN402"
+    },
+    "FuelPOS_LicenseProfiles": {
+      "PK": "USER#cognito-sub-uuid",
+      "SK": "LICENSE",
+      "userId": "cognito-sub-uuid",
+      "tenantId": "TENANT#bpcl-stn402",
+      "businessType": "petrol_pump",
+      "stationName": "BPCL Station #402",
+      "stationId": "STN402",
+      "licenseKey": "FUEL-XXXX-YYYY-ZZZZ",
+      "licenseValidFrom": "2024-01-01",
+      "licenseValidUntil": "2025-12-31",
+      "features": ["dashboard", "inventory", "reports", "employees", "billing"],
+      "permissions": ["read", "write", "delete"],
+      "cognitoGroup": "fuelpos_users",
+      "GSI1PK": "LICENSE#FUEL-XXXX-YYYY-ZZZZ"
+    }
+  },
+  "tenantIsolation": {
+    "description": "All data is isolated by tenantId. Each query must include tenantId validation against the user's license profile.",
+    "pattern": "TENANT#{tenantId} is stored in every item and verified in Lambda authorizer",
+    "accessControl": {
+      "read": "User can only read data where item.tenantId == user.tenantId",
+      "write": "User can only write data with item.tenantId == user.tenantId",
+      "crossTenantAccess": "STRICTLY PROHIBITED - Returns 403 Forbidden"
+    }
+  }
+}

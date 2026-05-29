@@ -1,0 +1,11 @@
+{
+  "name": "dukanx-frontend-cdn",
+  "version": "1.0.0",
+  "description": "Serverless CDN deployment for DukanX Frontend",
+  "scripts": {
+    "deploy:prod": "serverless deploy --stage prod"
+  },
+  "devDependencies": {
+    "serverless": "^4.0.0"
+  }
+}

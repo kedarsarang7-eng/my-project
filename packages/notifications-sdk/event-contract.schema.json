@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:dukanx:notifications-sdk:event-contract:v1",
+  "title": "UNS Event_Contract",
+  "description": "Canonical JSON Schema (Draft 2020-12) for every event published onto the Unified Notification System (UNS) Event_Bus. Every Producer (DukanX desktop, dukanx_backend, school_admin_app, school_teacher_app, school_student_app, webhook_consumer) and every Consumer MUST validate payloads against this schema (REQ 8.1). The schema is round-trip safe: parse(serialize(event)) is structurally equivalent to event for every valid event (REQ 8.6, Property 4). The Event_Bus rejects any publish whose payload fails this schema with a structured validation error (REQ 3.6). The schema covers the union of event shapes implied by the Phase 2 Notification_Event_Registry (134 events + 8 batched events).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "event_name",
+    "category",
+    "priority",
+    "actor_id",
+    "recipients",
+    "payload",
+    "channels",
+    "source_module",
+    "source_app",
+    "created_at",
+    "dedup_key"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique event identifier. UUID v4 string. Producers MUST generate this client-side so offline outbox replays preserve identity (REQ 8.8, 9.7).",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "event_name": {
+      "type": "string",
+      "description": "Snake_case canonical event name in the form '<domain>.<entity>.<action>' (REQ 2.6). Examples: billing.invoice.created, payments.school_fee.received, inventory.stock.low. Each segment starts with a lowercase letter and contains only [a-z0-9_]. The schema validates structure only; the closed list of valid event_name values is governed by the Notification_Event_Registry, not by this schema, so new events can be added without a schema change.",
+      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+      "minLength": 5,
+      "maxLength": 128
+    },
+    "category": {
+      "type": "string",
+      "description": "Top-level domain bucket. Restricted enum per REQ 2.3.",
+      "enum": [
+        "billing",
+        "orders",
+        "payments",
+        "inventory",
+        "users",
+        "system",
+        "delivery",
+        "reports"
+      ]
+    },
+    "sub_category": {
+      "type": "string",
+      "description": "Short scope hint inside the category (e.g. 'invoice', 'kot', 'school_fee'). Free-text snake_case slug. Optional. When present, MUST match the Notification_Event_Registry sub_category column for the event_name.",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "priority": {
+      "type": "string",
+      "description": "Reliability tier (REQ 2.4). 'critical'/'high' use at_least_once delivery (REQ 9.1); 'normal'/'low' use at_most_once_with_dedup (REQ 9.2). 'critical' bypasses Quiet_Hours (REQ 7.4).",
+      "enum": ["critical", "high", "normal", "low"]
+    },
+    "actor_id": {
+      "type": "string",
+      "description": "Identifier of the principal that caused the event. Usually a user UUID, but MAY be a non-UUID system identifier such as 'system', 'cron:reminder_sweeper', or a service-account slug. Used by the Preference_Engine for self-suppression (actor_id == recipient.user_id, REQ 7.5) and as part of the Deduplication_Key tuple (event_name, actor_id, target_id, dedup_scope_fields) per REQ 4.4.",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "target_id": {
+      "type": ["string", "null"],
+      "description": "Identifier of the primary domain entity the event acts on (e.g. invoice_id, student_id, order_id). Used for recipient-authorization checks against (event_name, target_id) (REQ 4.11, 12.1) and for mute resolution (REQ 7.6). MAY be null for events that do not target a single entity (e.g. system-wide alerts).",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "recipients": {
+      "type": "array",
+      "description": "Resolved recipient list at publish time. The Notification_Service re-authorizes every recipient at dispatch (REQ 4.11) and silently omits any recipient that fails authorization. An empty array is permitted; it indicates the Notification_Service must resolve recipients from the Notification_Event_Registry consumer_roles for this event_name.",
+      "minItems": 0,
+      "items": { "$ref": "#/$defs/recipient" }
+    },
+    "payload": {
+      "type": "object",
+      "description": "Domain-specific payload. The schema deliberately allows additional properties here because the Phase 2 registry contains 134 events with varied shapes; per-event payload schemas are governed by the Notification_Event_Registry rather than this envelope. Producers MUST sanitize payload contents (no scripting tags, no control characters, no raw secrets, no full PAN, no full government IDs) before publish (REQ 12.2, 12.8). For batched events the payload conforms to the registry summary_payload shape and includes a 'batch_window_seconds' marker (see Phase 2 section 12).",
+      "additionalProperties": true
+    },
+    "channels": {
+      "type": "array",
+      "description": "Channels the Producer is requesting for this event. The Preference_Engine intersects this set with each recipient resolved channel set (REQ 7.1-7.2a) and the per-user per-channel rate limits (REQ 9.5-9.6). At least one channel MUST be requested.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["in_app", "push", "sms", "email", "webhook"]
+      }
+    },
+    "source_module": {
+      "type": "string",
+      "description": "Canonical workspace path of the producing module (e.g. 'my-backend/src/handlers/invoices.ts', 'Dukan_x/lib/features/billing/...'). Used for traceability in the Notification_Event_Registry and Audit_Log (REQ 2.10, REQ 6.3). Forward slashes only.",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9_./-]+$"
+    },
+    "source_app": {
+      "type": "string",
+      "description": "The workspace app the event originated from. Restricted enum per Phase 2 section 2 (Source App Identifiers).",
+      "enum": [
+        "dukanx_desktop",
+        "dukanx_backend",
+        "school_admin_app",
+        "school_teacher_app",
+        "school_student_app",
+        "webhook_consumer"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event creation timestamp in RFC 3339 / ISO 8601 with explicit UTC offset (e.g. '2025-01-31T14:23:45.123Z'). Drives ordering for outbox replay (REQ 8.8, 9.7) and for the Sub_App replay endpoint (REQ 8.4). Producers SHOULD emit UTC ('Z'); the lifecycle ordering invariant (REQ 6.7a) requires created_at <= dispatched_at <= delivered_at <= read_at.",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "dedup_key": {
+      "type": "string",
+      "description": "Deterministic deduplication hash computed by the Producer over the tuple (event_name, actor_id, target_id, dedup_scope_fields) per the Notification_Event_Registry deduplication_rule for this event_name (REQ 4.4, design Notification_Service section). Identical inputs MUST produce identical dedup_key strings so the by-dedup-key GSI can suppress duplicates within the Deduplication_Window (default 60 s).",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[A-Za-z0-9_:.-]+$"
+    },
+    "dedup_scope_fields": {
+      "type": "array",
+      "description": "Ordered list of payload field names that participated in the dedup_key computation, copied from the registry deduplication_rule for this event_name. Stored alongside dedup_key so the Notification_Service can audit and reproduce the dedup decision (REQ 2.12). Order is significant.",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_.]*$",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "uniqueItems": true,
+      "minItems": 0,
+      "maxItems": 16
+    }
+  },
+  "$defs": {
+    "recipient": {
+      "type": "object",
+      "description": "A single resolved recipient for the event. The Notification_Service re-authorizes against (event_name, target_id) at dispatch and silently omits unauthorized entries (REQ 4.11).",
+      "additionalProperties": false,
+      "required": ["user_id", "role"],
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "Recipient user identifier. UUID format when the recipient is a known internal user; non-UUID identifiers are accepted for external webhook consumer endpoints (REQ 5.5).",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "role": {
+          "type": "string",
+          "description": "Recipient role from the Phase 2 section 3 role inventory. Drives the Preference_Engine role-level default channel set (REQ 7.2 resolution order). Restricted enum.",
+          "enum": [
+            "super_admin",
+            "admin",
+            "shop_owner",
+            "cashier",
+            "accountant",
+            "staff",
+            "delivery_agent",
+            "vendor",
+            "customer",
+            "chef",
+            "kitchen_staff",
+            "waiter",
+            "school_admin",
+            "teacher",
+            "student",
+            "parent",
+            "clinic_doctor",
+            "pharmacist",
+            "jewellery_artisan",
+            "service_technician",
+            "dc_staff",
+            "farmer",
+            "pump_attendant"
+          ]
+        },
+        "channels": {
+          "type": "array",
+          "description": "Optional per-recipient channel override requested by the Producer. When set, the Preference_Engine intersects this with the recipient resolved preferences instead of the envelope-level 'channels'. Same channel literals as the envelope.",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["in_app", "push", "sms", "email", "webhook"]
+          }
+        },
+        "target_id": {
+          "type": ["string", "null"],
+          "description": "Optional per-recipient target override. Used when one event addresses multiple targets that vary per recipient (e.g. parent receiving a per-child fee reminder). Falls back to the envelope-level target_id when omitted or null.",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    }
+  }
+}

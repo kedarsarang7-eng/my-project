@@ -1,0 +1,42 @@
+# Environment files — NEVER commit secrets
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+*.log
+build_runner.log
+replay_pid*.log
+analyze*.log
+analyze*.txt
+final_analysis.txt
+full_analysis.txt
+issues_csv.txt
+post_fix_issues.txt
+unused_imports.txt
+flutter_lints.txt
+outdated.json
+
+# Throwaway helper scripts (do not commit)
+tmp_*.js
+tmp_*.ts
+tmp_*.dart
+fix_*.ps1
+fix_*.py
+
+# Audit/scratch outputs
+_audit.txt
+_audit_errors.txt

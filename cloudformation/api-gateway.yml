@@ -1,0 +1,473 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: API Gateway - Complete REST API Infrastructure (P3 FIX)
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues: [dev, staging, production]
+  
+  CognitoUserPoolArn:
+    Type: String
+    Description: Cognito User Pool ARN for authorizer
+
+Resources:
+  # ============================================================================
+  # API GATEWAY REST API
+  # ============================================================================
+  
+  DukanXApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub 'DukanX-${Environment}'
+      Description: DukanX REST API
+      EndpointConfiguration:
+        Types: [REGIONAL]
+      BinaryMediaTypes:
+        - 'application/pdf'
+        - 'image/*'
+      MinimumCompressionSize: 1024
+
+  # ============================================================================
+  # COGNITO AUTHORIZER
+  # ============================================================================
+  
+  CognitoAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: CognitoAuthorizer
+      Type: COGNITO_USER_POOLS
+      RestApiId: !Ref DukanXApi
+      ProviderARNs:
+        - !Ref CognitoUserPoolArn
+      IdentitySource: method.request.header.Authorization
+
+  # ============================================================================
+  # REQUEST VALIDATORS
+  # ============================================================================
+  
+  RequestValidator:
+    Type: AWS::ApiGateway::RequestValidator
+    Properties:
+      Name: DukanXValidator
+      RestApiId: !Ref DukanXApi
+      ValidateRequestBody: true
+      ValidateRequestParameters: true
+
+  # ============================================================================
+  # API MODELS (P3 FIX - Schema Validation)
+  # ============================================================================
+  
+  BillCreateModel:
+    Type: AWS::ApiGateway::Model
+    Properties:
+      RestApiId: !Ref DukanXApi
+      ContentType: application/json
+      Description: Bill Creation Schema
+      Name: BillCreate
+      Schema:
+        type: object
+        required: [tenantId, customerId, items, total]
+        properties:
+          tenantId:
+            type: string
+            minLength: 1
+          customerId:
+            type: string
+            minLength: 1
+          items:
+            type: array
+            minItems: 1
+            items:
+              type: object
+              required: [productId, quantity, price]
+              properties:
+                productId:
+                  type: string
+                quantity:
+                  type: number
+                  minimum: 0.01
+                price:
+                  type: number
+                  minimum: 0
+                discountPercent:
+                  type: number
+                  minimum: 0
+                  maximum: 100
+          total:
+            type: number
+            minimum: 0
+          paymentMethod:
+            type: string
+            enum: [cash, card, upi, credit, cheque]
+
+  # ============================================================================
+  # RESOURCES - BILLING
+  # ============================================================================
+  
+  BillingResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DukanXApi
+      ParentId: !GetAtt DukanXApi.RootResourceId
+      PathPart: billing
+
+  BillingPlansResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DukanXApi
+      ParentId: !Ref BillingResource
+      PathPart: plans
+
+  BillingInvoicesResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DukanXApi
+      ParentId: !Ref BillingResource
+      PathPart: invoices
+
+  BillingInvoiceIdResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref DukanXApi
+      ParentId: !Ref BillingInvoicesResource
+      PathPart: '{id}'
+
+  # ============================================================================
+  # METHODS - WITH AUTHORIZATION
+  # ============================================================================
+  
+  # GET /billing/plans - Public
+  GetPlansMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DukanXApi
+      ResourceId: !Ref BillingPlansResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations
+          - LambdaArn: !GetAtt BillingHandler.Arn
+        IntegrationResponses:
+          - StatusCode: 200
+        PassthroughBehavior: WHEN_NO_MATCH
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: Empty
+
+  # POST /billing/subscribe - Protected
+  SubscribeMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DukanXApi
+      ResourceId: !Ref BillingResource
+      HttpMethod: POST
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref CognitoAuthorizer
+      RequestValidatorId: !Ref RequestValidator
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations
+          - LambdaArn: !GetAtt BillingHandler.Arn
+
+  # GET /billing/invoices - Protected with pagination
+  GetInvoicesMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DukanXApi
+      ResourceId: !Ref BillingInvoicesResource
+      HttpMethod: GET
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref CognitoAuthorizer
+      RequestParameters:
+        method.request.querystring.limit: false
+        method.request.querystring.cursor: false
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations
+          - LambdaArn: !GetAtt BillingHandler.Arn
+
+  # GET /billing/invoices/{id} - Protected
+  GetInvoiceMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref DukanXApi
+      ResourceId: !Ref BillingInvoiceIdResource
+      HttpMethod: GET
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref CognitoAuthorizer
+      RequestParameters:
+        method.request.path.id: true
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaArn}/invocations
+          - LambdaArn: !GetAtt BillingHandler.Arn
+
+  # ============================================================================
+  # LAMBDA FUNCTIONS
+  # ============================================================================
+  
+  BillingHandler:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'DukanX-BillingHandler-${Environment}'
+      Runtime: nodejs18.x
+      Handler: index.handler
+      MemorySize: 512
+      Timeout: 30
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_BILLING: !Ref BillingTable
+          DYNAMODB_TABLE_TENANTS: !Ref TenantsTable
+          COGNITO_USER_POOL_ID: !Ref CognitoUserPoolId
+          COGNITO_CLIENT_ID: !Ref CognitoClientId
+          NODE_ENV: !Ref Environment
+      Code:
+        S3Bucket: !Ref LambdaCodeBucket
+        S3Key: billing-handler-v2.zip
+      Role: !GetAtt LambdaExecutionRole.Arn
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
+        SubnetIds: !Ref PrivateSubnets
+
+  # ============================================================================
+  # DYNAMODB TABLES
+  # ============================================================================
+  
+  BillingTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'DukanX-Billing-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tenantId
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: KMS
+
+  AuditTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'DukanX-Audit-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+        - AttributeName: GSI2PK
+          AttributeType: S
+        - AttributeName: GSI3PK
+          AttributeType: S
+        - AttributeName: GSI3SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI2
+          KeySchema:
+            - AttributeName: GSI2PK
+              KeyType: HASH
+            - AttributeName: SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI3
+          KeySchema:
+            - AttributeName: GSI3PK
+              KeyType: HASH
+            - AttributeName: GSI3SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  # ============================================================================
+  # IAM ROLES
+  # ============================================================================
+  
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'DukanX-Lambda-Role-${Environment}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                  - dynamodb:BatchGetItem
+                  - dynamodb:BatchWriteItem
+                  - dynamodb:TransactWriteItems
+                Resource:
+                  - !GetAtt BillingTable.Arn
+                  - !Sub '${BillingTable.Arn}/index/*'
+                  - !GetAtt AuditTable.Arn
+                  - !Sub '${AuditTable.Arn}/index/*'
+        - PolicyName: CognitoAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cognito-idp:AdminGetUser
+                  - cognito-idp:ListUsers
+                  - cognito-idp:AdminUpdateUserAttributes
+                Resource: '*'
+
+  # ============================================================================
+  # API DEPLOYMENT
+  # ============================================================================
+  
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - GetPlansMethod
+      - SubscribeMethod
+      - GetInvoicesMethod
+      - GetInvoiceMethod
+    Properties:
+      RestApiId: !Ref DukanXApi
+      StageName: !Ref Environment
+      StageDescription:
+        LoggingLevel: INFO
+        MetricsEnabled: true
+        TracingEnabled: true
+        DataTraceEnabled: !If [IsDev, true, false]
+        ThrottlingBurstLimit: 1000
+        ThrottlingRateLimit: 500
+
+  # ============================================================================
+  # WAF ASSOCIATION
+  # ============================================================================
+  
+  WafAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    Condition: IsProduction
+    Properties:
+      ResourceArn: !Sub 'arn:aws:apigateway:${AWS::Region}::/restapis/${DukanXApi}/stages/${Environment}'
+      WebACLArn: !ImportValue DukanX-WAF-ARN
+
+  # ============================================================================
+  # CUSTOM DOMAIN (Production Only)
+  # ============================================================================
+  
+  CustomDomain:
+    Type: AWS::ApiGateway::DomainName
+    Condition: IsProduction
+    Properties:
+      DomainName: api.dukanx.com
+      CertificateArn: !Ref CertificateArn
+      SecurityPolicy: TLS_1_2
+
+  BasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Condition: IsProduction
+    Properties:
+      DomainName: !Ref CustomDomain
+      RestApiId: !Ref DukanXApi
+      Stage: !Ref Environment
+
+Conditions:
+  IsDev: !Equals [!Ref Environment, dev]
+  IsProduction: !Equals [!Ref Environment, production]
+
+Parameters:
+  LambdaCodeBucket:
+    Type: String
+    Description: S3 bucket containing Lambda code
+  CognitoUserPoolId:
+    Type: String
+  CognitoClientId:
+    Type: String
+  TenantsTable:
+    Type: String
+    Description: DynamoDB tenants table name
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup::Id
+  PrivateSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+  CertificateArn:
+    Type: String
+    Description: ACM certificate ARN for custom domain
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway URL
+    Value: !Sub 'https://${DukanXApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+    Export:
+      Name: !Sub 'DukanX-ApiUrl-${Environment}'
+  
+  ApiId:
+    Description: API Gateway ID
+    Value: !Ref DukanXApi
+    Export:
+      Name: !Sub 'DukanX-ApiId-${Environment}'

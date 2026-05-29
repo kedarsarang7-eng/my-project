@@ -1,0 +1,659 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Staff Attendance & Shift Management System
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues:
+      - development
+      - staging
+      - production
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: nodejs20.x
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        NODE_OPTIONS: '--enable-source-maps'
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
+        STAFF_SHIFTS_TABLE: !Ref StaffShiftsTable
+        STAFF_ATTENDANCE_TABLE: !Ref StaffAttendanceTable
+        STAFF_LEAVE_TABLE: !Ref StaffLeaveTable
+        STAFF_ALERTS_TABLE: !Ref StaffAlertsTable
+        WEBSOCKET_CONNECTIONS_TABLE: !Ref WebSocketConnectionsTable
+        STAFF_PROFILES_TABLE: !Ref StaffProfilesTable
+        TRANSACTIONS_TABLE: !Ref TransactionsTable
+        ENVIRONMENT: !Ref Environment
+        # p28(b): injected at deploy time by the WebSocket stage output
+        WS_CALLBACK_ENDPOINT: !Sub 'https://${StaffWebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+
+Resources:
+  # DynamoDB Tables
+  StaffShiftsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'PetrolStaffShifts-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+        - AttributeName: GSI2PK
+          AttributeType: S
+        - AttributeName: GSI2SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI2
+          KeySchema:
+            - AttributeName: GSI2PK
+              KeyType: HASH
+            - AttributeName: GSI2SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: Service
+          Value: StaffAttendance
+        - Key: Environment
+          Value: !Ref Environment
+
+  StaffAttendanceTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'PetrolStaffAttendance-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      Tags:
+        - Key: Service
+          Value: StaffAttendance
+        - Key: Environment
+          Value: !Ref Environment
+
+  StaffLeaveTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'PetrolStaffLeave-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      Tags:
+        - Key: Service
+          Value: StaffAttendance
+        - Key: Environment
+          Value: !Ref Environment
+
+  StaffAlertsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'PetrolStaffAlerts-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: Service
+          Value: StaffAttendance
+        - Key: Environment
+          Value: !Ref Environment
+
+  WebSocketConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'PetrolWebSocketConnections-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: connectionId
+          AttributeType: S
+        # p28(b): GSI1 for querying all connections by stationId
+        - AttributeName: GSI1PK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: connectionId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: Service
+          Value: StaffAttendance
+        - Key: Environment
+          Value: !Ref Environment
+
+  # S3 Buckets
+  IDCardScansBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'petrol-id-cards-${Environment}-${AWS::AccountId}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: ArchiveOldCards
+            Status: Enabled
+            ExpirationInDays: 365
+            Transitions:
+              - TransitionInDays: 90
+                StorageClass: GLACIER
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+            AllowedOrigins:
+              - '*'
+            MaxAge: 3600
+      Tags:
+        - Key: Service
+          Value: StaffAttendance
+        - Key: Environment
+          Value: !Ref Environment
+
+  EmailLogTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'PetrolStaffEmailLog-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      Tags:
+        - Key: Service
+          Value: StaffAttendance
+        - Key: Environment
+          Value: !Ref Environment
+
+  # WebSocket API (p28(b))
+  StaffWebSocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub 'staff-attendance-ws-${Environment}'
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: '$request.body.type'
+
+  WsConnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-ws-connect-${Environment}'
+      Handler: dist/handlers/websocketConnect.handler
+      CodeUri: ../
+      Description: WebSocket $connect — register connection
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref WebSocketConnectionsTable
+
+  WsDisconnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-ws-disconnect-${Environment}'
+      Handler: dist/handlers/websocketDisconnect.handler
+      CodeUri: ../
+      Description: WebSocket $disconnect — remove connection
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref WebSocketConnectionsTable
+
+  WsDefaultFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-ws-default-${Environment}'
+      Handler: dist/handlers/websocketDefault.handler
+      CodeUri: ../
+      Description: WebSocket $default — ping/pong keepalive
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref WebSocketConnectionsTable
+        - Statement:
+            - Effect: Allow
+              Action: execute-api:ManageConnections
+              Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${StaffWebSocketApi}/*'
+
+  WsConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref StaffWebSocketApi
+      RouteKey: '$connect'
+      AuthorizationType: NONE
+      Target: !Sub 'integrations/${WsConnectIntegration}'
+
+  WsDisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref StaffWebSocketApi
+      RouteKey: '$disconnect'
+      AuthorizationType: NONE
+      Target: !Sub 'integrations/${WsDisconnectIntegration}'
+
+  WsDefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref StaffWebSocketApi
+      RouteKey: '$default'
+      AuthorizationType: NONE
+      Target: !Sub 'integrations/${WsDefaultIntegration}'
+
+  WsConnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref StaffWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WsConnectFunction.Arn}/invocations'
+
+  WsDisconnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref StaffWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WsDisconnectFunction.Arn}/invocations'
+
+  WsDefaultIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref StaffWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WsDefaultFunction.Arn}/invocations'
+
+  WsStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref StaffWebSocketApi
+      StageName: !Ref Environment
+      AutoDeploy: true
+
+  WsConnectPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref WsConnectFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${StaffWebSocketApi}/*/$connect'
+
+  WsDisconnectPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref WsDisconnectFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${StaffWebSocketApi}/*/$disconnect'
+
+  WsDefaultPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref WsDefaultFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${StaffWebSocketApi}/*/$default'
+
+  # Lambda Functions
+  StaffCheckInFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-attendance-checkin-${Environment}'
+      Handler: dist/handlers/staffCheckIn.handler
+      CodeUri: ../
+      Description: Staff check-in with shift creation
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffShiftsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffAttendanceTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffAlertsTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffProfilesTable
+        # p28(b): read connections for broadcast; prune stale records
+        - DynamoDBCrudPolicy:
+            TableName: !Ref WebSocketConnectionsTable
+        - Statement:
+            - Effect: Allow
+              Action: execute-api:ManageConnections
+              Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${StaffWebSocketApi}/*'
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AttendanceApi
+            Path: /staff/{staffId}/check-in
+            Method: POST
+
+  StaffCheckOutFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-attendance-checkout-${Environment}'
+      Handler: dist/handlers/staffCheckOut.handler
+      CodeUri: ../
+      Description: Staff check-out with hours calculation
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffShiftsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffAttendanceTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref TransactionsTable
+        # p28(b): broadcast STAFF_CHECKED_OUT
+        - DynamoDBCrudPolicy:
+            TableName: !Ref WebSocketConnectionsTable
+        - Statement:
+            - Effect: Allow
+              Action: execute-api:ManageConnections
+              Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${StaffWebSocketApi}/*'
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AttendanceApi
+            Path: /staff/{staffId}/check-out
+            Method: POST
+
+  GetStaffDashboardFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-attendance-dashboard-${Environment}'
+      Handler: dist/handlers/getStaffDashboard.handler
+      CodeUri: ../
+      Description: Get comprehensive staff dashboard
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffProfilesTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffShiftsTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffAttendanceTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffAlertsTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffLeaveTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AttendanceApi
+            Path: /staff/{staffId}/dashboard
+            Method: GET
+
+  SubmitLeaveRequestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-attendance-leave-submit-${Environment}'
+      Handler: dist/handlers/submitLeaveRequest.handler
+      CodeUri: ../
+      Description: Submit leave request
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffLeaveTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffProfilesTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffAttendanceTable
+        # p28(b): broadcast LEAVE_REQUESTED
+        - DynamoDBCrudPolicy:
+            TableName: !Ref WebSocketConnectionsTable
+        - Statement:
+            - Effect: Allow
+              Action: execute-api:ManageConnections
+              Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${StaffWebSocketApi}/*'
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AttendanceApi
+            Path: /staff/{staffId}/leave
+            Method: POST
+
+  ProcessLeaveRequestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-attendance-leave-process-${Environment}'
+      Handler: dist/handlers/processLeaveRequest.handler
+      CodeUri: ../
+      Description: Process (approve/reject) leave request
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffLeaveTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffAttendanceTable
+        # p28(b): broadcast LEAVE_PROCESSED
+        - DynamoDBCrudPolicy:
+            TableName: !Ref WebSocketConnectionsTable
+        - Statement:
+            - Effect: Allow
+              Action: execute-api:ManageConnections
+              Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${StaffWebSocketApi}/*'
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AttendanceApi
+            Path: /owner/leave/{leaveId}
+            Method: PUT
+
+  UploadIDCardFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-attendance-idcard-upload-${Environment}'
+      Handler: dist/handlers/uploadIDCard.handler
+      CodeUri: ../
+      Description: Upload ID card image to S3
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref IDCardScansBucket
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffProfilesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref IDCardScansTable
+      Environment:
+        Variables:
+          ID_CARD_SCANS_BUCKET: !Ref IDCardScansBucket
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AttendanceApi
+            Path: /staff/{staffId}/id-card
+            Method: POST
+
+  EmailIDCardFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-attendance-idcard-email-${Environment}'
+      Handler: dist/handlers/emailIDCard.handler
+      CodeUri: ../
+      Description: Email ID card to staff member
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref IDCardScansBucket
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffProfilesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref IDCardScansTable
+        - SESBulkTemplatedCrudPolicy: {}
+      Environment:
+        Variables:
+          ID_CARD_SCANS_BUCKET: !Ref IDCardScansBucket
+          SES_SENDER_EMAIL: !Ref SESSenderEmail
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AttendanceApi
+            Path: /staff/{staffId}/id-card/email
+            Method: POST
+
+  # API Gateway
+  AttendanceApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub 'staff-attendance-api-${Environment}'
+      StageName: !Ref Environment
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,PATCH,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+        MaxAge: "'86400'"
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !Ref CognitoUserPoolArn
+
+  # Parameters
+  CognitoUserPoolArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /petrol-staff/cognito-user-pool-arn
+
+  StaffProfilesTable:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /petrol-staff/staff-profiles-table
+
+  TransactionsTable:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /petrol-staff/transactions-table
+
+  SESSenderEmail:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /petrol-staff/ses-sender-email
+
+  IDCardScansTable:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /petrol-staff/idcard-scans-table
+
+Outputs:
+  WebSocketEndpoint:
+    Description: WebSocket API endpoint for staff app connections
+    Value: !Sub 'wss://${StaffWebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${AttendanceApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+  
+  StaffShiftsTableName:
+    Description: Staff Shifts table name
+    Value: !Ref StaffShiftsTable
+  
+  StaffAttendanceTableName:
+    Description: Staff Attendance table name
+    Value: !Ref StaffAttendanceTable
+
+  IDCardBucketName:
+    Description: ID Card S3 Bucket name
+    Value: !Ref IDCardScansBucket
+
+  UploadIDCardEndpoint:
+    Description: Upload ID Card API endpoint
+    Value: !Sub 'https://${AttendanceApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/staff/{staffId}/id-card'
+
+  EmailIDCardEndpoint:
+    Description: Email ID Card API endpoint
+    Value: !Sub 'https://${AttendanceApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/staff/{staffId}/id-card/email'

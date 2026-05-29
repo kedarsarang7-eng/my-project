@@ -1,0 +1,121 @@
+{
+  "common": {
+    "success": "કાર્ય સફળ રહ્યું",
+    "error": "કોઈ ભૂલ થઈ",
+    "notFound": "{{resource}} મળ્યું નહીં",
+    "conflict": "{{resource}} પહેલેથી અસ્તિત્વ ધરાવે છે",
+    "forbidden": "તમને આ કાર્ય કરવાની પરવાનગી નથી",
+    "unauthorized": "પ્રમાણીકરણ જરૂરી છે",
+    "badRequest": "અમાન્ય વિનંતી",
+    "limitExceeded": "મર્યાદા ઓળંગી ગઈ. કૃપા કરી તમારો પ્લાન અપગ્રેડ કરો",
+    "planExpired": "તમારો પ્લાન સમાપ્ત થઈ ગયો. ચાલુ રાખવા માટે નવીનીકરણ કરો",
+    "serverError": "અણધારી ભૂલ થઈ. કૃપા કરી પછી ફરી પ્રયાસ કરો",
+    "timeout": "વિનંતી સમય સમાપ્ત. કૃપા કરી ફરી પ્રયાસ કરો"
+  },
+  "auth": {
+    "loginSuccess": "લૉગિન સફળ",
+    "logoutSuccess": "સફળતાપૂર્વક લૉગઆઉટ",
+    "invalidCredentials": "ઈમેઈલ અથવા પાસવર્ડ ખોટો છે",
+    "accountLocked": "એકાઉન્ટ લૉક છે. કૃપા કરી સહાય સંપર્ક કરો",
+    "sessionExpired": "સત્ર સમાપ્ત. કૃપા કરી ફરી લૉગ ઇન કરો",
+    "tokenInvalid": "અમાન્ય અથવા સમાપ્ત ટોકન",
+    "otpSent": "OTP {{destination}} પર મોકલ્યો",
+    "otpExpired": "OTP સમાપ્ત. કૃપા કરી નવો OTP મંગાવો",
+    "otpInvalid": "OTP ખોટો. કૃપા કરી ફરી પ્રયાસ કરો"
+  },
+  "billing": {
+    "invoiceCreated": "ઇન્વૉઇસ #{{invoiceNo}} સફળતાપૂર્વક બનાવ્યો",
+    "invoiceUpdated": "ઇન્વૉઇસ #{{invoiceNo}} અપડેટ થયો",
+    "invoiceDeleted": "ઇન્વૉઇસ #{{invoiceNo}} કાઢી નાખ્યો",
+    "paymentRecorded": "₹{{amount}} ની ચુકવણી સફળતાપૂર્વક નોંધાઈ",
+    "stockInsufficient": "{{productName}} નો પૂરતો સ્ટૉક નથી. ઉપલબ્ધ: {{available}} {{unit}}",
+    "invoiceNotFound": "ઇન્વૉઇસ મળ્યો નહીં",
+    "duplicateInvoice": "આ નંબરનો ઇન્વૉઇસ પહેલેથી અસ્તિત્વ ધરાવે છે"
+  },
+  "inventory": {
+    "productCreated": "ઉત્પાદ {{productName}} સફળતાપૂર્વક ઉમેર્યો",
+    "productUpdated": "ઉત્પાદ {{productName}} અપડેટ થયો",
+    "productDeleted": "ઉત્પાદ {{productName}} કાઢ્યો",
+    "stockUpdated": "{{productName}} નો સ્ટૉક અપડેટ થયો",
+    "lowStockAlert": "{{productName}} નો સ્ટૉક ઓછો છે. ઉપલબ્ધ: {{quantity}} {{unit}}",
+    "outOfStock": "{{productName}} નો સ્ટૉક ખૂટી ગયો",
+    "expiryWarning": "{{productName}} ની સમાપ્તિ તારીખ {{date}} છે",
+    "expiredProduct": "{{productName}} ની સમાપ્તિ થઈ ગઈ, વેચી શકાય નહીં",
+    "barcodeNotFound": "બારકોડ {{barcode}} નો કોઈ ઉત્પાદ મળ્યો નહીં",
+    "importComplete": "આયાત પૂર્ણ: {{success}} ઉત્પાદ આયાત થયા, {{failed}} નિષ્ફળ"
+  },
+  "customers": {
+    "customerCreated": "ગ્રાહક {{name}} સફળતાપૂર્વક ઉમેર્યો",
+    "customerUpdated": "ગ્રાહક {{name}} અપડેટ થયો",
+    "customerDeleted": "ગ્રાહક {{name}} કાઢ્યો",
+    "creditLimitExceeded": "{{name}} ની ક્રેડિટ મર્યાદા ઓળંગી. મર્યાદા: ₹{{limit}}",
+    "outstandingBalance": "{{name}} નું બાકી: ₹{{amount}}"
+  },
+  "notifications": {
+    "billCreated": "{{customerName}} માટે બિલ #{{invoiceNo}} બનાવ્યો",
+    "paymentReceived": "{{customerName}} પાસેથી ₹{{amount}} ની ચુકવણી મળી",
+    "lowStock": "{{productName}} નો સ્ટૉક ઓછો છે ({{quantity}} {{unit}} બાકી)",
+    "expiryWarning": "{{productName}} ની સમાપ્તિ {{date}} ના રોજ",
+    "planExpiring": "તમારો પ્લાન {{days}} દિવસમાં સમાપ્ત થશે. હમણાં નવીનીકરણ કરો",
+    "newOrder": "{{customerName}} પાસેથી નવો ઑર્ડર",
+    "backupComplete": "બૅકઅપ સફળતાપૂર્વક પૂર્ણ",
+    "syncComplete": "ડેટા સફળતાપૂર્વક સિંક",
+    "dailySummary": "આજની વેચાણ: ₹{{sales}} | બિલ: {{bills}} | નવા ગ્રાહક: {{customers}}"
+  },
+  "whatsapp": {
+    "billCreated": "પ્રિય {{customerName}},\nતમારો બિલ #{{invoiceNo}} ₹{{amount}} નો બનાવ્યો.\n{{shopName}} ખાતે ખરીદી માટે આભાર!\n\nઇન્વૉઇસ જુઓ: {{link}}",
+    "paymentReceived": "પ્રિય {{customerName}},\n{{date}} ના ₹{{amount}} ની ચુકવણી મળી.\nબાકી: ₹{{balance}}.\nઆભાર, {{shopName}}",
+    "paymentReminder": "પ્રિય {{customerName}},\n{{dueDate}} થી ₹{{amount}} બાકી.\nકૃપા {{phone}} પર સંપર્ક કરો.\nઆભાર, {{shopName}}",
+    "orderConfirmation": "પ્રિય {{customerName}},\nઑર્ડર #{{orderNo}} કન્ફર્મ.\nઅંદાજિત ડિલિવરી: {{date}}.\nઆભાર, {{shopName}}"
+  },
+  "sms": {
+    "billCreated": "{{shopName}}: બિલ #{{invoiceNo}} Rs.{{amount}} બનાવ્યો. આભાર!",
+    "paymentReceived": "{{shopName}}: Rs.{{amount}} ની ચુકવણી. બાકી: Rs.{{balance}}.",
+    "paymentReminder": "{{shopName}}: Rs.{{amount}} બાકી. {{phone}} સંપર્ક કરો.",
+    "otpMessage": "DukanX OTP {{otp}} છે. {{minutes}} મિનિટ માટે. કોઈ સાથે શેર ન કરો."
+  },
+  "pdf": {
+    "invoiceTitle": "કર ઇન્વૉઇસ",
+    "billTo": "બિલ ક્યાં",
+    "shipTo": "ક્યાં મોકલવું",
+    "description": "વિગત",
+    "qty": "જથ્થો",
+    "rate": "દર",
+    "amount": "રકમ",
+    "taxableAmount": "કરપાત્ર રકમ",
+    "grandTotal": "કુલ",
+    "amountInWords": "શબ્દોમાં રકમ",
+    "authorizedSignatory": "અધિકૃત હસ્તાક્ષરકર્તા",
+    "thankYou": "તમારા વ્યવસાય માટે આભાર!",
+    "termsConditions": "નિયમો અને શરતો",
+    "notes": "નોંધ",
+    "originalForRecipient": "પ્રાપ્તકર્તા માટે મૂળ",
+    "computerGeneratedInvoice": "આ કમ્પ્યૂટર-જનિત ઇન્વૉઇસ છે"
+  },
+  "reports": {
+    "dailySales": "દૈનિક વેચાણ અહેવાલ",
+    "monthlySales": "માસિક વેચાણ અહેવાલ",
+    "gstR1": "GSTR-1 અહેવાલ",
+    "inventory": "ઇન્વેન્ટરી અહેવાલ",
+    "profitLoss": "નફો અને ખોટ",
+    "periodLabel": "સમયગાળો: {{from}} થી {{to}}",
+    "generatedOn": "તૈયાર: {{date}}",
+    "noDataFound": "પસંદ કરેલ સમયગાળા માટે ડેટા નહીં",
+    "totalSales": "કુલ વેચાણ",
+    "totalPurchase": "કુલ ખરીદી",
+    "grossProfit": "કુલ નફો",
+    "netProfit": "ચોખ્ખો નફો"
+  },
+  "validation": {
+    "required": "{{field}} જરૂરી છે",
+    "minLength": "{{field}} ઓછામાં ઓછા {{min}} અક્ષર હોવા જોઈએ",
+    "maxLength": "{{field}} {{max}} અક્ષરથી વધુ ન હોઈ શકે",
+    "invalidEmail": "કૃપા માન્ય ઈ-મેઈલ દાખલ કરો",
+    "invalidPhone": "કૃપા 10 અંકનો મોબાઈલ નંબર દાખલ કરો",
+    "invalidGstin": "કૃપા 15 અંકનો માન્ય GSTIN દાખલ કરો",
+    "invalidPan": "કૃપા 10 અક્ષરનો માન્ય PAN દાખલ કરો",
+    "positiveNumber": "{{field}} ધન સંખ્યા હોવી જોઈએ",
+    "amountZero": "રકમ શૂન્ય કરતાં વધુ હોવી જોઈએ",
+    "passwordWeak": "પાસવર્ડ ઓછામાં ઓછા 8 અક્ષર, એક અપર-કેસ અને એક નંબર સાથે"
+  }
+}

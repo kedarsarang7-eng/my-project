@@ -1,0 +1,135 @@
+{
+    "_doc": "Representative load-test user seed. Conforms to phase5-load-plan.md §3.3 (role partitioning, 50 tenants with power-law fan-out) and §3.4 (connection mix + preference shape). The full 10 000-user seed is generated at run start by lib/recipients.ts using these parameters; this file documents the *shape* and provides a 200-user demo seed exhaustive enough to exercise every role / channel / preference combination. Do NOT import this file directly into a k6 script — go through lib/recipients.ts so the role-mix and tenant-fan-out invariants are enforced.",
+    "metadata": {
+        "run_id_prefix": "loadtest",
+        "total_users": 200,
+        "total_tenants": 10,
+        "generated_at": "2025-01-31T00:00:00.000Z"
+    },
+    "role_distribution_pct": {
+        "admin": 5,
+        "cashier": 10,
+        "accountant": 3,
+        "delivery_agent": 8,
+        "vendor": 4,
+        "customer": 30,
+        "chef": 2,
+        "kitchen_staff": 1,
+        "waiter": 1,
+        "school_admin": 2,
+        "teacher": 5,
+        "student": 12,
+        "parent": 12,
+        "clinic_doctor": 1,
+        "pharmacist": 1,
+        "jewellery_artisan": 1,
+        "service_technician": 2
+    },
+    "channel_mix_pct": {
+        "in_app_connected": 70,
+        "in_app_offline": 20,
+        "push_only": 10
+    },
+    "preference_shape_pct": {
+        "defaults": 60,
+        "category_overrides": 25,
+        "event_overrides_with_quiet_hours": 10,
+        "with_mute_targets": 5
+    },
+    "tenant_power_law": {
+        "top_tenants_pct": 10,
+        "top_tenants_share_pct": 60,
+        "mid_tenants_pct": 40,
+        "mid_tenants_share_pct": 30,
+        "tail_tenants_pct": 50,
+        "tail_tenants_share_pct": 10
+    },
+    "tenants": [
+        { "tenant_id": "loadtest-tenant-000", "size_class": "top", "users_count": 60 },
+        { "tenant_id": "loadtest-tenant-001", "size_class": "top", "users_count": 60 },
+        { "tenant_id": "loadtest-tenant-002", "size_class": "mid", "users_count": 16 },
+        { "tenant_id": "loadtest-tenant-003", "size_class": "mid", "users_count": 16 },
+        { "tenant_id": "loadtest-tenant-004", "size_class": "mid", "users_count": 14 },
+        { "tenant_id": "loadtest-tenant-005", "size_class": "mid", "users_count": 14 },
+        { "tenant_id": "loadtest-tenant-006", "size_class": "tail", "users_count": 5 },
+        { "tenant_id": "loadtest-tenant-007", "size_class": "tail", "users_count": 5 },
+        { "tenant_id": "loadtest-tenant-008", "size_class": "tail", "users_count": 5 },
+        { "tenant_id": "loadtest-tenant-009", "size_class": "tail", "users_count": 5 }
+    ],
+    "users_sample": [
+        {
+            "user_id": "loadtest-tenant-000-user-0001",
+            "tenant_id": "loadtest-tenant-000",
+            "role": "admin",
+            "connection": "in_app_connected",
+            "preference_class": "defaults",
+            "channels": ["in_app", "push", "email"],
+            "quiet_hours": null,
+            "mute_targets": []
+        },
+        {
+            "user_id": "loadtest-tenant-000-user-0002",
+            "tenant_id": "loadtest-tenant-000",
+            "role": "cashier",
+            "connection": "in_app_connected",
+            "preference_class": "category_overrides",
+            "channels": ["in_app", "push"],
+            "quiet_hours": null,
+            "mute_targets": []
+        },
+        {
+            "user_id": "loadtest-tenant-000-user-0003",
+            "tenant_id": "loadtest-tenant-000",
+            "role": "customer",
+            "connection": "in_app_offline",
+            "preference_class": "event_overrides_with_quiet_hours",
+            "channels": ["in_app", "email"],
+            "quiet_hours": {
+                "start": "22:00",
+                "end": "07:00",
+                "timezone": "Asia/Kolkata"
+            },
+            "mute_targets": []
+        },
+        {
+            "user_id": "loadtest-tenant-000-user-0004",
+            "tenant_id": "loadtest-tenant-000",
+            "role": "parent",
+            "connection": "push_only",
+            "preference_class": "with_mute_targets",
+            "channels": ["push"],
+            "quiet_hours": null,
+            "mute_targets": ["users.school_attendance.marked"]
+        },
+        {
+            "user_id": "loadtest-tenant-001-user-0050",
+            "tenant_id": "loadtest-tenant-001",
+            "role": "delivery_agent",
+            "connection": "in_app_connected",
+            "preference_class": "defaults",
+            "channels": ["in_app", "push", "sms"],
+            "quiet_hours": null,
+            "mute_targets": []
+        },
+        {
+            "user_id": "loadtest-tenant-002-user-0120",
+            "tenant_id": "loadtest-tenant-002",
+            "role": "teacher",
+            "connection": "in_app_connected",
+            "preference_class": "category_overrides",
+            "channels": ["in_app", "email"],
+            "quiet_hours": null,
+            "mute_targets": []
+        },
+        {
+            "user_id": "loadtest-tenant-006-user-0190",
+            "tenant_id": "loadtest-tenant-006",
+            "role": "service_technician",
+            "connection": "in_app_offline",
+            "preference_class": "defaults",
+            "channels": ["in_app", "push", "sms"],
+            "quiet_hours": null,
+            "mute_targets": []
+        }
+    ]
+}

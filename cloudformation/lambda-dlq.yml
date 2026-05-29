@@ -1,0 +1,199 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Dead Letter Queues (DLQ) for DukanX Lambda functions
+
+Resources:
+  # Main DLQ for async Lambda invocations
+  LambdaDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: DukanX-Lambda-DLQ
+      MessageRetentionPeriod: 1209600  # 14 days
+      VisibilityTimeout: 300
+      RedriveAllowPolicy: {}
+      SqsManagedSseEnabled: true
+      Tags:
+        - Key: Environment
+          Value: Production
+        - Key: Service
+          Value: DukanX
+
+  # DLQ for high-value operations (bills, payments)
+  CriticalOperationsDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: DukanX-Critical-Operations-DLQ
+      MessageRetentionPeriod: 1209600  # 14 days
+      VisibilityTimeout: 600  # 10 minutes for processing
+      SqsManagedSseEnabled: true
+      Tags:
+        - Key: Environment
+          Value: Production
+        - Key: Service
+          Value: DukanX
+        - Key: Criticality
+          Value: High
+
+  # DLQ Alarm - Message arrived
+  DLQMessageAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: DukanX-DLQ-Message-Alert
+      AlarmDescription: Dead Letter Queue has messages - processing failures detected
+      MetricName: ApproximateNumberOfMessagesVisible
+      Namespace: AWS/SQS
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt LambdaDLQ.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopic
+
+  # DLQ Alarm - Critical operations
+  CriticalDLQAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: DukanX-Critical-DLQ-Alert
+      AlarmDescription: CRITICAL: High-value operation failed and sent to DLQ
+      MetricName: ApproximateNumberOfMessagesVisible
+      Namespace: AWS/SQS
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt CriticalOperationsDLQ.QueueName
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopic
+
+  AlarmTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: DukanX-DLQ-Alerts
+      DisplayName: DukanX Dead Letter Queue Alerts
+
+  # Lambda execution role with DLQ permissions
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: DukanX-Lambda-Execution-Role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DLQAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              # Send to DLQ
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                  - sqs:SendMessageBatch
+                Resource:
+                  - !GetAtt LambdaDLQ.Arn
+                  - !GetAtt CriticalOperationsDLQ.Arn
+              # Receive from DLQ (for reprocessing)
+              - Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                Resource:
+                  - !GetAtt LambdaDLQ.Arn
+                  - !GetAtt CriticalOperationsDLQ.Arn
+
+  # Example Lambda with DLQ configured
+  BillingHandlerFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: DukanX-BillingHandler
+      Runtime: nodejs18.x
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ZipFile: |
+          exports.handler = async (event) => {
+            return { statusCode: 200, body: 'OK' };
+          };
+      DeadLetterConfig:
+        TargetArn: !GetAtt CriticalOperationsDLQ.Arn  # Use critical DLQ for billing
+      Environment:
+        Variables:
+          DLQ_URL: !Ref CriticalOperationsDLQ
+          NODE_ENV: production
+      Timeout: 30
+      MemorySize: 512
+
+  # Lambda Event Source Mapping for DLQ reprocessing (optional)
+  DLQReprocessorFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: DukanX-DLQ-Reprocessor
+      Runtime: nodejs18.x
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ZipFile: |
+          exports.handler = async (event) => {
+            for (const record of event.Records) {
+              const failedEvent = JSON.parse(record.body);
+              console.log('Reprocessing failed event:', failedEvent);
+              // Implement reprocessing logic
+            }
+            return { batchItemFailures: [] };
+          };
+      Environment:
+        Variables:
+          SOURCE_DLQ_URL: !Ref LambdaDLQ
+      Timeout: 60
+      MemorySize: 256
+
+  # Event source mapping for DLQ reprocessing
+  DLQEventSourceMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      FunctionName: !Ref DLQReprocessorFunction
+      EventSourceArn: !GetAtt LambdaDLQ.Arn
+      BatchSize: 10
+      MaximumBatchingWindowInSeconds: 5
+      FunctionResponseTypes:
+        - ReportBatchItemFailures
+
+Outputs:
+  LambdaDLQArn:
+    Description: Standard DLQ ARN
+    Value: !GetAtt LambdaDLQ.Arn
+    Export:
+      Name: DukanX-Lambda-DLQ-ARN
+
+  LambdaDLQUrl:
+    Description: Standard DLQ URL
+    Value: !Ref LambdaDLQ
+    Export:
+      Name: DukanX-Lambda-DLQ-URL
+
+  CriticalDLQArn:
+    Description: Critical operations DLQ ARN
+    Value: !GetAtt CriticalOperationsDLQ.Arn
+    Export:
+      Name: DukanX-Critical-DLQ-ARN
+
+  CriticalDLQUrl:
+    Description: Critical operations DLQ URL
+    Value: !Ref CriticalOperationsDLQ
+    Export:
+      Name: DukanX-Critical-DLQ-URL

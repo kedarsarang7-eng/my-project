@@ -1,0 +1,41 @@
+{
+  "name": "dukan-local-cloud",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local AWS cloud development environment for DukanX",
+  "scripts": {
+    "up": "docker compose up -d",
+    "down": "docker compose down",
+    "restart": "docker compose restart",
+    "logs": "docker compose logs -f localstack",
+    "status": "docker compose ps",
+    "health": "curl -s http://localhost:4566/_localstack/health | node -e \"process.stdin.pipe(require('stream').PassThrough()).on('data',d=>console.log(JSON.parse(d)))\"",
+    "seed": "bash init/02-seed-data.sh",
+    "smoke": "node scripts/smoke-test.mjs",
+    "auth:token": "node scripts/local-auth.mjs token",
+    "auth:login": "node scripts/local-auth.mjs login",
+    "invoke": "node scripts/invoke-lambda.mjs",
+    "test:integration": "node tests/integration.mjs",
+    "test:load": "npx artillery run tests/load-test.yml",
+    "tf:init": "cd terraform && terraform init",
+    "tf:plan": "cd terraform && terraform plan",
+    "tf:apply": "cd terraform && terraform apply -auto-approve",
+    "example:events": "node examples/eventbridge-demo.mjs",
+    "example:sqs": "node examples/sqs-sns-demo.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.490.0",
+    "@aws-sdk/client-eventbridge": "^3.490.0",
+    "@aws-sdk/client-s3": "^3.490.0",
+    "@aws-sdk/client-secrets-manager": "^3.490.0",
+    "@aws-sdk/client-sns": "^3.490.0",
+    "@aws-sdk/client-sqs": "^3.490.0",
+    "@aws-sdk/client-ssm": "^3.490.0",
+    "@aws-sdk/lib-dynamodb": "^3.490.0",
+    "jose": "^5.9.0"
+  },
+  "devDependencies": {
+    "artillery": "^2.0.0"
+  }
+}

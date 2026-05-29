@@ -1,0 +1,393 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Staff Management Service for Petrol Pump Business
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues:
+      - development
+      - staging
+      - production
+  
+  CognitoUserPoolId:
+    Type: String
+    Description: Cognito User Pool ID
+  
+  CognitoClientId:
+    Type: String
+    Description: Cognito Client ID
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: nodejs20.x
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        NODE_OPTIONS: '--enable-source-maps'
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
+        STAFF_TABLE: !Ref StaffProfilesTable
+        ACTIVITY_LOG_TABLE: !Ref StaffActivityLogTable
+        STAFF_ID_COUNTER_TABLE: !Ref StaffIdCounterTable
+        WEBSOCKET_TABLE: !Ref WebSocketConnectionsTable
+        USER_POOL_ID: !Ref CognitoUserPoolId
+        COGNITO_CLIENT_ID: !Ref CognitoClientId
+        ENVIRONMENT: !Ref Environment
+
+Resources:
+  # DynamoDB Tables
+  StaffProfilesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'PetrolStaffProfiles-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: staffId
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+        - AttributeName: GSI2PK
+          AttributeType: S
+        - AttributeName: GSI2SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: staffId
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: petrolPumpId-role-index
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: petrolPumpId-active-index
+          KeySchema:
+            - AttributeName: GSI2PK
+              KeyType: HASH
+            - AttributeName: GSI2SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: KMS
+      Tags:
+        - Key: Service
+          Value: StaffManagement
+        - Key: Environment
+          Value: !Ref Environment
+
+  StaffActivityLogTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'PetrolStaffActivityLog-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: Service
+          Value: StaffManagement
+        - Key: Environment
+          Value: !Ref Environment
+
+  StaffIdCounterTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'PetrolStaffIdCounter-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: petrolPumpId
+          AttributeType: S
+        - AttributeName: year
+          AttributeType: S
+      KeySchema:
+        - AttributeName: petrolPumpId
+          KeyType: HASH
+        - AttributeName: year
+          KeyType: RANGE
+      Tags:
+        - Key: Service
+          Value: StaffManagement
+        - Key: Environment
+          Value: !Ref Environment
+
+  WebSocketConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'PetrolWebSocketConnections-${Environment}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: connectionId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: connectionId
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: Service
+          Value: StaffManagement
+        - Key: Environment
+          Value: !Ref Environment
+
+  # Lambda Functions
+  CreateStaffFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-management-create-${Environment}'
+      Handler: dist/handlers/createStaff.handler
+      CodeUri: ../
+      Description: Create new staff account
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffProfilesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffIdCounterTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminCreateUser
+                - cognito-idp:AdminAddUserToGroup
+              Resource: !Sub 'arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}'
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref StaffApi
+            Path: /staff
+            Method: POST
+
+  ListStaffFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-management-list-${Environment}'
+      Handler: dist/handlers/listStaff.handler
+      CodeUri: ../
+      Description: List all staff members
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffProfilesTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref StaffApi
+            Path: /staff
+            Method: GET
+
+  GetStaffByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-management-get-${Environment}'
+      Handler: dist/handlers/getStaffById.handler
+      CodeUri: ../
+      Description: Get staff member by ID
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffProfilesTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref StaffApi
+            Path: /staff/{staffId}
+            Method: GET
+
+  UpdateStaffFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-management-update-${Environment}'
+      Handler: dist/handlers/updateStaff.handler
+      CodeUri: ../
+      Description: Update staff member
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffProfilesTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminUpdateUserAttributes
+                - cognito-idp:AdminRemoveUserFromGroup
+                - cognito-idp:AdminAddUserToGroup
+              Resource: !Sub 'arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}'
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref StaffApi
+            Path: /staff/{staffId}
+            Method: PUT
+
+  DeactivateStaffFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-management-deactivate-${Environment}'
+      Handler: dist/handlers/deactivateStaff.handler
+      CodeUri: ../
+      Description: Deactivate staff account
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffProfilesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffActivityLogTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminDisableUser
+              Resource: !Sub 'arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}'
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref StaffApi
+            Path: /staff/{staffId}/deactivate
+            Method: PATCH
+
+  ReactivateStaffFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-management-reactivate-${Environment}'
+      Handler: dist/handlers/reactivateStaff.handler
+      CodeUri: ../
+      Description: Reactivate staff account
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffProfilesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffActivityLogTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminEnableUser
+              Resource: !Sub 'arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}'
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref StaffApi
+            Path: /staff/{staffId}/reactivate
+            Method: PATCH
+
+  ResetPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-management-reset-password-${Environment}'
+      Handler: dist/handlers/resetStaffPassword.handler
+      CodeUri: ../
+      Description: Reset staff password
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffProfilesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StaffActivityLogTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminSetUserPassword
+              Resource: !Sub 'arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}'
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref StaffApi
+            Path: /staff/{staffId}/reset-password
+            Method: POST
+
+  GetStaffStatsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-management-stats-${Environment}'
+      Handler: dist/handlers/getStaffStats.handler
+      CodeUri: ../
+      Description: Get staff statistics
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffProfilesTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref StaffApi
+            Path: /staff/stats
+            Method: GET
+
+  GetActivityLogFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'staff-management-activity-${Environment}'
+      Handler: dist/handlers/activityLog.handler
+      CodeUri: ../
+      Description: Get staff activity log
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref StaffActivityLogTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref StaffApi
+            Path: /staff/{staffId}/activity
+            Method: GET
+
+  # API Gateway
+  StaffApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub 'staff-management-api-${Environment}'
+      StageName: !Ref Environment
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,PATCH,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+        MaxAge: "'86400'"
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !Sub 'arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}'
+      MethodSettings:
+        - ResourcePath: /*
+          HttpMethod: '*'
+          ThrottlingBurstLimit: 100
+          ThrottlingRateLimit: 50
+
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${StaffApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+  
+  StaffTableName:
+    Description: Staff Profiles table name
+    Value: !Ref StaffProfilesTable
+  
+  ActivityLogTableName:
+    Description: Activity Log table name
+    Value: !Ref StaffActivityLogTable

@@ -1,0 +1,244 @@
+name: Validate Translations
+
+on:
+  push:
+    paths:
+      - 'Dukan_x/lib/l10n/**.arb'
+      - 'my-backend/src/i18n/locales/**.json'
+  pull_request:
+    paths:
+      - 'Dukan_x/lib/l10n/**.arb'
+      - 'my-backend/src/i18n/locales/**.json'
+
+jobs:
+  # ────────────────────────────────────────────────────────────────────────────
+  # 1. Flutter ARB validation
+  # ────────────────────────────────────────────────────────────────────────────
+  flutter-arb:
+    name: Flutter ARB Lint & gen-l10n
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Dukan_x
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.x'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Validate JSON syntax (all ARB files)
+        run: |
+          for f in lib/l10n/*.arb; do
+            echo "Checking $f..."
+            python3 -c "import json,sys; json.load(open('$f'))" || (echo "INVALID JSON: $f" && exit 1)
+          done
+
+      - name: Run flutter gen-l10n
+        run: flutter gen-l10n
+
+      - name: Check for missing keys (hi vs en)
+        run: |
+          python3 - <<'EOF'
+          import json, sys
+
+          with open("lib/l10n/app_en.arb") as f:
+              en = {k for k in json.load(f) if not k.startswith("@")}
+
+          missing_total = 0
+          for lang in ["hi", "mr"]:
+              path = f"lib/l10n/app_{lang}.arb"
+              try:
+                  with open(path) as f:
+                      data = {k for k in json.load(f) if not k.startswith("@")}
+              except FileNotFoundError:
+                  print(f"MISSING FILE: {path}")
+                  sys.exit(1)
+
+              missing = en - data
+              if missing:
+                  print(f"\n[{lang}] Missing {len(missing)} keys:")
+                  for k in sorted(missing):
+                      print(f"  - {k}")
+                  missing_total += len(missing)
+              else:
+                  print(f"[{lang}] OK — all {len(en)} keys present")
+
+          if missing_total > 0:
+              print(f"\n❌ {missing_total} missing translation keys found. Please add them.")
+              sys.exit(1)
+          else:
+              print("\n✅ All translation keys are present in hi + mr")
+          EOF
+
+      - name: Check for orphaned keys (keys in hi/mr not in en)
+        run: |
+          python3 - <<'EOF'
+          import json, sys
+
+          with open("lib/l10n/app_en.arb") as f:
+              en = {k for k in json.load(f) if not k.startswith("@")}
+
+          orphaned_total = 0
+          for lang in ["hi", "mr"]:
+              path = f"lib/l10n/app_{lang}.arb"
+              try:
+                  with open(path) as f:
+                      data = {k for k in json.load(f) if not k.startswith("@")}
+              except FileNotFoundError:
+                  continue
+              orphaned = data - en
+              if orphaned:
+                  print(f"[{lang}] Orphaned keys (not in en):")
+                  for k in sorted(orphaned):
+                      print(f"  - {k}")
+                  orphaned_total += len(orphaned)
+
+          if orphaned_total > 0:
+              print(f"\n⚠️  {orphaned_total} orphaned keys — consider removing them.")
+              # Warning only, not a failure
+          else:
+              print("✅ No orphaned keys found")
+          EOF
+
+      - name: Verify generated files are up to date
+        run: |
+          if git diff --name-only HEAD | grep -q "lib/generated/"; then
+            echo "✅ Generated files updated"
+          else
+            echo "ℹ️  No generated file changes (may already be up to date)"
+          fi
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # 2. Backend JSON locale validation
+  # ────────────────────────────────────────────────────────────────────────────
+  backend-locales:
+    name: Backend i18n JSON Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: my-backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON syntax (all locale files)
+        run: |
+          for f in src/i18n/locales/*.json; do
+            echo "Checking $f..."
+            python3 -c "import json,sys; json.load(open('$f'))" || (echo "INVALID JSON: $f" && exit 1)
+          done
+
+      - name: Check backend locale key coverage (hi + mr vs en)
+        run: |
+          python3 - <<'EOF'
+          import json, sys
+
+          def flatten(d, prefix=""):
+              out = {}
+              for k, v in d.items():
+                  full = f"{prefix}.{k}" if prefix else k
+                  if isinstance(v, dict):
+                      out.update(flatten(v, full))
+                  else:
+                      out[full] = v
+              return out
+
+          with open("src/i18n/locales/en.json") as f:
+              en = set(flatten(json.load(f)).keys())
+
+          missing_total = 0
+          for lang in ["hi", "mr"]:
+              path = f"src/i18n/locales/{lang}.json"
+              try:
+                  with open(path) as f:
+                      data = set(flatten(json.load(f)).keys())
+              except FileNotFoundError:
+                  print(f"MISSING FILE: {path}")
+                  sys.exit(1)
+
+              missing = en - data
+              if missing:
+                  print(f"\n[{lang}] Missing {len(missing)} backend keys:")
+                  for k in sorted(missing):
+                      print(f"  - {k}")
+                  missing_total += len(missing)
+              else:
+                  print(f"[{lang}] OK — all {len(en)} backend keys present")
+
+          if missing_total > 0:
+              print(f"\n❌ {missing_total} missing backend translation keys.")
+              sys.exit(1)
+          else:
+              print("\n✅ All backend translation keys covered")
+          EOF
+
+      - name: Check for placeholder consistency
+        run: |
+          python3 - <<'EOF'
+          import json, re, sys
+
+          PLACEHOLDER_RE = re.compile(r'\{\{(\w+)\}\}')
+
+          def flatten(d, prefix=""):
+              out = {}
+              for k, v in d.items():
+                  full = f"{prefix}.{k}" if prefix else k
+                  if isinstance(v, dict):
+                      out.update(flatten(v, full))
+                  else:
+                      out[full] = v
+              return out
+
+          with open("src/i18n/locales/en.json") as f:
+              en = flatten(json.load(f))
+
+          errors = []
+          for lang in ["hi", "mr"]:
+              path = f"src/i18n/locales/{lang}.json"
+              try:
+                  with open(path) as f:
+                      other = flatten(json.load(f))
+              except FileNotFoundError:
+                  continue
+
+              for key, en_val in en.items():
+                  if key not in other:
+                      continue
+                  en_placeholders = set(PLACEHOLDER_RE.findall(en_val))
+                  other_placeholders = set(PLACEHOLDER_RE.findall(other[key]))
+                  missing_ph = en_placeholders - other_placeholders
+                  if missing_ph:
+                      errors.append(f"[{lang}] {key}: missing placeholders {missing_ph}")
+
+          if errors:
+              print("❌ Placeholder mismatches found:")
+              for e in errors:
+                  print(f"  {e}")
+              sys.exit(1)
+          else:
+              print("✅ All placeholders consistent across locales")
+          EOF
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # 3. Summary gate
+  # ────────────────────────────────────────────────────────────────────────────
+  translation-gate:
+    name: Translation Gate
+    needs: [flutter-arb, backend-locales]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check all jobs passed
+        run: |
+          if [[ "${{ needs.flutter-arb.result }}" != "success" || "${{ needs.backend-locales.result }}" != "success" ]]; then
+            echo "❌ Translation validation failed. Fix missing/invalid keys before merging."
+            exit 1
+          fi
+          echo "✅ All translation checks passed"

@@ -1,0 +1,138 @@
+service: dukanx-frontend-cdn
+
+provider:
+  name: aws
+  region: us-east-1 # CloudFront WAF MUST be in us-east-1
+  stage: ${opt:stage, 'prod'}
+
+resources:
+  Resources:
+    # ══════════════════════════════════════════════════════════════════════
+    # S3 BUCKET FOR FLUTTER WEB APP
+    # ══════════════════════════════════════════════════════════════════════
+    FrontendBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: dukanx-frontend-${self:provider.stage}-${aws:accountId}
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: index.html
+
+    FrontendBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref FrontendBucket
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: cloudfront.amazonaws.com
+              Action: s3:GetObject
+              Resource: !Sub "${FrontendBucket.Arn}/*"
+              Condition:
+                StringEquals:
+                  AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}"
+
+    # ══════════════════════════════════════════════════════════════════════
+    # CLOUDFRONT ORIGIN ACCESS CONTROL
+    # ══════════════════════════════════════════════════════════════════════
+    CloudFrontOAC:
+      Type: AWS::CloudFront::OriginAccessControl
+      Properties:
+        OriginAccessControlConfig:
+          Name: dukanx-frontend-oac-${self:provider.stage}
+          OriginAccessControlOriginType: s3
+          SigningBehavior: always
+          SigningProtocol: sigv4
+
+    # ══════════════════════════════════════════════════════════════════════
+    # AWS WAFv2 FOR CLOUDFRONT (Deployed in us-east-1)
+    # ══════════════════════════════════════════════════════════════════════
+    FrontendWAFWebACL:
+      Type: AWS::WAFv2::WebACL
+      Properties:
+        Name: dukanx-frontend-waf-${self:provider.stage}
+        Scope: CLOUDFRONT
+        DefaultAction:
+          Allow: {}
+        Rules:
+          - Name: AWSManagedRulesCommonRuleSet
+            Priority: 1
+            Statement:
+              ManagedRuleGroupStatement:
+                VendorName: AWS
+                Name: AWSManagedRulesCommonRuleSet
+            OverrideAction:
+              None: {}
+            VisibilityConfig:
+              SampledRequestsEnabled: true
+              CloudWatchMetricsEnabled: true
+              MetricName: DukanXFrontendCommon
+          - Name: AWSManagedRulesBotControlRuleSet
+            Priority: 2
+            Statement:
+              ManagedRuleGroupStatement:
+                VendorName: AWS
+                Name: AWSManagedRulesBotControlRuleSet
+            OverrideAction:
+              None: {}
+            VisibilityConfig:
+              SampledRequestsEnabled: true
+              CloudWatchMetricsEnabled: true
+              MetricName: DukanXFrontendBotControl
+        VisibilityConfig:
+          SampledRequestsEnabled: true
+          CloudWatchMetricsEnabled: true
+          MetricName: DukanXFrontendWebACL
+
+    # ══════════════════════════════════════════════════════════════════════
+    # CLOUDFRONT DISTRIBUTION
+    # ══════════════════════════════════════════════════════════════════════
+    CloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Enabled: true
+          HttpVersion: http2and3
+          DefaultRootObject: index.html
+          WebACLId: !GetAtt FrontendWAFWebACL.Arn
+          Origins:
+            - Id: FrontendS3Origin
+              DomainName: !GetAtt FrontendBucket.RegionalDomainName
+              OriginAccessControlId: !GetAtt CloudFrontOAC.Id
+              S3OriginConfig:
+                OriginAccessIdentity: ''
+          DefaultCacheBehavior:
+            TargetOriginId: FrontendS3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods: [GET, HEAD, OPTIONS]
+            CachedMethods: [GET, HEAD, OPTIONS]
+            Compress: true
+            ForwardedValues:
+              QueryString: false
+              Cookies:
+                Forward: none
+          CustomErrorResponses:
+            - ErrorCode: 403
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+            - ErrorCode: 404
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+
+  Outputs:
+    CloudFrontURL:
+      Description: The URL of the CloudFront Distribution
+      Value: !GetAtt CloudFrontDistribution.DomainName
+    CloudFrontDistributionId:
+      Description: The ID of the CloudFront Distribution
+      Value: !Ref CloudFrontDistribution
+    FrontendBucketName:
+      Description: The name of the S3 Bucket for the frontend
+      Value: !Ref FrontendBucket

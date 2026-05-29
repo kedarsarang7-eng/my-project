@@ -1,0 +1,336 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  DukanX Subscription Management API
+  Handles plan upgrades/downgrades, payment processing, and subscription lifecycle
+
+# ============================================================================
+# Global Settings
+# ============================================================================
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: nodejs20.x
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        NODE_ENV: !Ref Environment
+        DYNAMODB_TABLE: !Ref TenantsTable
+        COGNITO_USER_POOL_ID: !Ref CognitoUserPoolId
+        RAZORPAY_KEY_ID: !Ref RazorpayKeyId
+        RAZORPAY_KEY_SECRET: !Ref RazorpayKeySecret
+        RAZORPAY_WEBHOOK_SECRET: !Ref RazorpayWebhookSecret
+
+# ============================================================================
+# Parameters
+# ============================================================================
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+  CognitoUserPoolId:
+    Type: String
+    Description: Cognito User Pool ID
+  CognitoUserPoolArn:
+    Type: String
+    Description: Cognito User Pool ARN for API Gateway Authorizer
+  RazorpayKeyId:
+    Type: String
+    Description: Razorpay API Key ID
+    NoEcho: true
+  RazorpayKeySecret:
+    Type: String
+    Description: Razorpay API Key Secret
+    NoEcho: true
+  RazorpayWebhookSecret:
+    Type: String
+    Description: Razorpay Webhook Secret for signature verification
+    NoEcho: true
+
+# ============================================================================
+# Resources
+# ============================================================================
+Resources:
+
+  # ── API Gateway ─────────────────────────────────────────────────────────────
+  SubscriptionApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref Environment
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        AllowHeaders:
+          - authorization
+          - content-type
+          - x-request-id
+      Auth:
+        Authorizers:
+          CognitoAuthorizer:
+            IdentitySource: $request.header.Authorization
+            JwtConfiguration:
+              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${CognitoUserPoolId}"
+              audience:
+                - !Ref CognitoUserPoolId
+        DefaultAuthorizer: CognitoAuthorizer
+
+  # ── Lambda Functions ───────────────────────────────────────────────────────
+
+  # GET /subscription/current - Get current subscription
+  GetCurrentSubscriptionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/subscription.getCurrentSubscription
+      FunctionName: !Sub "dukanx-subscription-get-current-${Environment}"
+      Description: Get current subscription details for authenticated tenant
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TenantsTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminGetUser
+                - cognito-idp:AdminUpdateUserAttributes
+              Resource: !Sub "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}"
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref SubscriptionApi
+            Path: /subscription/current
+            Method: GET
+
+  # GET /subscription/plans - List available plans
+  ListPlansFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/subscription.listPlans
+      FunctionName: !Sub "dukanx-subscription-list-plans-${Environment}"
+      Description: List all available subscription plans with pricing
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TenantsTable
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref SubscriptionApi
+            Path: /subscription/plans
+            Method: GET
+
+  # POST /subscription/upgrade - Initiate plan upgrade
+  UpgradeSubscriptionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/subscription.upgradeSubscription
+      FunctionName: !Sub "dukanx-subscription-upgrade-${Environment}"
+      Description: Process self-service plan upgrades with proration
+      Timeout: 60
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TenantsTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminGetUser
+                - cognito-idp:AdminUpdateUserAttributes
+              Resource: !Sub "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}"
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref SubscriptionApi
+            Path: /subscription/upgrade
+            Method: POST
+
+  # POST /subscription/downgrade - Initiate plan downgrade
+  DowngradeSubscriptionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/subscription.downgradeSubscription
+      FunctionName: !Sub "dukanx-subscription-downgrade-${Environment}"
+      Description: Schedule plan downgrade for end of billing cycle
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TenantsTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminGetUser
+                - cognito-idp:AdminUpdateUserAttributes
+              Resource: !Sub "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}"
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref SubscriptionApi
+            Path: /subscription/downgrade
+            Method: POST
+
+  # POST /subscription/retry - Create payment retry link
+  RetryPaymentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/subscription.retryPayment
+      FunctionName: !Sub "dukanx-subscription-retry-${Environment}"
+      Description: Create payment retry link for failed subscriptions
+      Timeout: 60
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TenantsTable
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref SubscriptionApi
+            Path: /subscription/retry
+            Method: POST
+
+  # GET /subscription/usage - Get usage statistics
+  GetUsageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/subscription.getUsage
+      FunctionName: !Sub "dukanx-subscription-usage-${Environment}"
+      Description: Get current usage statistics against plan limits
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TenantsTable
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref SubscriptionApi
+            Path: /subscription/usage
+            Method: GET
+
+  # POST /webhooks/subscription - Razorpay webhook handler (PUBLIC)
+  SubscriptionWebhookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/subscription-webhook.handler
+      FunctionName: !Sub "dukanx-subscription-webhook-${Environment}"
+      Description: Handle Razorpay subscription webhooks (payment events)
+      Timeout: 30
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TenantsTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminGetUser
+                - cognito-idp:AdminUpdateUserAttributes
+              Resource: !Sub "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}"
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref SubscriptionApi
+            Path: /webhooks/subscription
+            Method: POST
+            Auth:
+              Authorizer: NONE  # Public endpoint for Razorpay
+
+  # ── Cron Job: Daily Grace Period Processing ────────────────────────────────
+  GracePeriodCronFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/handlers/cron/grace-period-cron.handler
+      FunctionName: !Sub "dukanx-grace-period-cron-${Environment}"
+      Description: Daily processing of grace periods and expired trials
+      Timeout: 300  # 5 minutes for batch processing
+      MemorySize: 1024
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TenantsTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminGetUser
+                - cognito-idp:AdminUpdateUserAttributes
+              Resource: !Sub "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}"
+            - Effect: Allow
+              Action:
+                - sns:Publish
+              Resource: !Ref NotificationTopic
+      Events:
+        DailySchedule:
+          Type: Schedule
+          Properties:
+            # 9:00 AM IST daily (3:30 AM UTC)
+            Schedule: cron(30 3 * * ? *)
+            Name: !Sub "dukanx-grace-period-schedule-${Environment}"
+
+  # ── SNS Topic for Notifications ───────────────────────────────────────────
+  NotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub "dukanx-subscription-notifications-${Environment}"
+      DisplayName: DukanX Subscription Notifications
+
+  # ── CloudWatch Alarms ───────────────────────────────────────────────────────
+  SubscriptionWebhookErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "dukanx-subscription-webhook-errors-${Environment}"
+      AlarmDescription: Alert on subscription webhook errors
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 5
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref SubscriptionWebhookFunction
+
+  # ── DynamoDB Table (Reference) ─────────────────────────────────────────────
+  TenantsTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: !Sub "DukanX-Tenants-${Environment}"
+      PrimaryKey:
+        Name: PK
+        Type: String
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        Environment: !Ref Environment
+        Service: subscription-management
+
+# ============================================================================
+# Outputs
+# ============================================================================
+Outputs:
+  SubscriptionApiUrl:
+    Description: URL for the Subscription API
+    Value: !Sub "https://${SubscriptionApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}"
+
+  WebhookUrl:
+    Description: Public webhook URL for Razorpay
+    Value: !Sub "https://${SubscriptionApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/webhooks/subscription"
+
+  GracePeriodCronFunctionArn:
+    Description: ARN of the grace period cron function
+    Value: !GetAtt GracePeriodCronFunction.Arn
+
+  NotificationTopicArn:
+    Description: SNS Topic for subscription notifications
+    Value: !Ref NotificationTopic

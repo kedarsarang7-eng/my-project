@@ -1,0 +1,183 @@
+Analyzing Dukan_x...                                            
+
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\security\device\device_fingerprint.dart:11:8 - unused_import
+warning - Unused import: '../../services/secure_storage_service.dart' - lib\core\security\device\device_fingerprint.dart:14:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\security\device\trusted_device_service.dart:9:8 - unused_import
+warning - Unused import: '../../database/app_database.dart' - lib\core\security\device\trusted_device_service.dart:11:8 - unused_import
+warning - Unused import: '../../database/app_database.dart' - lib\core\security\dual_control\dual_control_service.dart:9:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\security\dual_control\dual_control_service.dart:11:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\security\owner_authority_service.dart:8:8 - unused_import
+warning - Unused import: '../services/secure_storage_service.dart' - lib\core\security\owner_authority_service.dart:15:8 - unused_import
+warning - Unused import: '../../database/app_database.dart' - lib\core\security\safe_mode\safe_mode_service.dart:10:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\security\safe_mode\safe_mode_service.dart:12:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\security\services\cash_closing_service.dart:11:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\security\services\fraud_detection_service.dart:9:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\security\services\owner_pin_service.dart:10:8 - unused_import
+warning - Unused import: '../../services/secure_storage_service.dart' - lib\core\security\services\owner_pin_service.dart:13:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\security\services\pin_verification_service.dart:8:8 - unused_import
+warning - Unused import: '../../database/app_database.dart' - lib\core\security\time_lock\time_lock_service.dart:9:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\security\time_lock\time_lock_service.dart:11:8 - unused_import
+warning - Unused import: '../database/app_database.dart' - lib\core\services\access_control_service.dart:7:8 - unused_import
+warning - Duplicate import - lib\core\services\access_control_service.dart:9:8 - duplicate_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\services\cash_closing_validation_service.dart:7:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\services\deep_link_service.dart:14:8 - unused_import
+warning - Unused import: '../database/app_database.dart' - lib\core\services\device_registration_service.dart:16:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\services\event_dispatcher.dart:17:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\services\notification_listener_service.dart:2:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\services\period_lock_service.dart:7:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\services\report_export_service.dart:9:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\services\secure_storage_service.dart:3:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\services\security_layer.dart:7:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\services\security_notification_service.dart:8:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\services\speech_service.dart:4:8 - unused_import
+warning - Unused import: '../database/app_database.dart' - lib\core\services\stock_security_service.dart:7:8 - unused_import
+warning - Unused import: '../services/secure_storage_service.dart' - lib\core\startup\startup_manager.dart:12:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\sync\background_sync_service.dart:11:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\sync\engine\circuit_breaker.dart:2:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\sync\engine\rest_sync_engine.dart:12:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\sync\engine\sync_engine.dart:2:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\sync\engine\task_processor.dart:2:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\sync\sync_manager.dart:2:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\sync\sync_retry_service.dart:2:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\sync\sync_status_manager.dart:2:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\core\websocket\websocket_rid_service.dart:8:8 - unused_import
+warning - Unused import: '../sync/sync_queue_state_machine.dart' - lib\core\websocket\websocket_rid_service.dart:9:8 - unused_import
+warning - Unused import: '../../../core/di/service_locator.dart' - lib\features\ai_assistant\services\customer_recommendation_service.dart:3:8 - unused_import
+warning - Unused import: '../../../core/services/secure_storage_service.dart' - lib\features\ai_assistant\services\dictation_service.dart:11:8 - unused_import
+warning - Unused import: '../../../core/di/service_locator.dart' - lib\features\ai_assistant\services\groq_service.dart:2:8 - unused_import
+warning - Unused import: 'package:flutter/material.dart' - lib\features\ai_assistant\services\morning_briefing_service.dart:1:8 - unused_import
+warning - Unused import: '../../../core/di/service_locator.dart' - lib\features\ai_assistant\services\morning_briefing_service.dart:2:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\features\ai_assistant\services\on_device_ai_service.dart:1:8 - unused_import
+warning - Unused import: '../../../core/di/service_locator.dart' - lib\features\ai_assistant\services\on_device_ai_service.dart:2:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart' - lib\features\ai_assistant\services\query_executor.dart:1:8 - unused_import
+warning - Unused import: 'package:flutter/material.dart' - lib\features\ai_assistant\services\recommendation_service.dart:1:8 - unused_import
+warning - Unused import: '../../../../core/services/secure_storage_service.dart' - lib\features\e_invoice\data\services\nic_irp_config.dart:5:8 - unused_import
+warning - The asset directory 'assets/avatar/face/' doesn't exist - pubspec.yaml:204:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/avatar/eyes/' doesn't exist - pubspec.yaml:205:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/avatar/eyebrows/' doesn't exist - pubspec.yaml:206:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/avatar/nose/' doesn't exist - pubspec.yaml:207:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/avatar/mouth/' doesn't exist - pubspec.yaml:208:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/avatar/facial_hair/' doesn't exist - pubspec.yaml:209:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/avatar/clothes/top/' doesn't exist - pubspec.yaml:210:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/avatar/clothes/bottom/' doesn't exist - pubspec.yaml:211:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/avatar/clothes/shoes/' doesn't exist - pubspec.yaml:212:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/avatar/hair/' doesn't exist - pubspec.yaml:213:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/avatar/accessories/glasses/' doesn't exist - pubspec.yaml:214:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/avatar/accessories/misc/' doesn't exist - pubspec.yaml:215:7 - asset_directory_does_not_exist
+   info - The import of 'package:dukanx/models/bill.dart' is unnecessary because all of the used elements are also provided by the import of 'package:dukanx/core/repository/bills_repository.dart' - test\core\repository\bills_repository_stock_reservation_test.dart:13:8 - unnecessary_import
+  error - The class 'AppDatabase' doesn't have an unnamed constructor - test\core\repository\bills_repository_stock_reservation_test.dart:33:18 - new_with_undefined_constructor_default
+  error - The method 'inDatabasePath' isn't defined for the type 'QueryExecutor' - test\core\repository\bills_repository_stock_reservation_test.dart:34:23 - undefined_method
+  error - The argument type 'MockSyncManager' can't be assigned to the parameter type 'SyncManager'.  - test\core\repository\bills_repository_stock_reservation_test.dart:40:22 - argument_type_not_assignable
+  error - The argument type 'MockErrorHandler' can't be assigned to the parameter type 'ErrorHandler'.  - test\core\repository\bills_repository_stock_reservation_test.dart:41:23 - argument_type_not_assignable
+  error - The named parameter 'ownerId' is required, but there's no corresponding argument - test\core\repository\bills_repository_stock_reservation_test.dart:47:9 - missing_required_argument
+  error - The argument type 'String' can't be assigned to the parameter type 'Value<String?>'.  - test\core\repository\bills_repository_stock_reservation_test.dart:50:25 - argument_type_not_assignable
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\core\repository\bills_repository_stock_reservation_test.dart:68:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\core\repository\bills_repository_stock_reservation_test.dart:72:28 - argument_type_not_assignable
+  error - The named parameter 'price' isn't defined - test\core\repository\bills_repository_stock_reservation_test.dart:73:13 - undefined_named_parameter
+  error - The named parameter 'taxAmount' isn't defined - test\core\repository\bills_repository_stock_reservation_test.dart:90:15 - undefined_named_parameter
+  error - The named parameter 'taxAmount' isn't defined - test\core\repository\bills_repository_stock_reservation_test.dart:118:15 - undefined_named_parameter
+  error - A value of type 'RepositoryResult<Bill> (where RepositoryResult is defined in G:\desktop app genuine\Dukan_x\lib\core\error\error_handler.dart)' can't be assigned to a variable of type 'RepositoryResult<Bill> (where RepositoryResult is defined in G:\desktop app genuine\Dukan_x\test\core\repository\bills_repository_stock_reservation_test.dart)' - test\core\repository\bills_repository_stock_reservation_test.dart:141:19 - invalid_assignment
+  error - A value of type 'RepositoryResult<Bill> (where RepositoryResult is defined in G:\desktop app genuine\Dukan_x\lib\core\error\error_handler.dart)' can't be assigned to a variable of type 'RepositoryResult<Bill> (where RepositoryResult is defined in G:\desktop app genuine\Dukan_x\test\core\repository\bills_repository_stock_reservation_test.dart)' - test\core\repository\bills_repository_stock_reservation_test.dart:145:21 - invalid_assignment
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\core\repository\bills_repository_stock_reservation_test.dart:174:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\core\repository\bills_repository_stock_reservation_test.dart:178:28 - argument_type_not_assignable
+  error - The named parameter 'price' isn't defined - test\core\repository\bills_repository_stock_reservation_test.dart:179:13 - undefined_named_parameter
+  error - The named parameter 'taxAmount' isn't defined - test\core\repository\bills_repository_stock_reservation_test.dart:196:15 - undefined_named_parameter
+  error - The named parameter 'taxAmount' isn't defined - test\core\repository\bills_repository_stock_reservation_test.dart:228:15 - undefined_named_parameter
+  error - A value of type 'RepositoryResult<Bill> (where RepositoryResult is defined in G:\desktop app genuine\Dukan_x\lib\core\error\error_handler.dart)' can't be assigned to a variable of type 'RepositoryResult<Bill> (where RepositoryResult is defined in G:\desktop app genuine\Dukan_x\test\core\repository\bills_repository_stock_reservation_test.dart)' - test\core\repository\bills_repository_stock_reservation_test.dart:248:20 - invalid_assignment
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\core\repository\bills_repository_stock_reservation_test.dart:270:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\core\repository\bills_repository_stock_reservation_test.dart:274:28 - argument_type_not_assignable
+  error - The named parameter 'price' isn't defined - test\core\repository\bills_repository_stock_reservation_test.dart:275:13 - undefined_named_parameter
+  error - The named parameter 'taxAmount' isn't defined - test\core\repository\bills_repository_stock_reservation_test.dart:291:15 - undefined_named_parameter
+  error - The method 'getActiveReservations' isn't defined for the type 'StockReservationService' - test\core\repository\bills_repository_stock_reservation_test.dart:316:55 - undefined_method
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\core\repository\bills_repository_stock_reservation_test.dart:335:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\core\repository\bills_repository_stock_reservation_test.dart:339:28 - argument_type_not_assignable
+  error - The named parameter 'price' isn't defined - test\core\repository\bills_repository_stock_reservation_test.dart:340:13 - undefined_named_parameter
+  error - The argument type 'String' can't be assigned to the parameter type 'Value<String?>'.  - test\core\repository\bills_repository_stock_reservation_test.dart:341:23 - argument_type_not_assignable
+  error - The named parameter 'taxAmount' isn't defined - test\core\repository\bills_repository_stock_reservation_test.dart:357:15 - undefined_named_parameter
+warning - Unused import: 'dart:convert' - test\features\auth\license_business_type_sync_test.dart:7:8 - unused_import
+  error - The returned type 'BarcodeLookupResult' isn't returnable from a 'Future<BarcodeLookupResult>' function, as required by the closure's context - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:36:18 - return_of_invalid_type_from_closure
+  error - The named parameter 'createdAt' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:37:13 - missing_required_argument
+  error - The named parameter 'currentStock' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:37:13 - missing_required_argument
+  error - The named parameter 'salePriceCents' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:37:13 - missing_required_argument
+  error - The named parameter 'tenantId' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:37:13 - missing_required_argument
+  error - The named parameter 'updatedAt' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:37:13 - missing_required_argument
+  error - The named parameter 'price' isn't defined - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:41:15 - undefined_named_parameter
+  error - The returned type 'BarcodeLookupResult' isn't returnable from a 'Future<BarcodeLookupResult>' function, as required by the closure's context - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:99:18 - return_of_invalid_type_from_closure
+  error - The named parameter 'createdAt' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:100:13 - missing_required_argument
+  error - The named parameter 'currentStock' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:100:13 - missing_required_argument
+  error - The named parameter 'salePriceCents' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:100:13 - missing_required_argument
+  error - The named parameter 'tenantId' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:100:13 - missing_required_argument
+  error - The named parameter 'updatedAt' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:100:13 - missing_required_argument
+  error - The named parameter 'price' isn't defined - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:104:15 - undefined_named_parameter
+  error - The argument type 'String?' can't be assigned to the parameter type 'String'.  - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:114:31 - argument_type_not_assignable
+  error - The returned type 'BarcodeLookupResult' isn't returnable from a 'Future<BarcodeLookupResult>' function, as required by the closure's context - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:151:18 - return_of_invalid_type_from_closure
+  error - The named parameter 'createdAt' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:152:13 - missing_required_argument
+  error - The named parameter 'currentStock' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:152:13 - missing_required_argument
+  error - The named parameter 'salePriceCents' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:152:13 - missing_required_argument
+  error - The named parameter 'tenantId' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:152:13 - missing_required_argument
+  error - The named parameter 'updatedAt' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:152:13 - missing_required_argument
+  error - The named parameter 'price' isn't defined - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:156:15 - undefined_named_parameter
+  error - The argument type 'String?' can't be assigned to the parameter type 'String'.  - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:166:39 - argument_type_not_assignable
+  error - The returned type 'BarcodeLookupResult' isn't returnable from a 'Future<BarcodeLookupResult>' function, as required by the closure's context - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:204:18 - return_of_invalid_type_from_closure
+  error - The named parameter 'createdAt' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:205:13 - missing_required_argument
+  error - The named parameter 'currentStock' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:205:13 - missing_required_argument
+  error - The named parameter 'salePriceCents' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:205:13 - missing_required_argument
+  error - The named parameter 'tenantId' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:205:13 - missing_required_argument
+  error - The named parameter 'updatedAt' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:205:13 - missing_required_argument
+  error - The named parameter 'price' isn't defined - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:209:15 - undefined_named_parameter
+  error - The returned type 'BarcodeLookupResult' isn't returnable from a 'Future<BarcodeLookupResult>' function, as required by the closure's context - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:285:18 - return_of_invalid_type_from_closure
+  error - The named parameter 'createdAt' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:286:13 - missing_required_argument
+  error - The named parameter 'currentStock' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:286:13 - missing_required_argument
+  error - The named parameter 'salePriceCents' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:286:13 - missing_required_argument
+  error - The named parameter 'tenantId' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:286:13 - missing_required_argument
+  error - The named parameter 'updatedAt' is required, but there's no corresponding argument - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:286:13 - missing_required_argument
+  error - The named parameter 'price' isn't defined - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:290:15 - undefined_named_parameter
+  error - The argument type 'String?' can't be assigned to the parameter type 'String'.  - test\features\barcode\widgets\desktop_usb_scanner_dedup_test.dart:302:39 - argument_type_not_assignable
+  error - The class 'AppDatabase' doesn't have an unnamed constructor - test\features\inventory\services\stock_reservation_service_test.dart:19:18 - new_with_undefined_constructor_default
+  error - The method 'inDatabasePath' isn't defined for the type 'QueryExecutor' - test\features\inventory\services\stock_reservation_service_test.dart:20:23 - undefined_method
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\features\inventory\services\stock_reservation_service_test.dart:38:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\features\inventory\services\stock_reservation_service_test.dart:42:28 - argument_type_not_assignable
+  error - The name 'isNotNull' is defined in the libraries 'package:drift/src/runtime/query_builder/query_builder.dart (via package:drift/drift.dart)' and 'package:matcher/src/core_matchers.dart (via package:flutter_test/flutter_test.dart)' - test\features\inventory\services\stock_reservation_service_test.dart:58:38 - ambiguous_import
+  error - The name 'isNull' is defined in the libraries 'package:drift/src/runtime/query_builder/query_builder.dart (via package:drift/drift.dart)' and 'package:matcher/src/core_matchers.dart (via package:flutter_test/flutter_test.dart)' - test\features\inventory\services\stock_reservation_service_test.dart:59:34 - ambiguous_import
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\features\inventory\services\stock_reservation_service_test.dart:73:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\features\inventory\services\stock_reservation_service_test.dart:77:28 - argument_type_not_assignable
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\features\inventory\services\stock_reservation_service_test.dart:105:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\features\inventory\services\stock_reservation_service_test.dart:109:28 - argument_type_not_assignable
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\features\inventory\services\stock_reservation_service_test.dart:115:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\features\inventory\services\stock_reservation_service_test.dart:119:28 - argument_type_not_assignable
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\features\inventory\services\stock_reservation_service_test.dart:154:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\features\inventory\services\stock_reservation_service_test.dart:158:28 - argument_type_not_assignable
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\features\inventory\services\stock_reservation_service_test.dart:191:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\features\inventory\services\stock_reservation_service_test.dart:195:28 - argument_type_not_assignable
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\features\inventory\services\stock_reservation_service_test.dart:234:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\features\inventory\services\stock_reservation_service_test.dart:238:28 - argument_type_not_assignable
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\features\inventory\services\stock_reservation_service_test.dart:274:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\features\inventory\services\stock_reservation_service_test.dart:278:28 - argument_type_not_assignable
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\features\inventory\services\stock_reservation_service_test.dart:312:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\features\inventory\services\stock_reservation_service_test.dart:316:28 - argument_type_not_assignable
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\features\inventory\services\stock_reservation_service_test.dart:355:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\features\inventory\services\stock_reservation_service_test.dart:359:28 - argument_type_not_assignable
+  error - The argument type 'String' can't be assigned to the parameter type 'Value<String?>'.  - test\features\inventory\services\stock_reservation_service_test.dart:360:23 - argument_type_not_assignable
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\features\inventory\services\stock_reservation_service_test.dart:414:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\features\inventory\services\stock_reservation_service_test.dart:418:28 - argument_type_not_assignable
+  error - The named parameter 'sellingPrice' is required, but there's no corresponding argument - test\features\inventory\services\stock_reservation_service_test.dart:425:11 - missing_required_argument
+  error - The argument type 'int' can't be assigned to the parameter type 'Value<double>'.  - test\features\inventory\services\stock_reservation_service_test.dart:429:28 - argument_type_not_assignable
+warning - Unused import: 'package:flutter_bloc/flutter_bloc.dart' - test\features\staff\presentation\screens\staff_management_navigation_test.dart:8:8 - unused_import
+warning - Unused import: 'package:dukanx/features/staff/presentation/screens/staff_management_screen.dart' - test\features\staff\presentation\screens\staff_management_navigation_test.dart:16:8 - unused_import
+  error - The argument type 'DateTime' can't be assigned to the parameter type 'String'.  - test\features\staff\presentation\screens\staff_management_navigation_test.dart:28:20 - argument_type_not_assignable
+  error - The named parameter 'cognitoUserId' is required, but there's no corresponding argument - test\features\staff\presentation\screens\staff_management_navigation_test.dart:165:12 - missing_required_argument
+  error - The named parameter 'createdAt' is required, but there's no corresponding argument - test\features\staff\presentation\screens\staff_management_navigation_test.dart:165:12 - missing_required_argument
+  error - The named parameter 'createdBy' is required, but there's no corresponding argument - test\features\staff\presentation\screens\staff_management_navigation_test.dart:165:12 - missing_required_argument
+  error - The named parameter 'permissions' is required, but there's no corresponding argument - test\features\staff\presentation\screens\staff_management_navigation_test.dart:165:12 - missing_required_argument
+  error - The named parameter 'shiftTiming' is required, but there's no corresponding argument - test\features\staff\presentation\screens\staff_management_navigation_test.dart:165:12 - missing_required_argument
+  error - The named parameter 'updatedAt' is required, but there's no corresponding argument - test\features\staff\presentation\screens\staff_management_navigation_test.dart:165:12 - missing_required_argument
+  error - The argument type 'DateTime' can't be assigned to the parameter type 'String'.  - test\features\staff\presentation\screens\staff_management_navigation_test.dart:171:20 - argument_type_not_assignable
+warning - Unused import: 'package:dukanx/main.dart' - test\main_route_null_safety_test.dart:8:8 - unused_import
+
+flutter : 173 issues found. (ran in 17.9s)
+At line:1 char:1
++ flutter analyze --no-pub 2>&1 | ForEach-Object { $_ } | Out-File -Fil ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (173 issues found. (ran in 17.9s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

@@ -1,0 +1,9 @@
+2026-02-26 10:55:47 amplify-dukanx-dev-f1e01-deployment
+2026-03-05 16:40:31 bizmate-access-logs-dev-928341811981
+2026-03-05 16:40:47 bizmate-storage-dev-928341811981
+2026-02-26 12:51:20 bizmate-storage-prod-928341811981
+2026-02-12 19:31:20 do-not-delete-ssm-diagnosis-928341811981-ap-south-1-cu8iq
+2026-02-13 20:29:20 dukanx-updates-bucket
+2026-02-12 20:28:56 serverless-framework-deployments-ap-south-1-3ec19ca0-0fd1
+2026-02-12 20:25:17 serverless-framework-deployments-us-east-1-960f46e6-297f
+2026-02-12 18:39:30 ultra-billing-storage-2026

@@ -1,0 +1,36 @@
+{
+  "name": "transaction-validator",
+  "version": "1.0.0",
+  "description": "Backend validation for pharmacy compliance and transaction integrity",
+  "main": "index.mjs",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint *.mjs",
+    "deploy:dev": "sam build && sam deploy --config-env dev",
+    "deploy:prod": "sam build && sam deploy --config-env prod"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.450.0",
+    "@aws-sdk/lib-dynamodb": "^3.450.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "jest": "^29.7.0",
+    "eslint": "^8.55.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "pharmacy",
+    "compliance",
+    "drug-schedule",
+    "validation"
+  ],
+  "author": "DukanX Engineering",
+  "license": "UNLICENSED"
+}

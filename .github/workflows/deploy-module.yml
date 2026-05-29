@@ -1,0 +1,129 @@
+name: Deploy Business Module
+
+on:
+  push:
+    branches: [main, staging]
+    paths:
+      - 'my-backend/src/modules/**'
+      - 'my-backend/src/handlers/**'
+      - 'my-backend/src/services/**'
+  workflow_dispatch:
+    inputs:
+      module:
+        description: 'Module to deploy (e.g. grocery, pharmacy, restaurant)'
+        required: true
+        type: choice
+        options:
+          - grocery
+          - pharmacy
+          - restaurant
+          - clinic
+          - school-erp
+          - petrol-pump
+          - jewellery
+          - hardware
+          - clothing
+          - mobile-shop
+          - computer-shop
+          - wholesale
+          - auto-parts
+          - book-store
+          - vegetables-broker
+          - decoration-catering
+
+jobs:
+  detect-changed-modules:
+    name: Detect Changed Modules
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.detect.outputs.modules }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changed modules
+        id: detect
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "modules=[\"${{ inputs.module }}\"]" >> $GITHUB_OUTPUT
+          else
+            CHANGED=$(git diff --name-only HEAD~1 HEAD | \
+              grep -E '^my-backend/src/(modules|handlers|services)/' | \
+              sed 's|my-backend/src/modules/\([^/]*\)/.*|\1|' | \
+              sort -u | jq -R . | jq -sc .)
+            echo "modules=$CHANGED" >> $GITHUB_OUTPUT
+          fi
+
+  deploy-module:
+    name: Deploy ${{ matrix.module }}
+    needs: detect-changed-modules
+    if: needs.detect-changed-modules.outputs.modules != '[]'
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+    strategy:
+      matrix:
+        module: ${{ fromJson(needs.detect-changed-modules.outputs.modules) }}
+      max-parallel: 4   # Deploy up to 4 modules in parallel
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: my-backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: my-backend
+
+      - name: Run module tests
+        run: npm test -- --testPathPattern='src/__tests__/${{ matrix.module }}'
+        working-directory: my-backend
+        continue-on-error: false
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Deploy module stack (canary 10%)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          npx serverless compose deploy \
+            --stack dukanx-${{ matrix.module }} \
+            --stage prod \
+            --param deploymentPreference=Canary10Percent5Minutes
+        working-directory: my-backend
+        env:
+          INTERNAL_API_SECRET: ${{ secrets.INTERNAL_API_SECRET }}
+          MANIFEST_JWT_SECRET: ${{ secrets.MANIFEST_JWT_SECRET }}
+
+      - name: Deploy module stack (staging — full)
+        if: github.ref == 'refs/heads/staging'
+        run: |
+          npx serverless compose deploy \
+            --stack dukanx-${{ matrix.module }} \
+            --stage staging
+        working-directory: my-backend
+        env:
+          INTERNAL_API_SECRET: ${{ secrets.INTERNAL_API_SECRET }}
+          MANIFEST_JWT_SECRET: ${{ secrets.MANIFEST_JWT_SECRET }}
+
+      - name: Smoke test
+        run: |
+          MODULE=${{ matrix.module }}
+          STAGE=${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}
+          API_URL="${{ secrets.API_BASE_URL }}"
+          # Health check: verify the module's first endpoint responds 401 (auth required)
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${API_URL}/${MODULE}" -H "Content-Type: application/json")
+          if [ "$STATUS" != "401" ] && [ "$STATUS" != "403" ]; then
+            echo "Smoke test failed: expected 401/403, got $STATUS"
+            exit 1
+          fi
+          echo "Smoke test passed for $MODULE ($STATUS)"

@@ -1,0 +1,204 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudWatch Alarms for DukanX - Production Monitoring
+
+Parameters:
+  SNSTopicArn:
+    Type: String
+    Description: SNS Topic ARN for alarm notifications
+  ApiName:
+    Type: String
+    Default: DukanX
+    Description: API Gateway name
+
+Resources:
+  # SNS Topic (if not provided)
+  AlarmTopic:
+    Type: AWS::SNS::Topic
+    Condition: CreateSNSTopic
+    Properties:
+      TopicName: DukanX-Alerts
+      DisplayName: DukanX Production Alerts
+
+  # Alarm 1: High Error Rate (>1%)
+  HighErrorRateAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: DukanX-HighErrorRate
+      AlarmDescription: API Gateway 5XX error rate > 1% for 5 minutes
+      MetricName: 5XXError
+      Namespace: AWS/ApiGateway
+      Dimensions:
+        - Name: ApiName
+          Value: !Ref ApiName
+      Statistic: Sum
+      Period: 300  # 5 minutes
+      EvaluationPeriods: 1
+      Threshold: 10  # Adjust based on your traffic
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !If [CreateSNSTopic, !Ref AlarmTopic, !Ref SNSTopicArn]
+      OKActions:
+        - !If [CreateSNSTopic, !Ref AlarmTopic, !Ref SNSTopicArn]
+
+  # Alarm 2: Lambda Duration P95 > 3 seconds
+  LambdaDurationAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: DukanX-Lambda-Duration
+      AlarmDescription: Lambda P95 duration > 3 seconds
+      MetricName: Duration
+      Namespace: AWS/Lambda
+      Dimensions:
+        - Name: FunctionName
+          Value: !Sub '${ApiName}-*'  # Wildcard for all functions
+      ExtendedStatistic: p95
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 3000  # 3 seconds
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !If [CreateSNSTopic, !Ref AlarmTopic, !Ref SNSTopicArn]
+
+  # Alarm 3: Lambda Errors
+  LambdaErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: DukanX-Lambda-Errors
+      AlarmDescription: Lambda function errors detected
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !If [CreateSNSTopic, !Ref AlarmTopic, !Ref SNSTopicArn]
+
+  # Alarm 4: DynamoDB Throttling
+  DynamoDBThrottleAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: DukanX-DynamoDB-Throttling
+      AlarmDescription: DynamoDB throttling events detected
+      MetricName: ThrottledRequests
+      Namespace: AWS/DynamoDB
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !If [CreateSNSTopic, !Ref AlarmTopic, !Ref SNSTopicArn]
+
+  # Alarm 5: WAF Blocked Requests Spike
+  WAFBlockedRequestsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: DukanX-WAF-BlockedRequests
+      AlarmDescription: WAF blocked requests spike detected
+      MetricName: BlockedRequests
+      Namespace: AWS/WAFV2
+      Dimensions:
+        - Name: WebACL
+          Value: DukanX-API-WAF
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 100  # 100 blocked requests in 10 minutes
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !If [CreateSNSTopic, !Ref AlarmTopic, !Ref SNSTopicArn]
+
+  # Alarm 6: API Gateway Latency P99 > 5 seconds
+  APIGatewayLatencyAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: DukanX-API-Gateway-Latency
+      AlarmDescription: API Gateway P99 latency > 5 seconds
+      MetricName: Latency
+      Namespace: AWS/ApiGateway
+      Dimensions:
+        - Name: ApiName
+          Value: !Ref ApiName
+      ExtendedStatistic: p99
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 5000  # 5 seconds
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !If [CreateSNSTopic, !Ref AlarmTopic, !Ref SNSTopicArn]
+
+  # Alarm 7: Custom Metric - RID Generation Failures
+  RIDGenerationFailureAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: DukanX-RID-Generation-Failures
+      AlarmDescription: RID generation or validation failures detected
+      MetricName: RIDFailures
+      Namespace: DukanX/Custom
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !If [CreateSNSTopic, !Ref AlarmTopic, !Ref SNSTopicArn]
+
+  # Alarm 8: Custom Metric - Tenant Isolation Violations
+  TenantIsolationViolationAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: DukanX-Tenant-Isolation-Violations
+      AlarmDescription: Tenant isolation violations detected - potential security issue
+      MetricName: TenantIsolationViolations
+      Namespace: DukanX/Security
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !If [CreateSNSTopic, !Ref AlarmTopic, !Ref SNSTopicArn]
+
+  # Log Metric Filter for RID Failures
+  RIDFailureMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${ApiName}-*'
+      FilterPattern: '{ $.level = "ERROR" && $.message = "*RID*" }'
+      MetricTransformations:
+        - MetricNamespace: DukanX/Custom
+          MetricName: RIDFailures
+          MetricValue: '1'
+          DefaultValue: 0
+
+  # Log Metric Filter for Tenant Isolation Violations
+  TenantIsolationMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${ApiName}-*'
+      FilterPattern: '{ $.level = "ERROR" && $.message = "*Tenant mismatch*" }'
+      MetricTransformations:
+        - MetricNamespace: DukanX/Security
+          MetricName: TenantIsolationViolations
+          MetricValue: '1'
+          DefaultValue: 0
+
+Conditions:
+  CreateSNSTopic: !Equals [!Ref SNSTopicArn, '']
+
+Outputs:
+  AlarmTopicArn:
+    Description: SNS Topic ARN for alerts
+    Value: !If [CreateSNSTopic, !Ref AlarmTopic, !Ref SNSTopicArn]
+    Export:
+      Name: DukanX-Alarm-Topic-ARN

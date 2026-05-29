@@ -1,0 +1,163 @@
+# ============================================================================
+# DukanX — Serverless Compose (Multi-Stack Orchestration)
+# ============================================================================
+# Replaces the monolithic 270KB serverless.yml with per-module stacks.
+# Each module deploys independently. Core infrastructure is shared.
+#
+# Deploy all:    sls compose deploy
+# Deploy one:    sls compose deploy --stack dukanx-grocery
+# Remove one:    sls compose remove --stack dukanx-grocery
+#
+# Stack dependency order is enforced by `dependsOn`.
+# ============================================================================
+
+stages:
+  default:
+    params:
+      region: ap-south-1
+
+services:
+  # ── 1. Core Infrastructure ─────────────────────────────────────────────────
+  dukanx-core:
+    path: .
+    config: serverless.yml
+    params:
+      stage: ${sls:stage}
+
+  # ── 2. Shared Services ────────────────────────────────────────────────────
+  dukanx-shared:
+    path: .
+    config: serverless.shared.yml
+    dependsOn: dukanx-core
+    params:
+      stage: ${sls:stage}
+
+  # ── 3. Business Modules (independent, parallel-deployable) ────────────────
+
+  dukanx-grocery:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: grocery
+    dependsOn: dukanx-shared
+
+  dukanx-pharmacy:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: pharmacy
+    dependsOn: dukanx-shared
+
+  dukanx-restaurant:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: restaurant
+    dependsOn: dukanx-shared
+
+  dukanx-clinic:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: clinic
+    dependsOn: dukanx-shared
+
+  dukanx-school-erp:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: school-erp
+    dependsOn: dukanx-shared
+
+  dukanx-petrol-pump:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: petrol-pump
+    dependsOn: dukanx-shared
+
+  dukanx-jewellery:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: jewellery
+    dependsOn: dukanx-shared
+
+  dukanx-hardware:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: hardware
+    dependsOn: dukanx-shared
+
+  dukanx-clothing:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: clothing
+    dependsOn: dukanx-shared
+
+  dukanx-mobile-shop:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: mobile-shop
+    dependsOn: dukanx-shared
+
+  dukanx-computer-shop:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: computer-shop
+    dependsOn: dukanx-shared
+
+  dukanx-wholesale:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: wholesale
+    dependsOn: dukanx-shared
+
+  dukanx-auto-parts:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: auto-parts
+    dependsOn: dukanx-shared
+
+  dukanx-book-store:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: book-store
+    dependsOn: dukanx-shared
+
+  dukanx-vegetables-broker:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: vegetables-broker
+    dependsOn: dukanx-shared
+
+  dukanx-decoration-catering:
+    path: .
+    config: serverless.modules.yml
+    params:
+      stage: ${sls:stage}
+      module: decoration-catering
+    dependsOn: dukanx-shared

@@ -1,0 +1,522 @@
+# ============================================================================
+# School ERP Module — Lambda Function Definitions
+# Split from the original 181KB academic_coaching.ts monolith
+# Each handler file handles one domain entity
+# ============================================================================
+
+schoolStudents:
+  handler: src/handlers/modules/school-erp/school-students.listStudents
+  description: School ERP — Student management
+  events:
+    - httpApi:
+        path: /ac/students
+        method: GET
+    - httpApi:
+        path: /ac/students
+        method: POST
+    - httpApi:
+        path: /ac/students/{studentId}
+        method: GET
+    - httpApi:
+        path: /ac/students/{studentId}
+        method: PUT
+    - httpApi:
+        path: /ac/students/{studentId}
+        method: DELETE
+
+schoolBatches:
+  handler: src/handlers/modules/school-erp/school-batches.listBatches
+  description: School ERP — Batch management
+  events:
+    - httpApi:
+        path: /ac/batches
+        method: GET
+    - httpApi:
+        path: /ac/batches
+        method: POST
+    - httpApi:
+        path: /ac/batches/{batchId}
+        method: GET
+    - httpApi:
+        path: /ac/batches/{batchId}
+        method: PUT
+    - httpApi:
+        path: /ac/batches/{batchId}
+        method: DELETE
+
+schoolCourses:
+  handler: src/handlers/modules/school-erp/school-batches.listCourses
+  description: School ERP — Course management
+  events:
+    - httpApi:
+        path: /ac/courses
+        method: GET
+    - httpApi:
+        path: /ac/courses
+        method: POST
+    - httpApi:
+        path: /ac/courses/{courseId}
+        method: GET
+    - httpApi:
+        path: /ac/courses/{courseId}
+        method: PUT
+    - httpApi:
+        path: /ac/courses/{courseId}
+        method: DELETE
+
+schoolFees:
+  handler: src/handlers/modules/school-erp/school-fees.getStudentFees
+  description: School ERP — Fee management
+  events:
+    - httpApi:
+        path: /ac/fees
+        method: GET
+    - httpApi:
+        path: /ac/fees
+        method: POST
+    - httpApi:
+        path: /ac/fees/{feeId}
+        method: GET
+    - httpApi:
+        path: /ac/fees/{feeId}
+        method: PUT
+    - httpApi:
+        path: /ac/fees/batch-receipt
+        method: POST
+
+schoolAttendance:
+  handler: src/handlers/modules/school-erp/school-attendance.markAttendance
+  description: School ERP — Attendance management
+  events:
+    - httpApi:
+        path: /ac/attendance
+        method: GET
+    - httpApi:
+        path: /ac/attendance
+        method: POST
+    - httpApi:
+        path: /ac/attendance/{attendanceId}
+        method: GET
+
+schoolFaculty:
+  handler: src/handlers/modules/school-erp/school-faculty.listFaculty
+  description: School ERP — Faculty management
+  events:
+    - httpApi:
+        path: /ac/faculty
+        method: GET
+    - httpApi:
+        path: /ac/faculty
+        method: POST
+    - httpApi:
+        path: /ac/faculty/{facultyId}
+        method: GET
+    - httpApi:
+        path: /ac/faculty/{facultyId}
+        method: PUT
+    - httpApi:
+        path: /ac/faculty/{facultyId}
+        method: DELETE
+
+schoolExams:
+  handler: src/handlers/modules/school-erp/school-exams.listExams
+  description: School ERP — Exam and result management
+  events:
+    - httpApi:
+        path: /ac/exams
+        method: GET
+    - httpApi:
+        path: /ac/exams
+        method: POST
+    - httpApi:
+        path: /ac/exams/{examId}
+        method: GET
+    - httpApi:
+        path: /ac/exams/{examId}
+        method: PUT
+    - httpApi:
+        path: /ac/results
+        method: GET
+    - httpApi:
+        path: /ac/results
+        method: POST
+
+schoolTimetable:
+  handler: src/handlers/modules/school-erp/school-timetable.getTimetable
+  description: School ERP — Timetable management
+  events:
+    - httpApi:
+        path: /ac/timetable
+        method: GET
+    - httpApi:
+        path: /ac/timetable
+        method: POST
+    - httpApi:
+        path: /ac/timetable/{slotId}
+        method: PUT
+    - httpApi:
+        path: /ac/timetable/{slotId}
+        method: DELETE
+
+schoolMaterials:
+  handler: src/handlers/modules/school-erp/school-materials.listMaterials
+  description: School ERP — Study material management
+  events:
+    - httpApi:
+        path: /ac/materials
+        method: GET
+    - httpApi:
+        path: /ac/materials
+        method: POST
+    - httpApi:
+        path: /ac/materials/{materialId}
+        method: DELETE
+    - httpApi:
+        path: /ac/materials/presign
+        method: POST
+
+schoolCommunication:
+  handler: src/handlers/modules/school-erp/school-communication.sendNotification
+  description: School ERP — SMS/Email/WhatsApp notifications
+  events:
+    - httpApi:
+        path: /ac/communicate
+        method: POST
+    - httpApi:
+        path: /ac/communicate/bulk
+        method: POST
+
+schoolReports:
+  handler: src/handlers/modules/school-erp/school-dashboard.getDashboard
+  description: School ERP — Reports and analytics
+  events:
+    - httpApi:
+        path: /ac/dashboard
+        method: GET
+    - httpApi:
+        path: /ac/reports
+        method: GET
+    - httpApi:
+        path: /ac/reports/financial
+        method: GET
+
+schoolTransport:
+  handler: src/handlers/ac-transport.handler
+  description: School ERP — Transport management
+  events:
+    - httpApi:
+        path: /ac/transport
+        method: GET
+    - httpApi:
+        path: /ac/transport
+        method: POST
+    - httpApi:
+        path: /ac/transport/{id}
+        method: GET
+    - httpApi:
+        path: /ac/transport/{id}
+        method: PUT
+    - httpApi:
+        path: /ac/transport/{id}
+        method: DELETE
+
+schoolHomework:
+  handler: src/handlers/modules/school-erp/school-homework.handler
+  description: School ERP — Homework assignment and submission management
+  events:
+    - httpApi:
+        path: /ac/homework
+        method: GET
+    - httpApi:
+        path: /ac/homework
+        method: POST
+    - httpApi:
+        path: /ac/homework/{homeworkId}
+        method: GET
+    - httpApi:
+        path: /ac/homework/{homeworkId}
+        method: PUT
+    - httpApi:
+        path: /ac/homework/{homeworkId}
+        method: DELETE
+    - httpApi:
+        path: /ac/homework/submissions
+        method: GET
+    - httpApi:
+        path: /ac/homework/submissions/{submissionId}
+        method: GET
+    - httpApi:
+        path: /ac/homework/submissions/{submissionId}/grade
+        method: POST
+    - httpApi:
+        path: /ac/homework/{homeworkId}/submit
+        method: POST
+
+schoolLessonPlans:
+  handler: src/handlers/modules/school-erp/school-lesson-plans.handler
+  description: School ERP — Lesson plan management
+  events:
+    - httpApi:
+        path: /ac/lesson-plans
+        method: GET
+    - httpApi:
+        path: /ac/lesson-plans
+        method: POST
+    - httpApi:
+        path: /ac/lesson-plans/{planId}
+        method: GET
+    - httpApi:
+        path: /ac/lesson-plans/{planId}
+        method: PUT
+    - httpApi:
+        path: /ac/lesson-plans/{planId}
+        method: DELETE
+
+schoolLeave:
+  handler: src/handlers/modules/school-erp/school-leave.handler
+  description: School ERP — Leave management for students and faculty
+  events:
+    - httpApi:
+        path: /ac/leave
+        method: GET
+    - httpApi:
+        path: /ac/leave
+        method: POST
+    - httpApi:
+        path: /ac/leave/pending
+        method: GET
+    - httpApi:
+        path: /ac/leave/balance
+        method: GET
+    - httpApi:
+        path: /ac/leave/{leaveId}
+        method: GET
+    - httpApi:
+        path: /ac/leave/{leaveId}
+        method: PUT
+    - httpApi:
+        path: /ac/leave/{leaveId}/approve
+        method: POST
+
+schoolLibrary:
+  handler: src/handlers/modules/school-erp/school-library.handler
+  description: School ERP — Library and book management
+  events:
+    - httpApi:
+        path: /ac/library
+        method: GET
+    - httpApi:
+        path: /ac/library/books
+        method: GET
+    - httpApi:
+        path: /ac/library/books
+        method: POST
+    - httpApi:
+        path: /ac/library/books/{bookId}
+        method: GET
+    - httpApi:
+        path: /ac/library/books/{bookId}
+        method: PUT
+    - httpApi:
+        path: /ac/library/issue
+        method: POST
+    - httpApi:
+        path: /ac/library/return
+        method: POST
+    - httpApi:
+        path: /ac/library/issued
+        method: GET
+    - httpApi:
+        path: /ac/library/student
+        method: GET
+
+schoolHostel:
+  handler: src/handlers/modules/school-erp/school-hostel.handler
+  description: School ERP — Hostel and room management
+  events:
+    - httpApi:
+        path: /ac/hostel
+        method: GET
+    - httpApi:
+        path: /ac/hostel/blocks
+        method: GET
+    - httpApi:
+        path: /ac/hostel/blocks
+        method: POST
+    - httpApi:
+        path: /ac/hostel/rooms
+        method: GET
+    - httpApi:
+        path: /ac/hostel/rooms
+        method: POST
+    - httpApi:
+        path: /ac/hostel/rooms/{roomId}
+        method: GET
+    - httpApi:
+        path: /ac/hostel/rooms/{roomId}
+        method: PUT
+    - httpApi:
+        path: /ac/hostel/allocate
+        method: POST
+    - httpApi:
+        path: /ac/hostel/residents
+        method: GET
+
+schoolPayslip:
+  handler: src/handlers/modules/school-erp/school-payslip.handler
+  description: School ERP — Payroll and payslip management
+  events:
+    - httpApi:
+        path: /ac/payslip
+        method: GET
+    - httpApi:
+        path: /ac/payslip
+        method: POST
+    - httpApi:
+        path: /ac/payslip/{payslipId}
+        method: GET
+    - httpApi:
+        path: /ac/payslip/{payslipId}/pdf
+        method: GET
+
+schoolAdmissions:
+  handler: src/handlers/modules/school-erp/school-admissions.handler
+  description: School ERP — Admission application management
+  events:
+    - httpApi:
+        path: /ac/admissions
+        method: GET
+    - httpApi:
+        path: /ac/admissions
+        method: POST
+    - httpApi:
+        path: /ac/admissions/{admissionId}
+        method: GET
+    - httpApi:
+        path: /ac/admissions/{admissionId}
+        method: PUT
+    - httpApi:
+        path: /ac/admissions/{admissionId}/review
+        method: POST
+
+schoolNotifications:
+  handler: src/handlers/modules/school-erp/school-notifications.handler
+  description: School ERP — In-app notifications for students and faculty
+  events:
+    - httpApi:
+        path: /ac/notifications
+        method: GET
+    - httpApi:
+        path: /ac/notifications/{notificationId}/read
+        method: PUT
+    - httpApi:
+        path: /ac/notifications/read-all
+        method: PUT
+
+schoolFacultyProfile:
+  handler: src/handlers/modules/school-erp/school-faculty.getMyProfile
+  description: School ERP — Faculty self-profile endpoint
+  events:
+    - httpApi:
+        path: /ac/faculty/me
+        method: GET
+    - httpApi:
+        path: /ac/faculty/me
+        method: PUT
+
+schoolFeesExtended:
+  handler: src/handlers/modules/school-erp/school-fees.handler
+  description: School ERP — Extended fee endpoints (pending, receipts, structure)
+  events:
+    - httpApi:
+        path: /ac/fees/pending
+        method: GET
+    - httpApi:
+        path: /ac/fees/receipts
+        method: GET
+    - httpApi:
+        path: /ac/fees/structure
+        method: GET
+    - httpApi:
+        path: /ac/fees/structure
+        method: POST
+    - httpApi:
+        path: /ac/fees/{feeId}/pay
+        method: POST
+
+schoolConfig:
+  handler: src/handlers/modules/school-erp/school-config.handler
+  description: School ERP — Institution configuration and settings
+  events:
+    - httpApi:
+        path: /ac/config
+        method: GET
+    - httpApi:
+        path: /ac/config
+        method: PUT
+    - httpApi:
+        path: /ac/config/academic-year
+        method: GET
+    - httpApi:
+        path: /ac/config/academic-year
+        method: PUT
+
+schoolHostel:
+  handler: src/handlers/modules/school-erp/school-hostel.handler
+  description: School ERP — Hostel blocks, rooms and resident allocation
+  events:
+    - httpApi:
+        path: /ac/hostel
+        method: GET
+    - httpApi:
+        path: /ac/hostel/blocks
+        method: GET
+    - httpApi:
+        path: /ac/hostel/blocks
+        method: POST
+    - httpApi:
+        path: /ac/hostel/rooms
+        method: GET
+    - httpApi:
+        path: /ac/hostel/rooms
+        method: POST
+    - httpApi:
+        path: /ac/hostel/allocate
+        method: POST
+    - httpApi:
+        path: /ac/hostel/residents
+        method: GET
+
+schoolPayslip:
+  handler: src/handlers/modules/school-erp/school-payslip.handler
+  description: School ERP — Staff payslip generation and payroll management
+  events:
+    - httpApi:
+        path: /ac/payslip
+        method: GET
+    - httpApi:
+        path: /ac/payslip
+        method: POST
+    - httpApi:
+        path: /ac/payslip/{payslipId}
+        method: GET
+
+schoolLessonPlans:
+  handler: src/handlers/modules/school-erp/school-lesson-plans.handler
+  description: School ERP — Teacher lesson plan CRUD
+  events:
+    - httpApi:
+        path: /ac/lesson-plans
+        method: GET
+    - httpApi:
+        path: /ac/lesson-plans
+        method: POST
+    - httpApi:
+        path: /ac/lesson-plans/{planId}
+        method: GET
+    - httpApi:
+        path: /ac/lesson-plans/{planId}
+        method: PUT
+    - httpApi:
+        path: /ac/lesson-plans/{planId}
+        method: DELETE

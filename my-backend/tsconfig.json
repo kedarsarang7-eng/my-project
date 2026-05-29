@@ -1,0 +1,46 @@
+{
+    "compilerOptions": {
+        "target": "ES2024",
+        "module": "commonjs",
+        "lib": [
+            "ES2024"
+        ],
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "ignoreDeprecations": "5.0",
+        "moduleResolution": "node",
+        "baseUrl": "./src",
+        "paths": {
+            "@services/*": [
+                "services/*"
+            ],
+            "@middleware/*": [
+                "middleware/*"
+            ],
+            "@config/*": [
+                "config/*"
+            ],
+            "@types/*": [
+                "types/*"
+            ],
+            "@utils/*": [
+                "utils/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

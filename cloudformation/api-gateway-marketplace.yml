@@ -1,0 +1,488 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Dukan Marketplace API Gateway - REST + WebSocket APIs'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: prod
+    AllowedValues: [dev, staging, prod]
+  
+  CognitoUserPoolArn:
+    Type: String
+    Description: ARN of the Cognito Business User Pool
+  
+  CognitoCustomerPoolArn:
+    Type: String
+    Description: ARN of the Cognito Customer User Pool
+  
+  LambdaExecutionRoleArn:
+    Type: String
+    Description: ARN of the Lambda execution role
+
+Resources:
+  # ============================================================
+  # REST API Gateway
+  # ============================================================
+  
+  MarketplaceRestApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub 'dukan-marketplace-rest-${Environment}'
+      ProtocolType: HTTP
+      Target: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketplace-routes-handler'
+      CorsConfiguration:
+        AllowOrigins:
+          - '*'
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+          - X-Amz-Date
+          - Authorization
+          - X-Api-Key
+          - X-Amz-Security-Token
+          - X-Requested-With
+        ExposeHeaders:
+          - X-Request-Id
+        MaxAge: 86400
+        AllowCredentials: true
+
+  # Authorizer for Business Users
+  BusinessAuthorizer:
+    Type: AWS::ApiGatewayV2::Authorizer
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      AuthorizerType: JWT
+      IdentitySource:
+        - '$request.header.Authorization'
+      JwtConfiguration:
+        Audience:
+          - !Ref CognitoUserPoolArn
+        Issuer: !Sub 'https://cognito-idp.${AWS::Region}.amazonaws.com/${CognitoUserPoolArn}'
+      Name: BusinessAuthorizer
+
+  # Authorizer for Customers
+  CustomerAuthorizer:
+    Type: AWS::ApiGatewayV2::Authorizer
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      AuthorizerType: JWT
+      IdentitySource:
+        - '$request.header.Authorization'
+      JwtConfiguration:
+        Audience:
+          - !Ref CognitoCustomerPoolArn
+        Issuer: !Sub 'https://cognito-idp.${AWS::Region}.amazonaws.com/${CognitoCustomerPoolArn}'
+      Name: CustomerAuthorizer
+
+  # API Routes - Store
+  StoreConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'POST /v1/businesses/{businessId}/connect'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CustomerAuthorizer
+      Target: !Sub 'integrations/${StoreConnectIntegration}'
+
+  StoreConnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketplace-store-handler'
+      PayloadFormatVersion: '2.0'
+      IntegrationMethod: POST
+
+  StoreProfileRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'GET /v1/businesses/{businessId}/profile'
+      AuthorizationType: NONE
+      Target: !Sub 'integrations/${StoreProfileIntegration}'
+
+  StoreProfileIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketplace-store-handler'
+      PayloadFormatVersion: '2.0'
+
+  # API Routes - Inventory
+  ProductsListRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'GET /v1/businesses/{businessId}/products'
+      AuthorizationType: NONE
+      Target: !Sub 'integrations/${InventoryIntegration}'
+
+  ProductsSearchRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'GET /v1/businesses/{businessId}/products/search'
+      AuthorizationType: NONE
+      Target: !Sub 'integrations/${InventoryIntegration}'
+
+  ProductDetailRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'GET /v1/businesses/{businessId}/products/{productId}'
+      AuthorizationType: NONE
+      Target: !Sub 'integrations/${InventoryIntegration}'
+
+  InventorySyncRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'POST /v1/businesses/{businessId}/inventory/sync'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref BusinessAuthorizer
+      Target: !Sub 'integrations/${InventoryIntegration}'
+
+  InventoryIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketplace-inventory-handler'
+      PayloadFormatVersion: '2.0'
+
+  # API Routes - Cart
+  CartGetRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'GET /v1/businesses/{businessId}/cart'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CustomerAuthorizer
+      Target: !Sub 'integrations/${CartIntegration}'
+
+  CartAddItemRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'POST /v1/businesses/{businessId}/cart/items'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CustomerAuthorizer
+      Target: !Sub 'integrations/${CartIntegration}'
+
+  CartUpdateItemRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'PATCH /v1/businesses/{businessId}/cart/items/{itemId}'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CustomerAuthorizer
+      Target: !Sub 'integrations/${CartIntegration}'
+
+  CartRemoveItemRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'DELETE /v1/businesses/{businessId}/cart/items/{itemId}'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CustomerAuthorizer
+      Target: !Sub 'integrations/${CartIntegration}'
+
+  CartClearRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'DELETE /v1/businesses/{businessId}/cart'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CustomerAuthorizer
+      Target: !Sub 'integrations/${CartIntegration}'
+
+  CartApplyCouponRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'POST /v1/businesses/{businessId}/cart/coupon'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CustomerAuthorizer
+      Target: !Sub 'integrations/${CartIntegration}'
+
+  CartRemoveCouponRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'DELETE /v1/businesses/{businessId}/cart/coupon'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CustomerAuthorizer
+      Target: !Sub 'integrations/${CartIntegration}'
+
+  CartIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketplace-cart-handler'
+      PayloadFormatVersion: '2.0'
+
+  # API Routes - Orders
+  OrderPlaceRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'POST /v1/businesses/{businessId}/orders'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CustomerAuthorizer
+      Target: !Sub 'integrations/${OrdersIntegration}'
+
+  OrdersListRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'GET /v1/businesses/{businessId}/orders'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref BusinessAuthorizer
+      Target: !Sub 'integrations/${OrdersIntegration}'
+
+  OrderDetailRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'GET /v1/businesses/{businessId}/orders/{orderId}'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref BusinessAuthorizer
+      Target: !Sub 'integrations/${OrdersIntegration}'
+
+  OrderStatusUpdateRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'PATCH /v1/businesses/{businessId}/orders/{orderId}/status'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref BusinessAuthorizer
+      Target: !Sub 'integrations/${OrdersIntegration}'
+
+  OrderCancelRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'POST /v1/businesses/{businessId}/orders/{orderId}/cancel'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CustomerAuthorizer
+      Target: !Sub 'integrations/${OrdersIntegration}'
+
+  CustomerOrdersRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'GET /v1/customers/me/orders'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CustomerAuthorizer
+      Target: !Sub 'integrations/${OrdersIntegration}'
+
+  OrdersIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketplace-orders-handler'
+      PayloadFormatVersion: '2.0'
+
+  # API Routes - Delivery
+  DeliveryPartnersListRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'GET /v1/businesses/{businessId}/delivery-partners'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref BusinessAuthorizer
+      Target: !Sub 'integrations/${DeliveryIntegration}'
+
+  DeliveryPartnerCreateRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'POST /v1/businesses/{businessId}/delivery-partners'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref BusinessAuthorizer
+      Target: !Sub 'integrations/${DeliveryIntegration}'
+
+  DeliveryPartnerLocationRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'POST /v1/businesses/{businessId}/delivery-partners/{partnerId}/location'
+      AuthorizationType: NONE
+      Target: !Sub 'integrations/${DeliveryIntegration}'
+
+  OrderTrackingRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      RouteKey: 'GET /v1/businesses/{businessId}/orders/{orderId}/tracking'
+      AuthorizationType: JWT
+      AuthorizerId: !Ref CustomerAuthorizer
+      Target: !Sub 'integrations/${DeliveryIntegration}'
+
+  DeliveryIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketplace-delivery-handler'
+      PayloadFormatVersion: '2.0'
+
+  # Stage
+  MarketplaceStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref MarketplaceRestApi
+      StageName: !Ref Environment
+      AutoDeploy: true
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 1000
+        ThrottlingRateLimit: 500
+      AccessLogSettings:
+        DestinationArn: !GetAtt ApiGatewayAccessLogGroup.Arn
+        Format: '{ "requestId":"$context.requestId", "ip":"$context.identity.sourceIp", "requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod", "routeKey":"$context.routeKey", "status":"$context.status", "responseLength":"$context.responseLength", "integrationLatency":"$context.integrationLatency" }'
+
+  ApiGatewayAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/apigateway/marketplace-${Environment}'
+      RetentionInDays: 30
+
+  # ============================================================
+  # WebSocket API Gateway
+  # ============================================================
+
+  MarketplaceWebSocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub 'dukan-marketplace-ws-${Environment}'
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: '$request.body.action'
+
+  # WebSocket Routes
+  WsConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceWebSocketApi
+      RouteKey: $connect
+      AuthorizationType: NONE
+      Target: !Sub 'integrations/${WsConnectIntegration}'
+
+  WsConnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MarketplaceWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketplace-ws-handler'
+      IntegrationMethod: POST
+
+  WsDisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceWebSocketApi
+      RouteKey: $disconnect
+      Target: !Sub 'integrations/${WsDisconnectIntegration}'
+
+  WsDisconnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MarketplaceWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketplace-ws-handler'
+      IntegrationMethod: POST
+
+  WsDefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceWebSocketApi
+      RouteKey: $default
+      Target: !Sub 'integrations/${WsDefaultIntegration}'
+
+  WsDefaultIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MarketplaceWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketplace-ws-handler'
+      IntegrationMethod: POST
+
+  # Custom Routes
+  WsSubscribeRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceWebSocketApi
+      RouteKey: subscribe
+      Target: !Sub 'integrations/${WsSubscribeIntegration}'
+
+  WsSubscribeIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MarketplaceWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketplace-ws-handler'
+      IntegrationMethod: POST
+
+  WsOrderUpdateRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref MarketplaceWebSocketApi
+      RouteKey: order-status-update
+      Target: !Sub 'integrations/${WsOrderUpdateIntegration}'
+
+  WsOrderUpdateIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref MarketplaceWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:marketplace-ws-handler'
+      IntegrationMethod: POST
+
+  # WebSocket Stage
+  WebSocketStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref MarketplaceWebSocketApi
+      StageName: !Ref Environment
+      AutoDeploy: true
+
+  # WebSocket Deployment
+  WebSocketDeployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+      - WsConnectRoute
+      - WsDisconnectRoute
+      - WsDefaultRoute
+      - WsSubscribeRoute
+      - WsOrderUpdateRoute
+    Properties:
+      ApiId: !Ref MarketplaceWebSocketApi
+      StageName: !Ref Environment
+
+Outputs:
+  RestApiEndpoint:
+    Description: REST API Endpoint
+    Value: !Sub '${MarketplaceRestApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+  
+  WebSocketApiEndpoint:
+    Description: WebSocket API Endpoint
+    Value: !Sub '${MarketplaceWebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+  
+  ApiGatewayRestApiId:
+    Description: REST API ID
+    Value: !Ref MarketplaceRestApi
+    Export:
+      Name: !Sub 'MarketplaceRestApiId-${Environment}'
+  
+  ApiGatewayWebSocketApiId:
+    Description: WebSocket API ID
+    Value: !Ref MarketplaceWebSocketApi
+    Export:
+      Name: !Sub 'MarketplaceWebSocketApiId-${Environment}'

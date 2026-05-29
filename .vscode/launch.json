@@ -1,0 +1,148 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Lambda — Billing Handler",
+            "runtimeExecutable": "node",
+            "runtimeArgs": ["--experimental-vm-modules"],
+            "program": "${workspaceFolder}/local-cloud/scripts/invoke-lambda.mjs",
+            "args": [
+                "billingHandler",
+                "{\"httpMethod\":\"GET\",\"path\":\"/billing/plans\",\"headers\":{\"authorization\":\"Bearer test\"},\"requestContext\":{\"http\":{\"method\":\"GET\",\"path\":\"/billing/plans\",\"sourceIp\":\"127.0.0.1\",\"userAgent\":\"vscode-debug\"}}}"
+            ],
+            "env": {
+                "AWS_ENDPOINT_URL": "http://localhost:4566",
+                "AWS_REGION": "ap-south-1",
+                "AWS_ACCESS_KEY_ID": "test",
+                "AWS_SECRET_ACCESS_KEY": "test",
+                "DYNAMODB_TABLE_BILLING": "dukan-saas-dev-billing",
+                "DYNAMODB_TABLE_TENANTS": "dukan-saas-dev-tenants",
+                "DYNAMODB_TABLE_AUDIT": "dukan-saas-dev-audit-logs",
+                "ENVIRONMENT": "dev"
+            },
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Lambda — Tenant Handler",
+            "runtimeExecutable": "node",
+            "runtimeArgs": ["--experimental-vm-modules"],
+            "program": "${workspaceFolder}/local-cloud/scripts/invoke-lambda.mjs",
+            "args": [
+                "tenantHandler",
+                "{\"httpMethod\":\"GET\",\"path\":\"/tenants\",\"headers\":{\"authorization\":\"Bearer test\"},\"requestContext\":{\"http\":{\"method\":\"GET\",\"path\":\"/tenants\",\"sourceIp\":\"127.0.0.1\",\"userAgent\":\"vscode-debug\"}}}"
+            ],
+            "env": {
+                "AWS_ENDPOINT_URL": "http://localhost:4566",
+                "AWS_REGION": "ap-south-1",
+                "AWS_ACCESS_KEY_ID": "test",
+                "AWS_SECRET_ACCESS_KEY": "test",
+                "DYNAMODB_TABLE_TENANTS": "dukan-saas-dev-tenants",
+                "DYNAMODB_TABLE_AUDIT": "dukan-saas-dev-audit-logs",
+                "ENVIRONMENT": "dev"
+            },
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Lambda — User Handler",
+            "runtimeExecutable": "node",
+            "runtimeArgs": ["--experimental-vm-modules"],
+            "program": "${workspaceFolder}/local-cloud/scripts/invoke-lambda.mjs",
+            "args": [
+                "userHandler",
+                "{\"httpMethod\":\"GET\",\"path\":\"/users\",\"headers\":{\"authorization\":\"Bearer test\"},\"requestContext\":{\"http\":{\"method\":\"GET\",\"path\":\"/users\",\"sourceIp\":\"127.0.0.1\",\"userAgent\":\"vscode-debug\"}}}"
+            ],
+            "env": {
+                "AWS_ENDPOINT_URL": "http://localhost:4566",
+                "AWS_REGION": "ap-south-1",
+                "AWS_ACCESS_KEY_ID": "test",
+                "AWS_SECRET_ACCESS_KEY": "test",
+                "DYNAMODB_TABLE_USERS": "dukan-saas-dev-users",
+                "DYNAMODB_TABLE_TENANTS": "dukan-saas-dev-tenants",
+                "COGNITO_USER_POOL_ID": "local-pool",
+                "ENVIRONMENT": "dev"
+            },
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Lambda — Custom Handler",
+            "runtimeExecutable": "node",
+            "runtimeArgs": ["--experimental-vm-modules"],
+            "program": "${workspaceFolder}/local-cloud/scripts/invoke-lambda.mjs",
+            "args": ["${input:handlerName}", "${input:eventJson}"],
+            "env": {
+                "AWS_ENDPOINT_URL": "http://localhost:4566",
+                "AWS_REGION": "ap-south-1",
+                "AWS_ACCESS_KEY_ID": "test",
+                "AWS_SECRET_ACCESS_KEY": "test",
+                "ENVIRONMENT": "dev"
+            },
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run Smoke Tests",
+            "program": "${workspaceFolder}/local-cloud/scripts/smoke-test.mjs",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Generate Local Auth Token",
+            "program": "${workspaceFolder}/local-cloud/scripts/local-auth.mjs",
+            "args": ["token"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Jest — Lambda Tests",
+            "program": "${workspaceFolder}/lambda/node_modules/.bin/jest",
+            "args": ["--runInBand", "--detectOpenHandles"],
+            "cwd": "${workspaceFolder}/lambda",
+            "console": "integratedTerminal",
+            "env": {
+                "AWS_ENDPOINT_URL": "http://localhost:4566",
+                "AWS_REGION": "ap-south-1",
+                "NODE_ENV": "test"
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "handlerName",
+            "type": "promptString",
+            "description": "Lambda handler directory name (e.g., billingHandler)"
+        },
+        {
+            "id": "eventJson",
+            "type": "promptString",
+            "description": "Event JSON string"
+        }
+    ]
+}

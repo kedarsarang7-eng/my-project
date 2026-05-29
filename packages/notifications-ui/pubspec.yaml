@@ -1,0 +1,38 @@
+name: notifications_ui
+description: >
+  Shared Flutter widgets for the Unified Notification System (UNS).
+  Provides the canonical bell, drawer, toast, and preferences page consumed
+  by DukanX and every Sub_App (school admin / teacher / student / etc.).
+  Pinned by `phase3-architecture.md` §13.3 and validated by REQ 11.
+publish_to: 'none'
+
+version: 0.1.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.10.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Canonical UNS client surface (subscribe / emit / onNotification / replay).
+  # Path-based so the workspace can iterate on both packages together.
+  notifications_sdk:
+    path: ../notifications-sdk
+
+  # HTTP transport for the thin UI-side client (markAsRead, list, unread
+  # count, get/set user preferences). Same major as the SDK to keep the
+  # consumer's resolved version stable.
+  http: ^1.2.0
+
+  # Time-zone aware Quiet_Hours formatting on the preferences page.
+  intl: ">=0.19.0 <0.21.0"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,859 @@
+# FuelPOS - Petrol Pump Management System
+# SAM Template Snippet to be merged with main template.yaml
+# This adds DynamoDB tables, Lambda functions, and API Gateway routes
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: FuelPOS - Petrol Pump Dashboard Backend Resources
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Architectures:
+      - arm64
+    MemorySize: 512
+    Timeout: 29
+    Tracing: Active
+    Environment:
+      Variables:
+        ENVIRONMENT: !Ref Environment
+        AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
+
+Resources:
+  # ============================================================================
+  # WEBSOCKET API
+  # ============================================================================
+
+  FuelPOSWebSocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub '${AWS::StackName}-fuelpos-websocket'
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: '$request.body.action'
+
+  FuelPOSWebSocketStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref FuelPOSWebSocketApi
+      StageName: prod
+      AutoDeploy: true
+
+  # ============================================================================
+  # DYNAMODB TABLES
+  # ============================================================================
+
+  FuelPOSTransactionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-fuelpos-transactions'
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+        - AttributeName: GSI2PK
+          AttributeType: S
+        - AttributeName: GSI2SK
+          AttributeType: S
+        # P0-8 FIX: GSI3 for razorpayOrderId lookups
+        - AttributeName: GSI3PK
+          AttributeType: S
+        - AttributeName: GSI3SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_DateRange
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI_Vehicle
+          KeySchema:
+            - AttributeName: GSI2PK
+              KeyType: HASH
+            - AttributeName: GSI2SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        # P0-8 FIX: GSI for webhook lookups by razorpayOrderId (replaces expensive Scan)
+        - IndexName: GSI_RazorpayOrder
+          KeySchema:
+            - AttributeName: GSI3PK
+              KeyType: HASH
+            - AttributeName: GSI3SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: pendingTTL
+        Enabled: true
+      Tags:
+        - Key: Application
+          Value: FuelPOS
+        - Key: Environment
+          Value: !Ref Environment
+
+  FuelPOSInventoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-fuelpos-inventory'
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_AlertStatus
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Application
+          Value: FuelPOS
+        - Key: Environment
+          Value: !Ref Environment
+
+  FuelPOSDailySummaryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-fuelpos-daily-summary'
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_MonthlyReport
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Application
+          Value: FuelPOS
+        - Key: Environment
+          Value: !Ref Environment
+
+  FuelPOSFuelChartTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-fuelpos-fuel-chart'
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Application
+          Value: FuelPOS
+        - Key: Environment
+          Value: !Ref Environment
+
+  FuelPOSPricesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-fuelpos-prices'
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_EffectiveDate
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Application
+          Value: FuelPOS
+        - Key: Environment
+          Value: !Ref Environment
+
+  FuelPOSEmployeesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-fuelpos-employees'
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_OnDuty
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Application
+          Value: FuelPOS
+        - Key: Environment
+          Value: !Ref Environment
+
+  FuelPOSLicenseProfilesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-fuelpos-license-profiles'
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_LicenseKey
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Application
+          Value: FuelPOS
+        - Key: Environment
+          Value: !Ref Environment
+
+  # ============================================================================
+  # PAYMENT & WEBSOCKET TABLES
+  # ============================================================================
+
+  FuelPOSWebSocketConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-fuelpos-websocket-connections'
+      AttributeDefinitions:
+        - AttributeName: connectionId
+          AttributeType: S
+        - AttributeName: staffId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: connectionId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_StaffId
+          KeySchema:
+            - AttributeName: staffId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: Application
+          Value: FuelPOS
+        - Key: Environment
+          Value: !Ref Environment
+
+  FuelPOSOwnersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-fuelpos-owners'
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Application
+          Value: FuelPOS
+        - Key: Environment
+          Value: !Ref Environment
+
+  # ============================================================================
+  # LAMBDA FUNCTIONS
+  # ============================================================================
+
+  FuelPOSDashboardSummaryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-dashboard-summary'
+      CodeUri: lambda/fuelposHandler/
+      Handler: getDashboardSummary.handler
+      Description: Returns dashboard summary KPIs for petrol pump
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_DAILY_SUMMARY: !Ref FuelPOSDailySummaryTable
+          DYNAMODB_TABLE_INVENTORY: !Ref FuelPOSInventoryTable
+          DYNAMODB_TABLE_LICENSE: !Ref FuelPOSLicenseProfilesTable
+      Events:
+        DashboardSummaryApi:
+          Type: HttpApi
+          Properties:
+            Path: /dashboard/summary
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+              Resource:
+                - !GetAtt FuelPOSDailySummaryTable.Arn
+                - !GetAtt FuelPOSInventoryTable.Arn
+                - !GetAtt FuelPOSLicenseProfilesTable.Arn
+                - !Sub '${FuelPOSDailySummaryTable.Arn}/index/*'
+                - !Sub '${FuelPOSInventoryTable.Arn}/index/*'
+                - !Sub '${FuelPOSLicenseProfilesTable.Arn}/index/*'
+
+  FuelPOSFuelChartFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-fuel-chart'
+      CodeUri: lambda/fuelposHandler/
+      Handler: getFuelChart.handler
+      Description: Returns hourly fuel sales chart data
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_FUEL_CHART: !Ref FuelPOSFuelChartTable
+          DYNAMODB_TABLE_LICENSE: !Ref FuelPOSLicenseProfilesTable
+      Events:
+        FuelChartApi:
+          Type: HttpApi
+          Properties:
+            Path: /dashboard/fuel-chart
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Query
+                - dynamodb:GetItem
+              Resource:
+                - !GetAtt FuelPOSFuelChartTable.Arn
+                - !GetAtt FuelPOSLicenseProfilesTable.Arn
+                - !Sub '${FuelPOSFuelChartTable.Arn}/index/*'
+                - !Sub '${FuelPOSLicenseProfilesTable.Arn}/index/*'
+
+  FuelPOSRevenueBreakdownFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-revenue-breakdown'
+      CodeUri: lambda/fuelposHandler/
+      Handler: getRevenueBreakdown.handler
+      Description: Returns revenue breakdown by segment
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_DAILY_SUMMARY: !Ref FuelPOSDailySummaryTable
+          DYNAMODB_TABLE_LICENSE: !Ref FuelPOSLicenseProfilesTable
+      Events:
+        RevenueBreakdownApi:
+          Type: HttpApi
+          Properties:
+            Path: /dashboard/revenue-breakdown
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+              Resource:
+                - !GetAtt FuelPOSDailySummaryTable.Arn
+                - !GetAtt FuelPOSLicenseProfilesTable.Arn
+
+  FuelPOSTransactionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-transactions'
+      CodeUri: lambda/fuelposHandler/
+      Handler: getTransactions.handler
+      Description: Returns paginated transaction list
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_TRANSACTIONS: !Ref FuelPOSTransactionsTable
+          DYNAMODB_TABLE_DAILY_SUMMARY: !Ref FuelPOSDailySummaryTable
+          DYNAMODB_TABLE_LICENSE: !Ref FuelPOSLicenseProfilesTable
+      Events:
+        TransactionsApi:
+          Type: HttpApi
+          Properties:
+            Path: /transactions
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Query
+                - dynamodb:GetItem
+              Resource:
+                - !GetAtt FuelPOSTransactionsTable.Arn
+                - !GetAtt FuelPOSDailySummaryTable.Arn
+                - !GetAtt FuelPOSLicenseProfilesTable.Arn
+                - !Sub '${FuelPOSTransactionsTable.Arn}/index/*'
+
+  FuelPOSAlertsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-alerts'
+      CodeUri: lambda/fuelposHandler/
+      Handler: getAlerts.handler
+      Description: Returns station alerts and status
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_INVENTORY: !Ref FuelPOSInventoryTable
+          DYNAMODB_TABLE_PRICES: !Ref FuelPOSPricesTable
+          DYNAMODB_TABLE_EMPLOYEES: !Ref FuelPOSEmployeesTable
+          DYNAMODB_TABLE_LICENSE: !Ref FuelPOSLicenseProfilesTable
+      Events:
+        AlertsApi:
+          Type: HttpApi
+          Properties:
+            Path: /dashboard/alerts
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+              Resource:
+                - !GetAtt FuelPOSInventoryTable.Arn
+                - !GetAtt FuelPOSPricesTable.Arn
+                - !GetAtt FuelPOSEmployeesTable.Arn
+                - !GetAtt FuelPOSLicenseProfilesTable.Arn
+                - !Sub '${FuelPOSInventoryTable.Arn}/index/*'
+                - !Sub '${FuelPOSEmployeesTable.Arn}/index/*'
+
+  # ============================================================================
+  # PAYMENT & QR FUNCTIONS
+  # ============================================================================
+
+  FuelPOSGenerateQRFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-generate-qr'
+      CodeUri: lambda/fuelposHandler/
+      Handler: generateQR.handler
+      Description: Generate dynamic QR code for payment
+      MemorySize: 512
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_TRANSACTIONS: !Ref FuelPOSTransactionsTable
+          DYNAMODB_TABLE_LICENSE: !Ref FuelPOSLicenseProfilesTable
+          DYNAMODB_TABLE_OWNERS: !Ref FuelPOSOwnersTable
+          RAZORPAY_KEY_ID: '{{resolve:secretsmanager:${AWS::StackName}/razorpay:SecretString:keyId}}'
+          RAZORPAY_KEY_SECRET: '{{resolve:secretsmanager:${AWS::StackName}/razorpay:SecretString:keySecret}}'
+      Events:
+        GenerateQRApi:
+          Type: HttpApi
+          Properties:
+            Path: /staff/qr/generate
+            Method: POST
+            Auth:
+              Authorizer: CognitoAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+              Resource:
+                - !GetAtt FuelPOSTransactionsTable.Arn
+                - !GetAtt FuelPOSLicenseProfilesTable.Arn
+                - !GetAtt FuelPOSOwnersTable.Arn
+
+  FuelPOSPaymentStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-payment-status'
+      CodeUri: lambda/fuelposHandler/
+      Handler: getPaymentStatus.handler
+      Description: Poll payment status for fallback when WebSocket fails
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_TRANSACTIONS: !Ref FuelPOSTransactionsTable
+          DYNAMODB_TABLE_LICENSE: !Ref FuelPOSLicenseProfilesTable
+      Events:
+        PaymentStatusApi:
+          Type: HttpApi
+          Properties:
+            Path: /payment/status/{orderId}
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:Scan
+              Resource:
+                - !GetAtt FuelPOSTransactionsTable.Arn
+                - !Sub '${FuelPOSTransactionsTable.Arn}/index/*'
+                - !GetAtt FuelPOSLicenseProfilesTable.Arn
+
+  FuelPOSRazorpayWebhookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-razorpay-webhook'
+      CodeUri: lambda/fuelposHandler/
+      Handler: razorpayWebhook.handler
+      Description: Handle Razorpay payment webhooks
+      MemorySize: 512
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_TRANSACTIONS: !Ref FuelPOSTransactionsTable
+          DYNAMODB_TABLE_WEBSOCKET_CONNECTIONS: !Ref FuelPOSWebSocketConnectionsTable
+          RAZORPAY_WEBHOOK_SECRET: '{{resolve:secretsmanager:${AWS::StackName}/razorpay:SecretString:webhookSecret}}'
+          WEBSOCKET_ENDPOINT: !Sub 'wss://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com'
+      Events:
+        RazorpayWebhookApi:
+          Type: HttpApi
+          Properties:
+            Path: /webhook/razorpay
+            Method: POST
+            Auth:
+              Authorizer: NONE  # Webhook uses signature verification
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:UpdateItem
+                - dynamodb:Query
+                - dynamodb:DeleteItem
+              Resource:
+                - !GetAtt FuelPOSTransactionsTable.Arn
+                - !Sub '${FuelPOSTransactionsTable.Arn}/index/*'
+                - !GetAtt FuelPOSWebSocketConnectionsTable.Arn
+                - !Sub '${FuelPOSWebSocketConnectionsTable.Arn}/index/*'
+            - Effect: Allow
+              Action:
+                - execute-api:ManageConnections
+              Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*'
+
+  FuelPOSHealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-health'
+      CodeUri: lambda/fuelposHandler/
+      Handler: health.handler
+      Description: Health check endpoint
+      Events:
+        HealthApi:
+          Type: HttpApi
+          Properties:
+            Path: /health
+            Method: GET
+            Auth:
+              Authorizer: NONE
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  FuelPOSStaffTransactionsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-staff-transactions'
+      CodeUri: lambda/fuelposHandler/
+      Handler: getStaffTransactions.handler
+      Description: Get staff own transaction history
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_TRANSACTIONS: !Ref FuelPOSTransactionsTable
+      Events:
+        StaffTransactionsApi:
+          Type: HttpApi
+          Properties:
+            Path: /staff/transactions
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Query
+              Resource:
+                - !GetAtt FuelPOSTransactionsTable.Arn
+                - !Sub '${FuelPOSTransactionsTable.Arn}/index/*'
+
+  FuelPOSOwnerDashboardFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-owner-dashboard'
+      CodeUri: lambda/fuelposHandler/
+      Handler: getOwnerDashboard.handler
+      Description: Owner dashboard with staff revenue aggregation
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_TRANSACTIONS: !Ref FuelPOSTransactionsTable
+          DYNAMODB_TABLE_DAILY_SUMMARY: !Ref FuelPOSDailySummaryTable
+          DYNAMODB_TABLE_EMPLOYEES: !Ref FuelPOSEmployeesTable
+          DYNAMODB_TABLE_LICENSE: !Ref FuelPOSLicenseProfilesTable
+      Events:
+        OwnerDashboardApi:
+          Type: HttpApi
+          Properties:
+            Path: /owner/dashboard
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+              Resource:
+                - !GetAtt FuelPOSTransactionsTable.Arn
+                - !Sub '${FuelPOSTransactionsTable.Arn}/index/*'
+                - !GetAtt FuelPOSDailySummaryTable.Arn
+                - !GetAtt FuelPOSEmployeesTable.Arn
+                - !Sub '${FuelPOSEmployeesTable.Arn}/index/*'
+                - !GetAtt FuelPOSLicenseProfilesTable.Arn
+
+  # ============================================================================
+  # WEBSOCKET FUNCTIONS
+  # ============================================================================
+
+  FuelPOSWebSocketConnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-websocket-connect'
+      CodeUri: lambda/fuelposHandler/
+      Handler: websocketConnect.handler
+      Description: Handle WebSocket $connect with JWT auth
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_WEBSOCKET_CONNECTIONS: !Ref FuelPOSWebSocketConnectionsTable
+          COGNITO_USER_POOL_ID: !Ref CognitoUserPool
+          COGNITO_CLIENT_ID: !Ref CognitoUserPoolClient
+      Events:
+        WebSocketConnect:
+          Type: WebSocketApi
+          Properties:
+            ApiId: !Ref FuelPOSWebSocketApi
+            RouteKey: $connect
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+              Resource: !GetAtt FuelPOSWebSocketConnectionsTable.Arn
+
+  FuelPOSWebSocketDisconnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-websocket-disconnect'
+      CodeUri: lambda/fuelposHandler/
+      Handler: websocketDisconnect.handler
+      Description: Handle WebSocket $disconnect
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_WEBSOCKET_CONNECTIONS: !Ref FuelPOSWebSocketConnectionsTable
+      Events:
+        WebSocketDisconnect:
+          Type: WebSocketApi
+          Properties:
+            ApiId: !Ref FuelPOSWebSocketApi
+            RouteKey: $disconnect
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:DeleteItem
+              Resource: !GetAtt FuelPOSWebSocketConnectionsTable.Arn
+
+  # ============================================================================
+  # DYNAMODB STREAM PROCESSOR (For auto-aggregating daily summaries)
+  # ============================================================================
+
+  FuelPOSTransactionStreamProcessor:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-fuelpos-stream-processor'
+      CodeUri: lambda/fuelposHandler/
+      Handler: streamProcessor.handler
+      Description: Processes transaction stream to update daily summaries
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_DAILY_SUMMARY: !Ref FuelPOSDailySummaryTable
+          DYNAMODB_TABLE_FUEL_CHART: !Ref FuelPOSFuelChartTable
+      Events:
+        TransactionStream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt FuelPOSTransactionsTable.StreamArn
+            StartingPosition: LATEST
+            BatchSize: 100
+            MaximumBatchingWindowInSeconds: 5
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:Query
+              Resource:
+                - !GetAtt FuelPOSDailySummaryTable.Arn
+                - !GetAtt FuelPOSFuelChartTable.Arn
+
+Outputs:
+  FuelPOSTransactionsTableArn:
+    Description: FuelPOS Transactions Table ARN
+    Value: !GetAtt FuelPOSTransactionsTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-fuelpos-transactions-arn'
+
+  FuelPOSInventoryTableArn:
+    Description: FuelPOS Inventory Table ARN
+    Value: !GetAtt FuelPOSInventoryTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-fuelpos-inventory-arn'
+
+  FuelPOSDailySummaryTableArn:
+    Description: FuelPOS Daily Summary Table ARN
+    Value: !GetAtt FuelPOSDailySummaryTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-fuelpos-daily-summary-arn'
+
+  FuelPOSLicenseProfilesTableArn:
+    Description: FuelPOS License Profiles Table ARN
+    Value: !GetAtt FuelPOSLicenseProfilesTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-fuelpos-license-profiles-arn'
+
+  FuelPOSWebSocketApiEndpoint:
+    Description: WebSocket API Endpoint
+    Value: !Sub 'wss://${FuelPOSWebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
+    Export:
+      Name: !Sub '${AWS::StackName}-fuelpos-websocket-endpoint'
+
+  FuelPOSTransactionsTableWithTTL:
+    Description: Transactions Table with TTL for pending cleanup
+    Value: !GetAtt FuelPOSTransactionsTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-fuelpos-transactions-ttl-arn'

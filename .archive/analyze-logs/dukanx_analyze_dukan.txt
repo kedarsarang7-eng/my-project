@@ -1,0 +1,86 @@
+﻿Resolving dependencies...
+Downloading packages...
+  _fe_analyzer_shared 85.0.0 (100.0.0 available)
+  _flutterfire_internals 1.3.69 (1.3.71 available)
+  analyzer 7.7.1 (13.0.0 available)
+  archive 3.6.1 (4.0.9 available)
+  bloc 8.1.4 (9.2.1 available)
+  build 2.5.4 (4.0.6 available)
+  build_config 1.1.2 (1.3.0 available)
+  build_resolvers 2.5.4 (3.0.4 available)
+  build_runner 2.5.4 (2.15.0 available)
+  build_runner_core 9.1.2 (9.3.2 available)
+  cli_util 0.4.2 (0.5.1 available)
+  dart_style 3.1.1 (3.1.9 available)
+  device_info_plus 12.4.0 (13.1.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  drift 2.28.2 (2.33.0 available)
+  drift_dev 2.28.0 (2.33.0 available)
+  firebase_core 4.7.0 (4.9.0 available)
+  firebase_core_platform_interface 6.0.3 (7.0.1 available)
+  firebase_core_web 3.6.0 (3.7.0 available)
+  firebase_messaging 16.2.0 (16.2.2 available)
+  firebase_messaging_platform_interface 4.7.9 (4.7.11 available)
+  firebase_messaging_web 4.1.5 (4.1.7 available)
+  flutter_bloc 8.1.6 (9.1.1 available)
+  flutter_riverpod 2.6.1 (3.3.1 available)
+  flutter_secure_storage 10.1.0 (10.2.0 available)
+  flutter_secure_storage_darwin 0.3.0 (0.3.1 available)
+  flutter_secure_storage_windows 4.1.0 (4.2.1 available)
+  flutter_svg 2.2.4 (2.3.0 available)
+  freezed 2.5.8 (3.2.5 available)
+  freezed_annotation 2.4.4 (3.1.0 available)
+  go_router 14.8.1 (17.2.3 available)
+  image 4.3.0 (4.8.0 available)
+  json_annotation 4.9.0 (4.12.0 available)
+  json_serializable 6.9.5 (6.14.0 available)
+  matcher 0.12.19 (0.12.20 available)
+  meta 1.17.0 (1.18.2 available)
+  mockito 5.4.6 (5.6.5 available)
+  native_toolchain_c 0.17.6 (0.18.0 available)
+  package_info_plus 9.0.1 (10.1.0 available)
+  package_info_plus_platform_interface 3.2.1 (4.1.0 available)
+  pointycastle 3.9.1 (4.0.0 available)
+  riverpod 2.6.1 (3.2.1 available)
+  share_plus 12.0.2 (13.1.0 available)
+  share_plus_platform_interface 6.1.0 (7.1.0 available)
+  source_gen 2.0.0 (4.2.3 available)
+  source_helper 1.3.7 (1.3.12 available)
+  sqlite3 2.9.4 (3.3.1 available)
+  sqlparser 0.41.2 (0.44.4 available)
+  test_api 0.7.10 (0.7.12 available)
+  vector_graphics 1.2.0 (1.2.1 available)
+  vector_graphics_compiler 1.2.1 (1.2.2 available)
+  vector_math 2.2.0 (2.3.0 available)
+  wakelock_plus 1.5.2 (1.6.1 available)
+  wakelock_plus_platform_interface 1.5.0 (1.5.1 available)
+  win32 5.15.0 (6.2.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  xml 6.6.1 (7.0.1 available)
+Got dependencies!
+57 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing Dukan_x...                                            
+
+   info - Unnecessary braces in a string interpolation - lib\core\config\app_config.dart:246:36 - unnecessary_brace_in_string_interps
+   info - Unnecessary use of multiple underscores - lib\features\in_store\presentation\screens\active_sessions_screen.dart:187:41 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\features\in_store\presentation\screens\in_store_orders_screen.dart:149:41 - unnecessary_underscores
+warning - Unused import: 'dart:convert' - lib\features\inventory\presentation\screens\import_inventory_screen.dart:14:8 - unused_import
+warning - Unused import: 'dart:io' - lib\features\inventory\presentation\screens\import_inventory_screen.dart:15:8 - unused_import
+warning - Unused import: '../../../../widgets/modern_ui_components.dart' - lib\features\inventory\presentation\screens\import_inventory_screen.dart:30:8 - unused_import
+  error - The getter 'platform' isn't defined for the type 'FilePicker' - lib\features\inventory\presentation\screens\import_inventory_screen.dart:123:37 - undefined_getter
+  error - The getter 'errorMessage' isn't defined for the type 'ApiResponse<Map<String, dynamic>>' - lib\features\inventory\presentation\screens\import_inventory_screen.dart:203:27 - undefined_getter
+warning - Unused import: 'package:mockito/mockito.dart' - test\widget\feature_gating_widget_test.dart:12:8 - unused_import
+warning - Unused import: 'package:dukanx/core/isolation/widgets/feature_gate.dart' - test\widget\feature_gating_widget_test.dart:16:8 - unused_import
+   info - The 'child' argument should be last in widget constructor invocations - test\widget\feature_gating_widget_test.dart:37:11 - sort_child_properties_last
+   info - The 'child' argument should be last in widget constructor invocations - test\widget\feature_gating_widget_test.dart:412:15 - sort_child_properties_last
+warning - The value of the field '_submitCount' isn't used - test\widget\form_validation_widget_test.dart:27:7 - unused_field
+   info - Statements in an if should be enclosed in a block - test\widget\form_validation_widget_test.dart:54:60 - curly_braces_in_flow_control_structures
+
+flutter : 14 issues found. (ran in 16.6s)
+At line:1 char:1
++ flutter analyze 2>&1 | Out-File -FilePath "analyze_dukan.txt" -Encodi ...
++ ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (14 issues found. (ran in 16.6s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

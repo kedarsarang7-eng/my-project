@@ -1,0 +1,121 @@
+{
+  "common": {
+    "success": "செயல் வெற்றிகரமாக முடிந்தது",
+    "error": "பிழை ஏற்பட்டது",
+    "notFound": "{{resource}} கிடைக்கவில்லை",
+    "conflict": "{{resource}} ஏற்கனவே உள்ளது",
+    "forbidden": "இந்த செயலை செய்ய உங்களுக்கு அனுமதி இல்லை",
+    "unauthorized": "அங்கீகாரம் தேவை",
+    "badRequest": "தவறான கோரிக்கை",
+    "limitExceeded": "வரம்பு மீறப்பட்டது. திட்டத்தை மேம்படுத்தவும்",
+    "planExpired": "உங்கள் திட்டம் காலாவதியானது. தொடர புதுப்பிக்கவும்",
+    "serverError": "எதிர்பாராத பிழை. பிறகு மீண்டும் முயற்சிக்கவும்",
+    "timeout": "கோரிக்கை நேரம் முடிந்தது. மீண்டும் முயற்சிக்கவும்"
+  },
+  "auth": {
+    "loginSuccess": "உள்நுழைவு வெற்றிகரம்",
+    "logoutSuccess": "வெற்றிகரமாக வெளியேறினீர்கள்",
+    "invalidCredentials": "மின்னஞ்சல் அல்லது கடவுச்சொல் தவறு",
+    "accountLocked": "கணக்கு பூட்டப்பட்டது. ஆதரவை தொடர்பு கொள்ளுங்கள்",
+    "sessionExpired": "அமர்வு காலாவதி. மீண்டும் உள்நுழையவும்",
+    "tokenInvalid": "தவறான அல்லது காலாவதியான டோக்கன்",
+    "otpSent": "OTP {{destination}} க்கு அனுப்பப்பட்டது",
+    "otpExpired": "OTP காலாவதி. புதிய OTP கேளுங்கள்",
+    "otpInvalid": "OTP தவறு. மீண்டும் முயற்சிக்கவும்"
+  },
+  "billing": {
+    "invoiceCreated": "இன்வாய்ஸ் #{{invoiceNo}} வெற்றிகரமாக உருவாக்கப்பட்டது",
+    "invoiceUpdated": "இன்வாய்ஸ் #{{invoiceNo}} புதுப்பிக்கப்பட்டது",
+    "invoiceDeleted": "இன்வாய்ஸ் #{{invoiceNo}} நீக்கப்பட்டது",
+    "paymentRecorded": "₹{{amount}} கட்டணம் வெற்றிகரமாக பதிவு செய்யப்பட்டது",
+    "stockInsufficient": "{{productName}} க்கு போதுமான இருப்பு இல்லை. கிடைக்கும்: {{available}} {{unit}}",
+    "invoiceNotFound": "இன்வாய்ஸ் கிடைக்கவில்லை",
+    "duplicateInvoice": "இந்த எண்ணின் இன்வாய்ஸ் ஏற்கனவே உள்ளது"
+  },
+  "inventory": {
+    "productCreated": "தயாரிப்பு {{productName}} வெற்றிகரமாக சேர்க்கப்பட்டது",
+    "productUpdated": "தயாரிப்பு {{productName}} புதுப்பிக்கப்பட்டது",
+    "productDeleted": "தயாரிப்பு {{productName}} நீக்கப்பட்டது",
+    "stockUpdated": "{{productName}} இருப்பு புதுப்பிக்கப்பட்டது",
+    "lowStockAlert": "{{productName}} இருப்பு குறைவாக உள்ளது. கிடைக்கும்: {{quantity}} {{unit}}",
+    "outOfStock": "{{productName}} இருப்பு தீர்ந்துவிட்டது",
+    "expiryWarning": "{{productName}} காலாவதி தேதி {{date}}",
+    "expiredProduct": "{{productName}} காலாவதியானது, விற்க முடியாது",
+    "barcodeNotFound": "பார்கோட் {{barcode}} க்கு எந்த தயாரிப்பும் இல்லை",
+    "importComplete": "இறக்குமதி முடிந்தது: {{success}} தயாரிப்புகள், {{failed}} தோல்வி"
+  },
+  "customers": {
+    "customerCreated": "வாடிக்கையாளர் {{name}} வெற்றிகரமாக சேர்க்கப்பட்டார்",
+    "customerUpdated": "வாடிக்கையாளர் {{name}} புதுப்பிக்கப்பட்டார்",
+    "customerDeleted": "வாடிக்கையாளர் {{name}} நீக்கப்பட்டார்",
+    "creditLimitExceeded": "{{name}} கடன் வரம்பு மீறப்பட்டது. வரம்பு: ₹{{limit}}",
+    "outstandingBalance": "{{name}} நிலுவை: ₹{{amount}}"
+  },
+  "notifications": {
+    "billCreated": "{{customerName}} க்காக பில் #{{invoiceNo}} உருவாக்கப்பட்டது",
+    "paymentReceived": "{{customerName}} இடமிருந்து ₹{{amount}} கட்டணம் பெறப்பட்டது",
+    "lowStock": "{{productName}} இருப்பு குறைவு ({{quantity}} {{unit}} மீதம்)",
+    "expiryWarning": "{{productName}} காலாவதி {{date}}",
+    "planExpiring": "உங்கள் திட்டம் {{days}} நாட்களில் காலாவதியாகும். இப்போது புதுப்பிக்கவும்",
+    "newOrder": "{{customerName}} இடமிருந்து புதிய ஆர்டர்",
+    "backupComplete": "காப்புப்பிரதி வெற்றிகரமாக முடிந்தது",
+    "syncComplete": "தரவு வெற்றிகரமாக ஒத்திசைக்கப்பட்டது",
+    "dailySummary": "இன்றைய விற்பனை: ₹{{sales}} | பில்கள்: {{bills}} | புதிய வாடிக்கையாளர்: {{customers}}"
+  },
+  "whatsapp": {
+    "billCreated": "அன்பு {{customerName}},\nஉங்கள் பில் #{{invoiceNo}} ₹{{amount}} உருவாக்கப்பட்டது.\n{{shopName}} இல் வாங்கியதற்கு நன்றி!\n\nஇன்வாய்ஸ் பார்க்க: {{link}}",
+    "paymentReceived": "அன்பு {{customerName}},\n{{date}} அன்று ₹{{amount}} பெறப்பட்டது.\nமீதி: ₹{{balance}}.\nநன்றி, {{shopName}}",
+    "paymentReminder": "அன்பு {{customerName}},\n{{dueDate}} முதல் ₹{{amount}} நிலுவை.\n{{phone}} தொடர்பு கொள்ளுங்கள்.\nநன்றி, {{shopName}}",
+    "orderConfirmation": "அன்பு {{customerName}},\nஆர்டர் #{{orderNo}} உறுதிப்படுத்தப்பட்டது.\nதேர்வு டெலிவரி: {{date}}.\nநன்றி, {{shopName}}"
+  },
+  "sms": {
+    "billCreated": "{{shopName}}: பில் #{{invoiceNo}} Rs.{{amount}}. நன்றி!",
+    "paymentReceived": "{{shopName}}: Rs.{{amount}} பெறப்பட்டது. மீதி: Rs.{{balance}}.",
+    "paymentReminder": "{{shopName}}: Rs.{{amount}} நிலுவை. {{phone}} தொடர்பு.",
+    "otpMessage": "DukanX OTP {{otp}}. {{minutes}} நிமிடம். யாரிடமும் பகிர வேண்டாம்."
+  },
+  "pdf": {
+    "invoiceTitle": "வரி இன்வாய்ஸ்",
+    "billTo": "பில் யாருக்கு",
+    "shipTo": "அனுப்பும் முகவரி",
+    "description": "விளக்கம்",
+    "qty": "அளவு",
+    "rate": "விலை",
+    "amount": "தொகை",
+    "taxableAmount": "வரிக்குரிய தொகை",
+    "grandTotal": "மொத்தம்",
+    "amountInWords": "வார்த்தைகளில் தொகை",
+    "authorizedSignatory": "அங்கீகரிக்கப்பட்ட கையொப்பமிடுபவர்",
+    "thankYou": "உங்கள் வியாபாரத்திற்கு நன்றி!",
+    "termsConditions": "விதிமுறைகள்",
+    "notes": "குறிப்புகள்",
+    "originalForRecipient": "பெறுநருக்கு மூலம்",
+    "computerGeneratedInvoice": "இது கணினி உருவாக்கிய இன்வாய்ஸ்"
+  },
+  "reports": {
+    "dailySales": "தினசரி விற்பனை அறிக்கை",
+    "monthlySales": "மாதாந்திர விற்பனை அறிக்கை",
+    "gstR1": "GSTR-1 அறிக்கை",
+    "inventory": "சரக்கு அறிக்கை",
+    "profitLoss": "லாப நஷ்ட அறிக்கை",
+    "periodLabel": "காலம்: {{from}} முதல் {{to}} வரை",
+    "generatedOn": "உருவாக்கப்பட்டது: {{date}}",
+    "noDataFound": "தேர்ந்தெடுத்த காலத்திற்கு தரவு இல்லை",
+    "totalSales": "மொத்த விற்பனை",
+    "totalPurchase": "மொத்த கொள்முதல்",
+    "grossProfit": "மொத்த லாபம்",
+    "netProfit": "நிகர லாபம்"
+  },
+  "validation": {
+    "required": "{{field}} தேவை",
+    "minLength": "{{field}} குறைந்தபட்சம் {{min}} எழுத்துகள் இருக்க வேண்டும்",
+    "maxLength": "{{field}} {{max}} எழுத்துகளுக்கு மேல் இருக்கக்கூடாது",
+    "invalidEmail": "சரியான மின்னஞ்சல் உள்ளிடவும்",
+    "invalidPhone": "10 இலக்க மொபைல் எண் உள்ளிடவும்",
+    "invalidGstin": "15 இலக்க GSTIN உள்ளிடவும்",
+    "invalidPan": "10 எழுத்து PAN உள்ளிடவும்",
+    "positiveNumber": "{{field}} நேர்மறை எண்ணாக இருக்க வேண்டும்",
+    "amountZero": "தொகை பூஜ்ஜியத்தை விட அதிகமாக இருக்க வேண்டும்",
+    "passwordWeak": "கடவுச்சொல் குறைந்தபட்சம் 8 எழுத்துகள், ஒரு பெரிய எழுத்து, ஒரு எண் கொண்டிருக்க வேண்டும்"
+  }
+}

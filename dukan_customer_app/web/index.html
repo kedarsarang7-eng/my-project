@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<base href="$FLUTTER_BASE_HREF">
+
+<meta charset="UTF-8">
+<meta content="IE=Edge" http-equiv="X-UA-Compatible">
+<meta name="description" content="DukanX - Complete billing and inventory management for all shops.">
+
+<!-- iOS meta tags & icons -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="DukanX">
+<link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="favicon.png" />
+
+<title>DukanX</title>
+<link rel="manifest" href="manifest.json">
+
+<!-- ============================================================ -->
+<!-- Firebase JS SDK (REQUIRED for Flutter Web Firebase plugins)   -->
+<!-- These compat scripts provide the JS interop bridge that       -->
+<!-- firebase_core_web, cloud_firestore_web, etc. depend on.      -->
+<!-- Without these, Flutter Web throws:                            -->
+<!--   "FirebaseException is not a subtype of JavaScriptObject"   -->
+<!-- ============================================================ -->
+<script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-messaging-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-storage-compat.js"></script>
+
+</head>
+
+<body>
+  <script src="sql-wasm.js" defer></script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+
+</html>

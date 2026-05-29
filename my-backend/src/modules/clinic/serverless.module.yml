@@ -1,0 +1,147 @@
+# ============================================================================
+# Clinic Module — Lambda Function Definitions
+# Split from the original 92KB clinic.ts monolith
+# ============================================================================
+
+clinicPatients:
+  handler: src/handlers/clinic.listPatients
+  description: Clinic — Patient management
+  events:
+    - httpApi:
+        path: /clinic/patients
+        method: GET
+    - httpApi:
+        path: /clinic/patients
+        method: POST
+    - httpApi:
+        path: /clinic/patients/{patientId}
+        method: GET
+    - httpApi:
+        path: /clinic/patients/{patientId}
+        method: PUT
+    - httpApi:
+        path: /clinic/patients/{patientId}
+        method: DELETE
+
+clinicAppointments:
+  handler: src/handlers/clinic.listAppointments
+  description: Clinic — Appointment scheduling
+  events:
+    - httpApi:
+        path: /clinic/appointments
+        method: GET
+    - httpApi:
+        path: /clinic/appointments
+        method: POST
+    - httpApi:
+        path: /clinic/appointments/{appointmentId}
+        method: GET
+    - httpApi:
+        path: /clinic/appointments/{appointmentId}
+        method: PUT
+    - httpApi:
+        path: /clinic/appointments/{appointmentId}/status
+        method: PUT
+
+clinicDoctors:
+  handler: src/handlers/clinic.listDoctors
+  description: Clinic — Doctor profile management
+  events:
+    - httpApi:
+        path: /clinic/doctors
+        method: GET
+    - httpApi:
+        path: /clinic/doctors
+        method: POST
+    - httpApi:
+        path: /clinic/doctors/{doctorId}
+        method: GET
+    - httpApi:
+        path: /clinic/doctors/{doctorId}
+        method: PUT
+    - httpApi:
+        path: /clinic/doctors/{doctorId}/schedule
+        method: GET
+    - httpApi:
+        path: /clinic/doctors/{doctorId}/schedule
+        method: PUT
+
+clinicPrescriptions:
+  handler: src/handlers/clinic.createPrescription
+  description: Clinic — Prescription and EMR management
+  events:
+    - httpApi:
+        path: /clinic/prescriptions
+        method: GET
+    - httpApi:
+        path: /clinic/prescriptions
+        method: POST
+    - httpApi:
+        path: /clinic/prescriptions/{prescriptionId}
+        method: GET
+    - httpApi:
+        path: /clinic/prescriptions/{prescriptionId}/pdf
+        method: GET
+
+clinicBilling:
+  handler: src/handlers/clinic.createBill
+  description: Clinic — Billing and invoicing
+  events:
+    - httpApi:
+        path: /clinic/billing
+        method: GET
+    - httpApi:
+        path: /clinic/billing
+        method: POST
+    - httpApi:
+        path: /clinic/billing/{billId}
+        method: GET
+    - httpApi:
+        path: /clinic/billing/{billId}/payment
+        method: POST
+
+clinicDashboard:
+  handler: src/handlers/clinic.getDashboard
+  description: Clinic — Dashboard KPIs
+  events:
+    - httpApi:
+        path: /clinic/dashboard
+        method: GET
+
+clinicReports:
+  handler: src/handlers/clinic.getReports
+  description: Clinic — Analytics and reports
+  events:
+    - httpApi:
+        path: /clinic/reports
+        method: GET
+    - httpApi:
+        path: /clinic/reports/revenue
+        method: GET
+
+clinicScheduler:
+  handler: src/handlers/clinic.getSlots
+  description: Clinic — Token and slot management
+  events:
+    - httpApi:
+        path: /clinic/tokens
+        method: GET
+    - httpApi:
+        path: /clinic/tokens
+        method: POST
+    - httpApi:
+        path: /clinic/tokens/{tokenId}/call
+        method: POST
+    - httpApi:
+        path: /clinic/slots/available
+        method: GET
+
+clinicPdf:
+  handler: src/handlers/clinic.generatePdf
+  description: Clinic — PDF generation (prescriptions, bills)
+  timeout: 30
+  memorySize: 512
+  events:
+    - httpApi:
+        path: /clinic/pdf/{type}/{id}
+        method: GET

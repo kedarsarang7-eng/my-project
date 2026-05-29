@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "782683401944",
+    "firebase_url": "https://billingapp-5cb94-default-rtdb.firebaseio.com",
+    "project_id": "billingapp-5cb94",
+    "storage_bucket": "billingapp-5cb94.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782683401944:android:442cf8122899f941db71ad",
+        "android_client_info": {
+          "package_name": "com.dukanx.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "782683401944-807bi8oash85lbafm8ekbr1cobqbjmii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dukanx.app",
+            "certificate_hash": "bdfb645ce405f42f51f2dee2df1802fcc72c7973"
+          }
+        },
+        {
+          "client_id": "782683401944-3rff5ktb3g0ilnef9feimk636ahlf3iv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-b5skE3UFEFD7Rgg0iFOQm8ze1mcY-Ks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "782683401944-3rff5ktb3g0ilnef9feimk636ahlf3iv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

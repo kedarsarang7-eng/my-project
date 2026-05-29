@@ -1,0 +1,33 @@
+# =============================================================================
+# Low-RAM Override — Use when machine has ≤ 8GB RAM
+# =============================================================================
+# Usage: docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
+# Or rename to docker-compose.override.yml (auto-applied)
+# =============================================================================
+
+services:
+  localstack:
+    environment:
+      LAMBDA_EXECUTOR: local          # No Docker-in-Docker — saves ~2GB
+      EAGER_SERVICE_LOADING: 0        # Lazy load — saves startup memory
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+          cpus: "2"
+
+  redis:
+    command: >
+      redis-server
+      --maxmemory 128mb
+      --maxmemory-policy allkeys-lru
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+
+  mailhog:
+    deploy:
+      resources:
+        limits:
+          memory: 128M

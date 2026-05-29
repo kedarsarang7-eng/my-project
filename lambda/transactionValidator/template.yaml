@@ -1,0 +1,156 @@
+# ============================================================================
+# TRANSACTION VALIDATOR - AWS SAM TEMPLATE
+# ============================================================================
+# Backend validation for pharmacy compliance and transaction integrity
+# 
+# Endpoints:
+#   POST /validate-transaction - Validate transaction before creation
+#   POST /validate-bulk - Validate multiple transactions
+#
+# Security:
+#   - Cognito Authorizer required
+#   - IAM permissions for DynamoDB read
+#   - CloudWatch Logs for audit trail
+# ============================================================================
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Transaction Validator Lambda for Pharmacy Compliance
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+  CognitoUserPoolArn:
+    Type: String
+    Description: ARN of the Cognito User Pool for authorizer
+  DynamoDBTableName:
+    Type: String
+    Default: DukanX
+    Description: DynamoDB table name
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: nodejs18.x
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        NODE_ENV: !Ref Environment
+        DYNAMODB_TABLE: !Ref DynamoDBTableName
+        LOG_LEVEL: INFO
+
+Resources:
+  # --------------------------------------------------------------------------
+  # LAMBDA FUNCTION
+  # --------------------------------------------------------------------------
+  TransactionValidatorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-transaction-validator'
+      Description: Validates transactions for pharmacy compliance
+      Handler: index.handler
+      CodeUri: ./
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref DynamoDBTableName
+        - Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: '*'
+      Events:
+        ValidateTransactionApi:
+          Type: Api
+          Properties:
+            Path: /validate-transaction
+            Method: post
+            RestApiId: !Ref ApiGatewayApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+        ValidateBulkApi:
+          Type: Api
+          Properties:
+            Path: /validate-bulk
+            Method: post
+            RestApiId: !Ref ApiGatewayApi
+            Auth:
+              Authorizer: CognitoAuthorizer
+      Tags:
+        Environment: !Ref Environment
+        Service: transaction-validator
+        Compliance: pharmacy
+
+  # --------------------------------------------------------------------------
+  # API GATEWAY
+  # --------------------------------------------------------------------------
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub '${AWS::StackName}-transaction-api'
+      StageName: !Ref Environment
+      Cors:
+        AllowMethods: "'POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+      Auth:
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !Ref CognitoUserPoolArn
+            Identity:
+              Header: Authorization
+              ValidationExpression: "^Bearer [-0-9a-zA-Z._]*$"
+              ReauthorizeEvery: 300
+
+  # --------------------------------------------------------------------------
+  # CLOUDWATCH ALARM - High Error Rate
+  # --------------------------------------------------------------------------
+  HighErrorRateAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${AWS::StackName}-validator-errors'
+      AlarmDescription: Alarm when validation errors exceed threshold
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 10
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref TransactionValidatorFunction
+      AlarmActions:
+        - !Ref SNSTopic
+
+  # --------------------------------------------------------------------------
+  # SNS TOPIC - For Alerts
+  # --------------------------------------------------------------------------
+  SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${AWS::StackName}-alerts'
+      DisplayName: Transaction Validator Alerts
+
+Outputs:
+  TransactionValidatorApi:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/validate-transaction'
+  
+  TransactionValidatorFunctionArn:
+    Description: Lambda function ARN
+    Value: !GetAtt TransactionValidatorFunction.Arn
+    
+  ApiGatewayApiId:
+    Description: API Gateway ID for integration
+    Value: !Ref ApiGatewayApi
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiId'

@@ -1,0 +1,1570 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Multi-Tenant SaaS Platform Backend
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+  DomainName:
+    Type: String
+    Default: yourdomain.com
+
+Globals:
+  Function:
+    Runtime: nodejs24.x
+    Architectures:
+      - arm64
+    MemorySize: 256
+    Timeout: 29
+    Tracing: Active
+    Environment:
+      Variables:
+        DYNAMODB_TABLE_AUTH: !Ref AuthSessionsTable
+        DYNAMODB_TABLE_TENANTS: !Ref TenantsTable
+        DYNAMODB_TABLE_USERS: !Ref UsersTable
+        DYNAMODB_TABLE_BILLING: !Ref BillingTable
+        DYNAMODB_TABLE_AUDIT: !Ref AuditLogsTable
+        COGNITO_USER_POOL_ID: !Ref CognitoUserPool
+        COGNITO_CLIENT_ID: !Ref CognitoUserPoolClient
+        AWS_REGION: !Ref AWS::Region
+        ENVIRONMENT: !Ref Environment
+
+Resources:
+  # Cognito User Pool
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub '${AWS::StackName}-user-pool'
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: custom:tenantId
+          AttributeDataType: String
+          Mutable: true
+        - Name: custom:role
+          AttributeDataType: String
+          Mutable: false
+        - Name: custom:plan
+          AttributeDataType: String
+          Mutable: true
+      LambdaConfig:
+        PreTokenGeneration: !GetAtt PreTokenGenerationTrigger.Arn
+
+  # Cognito User Pool Clients
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      ClientName: !Sub '${AWS::StackName}-app-client'
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      SupportedIdentityProviders:
+        - COGNITO
+      AccessTokenValidity: 1
+      IdTokenValidity: 1
+      RefreshTokenValidity: 30
+
+  AdminPanelClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      ClientName: !Sub '${AWS::StackName}-admin-client'
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      SupportedIdentityProviders:
+        - COGNITO
+      AccessTokenValidity: 1
+      IdTokenValidity: 1
+      RefreshTokenValidity: 30
+
+  MobileAppClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      ClientName: !Sub '${AWS::StackName}-mobile-client'
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+      SupportedIdentityProviders:
+        - COGNITO
+      AccessTokenValidity: 1
+      IdTokenValidity: 1
+      RefreshTokenValidity: 30
+
+  DesktopAppClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      ClientName: !Sub '${AWS::StackName}-desktop-client'
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      SupportedIdentityProviders:
+        - COGNITO
+      AccessTokenValidity: 1
+      IdTokenValidity: 1
+      RefreshTokenValidity: 30
+
+  # Pre-token generation Lambda (security: authoritative role/tenantId injection)
+  PreTokenGenerationTrigger:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-pre-token-trigger'
+      CodeUri: lambda/cognitoPreTokenTrigger/
+      Handler: index.handler
+      MemorySize: 256
+      Timeout: 5
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref UsersTable
+          TENANTS_TABLE: !Ref TenantsTable
+          CUSTOMER_USER_POOL_ID: !Ref CognitoUserPool
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+              Resource:
+                - !GetAtt UsersTable.Arn
+                - !GetAtt TenantsTable.Arn
+
+  PreTokenTriggerCognitoPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt PreTokenGenerationTrigger.Arn
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt CognitoUserPool.Arn
+
+  # Lambda Functions
+  #
+  # NOTE (F-01a, 2026-05-17): AuthHandler (lambda/authHandler/) was removed.
+  # /auth/refresh and /auth/logout are now solely owned by my-backend's
+  # auth.refresh + auth.logout (Dukan_x/my-backend/serverless.yml).
+  # See docs/ARCHITECTURE.md §4.1 for the ownership decision.
+  # The source file lambda/authHandler/index.mjs is retained (marked DEPRECATED)
+  # for git history; do not re-wire it.
+
+  TenantHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-tenant-handler'
+      CodeUri: lambda/tenantHandler/
+      Handler: index.handler
+      Events:
+        CreateTenant:
+          Type: HttpApi
+          Properties:
+            Path: /tenants
+            Method: POST
+        ListTenants:
+          Type: HttpApi
+          Properties:
+            Path: /tenants
+            Method: GET
+        GetTenant:
+          Type: HttpApi
+          Properties:
+            Path: /tenants/{tenantId}
+            Method: GET
+        UpdateTenant:
+          Type: HttpApi
+          Properties:
+            Path: /tenants/{tenantId}
+            Method: PATCH
+        DeleteTenant:
+          Type: HttpApi
+          Properties:
+            Path: /tenants/{tenantId}
+            Method: DELETE
+        AdminListAllTenants:
+          Type: HttpApi
+          Properties:
+            Path: /admin/tenants
+            Method: GET
+        AdminUpdateTenant:
+          Type: HttpApi
+          Properties:
+            Path: /admin/tenants/{id}
+            Method: PATCH
+        AdminDeleteTenant:
+          Type: HttpApi
+          Properties:
+            Path: /admin/tenants/{id}
+            Method: DELETE
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:DeleteItem
+                - dynamodb:Query
+                - dynamodb:Scan
+              Resource:
+                - !GetAtt TenantsTable.Arn
+                - !Sub '${TenantsTable.Arn}/index/*'
+
+  UserHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-user-handler'
+      CodeUri: lambda/userHandler/
+      Handler: index.handler
+      Events:
+        ListUsers:
+          Type: HttpApi
+          Properties:
+            Path: /users
+            Method: GET
+        InviteUser:
+          Type: HttpApi
+          Properties:
+            Path: /users/invite
+            Method: POST
+        GetUser:
+          Type: HttpApi
+          Properties:
+            Path: /users/{userId}
+            Method: GET
+        UpdateUser:
+          Type: HttpApi
+          Properties:
+            Path: /users/{userId}
+            Method: PATCH
+        DeleteUser:
+          Type: HttpApi
+          Properties:
+            Path: /users/{userId}
+            Method: DELETE
+        UpdateRole:
+          Type: HttpApi
+          Properties:
+            Path: /users/{userId}/role
+            Method: PATCH
+        AdminListAllUsers:
+          Type: HttpApi
+          Properties:
+            Path: /admin/users
+            Method: GET
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:DeleteItem
+                - dynamodb:Query
+                - dynamodb:Scan
+              Resource:
+                - !GetAtt UsersTable.Arn
+                - !Sub '${UsersTable.Arn}/index/*'
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminCreateUser
+                - cognito-idp:AdminDisableUser
+                - cognito-idp:AdminUpdateUserAttributes
+              Resource: !GetAtt CognitoUserPool.Arn
+
+  BillingHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-billing-handler'
+      CodeUri: lambda/billingHandler/
+      Handler: index.handler
+      Events:
+        ListPlans:
+          Type: HttpApi
+          Properties:
+            Path: /billing/plans
+            Method: GET
+        Subscribe:
+          Type: HttpApi
+          Properties:
+            Path: /billing/subscribe
+            Method: POST
+        ListInvoices:
+          Type: HttpApi
+          Properties:
+            Path: /billing/invoices
+            Method: GET
+        GetInvoice:
+          Type: HttpApi
+          Properties:
+            Path: /billing/invoices/{id}
+            Method: GET
+        CancelSubscription:
+          Type: HttpApi
+          Properties:
+            Path: /billing/cancel
+            Method: POST
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:DeleteItem
+                - dynamodb:Query
+                - dynamodb:Scan
+              Resource:
+                - !GetAtt BillingTable.Arn
+                - !Sub '${BillingTable.Arn}/index/*'
+
+  AuditHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-audit-handler'
+      CodeUri: lambda/auditHandler/
+      Handler: index.handler
+      Events:
+        QueryLogs:
+          Type: HttpApi
+          Properties:
+            Path: /audit/logs
+            Method: GET
+        ExportLogs:
+          Type: HttpApi
+          Properties:
+            Path: /audit/export
+            Method: GET
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:Query
+                - dynamodb:Scan
+              Resource:
+                - !GetAtt AuditLogsTable.Arn
+                - !Sub '${AuditLogsTable.Arn}/index/*'
+
+  CustomerAuthorizerInvokeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${AWS::StackName}-customer-authorizer-invoke-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: InvokeCustomerAuthorizer
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !GetAtt CustomerAuthorizer.Arn
+
+  # HTTP API Gateway
+  # SECURITY FIX: Added throttling + access logging (was missing)
+  ApiAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/apigateway/${AWS::StackName}-api'
+      RetentionInDays: 30
+
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Name: !Sub '${AWS::StackName}-api'
+      StageName: $default
+      # SECURITY FIX: Add throttling to prevent credential stuffing / DDoS
+      ThrottlingBurstLimit: 200
+      ThrottlingRateLimit: 100
+      # SECURITY FIX: Add access logging for forensic trail
+      AccessLogSettings:
+        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
+        Format: '{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","method":"$context.httpMethod","path":"$context.path","status":"$context.status","latency":"$context.responseLatency"}'
+      CorsConfiguration:
+        AllowCredentials: false
+        AllowHeaders:
+          - content-type
+          - x-amz-date
+          - authorization
+          - x-api-key
+          - x-amz-security-token
+          - x-tenant-id
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          - OPTIONS
+        AllowOrigins:
+          - https://admin.${DomainName}
+          - https://app.${DomainName}
+          # SECURITY FIX: Removed http://localhost:* wildcard
+      Auth:
+        Authorizers:
+          CognitoAuthorizer:
+            Type: JWT
+            IdentitySource: $request.header.Authorization
+            JwtConfiguration:
+              issuer: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${CognitoUserPool}
+              audience:
+                - !Ref CognitoUserPoolClient
+                - !Ref AdminPanelClient
+                - !Ref MobileAppClient
+                - !Ref DesktopAppClient
+          CustomerJwtAuthorizer:
+            FunctionArn: !GetAtt CustomerAuthorizer.Arn
+            FunctionInvokeRole: !GetAtt CustomerAuthorizerInvokeRole.Arn
+            Identity:
+              Headers:
+                - Authorization
+            AuthorizerPayloadFormatVersion: '2.0'
+            EnableSimpleResponses: false
+            ResultTtlInSeconds: 300
+        DefaultAuthorizer: CognitoAuthorizer
+
+  # DynamoDB Tables
+  AuthSessionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-auth-sessions'
+      AttributeDefinitions:
+        - AttributeName: sessionId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: sessionId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+      # COST-OPT: Stream removed — no consumer Lambda exists
+      # StreamSpecification:
+      #   StreamViewType: NEW_AND_OLD_IMAGES
+      # COST-OPT: PITR disabled — ephemeral session data
+      # PointInTimeRecoverySpecification:
+      #   PointInTimeRecoveryEnabled: true
+
+  TenantsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-tenants'
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: plan
+          AttributeType: S
+        - AttributeName: slug
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+        - AttributeName: ownerUserId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tenantId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_Plan
+          KeySchema:
+            - AttributeName: plan
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI_Slug
+          KeySchema:
+            - AttributeName: slug
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI_Owner
+          KeySchema:
+            - AttributeName: ownerUserId
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: deleteAt
+        Enabled: true
+      # COST-OPT: Stream removed — no consumer Lambda exists
+      # StreamSpecification:
+      #   StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-users'
+      AttributeDefinitions:
+        - AttributeName: tenantId#userId
+          AttributeType: S
+        - AttributeName: email
+          AttributeType: S
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: role#userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tenantId#userId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_Email
+          KeySchema:
+            - AttributeName: email
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI_TenantRole
+          KeySchema:
+            - AttributeName: tenantId
+              KeyType: HASH
+            - AttributeName: role#userId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      # COST-OPT: Stream removed — no consumer Lambda exists
+      # StreamSpecification:
+      #   StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  BillingTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-billing'
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: status
+          AttributeType: S
+        - AttributeName: dueAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tenantId
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_BillingStatus
+          KeySchema:
+            - AttributeName: status
+              KeyType: HASH
+            - AttributeName: dueAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+      # COST-OPT: Stream removed — no consumer Lambda exists
+      # StreamSpecification:
+      #   StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  AuditLogsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-audit-logs'
+      AttributeDefinitions:
+        - AttributeName: tenantId
+          AttributeType: S
+        - AttributeName: tenantId#userId
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tenantId
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_UserAudit
+          KeySchema:
+            - AttributeName: tenantId#userId
+              KeyType: HASH
+            - AttributeName: SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      # COST-OPT: PITR disabled — TTL-expired audit data
+      # PointInTimeRecoverySpecification:
+      #   PointInTimeRecoveryEnabled: true
+
+  # Shared Lambda Layer
+  SharedUtilsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub '${AWS::StackName}-shared-utils'
+      ContentUri: lambda/shared/
+      CompatibleRuntimes:
+        - nodejs24.x
+    Metadata:
+      BuildMethod: nodejs24.x
+
+  # CloudWatch Alarms
+  LambdaErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${AWS::StackName}-lambda-errors'
+      AlarmDescription: Lambda function errors > 1% over 5 minutes
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      Threshold: 1
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref AuthHandler
+        - Name: FunctionName
+          Value: !Ref TenantHandler
+        - Name: FunctionName
+          Value: !Ref UserHandler
+        - Name: FunctionName
+          Value: !Ref BillingHandler
+        - Name: FunctionName
+          Value: !Ref AuditHandler
+
+  LambdaDurationAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${AWS::StackName}-lambda-duration'
+      AlarmDescription: Lambda p99 duration > 5000ms
+      MetricName: Duration
+      Namespace: AWS/Lambda
+      Statistic: p99
+      Period: 300
+      Threshold: 5000
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref AuthHandler
+        - Name: FunctionName
+          Value: !Ref TenantHandler
+        - Name: FunctionName
+          Value: !Ref UserHandler
+        - Name: FunctionName
+          Value: !Ref BillingHandler
+        - Name: FunctionName
+          Value: !Ref AuditHandler
+
+  # ============================================================================
+  # BARCODE SYSTEM - Lambda Functions
+  # ============================================================================
+  
+  BarcodeLookupFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-barcode-lookup'
+      Description: 'O(1) barcode to product lookup with tenant isolation - Target p99 <100ms'
+      CodeUri: lambda/barcodeLookup/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      MemorySize: 256
+      Timeout: 3  # Fast response required
+      # COST-OPT: Reserved concurrency removed at startup — wastes account-level budget
+      # ReservedConcurrentExecutions: 100
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref ProductsTable
+          LOG_LEVEL: INFO
+      Events:
+        BarcodeLookup:
+          Type: HttpApi
+          Properties:
+            Path: /barcode/lookup
+            Method: POST
+            Auth:
+              Authorizer: CognitoAuthorizer
+        BulkBarcodeLookup:
+          Type: HttpApi
+          Properties:
+            Path: /barcode/bulk-lookup
+            Method: POST
+            Auth:
+              Authorizer: CognitoAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+              Resource:
+                - !GetAtt ProductsTable.Arn
+                - !Sub '${ProductsTable.Arn}/index/*'
+
+  # CloudWatch Alarm for Barcode Lookup Latency
+  BarcodeLookupLatencyAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${AWS::StackName}-barcode-lookup-latency'
+      AlarmDescription: Barcode lookup p99 latency > 200ms
+      MetricName: Duration
+      Namespace: AWS/Lambda
+      Statistic: p99
+      Period: 60
+      Threshold: 200
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 3
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref BarcodeLookupFunction
+
+  # S3 Bucket for Barcode Labels
+  BarcodeLabelsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${AWS::StackName}-barcode-labels-${AWS::AccountId}'
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldLabels
+            Status: Enabled
+            ExpirationInDays: 30
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  DynamoDBThrottlesAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${AWS::StackName}-dynamodb-throttles'
+      AlarmDescription: DynamoDB throttled requests > 0
+      MetricName: ThrottledRequests
+      Namespace: AWS/DynamoDB
+      Statistic: Sum
+      Period: 300
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      Dimensions:
+        - Name: TableName
+          Value: !Ref TenantsTable
+        - Name: TableName
+          Value: !Ref UsersTable
+        - Name: TableName
+          Value: !Ref BillingTable
+        - Name: TableName
+          Value: !Ref AuditLogsTable
+
+  ApiGateway5xxAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${AWS::StackName}-api-5xx'
+      AlarmDescription: API Gateway 5xx rate > 1%
+      MetricName: 5XXError
+      Namespace: AWS/ApiGateway
+      Statistic: Average
+      Period: 300
+      Threshold: 1
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      Dimensions:
+        - Name: ApiName
+          Value: !Ref HttpApi
+
+  # ============================================================================
+  # CUSTOMER APP — DynamoDB Tables
+  # ============================================================================
+
+  CustomerInvoicesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-customer-invoices'
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: customerId
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_Customer
+          KeySchema:
+            - AttributeName: customerId
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+
+  CustomerLedgerTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-customer-ledger'
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: customerId
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_CustomerLedger
+          KeySchema:
+            - AttributeName: customerId
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+
+  CustomerPaymentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-customer-payments'
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI_Customer_PK
+          AttributeType: S
+        - AttributeName: GSI_Customer_SK
+          AttributeType: S
+        - AttributeName: GSI_Vendor_PK
+          AttributeType: S
+        - AttributeName: GSI_Vendor_SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_Customer
+          KeySchema:
+            - AttributeName: GSI_Customer_PK
+              KeyType: HASH
+            - AttributeName: GSI_Customer_SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI_Vendor
+          KeySchema:
+            - AttributeName: GSI_Vendor_PK
+              KeyType: HASH
+            - AttributeName: GSI_Vendor_SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  CustomerNotificationsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-customer-notifications'
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+      # COST-OPT: PITR disabled — ephemeral notification data
+      # PointInTimeRecoverySpecification:
+      #   PointInTimeRecoveryEnabled: true
+
+  # ============================================================================
+  # CUSTOMER APP — Lambda Functions
+  # ============================================================================
+
+  CustomerAuthorizer:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-customer-authorizer'
+      Description: JWT authorizer for all /customer/v1/* routes — enforces role=customer
+      CodeUri: lambda/customerAuthorizerHandler/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      MemorySize: 128
+      Timeout: 5
+      Environment:
+        Variables:
+          COGNITO_USER_POOL_ID: !Ref CognitoUserPool
+          COGNITO_MOBILE_CLIENT_ID: !Ref MobileAppClient
+          TENANTS_TABLE: !Ref TenantsTable
+      Layers:
+        - !Ref SharedUtilsLayer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action: dynamodb:GetItem
+              Resource: !GetAtt TenantsTable.Arn
+
+  CustomerProfileHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-customer-profile'
+      Description: Customer profile and summary endpoints
+      CodeUri: lambda/customerHandler/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      MemorySize: 256
+      Timeout: 10
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref UsersTable
+          TENANTS_TABLE: !Ref TenantsTable
+      Layers:
+        - !Ref SharedUtilsLayer
+      Events:
+        GetProfile:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/profile
+            Method: GET
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+        UpdateProfile:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/profile
+            Method: PATCH
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+        GetSummary:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/summary
+            Method: GET
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+        GetConnections:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/connections
+            Method: GET
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:Query
+              Resource:
+                - !GetAtt UsersTable.Arn
+                - !Sub '${UsersTable.Arn}/index/*'
+                - !GetAtt TenantsTable.Arn
+                - !Sub '${TenantsTable.Arn}/index/*'
+
+  CustomerInvoiceHandlerFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-customer-invoices'
+      Description: Customer invoice list and detail endpoints
+      CodeUri: lambda/customerInvoiceHandler/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      MemorySize: 256
+      Timeout: 10
+      Environment:
+        Variables:
+          INVOICES_TABLE: !Ref CustomerInvoicesTable
+          USERS_TABLE: !Ref UsersTable
+      Layers:
+        - !Ref SharedUtilsLayer
+      Events:
+        ListInvoices:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/invoices
+            Method: GET
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+        GetInvoice:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/invoices/{id}
+            Method: GET
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+              Resource:
+                - !GetAtt CustomerInvoicesTable.Arn
+                - !Sub '${CustomerInvoicesTable.Arn}/index/*'
+
+  CustomerLedgerHandlerFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-customer-ledger'
+      Description: Customer ledger entries and balance endpoints
+      CodeUri: lambda/customerLedgerHandler/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      MemorySize: 256
+      Timeout: 10
+      Environment:
+        Variables:
+          LEDGER_TABLE: !Ref CustomerLedgerTable
+      Layers:
+        - !Ref SharedUtilsLayer
+      Events:
+        GetLedger:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/ledger
+            Method: GET
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+        GetBalance:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/ledger/balance
+            Method: GET
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Query
+              Resource:
+                - !GetAtt CustomerLedgerTable.Arn
+                - !Sub '${CustomerLedgerTable.Arn}/index/*'
+
+  CustomerPaymentHandlerFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-customer-payments'
+      Description: Customer payment recording and history
+      CodeUri: lambda/customerPaymentHandler/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      MemorySize: 256
+      Timeout: 15
+      Environment:
+        Variables:
+          PAYMENTS_TABLE: !Ref CustomerPaymentsTable
+          LEDGER_TABLE: !Ref CustomerLedgerTable
+          USERS_TABLE: !Ref UsersTable
+      Layers:
+        - !Ref SharedUtilsLayer
+      Events:
+        RecordPayment:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/payments
+            Method: POST
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+        GetPayments:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/payments
+            Method: GET
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:Query
+              Resource:
+                - !GetAtt CustomerPaymentsTable.Arn
+                - !Sub '${CustomerPaymentsTable.Arn}/index/*'
+                - !GetAtt CustomerLedgerTable.Arn
+                - !Sub '${CustomerLedgerTable.Arn}/index/*'
+                - !GetAtt UsersTable.Arn
+                - !Sub '${UsersTable.Arn}/index/*'
+                - !GetAtt AuditLogsTable.Arn
+
+  CustomerNotificationHandlerFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-customer-notifications'
+      Description: Customer notification list and mark-read endpoints
+      CodeUri: lambda/customerNotificationHandler/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      MemorySize: 128
+      Timeout: 10
+      Environment:
+        Variables:
+          NOTIFICATIONS_TABLE: !Ref CustomerNotificationsTable
+      Layers:
+        - !Ref SharedUtilsLayer
+      Events:
+        ListNotifications:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/notifications
+            Method: GET
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+        MarkRead:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/notifications/{id}/read
+            Method: PATCH
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+        MarkAllRead:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/notifications/read-all
+            Method: PATCH
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Query
+                - dynamodb:UpdateItem
+              Resource:
+                - !GetAtt CustomerNotificationsTable.Arn
+                - !Sub '${CustomerNotificationsTable.Arn}/index/*'
+
+  CustomerConnectionHandlerFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-customer-connections'
+      Description: Customer vendor link/unlink endpoints
+      CodeUri: lambda/customerConnectionHandler/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      MemorySize: 256
+      Timeout: 15
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref UsersTable
+          TENANTS_TABLE: !Ref TenantsTable
+      Layers:
+        - !Ref SharedUtilsLayer
+      Events:
+        RequestConnection:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/connections/request
+            Method: POST
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+        DeleteConnection:
+          Type: HttpApi
+          Properties:
+            Path: /customer/v1/connections/{vendorId}
+            Method: DELETE
+            Auth:
+              Authorizer: CustomerJwtAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:Query
+              Resource:
+                - !GetAtt UsersTable.Arn
+                - !Sub '${UsersTable.Arn}/index/*'
+                - !GetAtt TenantsTable.Arn
+                - !Sub '${TenantsTable.Arn}/index/*'
+                - !GetAtt AuditLogsTable.Arn
+
+  CustomerOnboardingTriggerFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-customer-onboarding'
+      Description: Cognito Post-Confirmation trigger — creates customer profile idempotently
+      CodeUri: lambda/customerOnboardingTrigger/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      MemorySize: 128
+      Timeout: 10
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref UsersTable
+      Layers:
+        - !Ref SharedUtilsLayer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+              Resource: !GetAtt UsersTable.Arn
+
+  CustomerOnboardingTriggerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt CustomerOnboardingTriggerFn.Arn
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt CognitoUserPool.Arn
+
+  # ============================================================================
+  # CUSTOMER APP — WebSocket Infrastructure
+  # ============================================================================
+
+  WsConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-ws-connections'
+      AttributeDefinitions:
+        - AttributeName: connectionId
+          AttributeType: S
+        - AttributeName: GSI_Customer_PK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: connectionId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_Customer
+          KeySchema:
+            - AttributeName: GSI_Customer_PK
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  CustomerWebSocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub '${AWS::StackName}-customer-ws'
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: $request.body.action
+
+  CustomerWsStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref CustomerWebSocketApi
+      StageName: prod
+      AutoDeploy: true
+
+  CustomerWsHandlerFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-customer-ws-handler'
+      Description: WebSocket $connect/$disconnect/$default for customer app
+      CodeUri: lambda/customerWsHandler/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      MemorySize: 256
+      Timeout: 15
+      Environment:
+        Variables:
+          WS_CONNECTIONS_TABLE: !Ref WsConnectionsTable
+          COGNITO_USER_POOL_ID: !Ref CognitoUserPool
+          COGNITO_MOBILE_CLIENT_ID: !Ref MobileAppClient
+          WS_ENDPOINT: !Sub 'https://${CustomerWebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
+      Layers:
+        - !Ref SharedUtilsLayer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:DeleteItem
+                - dynamodb:Query
+              Resource:
+                - !GetAtt WsConnectionsTable.Arn
+                - !Sub '${WsConnectionsTable.Arn}/index/*'
+            - Effect: Allow
+              Action: execute-api:ManageConnections
+              Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${CustomerWebSocketApi}/*'
+
+  CustomerWsConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref CustomerWebSocketApi
+      RouteKey: $connect
+      AuthorizationType: NONE
+      Target: !Sub 'integrations/${CustomerWsConnectIntegration}'
+
+  CustomerWsDisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref CustomerWebSocketApi
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      Target: !Sub 'integrations/${CustomerWsDisconnectIntegration}'
+
+  CustomerWsDefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref CustomerWebSocketApi
+      RouteKey: $default
+      AuthorizationType: NONE
+      Target: !Sub 'integrations/${CustomerWsDefaultIntegration}'
+
+  CustomerWsConnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref CustomerWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustomerWsHandlerFn.Arn}/invocations'
+
+  CustomerWsDisconnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref CustomerWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustomerWsHandlerFn.Arn}/invocations'
+
+  CustomerWsDefaultIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref CustomerWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustomerWsHandlerFn.Arn}/invocations'
+
+  CustomerWsHandlerPermissionConnect:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt CustomerWsHandlerFn.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${CustomerWebSocketApi}/*/$connect'
+
+  CustomerWsHandlerPermissionDisconnect:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt CustomerWsHandlerFn.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${CustomerWebSocketApi}/*/$disconnect'
+
+  CustomerWsHandlerPermissionDefault:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt CustomerWsHandlerFn.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${CustomerWebSocketApi}/*/*'
+
+  CustomerStreamProcessorFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-customer-stream-processor'
+      Description: DynamoDB Streams processor — pushes real-time events to customer WebSocket connections
+      CodeUri: lambda/customerStreamProcessor/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      MemorySize: 512
+      Timeout: 60
+      Environment:
+        Variables:
+          WS_CONNECTIONS_TABLE: !Ref WsConnectionsTable
+          NOTIFICATIONS_TABLE: !Ref CustomerNotificationsTable
+          WS_ENDPOINT: !Sub 'https://${CustomerWebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
+      Layers:
+        - !Ref SharedUtilsLayer
+      Events:
+        InvoiceStreamEvent:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt CustomerInvoicesTable.StreamArn
+            StartingPosition: TRIM_HORIZON
+            BatchSize: 10
+            FilterCriteria:
+              Filters:
+                - Pattern: '{"eventName": ["INSERT", "MODIFY"]}'
+        LedgerStreamEvent:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt CustomerLedgerTable.StreamArn
+            StartingPosition: TRIM_HORIZON
+            BatchSize: 10
+            FilterCriteria:
+              Filters:
+                - Pattern: '{"eventName": ["INSERT"]}'
+        PaymentStreamEvent:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt CustomerPaymentsTable.StreamArn
+            StartingPosition: TRIM_HORIZON
+            BatchSize: 10
+            FilterCriteria:
+              Filters:
+                - Pattern: '{"eventName": ["INSERT"]}'
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaDynamoDBExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Query
+                - dynamodb:DeleteItem
+              Resource:
+                - !GetAtt WsConnectionsTable.Arn
+                - !Sub '${WsConnectionsTable.Arn}/index/*'
+            - Effect: Allow
+              Action: dynamodb:PutItem
+              Resource: !GetAtt CustomerNotificationsTable.Arn
+            - Effect: Allow
+              Action: execute-api:ManageConnections
+              Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${CustomerWebSocketApi}/*'
+
+Outputs:
+  CustomerWebSocketUrl:
+    Description: Customer App WebSocket URL
+    Value: !Sub 'wss://${CustomerWebSocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
+    Export:
+      Name: !Sub '${AWS::StackName}-customer-ws-url'
+  ApiGatewayUrl:
+    Description: API Gateway HTTP API URL
+    Value: !Sub 'https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub '${AWS::StackName}-api-url'
+  UserPoolId:
+    Description: Cognito User Pool ID
+    Value: !Ref CognitoUserPool
+    Export:
+      Name: !Sub '${AWS::StackName}-user-pool-id'
+  UserPoolArn:
+    Description: Cognito User Pool ARN
+    Value: !GetAtt CognitoUserPool.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-user-pool-arn'
+  AdminClientId:
+    Description: Admin Panel Cognito Client ID
+    Value: !Ref AdminPanelClient
+    Export:
+      Name: !Sub '${AWS::StackName}-admin-client-id'
+  AppClientId:
+    Description: App Cognito Client ID
+    Value: !Ref CognitoUserPoolClient
+    Export:
+      Name: !Sub '${AWS::StackName}-app-client-id'
+  MobileClientId:
+    Description: Mobile App Cognito Client ID
+    Value: !Ref MobileAppClient
+    Export:
+      Name: !Sub '${AWS::StackName}-mobile-client-id'
+  DesktopClientId:
+    Description: Desktop App Cognito Client ID
+    Value: !Ref DesktopAppClient
+    Export:
+      Name: !Sub '${AWS::StackName}-desktop-client-id'</content>
+<parameter name="filePath">g:\desktop app genuine\template.yaml

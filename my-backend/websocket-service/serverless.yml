@@ -1,0 +1,336 @@
+# ============================================================================
+# WebSocket Real-Time Service — Complete Stack (Phases 1-4)
+# ============================================================================
+# Deployed as a standalone Serverless service to avoid the 500-resource
+# CloudFormation limit in the main my-backend stack.
+#
+# Deploy: cd websocket-service && npx serverless deploy --stage dev
+# ============================================================================
+
+service: dukanx-websocket
+
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  region: ap-south-1
+  memorySize: 256
+  timeout: 10
+
+  environment:
+    NODE_ENV: ${self:provider.stage}
+    WEBSOCKET_CONNECTIONS_TABLE: !Ref WebsocketConnectionsTable
+    WEBSOCKET_API_ENDPOINT: !Sub 'https://${WebsocketsApi}.execute-api.${AWS::Region}.amazonaws.com/${self:provider.stage}'
+    COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID, ''}
+    COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID, ''}
+    COGNITO_DESKTOP_CLIENT_ID: ${env:COGNITO_DESKTOP_CLIENT_ID, ''}
+    COGNITO_MOBILE_CLIENT_ID: ${env:COGNITO_MOBILE_CLIENT_ID, ''}
+    COGNITO_ADMIN_CLIENT_ID: ${env:COGNITO_ADMIN_CLIENT_ID, ''}
+    AWS_REGION_CUSTOM: ${self:provider.region}
+    EVENTBRIDGE_BUS_NAME: ${self:custom.eventBusName}
+    OFFLINE_MESSAGES_TABLE: !Ref OfflineMessagesTable
+
+  iam:
+    role:
+      statements:
+        # DynamoDB — WebSocket connection storage
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:DeleteItem
+            - dynamodb:UpdateItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource:
+            - !GetAtt WebsocketConnectionsTable.Arn
+            - !Sub '${WebsocketConnectionsTable.Arn}/index/*'
+
+        # DynamoDB — Offline messages (Phase 4)
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:DeleteItem
+            - dynamodb:Query
+            - dynamodb:BatchWriteItem
+          Resource:
+            - !GetAtt OfflineMessagesTable.Arn
+            - !Sub '${OfflineMessagesTable.Arn}/index/*'
+
+        # API Gateway Management — Post messages to WebSocket connections
+        - Effect: Allow
+          Action:
+            - execute-api:ManageConnections
+          Resource:
+            - !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebsocketsApi}/${self:provider.stage}/POST/@connections/*'
+
+        # EventBridge — Emit events (Phase 2)
+        - Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource:
+            - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/${self:custom.eventBusName}'
+
+        # CloudWatch — Custom metrics (Phase 3) (IAM-5 FIX: namespace-scoped)
+        - Effect: Allow
+          Action:
+            - cloudwatch:PutMetricData
+          Resource: '*'
+          Condition:
+            StringEquals:
+              cloudwatch:namespace: 'DukanX/WebSocket'
+
+        # SQS — Dead-letter queue (Phase 4)
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+          Resource:
+            - !GetAtt WebSocketDLQ.Arn
+
+custom:
+  eventBusName: dukanx-events-${self:provider.stage}
+
+# ============================================================================
+# FUNCTIONS
+# ============================================================================
+functions:
+  wsConnect:
+    handler: dist/handlers/websocket.wsConnect
+    events:
+      - websocket:
+          route: $connect
+    description: Authenticate and register WebSocket connection
+
+  wsDisconnect:
+    handler: dist/handlers/websocket.wsDisconnect
+    events:
+      - websocket:
+          route: $disconnect
+    description: Clean up WebSocket connection on disconnect
+
+  wsDefault:
+    handler: dist/handlers/websocket.wsDefault
+    events:
+      - websocket:
+          route: $default
+    description: Handle incoming WebSocket messages (ping, subscribe, presence)
+
+  # Phase 2: Dedicated Broadcaster Lambda — triggered by EventBridge
+  wsBroadcaster:
+    handler: dist/handlers/ws-broadcaster.wsBroadcaster
+    memorySize: 512
+    timeout: 30
+    reservedConcurrency: 10  # PERF-17 FIX: Cap broadcaster to prevent concurrency exhaustion
+    description: Fan-out EventBridge events to WebSocket connections
+    events:
+      # Orders
+      - eventBridge:
+          eventBus: !Ref EventBus
+          pattern:
+            source:
+              - dukanx.orders
+            detail-type:
+              - WSBroadcast
+      # Billing
+      - eventBridge:
+          eventBus: !Ref EventBus
+          pattern:
+            source:
+              - dukanx.billing
+            detail-type:
+              - WSBroadcast
+      # Inventory
+      - eventBridge:
+          eventBus: !Ref EventBus
+          pattern:
+            source:
+              - dukanx.inventory
+            detail-type:
+              - WSBroadcast
+      # Staff
+      - eventBridge:
+          eventBus: !Ref EventBus
+          pattern:
+            source:
+              - dukanx.staff
+            detail-type:
+              - WSBroadcast
+      # Payments
+      - eventBridge:
+          eventBus: !Ref EventBus
+          pattern:
+            source:
+              - dukanx.payments
+            detail-type:
+              - WSBroadcast
+      # System
+      - eventBridge:
+          eventBus: !Ref EventBus
+          pattern:
+            source:
+              - dukanx.system
+            detail-type:
+              - WSBroadcast
+      # Clinic
+      - eventBridge:
+          eventBus: !Ref EventBus
+          pattern:
+            source:
+              - dukanx.clinic
+            detail-type:
+              - WSBroadcast
+      # Petrol Pump
+      - eventBridge:
+          eventBus: !Ref EventBus
+          pattern:
+            source:
+              - dukanx.pump
+            detail-type:
+              - WSBroadcast
+      # Service Business
+      - eventBridge:
+          eventBus: !Ref EventBus
+          pattern:
+            source:
+              - dukanx.service
+            detail-type:
+              - WSBroadcast
+
+# ============================================================================
+# RESOURCES
+# ============================================================================
+resources:
+  Resources:
+    # ── EventBridge Bus (Phase 2) ──────────────────────────────────────────
+    EventBus:
+      Type: AWS::Events::EventBus
+      Properties:
+        Name: ${self:custom.eventBusName}
+
+    # ── DynamoDB: WebSocket Connections ─────────────────────────────────────
+    WebsocketConnectionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: dukanx-ws-connections-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+          - AttributeName: businessId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: deviceId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          # Existing: Query connections by business
+          - IndexName: businessId-index
+            KeySchema:
+              - AttributeName: businessId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+          # Phase 2: Query connections by user (multi-device sync)
+          - IndexName: userId-index
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+          # Phase 2: Query connections by device
+          - IndexName: deviceId-index
+            KeySchema:
+              - AttributeName: deviceId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+        Tags:
+          - Key: service
+            Value: dukanx-websocket
+          - Key: environment
+            Value: ${self:provider.stage}
+
+    # ── DynamoDB: Offline Messages Queue (Phase 4) ─────────────────────────
+    OfflineMessagesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: dukanx-ws-offline-messages-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: messageId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: messageId
+            KeyType: RANGE
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+        Tags:
+          - Key: service
+            Value: dukanx-websocket
+          - Key: environment
+            Value: ${self:provider.stage}
+
+    # ── SQS: Dead-Letter Queue for failed broadcasts (Phase 4) ─────────────
+    WebSocketDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: dukanx-ws-dlq-${self:provider.stage}
+        MessageRetentionPeriod: 1209600  # 14 days
+        VisibilityTimeout: 60
+        Tags:
+          - Key: service
+            Value: dukanx-websocket
+          - Key: environment
+            Value: ${self:provider.stage}
+
+
+
+  Outputs:
+    WebsocketApiEndpoint:
+      Value: !Sub 'wss://${WebsocketsApi}.execute-api.${AWS::Region}.amazonaws.com/${self:provider.stage}'
+      Description: WebSocket API Gateway endpoint URL
+
+    WebsocketConnectionsTableName:
+      Value: !Ref WebsocketConnectionsTable
+      Description: DynamoDB table for WebSocket connections
+
+    WebsocketConnectionsTableArn:
+      Value: !GetAtt WebsocketConnectionsTable.Arn
+      Description: DynamoDB table ARN (for cross-stack IAM reference)
+
+    EventBusName:
+      Value: !Ref EventBus
+      Description: EventBridge bus name for cross-stack event emission
+
+    EventBusArn:
+      Value: !GetAtt EventBus.Arn
+      Description: EventBridge bus ARN
+
+    OfflineMessagesTableName:
+      Value: !Ref OfflineMessagesTable
+      Description: DynamoDB table for offline message queuing
+
+    WebSocketDLQUrl:
+      Value: !Ref WebSocketDLQ
+      Description: SQS dead-letter queue URL
+
+    WebSocketDLQArn:
+      Value: !GetAtt WebSocketDLQ.Arn
+      Description: SQS dead-letter queue ARN

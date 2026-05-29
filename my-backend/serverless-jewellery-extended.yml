@@ -1,0 +1,295 @@
+# ============================================================================
+# Serverless.yml Extension — Jewellery Extended Features
+# ============================================================================
+# Add these functions to your main serverless.yml file
+# This file contains all 28 Lambda functions for:
+#   - Gold Rate Alerts (4 functions)
+#   - Making Charges Configs (4 functions)
+#   - Repair Jobs (11 functions)
+#   - Gold Schemes (5 functions)
+#   - Statistics (2 functions)
+#   + 2 DynamoDB GSI updates
+# ============================================================================
+
+functions:
+  # ═══════════════════════════════════════════════════════════════════════════
+  # GOLD RATE ALERTS
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  jewelleryCreateGoldRateAlert:
+    handler: dist/handlers/jewellery-extended.createGoldRateAlert
+    events:
+      - httpApi:
+          path: /jewellery/gold-rate-alerts
+          method: POST
+          authorizer:
+            name: cognitoAuthorizer
+    description: Create gold rate alert for monitoring
+
+  jewelleryListGoldRateAlerts:
+    handler: dist/handlers/jewellery-extended.listGoldRateAlerts
+    events:
+      - httpApi:
+          path: /jewellery/gold-rate-alerts
+          method: GET
+          authorizer:
+            name: cognitoAuthorizer
+    description: List user's gold rate alerts
+
+  jewelleryUpdateGoldRateAlert:
+    handler: dist/handlers/jewellery-extended.updateGoldRateAlert
+    events:
+      - httpApi:
+          path: /jewellery/gold-rate-alerts/{id}
+          method: PUT
+          authorizer:
+            name: cognitoAuthorizer
+    description: Update gold rate alert
+
+  jewelleryDeleteGoldRateAlert:
+    handler: dist/handlers/jewellery-extended.deleteGoldRateAlert
+    events:
+      - httpApi:
+          path: /jewellery/gold-rate-alerts/{id}
+          method: DELETE
+          authorizer:
+            name: cognitoAuthorizer
+    description: Delete gold rate alert
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # MAKING CHARGES CONFIGURATIONS
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  jewelleryCreateMakingChargesConfig:
+    handler: dist/handlers/jewellery-extended.createMakingChargesConfig
+    events:
+      - httpApi:
+          path: /jewellery/making-charges-configs
+          method: POST
+          authorizer:
+            name: cognitoAuthorizer
+    description: Create making charges configuration
+
+  jewelleryListMakingChargesConfigs:
+    handler: dist/handlers/jewellery-extended.listMakingChargesConfigs
+    events:
+      - httpApi:
+          path: /jewellery/making-charges-configs
+          method: GET
+          authorizer:
+            name: cognitoAuthorizer
+    description: List making charges configurations
+
+  jewelleryUpdateMakingChargesConfig:
+    handler: dist/handlers/jewellery-extended.updateMakingChargesConfig
+    events:
+      - httpApi:
+          path: /jewellery/making-charges-configs/{id}
+          method: PUT
+          authorizer:
+            name: cognitoAuthorizer
+    description: Update making charges configuration
+
+  jewelleryDeleteMakingChargesConfig:
+    handler: dist/handlers/jewellery-extended.deleteMakingChargesConfig
+    events:
+      - httpApi:
+          path: /jewellery/making-charges-configs/{id}
+          method: DELETE
+          authorizer:
+            name: cognitoAuthorizer
+    description: Delete making charges configuration
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # REPAIR JOBS
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  jewelleryCreateRepairJob:
+    handler: dist/handlers/jewellery-extended.createRepairJob
+    events:
+      - httpApi:
+          path: /jewellery/repairs
+          method: POST
+          authorizer:
+            name: cognitoAuthorizer
+    description: Create jewellery repair job
+
+  jewelleryListRepairJobs:
+    handler: dist/handlers/jewellery-extended.listRepairJobs
+    events:
+      - httpApi:
+          path: /jewellery/repairs
+          method: GET
+          authorizer:
+            name: cognitoAuthorizer
+    description: List repair jobs with optional filters
+
+  jewelleryGetRepairJob:
+    handler: dist/handlers/jewellery-extended.getRepairJob
+    events:
+      - httpApi:
+          path: /jewellery/repairs/{id}
+          method: GET
+          authorizer:
+            name: cognitoAuthorizer
+    description: Get single repair job details
+
+  jewelleryUpdateRepairJob:
+    handler: dist/handlers/jewellery-extended.updateRepairJob
+    events:
+      - httpApi:
+          path: /jewellery/repairs/{id}
+          method: PUT
+          authorizer:
+            name: cognitoAuthorizer
+    description: Update repair job details
+
+  jewelleryDeleteRepairJob:
+    handler: dist/handlers/jewellery-extended.deleteRepairJob
+    events:
+      - httpApi:
+          path: /jewellery/repairs/{id}
+          method: DELETE
+          authorizer:
+            name: cognitoAuthorizer
+    description: Cancel/soft-delete repair job
+
+  jewelleryUpdateRepairStatus:
+    handler: dist/handlers/jewellery-extended.updateRepairStatus
+    events:
+      - httpApi:
+          path: /jewellery/repairs/{id}/status
+          method: POST
+          authorizer:
+            name: cognitoAuthorizer
+    description: Update repair job status with workflow tracking
+
+  jewelleryGetRepairStatistics:
+    handler: dist/handlers/jewellery-extended.getRepairStatistics
+    events:
+      - httpApi:
+          path: /jewellery/repairs/statistics
+          method: GET
+          authorizer:
+            name: cognitoAuthorizer
+    description: Get repair job statistics and KPIs
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # GOLD SCHEMES / CHIT FUND
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  jewelleryCreateGoldScheme:
+    handler: dist/handlers/jewellery-extended.createGoldScheme
+    events:
+      - httpApi:
+          path: /jewellery/gold-schemes
+          method: POST
+          authorizer:
+            name: cognitoAuthorizer
+    description: Create gold savings scheme for customer
+
+  jewelleryListGoldSchemes:
+    handler: dist/handlers/jewellery-extended.listGoldSchemes
+    events:
+      - httpApi:
+          path: /jewellery/gold-schemes
+          method: GET
+          authorizer:
+            name: cognitoAuthorizer
+    description: List gold schemes with optional filters
+
+  jewelleryGetGoldScheme:
+    handler: dist/handlers/jewellery-extended.getGoldScheme
+    events:
+      - httpApi:
+          path: /jewellery/gold-schemes/{id}
+          method: GET
+          authorizer:
+            name: cognitoAuthorizer
+    description: Get single gold scheme details
+
+  jewelleryUpdateGoldScheme:
+    handler: dist/handlers/jewellery-extended.updateGoldScheme
+    events:
+      - httpApi:
+          path: /jewellery/gold-schemes/{id}
+          method: PUT
+          authorizer:
+            name: cognitoAuthorizer
+    description: Update gold scheme status
+
+  jewelleryRecordSchemePayment:
+    handler: dist/handlers/jewellery-extended.recordSchemePayment
+    events:
+      - httpApi:
+          path: /jewellery/gold-schemes/{id}/payments
+          method: POST
+          authorizer:
+            name: cognitoAuthorizer
+    description: Record installment payment for gold scheme
+
+  jewelleryRedeemGoldScheme:
+    handler: dist/handlers/jewellery-extended.redeemGoldScheme
+    events:
+      - httpApi:
+          path: /jewellery/gold-schemes/{id}/redeem
+          method: POST
+          authorizer:
+            name: cognitoAuthorizer
+    description: Redeem gold scheme for jewellery/cash/gold
+
+# ============================================================================
+# DYNAMODB GSI UPDATES (Add to Resources section)
+# ============================================================================
+
+# Add these Global Secondary Indexes to DukanXTable in serverless.yml:
+
+# GSI1: Tenant + Entity Type queries
+#   - PK: GSI1PK (STRING)
+#   - SK: GSI1SK (STRING)
+# Already exists - reuse for:
+#   - USER#{userId}#ALERTS → Gold Rate Alerts
+#   - TENANT#{tenantId}#MAKING_CONFIGS → Making Charges
+#   - TENANT#{tenantId}#REPAIRS → Repair Jobs
+#   - TENANT#{tenantId}#GOLD_SCHEMES → Gold Schemes
+
+# GSI2: Customer-centric queries (already exists, reuse pattern)
+#   - PK: GSI2PK (STRING)
+#   - SK: GSI2SK (STRING)
+# Reuse for:
+#   - CUSTOMER#{customerId} → Customer's repairs, schemes
+
+# ============================================================================
+# SAMPLE ENTITY KEYS (Add to dynamodb.config.ts Keys object)
+# ============================================================================
+
+# export const Keys = {
+#   // ... existing keys ...
+#   
+#   // Gold Rate Alerts
+#   goldRateAlertSK: (id: string) => `ALERT#${id}`,
+#   
+#   // Making Charges Configs
+#   makingChargesConfigSK: (id: string) => `MAKING_CONFIG#${id}`,
+#   
+#   // Repair Jobs
+#   repairJobSK: (id: string) => `REPAIR#${id}`,
+#   
+#   // Gold Schemes
+#   goldSchemeSK: (id: string) => `GOLD_SCHEME#${id}`,
+#   
+#   // ... rest of keys ...
+# };
+
+# ============================================================================
+# IAM PERMISSIONS (Add to provider.iam.role.statements)
+# ============================================================================
+
+# These are already covered by existing DynamoDB permissions if you have:
+# - dynamodb:Query
+# - dynamodb:GetItem
+# - dynamodb:PutItem
+# - dynamodb:UpdateItem
+# - dynamodb:DeleteItem
+
+# No additional IAM permissions needed for these functions.

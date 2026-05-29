@@ -1,0 +1,72 @@
+# Artillery Load Test — DukanX Local API
+# Usage: npx artillery run local-cloud/tests/load-test.yml
+
+config:
+  target: "http://localhost:4566"
+  phases:
+    - duration: 30
+      arrivalRate: 5
+      name: "Warm up"
+    - duration: 60
+      arrivalRate: 20
+      name: "Sustained load"
+    - duration: 30
+      arrivalRate: 50
+      name: "Peak load"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Bearer {{$env.TEST_TOKEN}}"
+      x-tenant-id: "tenant-001"
+  plugins:
+    expect: {}
+
+scenarios:
+  - name: "List billing plans"
+    weight: 30
+    flow:
+      - get:
+          url: "/billing/plans"
+          expect:
+            - statusCode: 200
+            - hasProperty: "body.plans"
+
+  - name: "List tenants"
+    weight: 20
+    flow:
+      - get:
+          url: "/tenants"
+          expect:
+            - statusCode: 200
+
+  - name: "Get tenant by ID"
+    weight: 20
+    flow:
+      - get:
+          url: "/tenants/tenant-001"
+          expect:
+            - statusCode: 200
+
+  - name: "List users"
+    weight: 15
+    flow:
+      - get:
+          url: "/users"
+          expect:
+            - statusCode: 200
+
+  - name: "List audit logs"
+    weight: 10
+    flow:
+      - get:
+          url: "/audit/logs"
+          expect:
+            - statusCode: 200
+
+  - name: "Get billing invoices"
+    weight: 5
+    flow:
+      - get:
+          url: "/billing/invoices"
+          expect:
+            - statusCode: 200
