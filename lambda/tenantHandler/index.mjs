@@ -95,11 +95,16 @@ export async function listTenants(event) {
     const token = authHeader.substring(7);
     const decoded = await verifyToken(token);
 
-    const { limit, nextToken } = getPaginationParams(event);
+    const { limit, cursor } = getPaginationParams(event);
     const queryParams = event.queryStringParameters || {};
 
     let tenants;
     let lastEvaluatedKey;
+
+    // FIX (M-02): Pass cursor as ExclusiveStartKey and capture LastEvaluatedKey
+    const queryOpts = {};
+    if (cursor) queryOpts.ExclusiveStartKey = cursor;
+    queryOpts.Limit = limit;
 
     if (queryParams.plan) {
       // Query by plan using GSI_Plan
@@ -108,9 +113,10 @@ export async function listTenants(event) {
         '#p = :plan',
         { ':plan': queryParams.plan },
         'attribute_not_exists(deletedAt)',
-        { IndexName: 'GSI_Plan', ExpressionAttributeNames: { '#p': 'plan' } }
+        { IndexName: 'GSI_Plan', ExpressionAttributeNames: { '#p': 'plan' }, ...queryOpts }
       );
-      tenants = result.slice(0, limit);
+      tenants = Array.isArray(result) ? result : (result.Items || result);
+      lastEvaluatedKey = result.LastEvaluatedKey;
     } else {
       // Query owner's tenants using GSI_Owner
       const result = await queryItems(
@@ -118,9 +124,10 @@ export async function listTenants(event) {
         'ownerUserId = :owner',
         { ':owner': decoded.sub },
         'attribute_not_exists(deletedAt)',
-        { IndexName: 'GSI_Owner' }
+        { IndexName: 'GSI_Owner', ...queryOpts }
       );
-      tenants = result.slice(0, limit);
+      tenants = Array.isArray(result) ? result : (result.Items || result);
+      lastEvaluatedKey = result.LastEvaluatedKey;
     }
 
     return success(createPaginationResponse(tenants, limit, lastEvaluatedKey));
@@ -276,14 +283,22 @@ export async function adminListAllTenants(event) {
 
     requireAdminRole(decoded.role);
 
-    const { limit, nextToken } = getPaginationParams(event);
+    const { limit, cursor } = getPaginationParams(event);
 
-    const tenants = await scanItems(
+    // FIX (M-01): Pass Limit and cursor to scan instead of full-table scan + slice
+    const scanOpts = { Limit: limit };
+    if (cursor) scanOpts.ExclusiveStartKey = cursor;
+
+    const result = await scanItems(
       process.env.DYNAMODB_TABLE_TENANTS,
-      'attribute_not_exists(deletedAt)'
+      'attribute_not_exists(deletedAt)',
+      scanOpts
     );
 
-    return success(createPaginationResponse(tenants.slice(0, limit), limit));
+    const tenants = Array.isArray(result) ? result : (result.Items || result);
+    const lastKey = result.LastEvaluatedKey;
+
+    return success(createPaginationResponse(tenants, limit, lastKey));
   } catch (err) {
     console.error('Admin list tenants error:', err);
     if (err.message === 'FORBIDDEN') {

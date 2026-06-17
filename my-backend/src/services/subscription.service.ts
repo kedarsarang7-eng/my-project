@@ -8,6 +8,7 @@
 // - Subscription status synchronization
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { DynamoDBClient, GetItemCommand, UpdateItemCommand, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { CognitoIdentityProviderClient, AdminUpdateUserAttributesCommand } from '@aws-sdk/client-cognito-identity-provider';
@@ -115,8 +116,8 @@ export interface PaymentRetryResult {
 const DYNAMODB_TABLE = config.dynamodb.tableName;
 const COGNITO_USER_POOL_ID = config.cognito.userPoolId;
 
-const dynamodb = new DynamoDBClient({ region: config.aws.region });
-const cognito = new CognitoIdentityProviderClient({ region: config.aws.region });
+const dynamodb = new DynamoDBClient(configureAwsClient({ region: config.aws.region }));
+const cognito = new CognitoIdentityProviderClient(configureAwsClient({ region: config.aws.region }));
 
 // const razorpay = new Razorpay({
 //     key_id: config.payment.razorpay.keyId || '',

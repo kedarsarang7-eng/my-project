@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // Stock Service — Barcode Lookup, Image Analysis, Manual Add, Replenishment (DynamoDB)
 // ============================================================================
 // AUDIT FIXES APPLIED:
@@ -15,6 +15,7 @@ import { AppError } from '../utils/errors';
 import { logAudit } from '../middleware/audit';
 import { recordRevision } from './revision-history.service';
 import { config } from '../config/environment';
+import { updateLowStockStatus } from '../utils/low-stock-alerts';
 
 export interface BarcodeLookupResult { found: boolean; source: 'local' | 'openfoodfacts' | null; data: Record<string, unknown> | null; }
 export interface ImageAnalysisResult { name: string | null; category: string | null; brand: string | null; confidence: number; }
@@ -191,6 +192,21 @@ export async function addStockItem(
         );
 
         logger.info('Stock replenished', { tenantId, productId, addedQty: quantity, newStock });
+
+        // Update low-stock status (may emit LOW_STOCK_RESOLVED if crossing above threshold)
+        const reorderLevel = Number(existing.reorderLevel || 0);
+        updateLowStockStatus(
+            tenantId,
+            productId,
+            newStock,
+            reorderLevel,
+            existing.name,
+        ).catch(err => {
+            logger.warn('Failed to update low-stock status after replenishment', {
+                tenantId, productId, error: (err as Error).message,
+            });
+        });
+
         return { id: productId, name: existing.name, isNew: false, newStock };
     }
 

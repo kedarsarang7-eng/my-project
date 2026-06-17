@@ -107,7 +107,7 @@ class PwaApiService {
   }
 
   // ── Order placement ──────────────────────────────────────────────
-  /// P0-02: Sends Authorization: Bearer <table-JWT>. Server resolves prices
+  /// P0-02: Sends Authorization: Bearer `table-JWT`. Server resolves prices
   /// authoritatively — client only sends {menuItemId, qty, note}.
   /// Returns the orderId on success.
   static Future<String?> placeOrder({

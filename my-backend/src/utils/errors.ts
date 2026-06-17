@@ -13,12 +13,31 @@ export class AppError extends Error {
     public readonly code: string;
     public readonly details?: unknown;
 
-    constructor(message: string, statusCode: number, code: string, details?: unknown) {
-        super(message);
+    constructor(messageOrCode: string, statusCodeOrMessage?: number | string, code?: string, details?: unknown) {
+        let finalMessage = messageOrCode;
+        let finalStatusCode = 500;
+        let finalCode = 'INTERNAL_ERROR';
+        let finalDetails = details;
+
+        if (typeof statusCodeOrMessage === 'string') {
+            finalCode = messageOrCode;
+            finalMessage = statusCodeOrMessage;
+            finalStatusCode = 400;
+            finalDetails = code;
+        } else {
+            if (statusCodeOrMessage !== undefined) {
+                finalStatusCode = statusCodeOrMessage;
+            }
+            if (code !== undefined) {
+                finalCode = code;
+            }
+        }
+
+        super(finalMessage);
         this.name = 'AppError';
-        this.statusCode = statusCode;
-        this.code = code;
-        this.details = details;
+        this.statusCode = finalStatusCode;
+        this.code = finalCode;
+        this.details = finalDetails;
     }
 }
 

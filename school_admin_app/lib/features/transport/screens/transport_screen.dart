@@ -42,7 +42,7 @@ class TransportScreen extends ConsumerWidget {
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(color: AppTheme.cardBg, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.divider)),
                       child: Row(children: [
-                        Container(width: 40, height: 40, decoration: BoxDecoration(color: AppTheme.success.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.route_rounded, color: AppTheme.success, size: 20)),
+                        Container(width: 40, height: 40, decoration: BoxDecoration(color: AppTheme.success.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.route_rounded, color: AppTheme.success, size: 20)),
                         const SizedBox(width: 12),
                         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Text(route['name'] ?? 'Route', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),

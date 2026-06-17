@@ -4,7 +4,7 @@
 // Provides API endpoints for customers to view shop info, products, and orders
 
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2, Context } from 'aws-lambda';
-import { authorizedHandler } from '../middleware/cognito-auth';
+import { authorizedHandler } from '../middleware/auth';
 import { response, errorResponse } from '../utils/response';
 import { logger } from '../utils/logger';
 import * as customerService from '../services/customer.service';
@@ -357,8 +357,8 @@ export const unlinkCustomerFromShop = authorizedHandler(
  */
 export const handler = authorizedHandler(
     async (event: APIGatewayProxyEventV2, context: Context): Promise<APIGatewayProxyResultV2> => {
-        const path = event.rawPath || event.path || '';
-        const method = event.requestContext?.http?.method || event.httpMethod || 'GET';
+        const path = event.rawPath || (event as any).path || '';
+        const method = event.requestContext?.http?.method || (event as any).httpMethod || 'GET';
 
         logger.debug('Customer handler called', { path, method });
 

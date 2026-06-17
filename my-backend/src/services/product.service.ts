@@ -3,6 +3,7 @@
  * Handles product management, search, and image coordination
  */
 
+import { configureAwsClient } from '../config/aws.config';
 import { DynamoDBClient, QueryCommand, PutItemCommand, UpdateItemCommand, DeleteItemCommand, GetItemCommand, ScanCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import {
@@ -19,7 +20,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { config } from '../config/environment';
 
 const TABLE_NAME = config.dynamodb.tableName;
-const client = new DynamoDBClient({ region: config.aws.region });
+const client = new DynamoDBClient(configureAwsClient({ region: config.aws.region }));
 const storageService = new StorageService();
 
 export class ProductService {

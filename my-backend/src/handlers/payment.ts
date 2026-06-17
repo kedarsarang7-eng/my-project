@@ -50,7 +50,7 @@ export const initiatePayment = authorizedHandler(
         const stage = (event.requestContext as any)?.stage;
         const callbackBaseUrl = domainName
             ? `https://${domainName}${stage && stage !== '$default' ? `/${stage}` : ''}`
-            : (config.app.slsBackendUrl || (() => { throw new Error('API_BASE_URL is required when domainName is unavailable'); })());
+            : (config.extendedApp.slsBackendUrl || (() => { throw new Error('API_BASE_URL is required when domainName is unavailable'); })());
 
         const result = await paymentOrderService.createPaymentOrder(
             auth.tenantId,

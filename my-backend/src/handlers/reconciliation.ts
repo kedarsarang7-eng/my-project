@@ -6,6 +6,7 @@
 // stores report snapshot in S3.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
@@ -14,9 +15,9 @@ import { logger } from '../utils/logger';
 import { config } from '../config/environment';
 
 const region = config.aws.region;
-const snsClient = new SNSClient({ region });
-const s3Client = new S3Client({ region });
-const cwClient = new CloudWatchClient({ region });
+const snsClient = new SNSClient(configureAwsClient({ region }));
+const s3Client = new S3Client(configureAwsClient({ region }));
+const cwClient = new CloudWatchClient(configureAwsClient({ region }));
 
 const SNS_TOPIC_ARN = config.awsSns.reconciliationTopicArn || '';
 const S3_BUCKET = config.extendedS3.reconciliationBucket || '';

@@ -2,6 +2,7 @@
 // Plan Guard Middleware — Feature-Level Access Control (DynamoDB)
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { AuthContext } from '../types/tenant.types';
 import { FeatureKey, PlanTier, isFeatureAllowed, mapToPlanTier } from '../config/plan-feature-registry';
 import { getCachedManifest } from '../config/manifest-cache';
@@ -11,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
 import { config } from '../config/environment';
 
-const cloudwatchClient = new CloudWatchClient({ region: config.aws.region });
+const cloudwatchClient = new CloudWatchClient(configureAwsClient({ region: config.aws.region }));
 
 export async function validateFeatureAccess(
     auth: AuthContext,

@@ -105,7 +105,7 @@ class _BottomNavItem extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primary.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? AppTheme.primary.withValues(alpha: 0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -184,7 +184,7 @@ class _SideNav extends StatelessWidget {
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text('Student Portal', style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 11)),
+            child: Text('Student Portal', style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 11)),
           ),
           const SizedBox(height: 24),
           Expanded(
@@ -218,7 +218,7 @@ class _SideNavItem extends StatelessWidget {
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white.withOpacity(0.12) : Colors.transparent,
+            color: isSelected ? Colors.white.withValues(alpha: 0.12) : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
@@ -226,13 +226,13 @@ class _SideNavItem extends StatelessWidget {
               Icon(
                 isSelected ? item.activeIcon : item.icon,
                 size: 20,
-                color: isSelected ? Colors.white : Colors.white.withOpacity(0.6),
+                color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.6),
               ),
               const SizedBox(width: 12),
               Text(
                 item.label,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.white.withOpacity(0.6),
+                  color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.6),
                   fontSize: 14,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 ),

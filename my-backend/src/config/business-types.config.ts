@@ -125,6 +125,27 @@ export const BUSINESS_TYPES: BusinessTypeConfig[] = [
         features: ['inventory', 'billing', 'gst', 'reports', 'karat_tracking', 'custom_orders'],
     },
     {
+        id: 'auto_parts',
+        label: 'Auto Parts',
+        description: 'Auto parts and service shop',
+        category: 'industrial',
+        features: ['autoparts_vehicle_lookup', 'autoparts_oem_cross_ref', 'autoparts_fitment_guide', 'autoparts_return_warranty', 'autoparts_job_card'],
+    },
+    {
+        id: 'decoration_catering',
+        label: 'Decoration & Catering',
+        description: 'Decoration and catering services',
+        category: 'service',
+        features: ['dc_event_booking', 'dc_decoration_themes', 'dc_catering_menu', 'dc_staff_management', 'dc_vendor_management', 'dc_inventory', 'dc_billing', 'dc_reports', 'dc_meal_planner', 'dc_expense_tracking'],
+    },
+    {
+        id: 'school_erp',
+        label: 'School ERP',
+        description: 'Academic and institution management',
+        category: 'education',
+        features: ['ac_student_management', 'ac_batch_management', 'ac_course_management', 'ac_fee_management', 'ac_attendance_management', 'ac_faculty_management', 'ac_exam_management', 'ac_timetable_management', 'ac_material_management', 'ac_communication', 'ac_reports_analytics', 'ac_parent_portal', 'ac_student_portal', 'ac_class_section_management', 'ac_academic_year_management', 'ac_library_management', 'ac_transport_management', 'ac_report_cards', 'ac_classwise_fee', 'ac_institution_config'],
+    },
+    {
         id: 'other',
         label: 'Other Business',
         description: 'Custom business type not listed above',

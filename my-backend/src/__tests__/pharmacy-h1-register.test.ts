@@ -120,6 +120,19 @@ jest.mock('../middleware/cloudwatch-logger', () => ({
     logRequest: jest.fn().mockResolvedValue(undefined),
     logAuthFailure: jest.fn().mockResolvedValue(undefined),
 }));
+jest.mock('../middleware/software-lock', () => ({
+    checkSoftwareLock: jest.fn().mockResolvedValue({
+        allowed: true,
+        lockLevel: 'none',
+        userMessage: '',
+    }),
+    LockLevel: {
+        NONE: 'none',
+        WARNING: 'warning',
+        PARTIAL: 'partial',
+        FULL: 'full',
+    },
+}));
 
 // ---- Constants ------------------------------------------------------------
 const TENANT_ID = 'test-tenant-id';

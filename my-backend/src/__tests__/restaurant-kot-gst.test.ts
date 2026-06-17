@@ -1,3 +1,4 @@
+﻿export {};
 // ============================================================================
 // restaurant-kot-gst.test.ts
 // Phase 3 — Restaurant GST tiers, KOT lifecycle, and scan-JWT unit tests.
@@ -380,3 +381,4 @@ describe('Bill total calculation', () => {
     expect(r.subtotalCents).toBe(paise(200)); // server wins
   });
 });
+

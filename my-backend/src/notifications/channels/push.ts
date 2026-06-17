@@ -44,6 +44,7 @@
 // Validates: REQ 5.2, 5.9, 9.3.
 // ============================================================================
 
+import { configureAwsClient } from '../../config/aws.config';
 import {
     SNSClient,
     PublishCommand,
@@ -75,7 +76,7 @@ let snsClient: SNSClient | null = null;
 
 function getSnsClient(): SNSClient {
     if (!snsClient) {
-        snsClient = new SNSClient({ region: config.aws.region });
+        snsClient = new SNSClient(configureAwsClient({ region: config.aws.region }));
     }
     return snsClient;
 }

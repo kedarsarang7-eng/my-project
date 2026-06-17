@@ -16,6 +16,7 @@
 //   7. Update ImportJob status=PROCESSING
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { S3Event, APIGatewayProxyEventV2, APIGatewayProxyResultV2, Context } from 'aws-lambda';
 import { SQSClient, SendMessageBatchCommand } from '@aws-sdk/client-sqs';
 import type { SendMessageBatchRequestEntry } from '@aws-sdk/client-sqs';
@@ -50,13 +51,13 @@ const JOB_TTL_DAYS = 7;
 // Lazy SQS client
 let sqsClient: SQSClient | null = null;
 function getSQS(): SQSClient {
-    if (!sqsClient) sqsClient = new SQSClient({ region: REGION });
+    if (!sqsClient) sqsClient = new SQSClient(configureAwsClient({ region: REGION }));
     return sqsClient;
 }
 
 let s3Client: S3Client | null = null;
 function getS3(): S3Client {
-    if (!s3Client) s3Client = new S3Client({ region: REGION });
+    if (!s3Client) s3Client = new S3Client(configureAwsClient({ region: REGION }));
     return s3Client;
 }
 
@@ -75,7 +76,7 @@ function parsePrice(raw: string | undefined): number | undefined {
     if (!raw) return undefined;
     const n = parseFloat(raw.replace(/[^0-9.]/g, ''));
     if (isNaN(n)) return undefined;
-    // Assume input is in rupees — store as paise (cents)
+    // Assume input is in rupees ï¿½ store as paise (cents)
     return Math.round(n * 100);
 }
 
@@ -157,7 +158,7 @@ async function enqueueRows(rows: ImportRow[], connectionId?: string): Promise<vo
             return {
                 Id: `${row.rowIndex}`,
                 MessageBody: JSON.stringify(msg),
-                MessageGroupId: row.tenantId,            // FIFO queue — group by tenant
+                MessageGroupId: row.tenantId,            // FIFO queue ï¿½ group by tenant
                 MessageDeduplicationId: `${row.jobId}-${row.rowIndex}`, // idempotent
             };
         });
@@ -345,7 +346,7 @@ export const processS3Upload = async (event: S3Event): Promise<void> => {
         // uploads/{tenantId}/{jobId}/{filename}
         const parts = key.split('/');
         if (parts.length < 4 || parts[0] !== 'uploads') {
-            logger.warn('[S3Upload] Unexpected key pattern — skipping', { key });
+            logger.warn('[S3Upload] Unexpected key pattern ï¿½ skipping', { key });
             continue;
         }
 
@@ -387,7 +388,7 @@ export const processS3Upload = async (event: S3Event): Promise<void> => {
             const parseResult = await parseImportFile(bucket, key, mimeType);
 
             if (parseResult.rows.length === 0) {
-                // No valid rows — complete immediately
+                // No valid rows ï¿½ complete immediately
                 await updateJobStatus(tenantId, jobId, 'COMPLETED', {
                     counts: { total: 0, created: 0, updated: 0, skipped: 0, errors: parseResult.errors.length, queued: 0 },
                     errors: parseResult.errors,
@@ -425,7 +426,7 @@ export const processS3Upload = async (event: S3Event): Promise<void> => {
                 errors: parseErrors,
             });
 
-            // Enqueue all rows to SQS (always — processImportRow is the worker)
+            // Enqueue all rows to SQS (always ï¿½ processImportRow is the worker)
             // For > 500 rows this is fan-out; for smaller files it still uses the same path for consistency.
             await enqueueRows(rows);
 

@@ -3,6 +3,7 @@
 // Trigger: EventBridge rate rule. Optional SNS / WhatsApp webhook via env.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { EventBridgeEvent } from 'aws-lambda';
 import { randomUUID } from 'crypto';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
@@ -14,7 +15,7 @@ import { config } from '../config/environment';
 
 type DispatchRow = Record<string, any>;
 
-const sns = new SNSClient({ region: config.aws.region });
+const sns = new SNSClient(configureAwsClient({ region: config.aws.region }));
 
 /** Exported for unit tests � whether a row should run on this tick. */
 export function isReportDispatchDue(row: DispatchRow, now: Date = new Date()): boolean {

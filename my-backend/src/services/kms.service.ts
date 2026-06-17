@@ -1,5 +1,5 @@
 // ============================================================================
-// KMS Service — AWS Key Management Service Wrapper
+// KMS Service ï¿½ AWS Key Management Service Wrapper
 // ============================================================================
 // Provides encrypt/decrypt operations for payment gateway credentials.
 // Uses envelope encryption: credentials are encrypted with a KMS data key.
@@ -13,6 +13,7 @@
 //   - Decryption anomaly detection with CloudWatch metrics
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import {
     KMSClient,
     EncryptCommand,
@@ -21,13 +22,13 @@ import {
 import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
 import { logger } from '../utils/logger';
 
-const kmsClient = new KMSClient({ region: config.aws.region });
-const cloudwatchClient = new CloudWatchClient({ region: config.aws.region });
+const kmsClient = new KMSClient(configureAwsClient({ region: config.aws.region }));
+const cloudwatchClient = new CloudWatchClient(configureAwsClient({ region: config.aws.region }));
 
 const KMS_KEY_ID = config.awsKms.keyId;
 
 // -- Decryption Anomaly Detection --------------------------------------------
-// CRIT-003 FIX: Moved from in-memory Map (useless on Lambda — resets every cold
+// CRIT-003 FIX: Moved from in-memory Map (useless on Lambda ï¿½ resets every cold
 // start) to DynamoDB atomic counter with TTL for persistent tracking.
 
 import { DynamoDBDocumentClient, UpdateCommand as KmsUpdateCommand } from '@aws-sdk/lib-dynamodb';
@@ -94,7 +95,7 @@ async function checkDecryptionAnomaly(tenantId: string): Promise<void> {
         }
     } catch (err: any) {
         if (err.name === 'ConditionalCheckFailedException') {
-            // Window expired — reset counter (first request in new window)
+            // Window expired ï¿½ reset counter (first request in new window)
             try {
                 await _kmsRlClient.send(new KmsUpdateCommand({
                     TableName: _KMS_TABLE,
@@ -188,7 +189,7 @@ export async function decryptCredentials(
 
 /**
  * Zero-fill a Buffer to reduce exposure window of sensitive data.
- * LOW-003 FIX: Single pass is sufficient — V8 GC makes multi-pass meaningless.
+ * LOW-003 FIX: Single pass is sufficient ï¿½ V8 GC makes multi-pass meaningless.
  *
  * @param buffer - The Buffer to wipe
  */

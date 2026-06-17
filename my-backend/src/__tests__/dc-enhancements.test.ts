@@ -5,6 +5,17 @@
 // ============================================================================
 import { APIGatewayProxyEventV2, Context } from 'aws-lambda';
 import { WSEventName } from '../types/websocket.types';
+import {
+    getQuote,
+    getExpense,
+    updateExpense,
+    deleteExpense,
+    listVendors,
+    createVendor,
+    getDashboard,
+    createEvent,
+    updateEvent
+} from '../handlers/dc';
 
 // ---- Test Helpers ----
 function makeEvent(overrides: Partial<APIGatewayProxyEventV2> = {}): APIGatewayProxyEventV2 {
@@ -51,8 +62,42 @@ function parseBody(result: any): any {
 }
 
 // Mock dependencies
-jest.mock('../services/websocket.service');
-jest.mock('../utils/logger');
+jest.mock('../services/websocket.service', () => ({
+    broadcastToClientType: jest.fn().mockResolvedValue(undefined),
+    broadcastToBusiness: jest.fn().mockResolvedValue(undefined),
+    broadcastToStaff: jest.fn().mockResolvedValue(undefined),
+    emitEvent: jest.fn().mockResolvedValue(undefined),
+}));
+jest.mock('../utils/logger', () => ({
+    logger: {
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn((msg, meta) => console.error("LOGGER ERROR:", msg, meta)),
+        debug: jest.fn(),
+    }
+}));
+jest.mock('../middleware/cognito-auth', () => ({
+    verifyAuth: jest.fn().mockResolvedValue({
+        sub: 'user-123',
+        email: 'owner@test.com',
+        tenantId: 'test-tenant',
+        role: 'owner',
+        businessType: 'decoration_catering',
+    }),
+}));
+jest.mock('../middleware/plan-guard', () => ({
+    validateFeatureAccess: jest.fn().mockResolvedValue(undefined),
+    enforceLimits: jest.fn().mockResolvedValue(undefined),
+}));
+jest.mock('../middleware/software-lock', () => ({
+    checkSoftwareLock: jest.fn().mockResolvedValue({ allowed: true, lockLevel: 'none', userMessage: '' }),
+    LockLevel: {
+        NONE: 'none',
+        WARNING: 'warning',
+        PARTIAL: 'partial',
+        FULL: 'full',
+    },
+}));
 jest.mock('../config/dynamodb.config', () => ({
     Keys: {
         tenantPK: (tenantId: string) => `TENANT#${tenantId}`,
@@ -122,7 +167,6 @@ describe('DC Module - Phase 1: Critical Backend Fixes', () => {
 
                 const event = { pathParameters: { id: 'expense-123' } } as any;
                 const result = await getExpense(event, {} as any, auth as any);
-
                 expect(result.statusCode).toBe(200);
                 expect(JSON.parse(result.body).data).toEqual(mockExpense);
             });

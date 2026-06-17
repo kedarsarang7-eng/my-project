@@ -1,3 +1,4 @@
+﻿export {};
 // ============================================================================
 // UT-BIZ — Specialized Business Logic Unit Tests
 // Coverage: IMEI, Drug schedule, Commission, Fuel delta, Crate deposit,
@@ -546,3 +547,4 @@ describe('UT-BIZ-009: Job Sheet Status Machine (service, mobileShop, autoParts)'
     expect(canTransition('REPAIRING', 'RECEIVED')).toBe(false);
   });
 });
+

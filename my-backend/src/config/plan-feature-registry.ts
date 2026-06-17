@@ -401,7 +401,6 @@ const PREMIUM_BUSINESS_FEATURES: BusinessFeatureMap = {
     [BusinessType.PETROL_PUMP]: [
         FeatureKey.PETROL_BASIC_SHIFT_ENTRY,
         FeatureKey.PETROL_DIP_READING,
-        FeatureKey.PETROL_NOZZLE_SETTLEMENT,
         FeatureKey.PETROL_DENSITY_LOSS,
     ],
     [BusinessType.VEGETABLES_BROKER]: [
@@ -466,6 +465,18 @@ const PREMIUM_BUSINESS_FEATURES: BusinessFeatureMap = {
         FeatureKey.AC_REPORT_CARDS,
         FeatureKey.AC_CLASSWISE_FEE,
         FeatureKey.AC_INSTITUTION_CONFIG,
+    ],
+    [BusinessType.DECORATION_CATERING]: [
+        FeatureKey.DC_EVENT_BOOKING,
+        FeatureKey.DC_DECORATION_THEMES,
+        FeatureKey.DC_CATERING_MENU,
+        FeatureKey.DC_STAFF_MANAGEMENT,
+        FeatureKey.DC_VENDOR_MANAGEMENT,
+        FeatureKey.DC_INVENTORY,
+        FeatureKey.DC_BILLING,
+        FeatureKey.DC_REPORTS,
+        FeatureKey.DC_MEAL_PLANNER,
+        FeatureKey.DC_EXPENSE_TRACKING,
     ],
 };
 
@@ -585,6 +596,40 @@ const ENTERPRISE_BUSINESS_FEATURES: BusinessFeatureMap = {
         FeatureKey.AUTOPARTS_RETURN_WARRANTY,
         FeatureKey.AUTOPARTS_JOB_CARD,
     ],
+    [BusinessType.DECORATION_CATERING]: [
+        FeatureKey.DC_EVENT_BOOKING,
+        FeatureKey.DC_DECORATION_THEMES,
+        FeatureKey.DC_CATERING_MENU,
+        FeatureKey.DC_STAFF_MANAGEMENT,
+        FeatureKey.DC_VENDOR_MANAGEMENT,
+        FeatureKey.DC_INVENTORY,
+        FeatureKey.DC_BILLING,
+        FeatureKey.DC_REPORTS,
+        FeatureKey.DC_MEAL_PLANNER,
+        FeatureKey.DC_EXPENSE_TRACKING,
+    ],
+    [BusinessType.SCHOOL_ERP]: [
+        FeatureKey.AC_STUDENT_MANAGEMENT,
+        FeatureKey.AC_BATCH_MANAGEMENT,
+        FeatureKey.AC_COURSE_MANAGEMENT,
+        FeatureKey.AC_FEE_MANAGEMENT,
+        FeatureKey.AC_ATTENDANCE_MANAGEMENT,
+        FeatureKey.AC_FACULTY_MANAGEMENT,
+        FeatureKey.AC_EXAM_MANAGEMENT,
+        FeatureKey.AC_TIMETABLE_MANAGEMENT,
+        FeatureKey.AC_MATERIAL_MANAGEMENT,
+        FeatureKey.AC_COMMUNICATION,
+        FeatureKey.AC_REPORTS_ANALYTICS,
+        FeatureKey.AC_PARENT_PORTAL,
+        FeatureKey.AC_STUDENT_PORTAL,
+        FeatureKey.AC_CLASS_SECTION_MANAGEMENT,
+        FeatureKey.AC_ACADEMIC_YEAR_MANAGEMENT,
+        FeatureKey.AC_LIBRARY_MANAGEMENT,
+        FeatureKey.AC_TRANSPORT_MANAGEMENT,
+        FeatureKey.AC_REPORT_CARDS,
+        FeatureKey.AC_CLASSWISE_FEE,
+        FeatureKey.AC_INSTITUTION_CONFIG,
+    ],
 };
 
 // PRO business features: Basic features + 1-2 mid-tier additions per vertical
@@ -657,7 +702,6 @@ const PRO_BUSINESS_FEATURES: BusinessFeatureMap = {
     [BusinessType.PETROL_PUMP]: [
         FeatureKey.PETROL_BASIC_SHIFT_ENTRY,
         FeatureKey.PETROL_DIP_READING,
-        FeatureKey.PETROL_NOZZLE_SETTLEMENT,
     ],
     // §12 VegBroker: commodity profitability, farmer history, APMC levy
     [BusinessType.VEGETABLES_BROKER]: [

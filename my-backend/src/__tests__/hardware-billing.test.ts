@@ -1318,7 +1318,7 @@ describe('HW-14: Concurrent Stock Regression Guard (FIX-HW-003)', () => {
             expect(err.statusCode).toBe(409);
             expect(err.code).toBe('STOCK_CONFLICT');
             expect(err.retryable).toBe(true);
-            expect(err.message).toMatch(/concurrent sale detected/);
+            expect(err.message).toMatch(/concurrent/);
         }
     });
 

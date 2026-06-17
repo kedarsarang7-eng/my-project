@@ -90,9 +90,9 @@ class _StopTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: isMine ? AppTheme.primary.withOpacity(0.06) : AppTheme.cardBg,
+        color: isMine ? AppTheme.primary.withValues(alpha: 0.06) : AppTheme.cardBg,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: isMine ? AppTheme.primary.withOpacity(0.3) : AppTheme.divider),
+        border: Border.all(color: isMine ? AppTheme.primary.withValues(alpha: 0.3) : AppTheme.divider),
       ),
       child: Row(children: [
         Container(width: 28, height: 28, decoration: BoxDecoration(color: isMine ? AppTheme.primary : Colors.grey.shade200, shape: BoxShape.circle),

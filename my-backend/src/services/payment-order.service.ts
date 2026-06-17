@@ -4,6 +4,7 @@
 // Migrated from PostgreSQL to DynamoDB single-table design.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { v4 as uuidv4 } from 'uuid';
 import * as crypto from 'crypto';
 import {
@@ -24,7 +25,7 @@ import * as fraudDetectionService from './fraud-detection.service';
 import { recordRevision } from './revision-history.service';
 import { config } from '../config/environment';
 
-const cloudwatchClient = new CloudWatchClient({ region: config.aws.region });
+const cloudwatchClient = new CloudWatchClient(configureAwsClient({ region: config.aws.region }));
 
 const VALID_TRANSITIONS: Record<PaymentOrderStatus, PaymentOrderStatus[]> = {
     [PaymentOrderStatus.CREATED]: [PaymentOrderStatus.QR_GENERATED, PaymentOrderStatus.FAILED, PaymentOrderStatus.EXPIRED],

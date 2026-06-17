@@ -1,0 +1,281 @@
+// FIXED VERSION: Feature Flag Service with ScanCommand replaced by Query
+// BUG-002 FIX: Replaced ScanCommand with GSI-based query
+
+import { logger } from '../utils/logger';
+import { docClient, TABLE_NAME } from '../config/dynamodb.config';
+import {
+    GetCommand,
+    PutCommand,
+    DeleteCommand,
+    QueryCommand, // NEW: Use Query instead of Scan
+} from '@aws-sdk/lib-dynamodb';
+import * as crypto from 'crypto';
+
+// ---- DynamoDB Key Patterns ----
+
+const FF_PK_PREFIX = 'FEATUREFLAG';
+const FF_SK = 'CONFIG';
+const GSI1_NAME = 'GSI1'; // Feature flag lookup index
+
+function ffPK(flagKey: string): string {
+    return `${FF_PK_PREFIX}#${flagKey}`;
+}
+
+// NEW: GSI keys for query-based lookups
+function gsi1PK(): string {
+    return 'FEATUREFLAG'; // All feature flags share same GSI1PK
+}
+
+function gsi1SK(flagKey: string): string {
+    return `FLAG#${flagKey}`;
+}
+
+// ---- Types ----
+
+export interface FeatureFlag {
+    id: string;
+    flag_key: string;
+    display_name: string;
+    description: string | null;
+    flag_type: string;
+    default_value: any;
+    plan_overrides: Record<string, any>;
+    min_app_version: string | null;
+    rollout_percentage: number;
+    is_active: boolean;
+    created_by: string | null;
+    updated_by: string | null;
+    created_at: string;
+    updated_at: string;
+    // NEW: GSI keys for efficient queries
+    GSI1PK: string;
+    GSI1SK: string;
+}
+
+// ---- In-Memory Cache ----
+
+let _flagCache: { data: FeatureFlag[]; expiresAt: number } | null = null;
+const FLAG_CACHE_TTL_MS = 5 * 60 * 1000;
+
+function invalidateFlagCache(): void {
+    _flagCache = null;
+}
+
+// ---- CRUD Operations ----
+
+/**
+ * FIXED: Get all feature flags using Query instead of Scan
+ * REPLACES: ScanCommand with filter
+ * USES: QueryCommand on GSI1
+ */
+export async function listFeatureFlagsFIXED(): Promise<FeatureFlag[]> {
+    if (_flagCache && _flagCache.expiresAt > Date.now()) {
+        return _flagCache.data;
+    }
+
+    try {
+        // FIX: Use QueryCommand on GSI1 instead of ScanCommand
+        // All feature flags have GSI1PK = 'FEATUREFLAG'
+        const flags: FeatureFlag[] = [];
+        let lastEvaluatedKey: Record<string, unknown> | undefined;
+
+        do {
+            const result = await docClient.send(new QueryCommand({
+                TableName: TABLE_NAME,
+                IndexName: GSI1_NAME,
+                KeyConditionExpression: 'GSI1PK = :pk',
+                ExpressionAttributeValues: {
+                    ':pk': 'FEATUREFLAG',
+                },
+                ExclusiveStartKey: lastEvaluatedKey,
+            }));
+
+            if (result.Items) {
+                flags.push(...result.Items.map(item => dynamoToFeatureFlag(item)));
+            }
+
+            lastEvaluatedKey = result.LastEvaluatedKey;
+        } while (lastEvaluatedKey);
+
+        if (flags.length > 0) {
+            _flagCache = { data: flags, expiresAt: Date.now() + FLAG_CACHE_TTL_MS };
+        }
+
+        return flags;
+    } catch (error: any) {
+        logger.error('DynamoDB feature flag query failed', { error: error.message });
+        return _flagCache?.data || []; // Fallback to stale cache on error
+    }
+}
+
+/**
+ * Get a single feature flag by key
+ * UNCHANGED: Uses GetCommand (already efficient)
+ */
+export async function getFeatureFlag(flagKey: string): Promise<FeatureFlag | null> {
+    try {
+        const result = await docClient.send(new GetCommand({
+            TableName: TABLE_NAME,
+            Key: { PK: ffPK(flagKey), SK: FF_SK },
+        }));
+
+        if (result.Item) {
+            return dynamoToFeatureFlag(result.Item);
+        }
+    } catch (error: any) {
+        logger.error('DynamoDB feature flag get failed', { flagKey, error: error.message });
+        return null;
+    }
+
+    return null;
+}
+
+/**
+ * FIXED: Create feature flag with GSI keys
+ */
+export async function createFeatureFlagFIXED(params: {
+    flag_key: string;
+    display_name: string;
+    description?: string;
+    flag_type?: string;
+    default_value?: any;
+    plan_overrides?: Record<string, any>;
+    min_app_version?: string;
+    rollout_percentage?: number;
+    created_by: string;
+}): Promise<FeatureFlag> {
+    const now = new Date().toISOString();
+    const id = crypto.randomUUID();
+
+    const flag: Record<string, any> = {
+        PK: ffPK(params.flag_key),
+        SK: FF_SK,
+        entityType: 'FEATURE_FLAG',
+        id,
+        flag_key: params.flag_key,
+        display_name: params.display_name,
+        description: params.description || null,
+        flag_type: params.flag_type || 'boolean',
+        default_value: params.default_value ?? false,
+        plan_overrides: params.plan_overrides || {},
+        min_app_version: params.min_app_version || null,
+        rollout_percentage: params.rollout_percentage ?? 100,
+        is_active: true,
+        created_by: params.created_by,
+        updated_by: params.created_by,
+        created_at: now,
+        updated_at: now,
+        // NEW: GSI keys for query support
+        GSI1PK: gsi1PK(),
+        GSI1SK: gsi1SK(params.flag_key),
+    };
+
+    await docClient.send(new PutCommand({
+        TableName: TABLE_NAME,
+        Item: flag,
+        ConditionExpression: 'attribute_not_exists(PK)',
+    }));
+
+    invalidateFlagCache();
+    logger.info('Feature flag created', { key: params.flag_key });
+
+    return dynamoToFeatureFlag(flag);
+}
+
+/**
+ * FIXED: Update feature flag with cache invalidation
+ */
+export async function updateFeatureFlagFIXED(
+    flagKey: string,
+    updates: Partial<Omit<FeatureFlag, 'id' | 'flag_key' | 'created_at'>>,
+    updatedBy: string,
+): Promise<FeatureFlag | null> {
+    const existing = await getFeatureFlag(flagKey);
+    if (!existing) return null;
+
+    const now = new Date().toISOString();
+
+    const flag: Record<string, any> = {
+        PK: ffPK(flagKey),
+        SK: FF_SK,
+        entityType: 'FEATURE_FLAG',
+        id: existing.id,
+        flag_key: flagKey,
+        display_name: updates.display_name ?? existing.display_name,
+        description: updates.description ?? existing.description,
+        flag_type: updates.flag_type ?? existing.flag_type,
+        default_value: updates.default_value ?? existing.default_value,
+        plan_overrides: updates.plan_overrides ?? existing.plan_overrides,
+        min_app_version: updates.min_app_version ?? existing.min_app_version,
+        rollout_percentage: updates.rollout_percentage ?? existing.rollout_percentage,
+        is_active: updates.is_active ?? existing.is_active,
+        created_by: existing.created_by,
+        updated_by: updatedBy,
+        created_at: existing.created_at,
+        updated_at: now,
+        // Preserve GSI keys
+        GSI1PK: gsi1PK(),
+        GSI1SK: gsi1SK(flagKey),
+    };
+
+    await docClient.send(new PutCommand({
+        TableName: TABLE_NAME,
+        Item: flag,
+    }));
+
+    invalidateFlagCache();
+    logger.info('Feature flag updated', { key: flagKey, by: updatedBy });
+
+    return dynamoToFeatureFlag(flag);
+}
+
+/**
+ * Delete feature flag with cache invalidation
+ */
+export async function deleteFeatureFlagFIXED(flagKey: string): Promise<boolean> {
+    try {
+        await docClient.send(new DeleteCommand({
+            TableName: TABLE_NAME,
+            Key: { PK: ffPK(flagKey), SK: FF_SK },
+        }));
+
+        invalidateFlagCache();
+        logger.info('Feature flag deleted', { key: flagKey });
+        return true;
+    } catch (error: any) {
+        logger.error('Failed to delete feature flag', { flagKey, error: error.message });
+        return false;
+    }
+}
+
+// ---- Helper Functions ----
+
+function dynamoToFeatureFlag(item: Record<string, any>): FeatureFlag {
+    return {
+        id: item.id,
+        flag_key: item.flag_key,
+        display_name: item.display_name,
+        description: item.description,
+        flag_type: item.flag_type,
+        default_value: item.default_value,
+        plan_overrides: item.plan_overrides,
+        min_app_version: item.min_app_version,
+        rollout_percentage: item.rollout_percentage,
+        is_active: item.is_active,
+        created_by: item.created_by,
+        updated_by: item.updated_by,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+        GSI1PK: item.GSI1PK,
+        GSI1SK: item.GSI1SK,
+    };
+}
+
+// ---- Migration Guide ----
+// To migrate existing feature flags:
+// 1. Add GSI1 to the DynamoDB table:
+//    - Partition Key: GSI1PK (String)
+//    - Sort Key: GSI1SK (String)
+// 2. Run migration script to add GSI1PK and GSI1SK to existing records
+// 3. Deploy updated code
+// 4. Verify no ScanCommand is being used

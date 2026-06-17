@@ -25,9 +25,9 @@ export function mockEvent(
       ...options.headers,
       ...(auth && { authorization: 'Bearer mock-token' }),
     },
-    queryStringParameters: options.queryStringParameters || null,
-    pathParameters: options.pathParameters || null,
-    body: options.body || null,
+    queryStringParameters: options.queryStringParameters || undefined,
+    pathParameters: options.pathParameters || undefined,
+    body: options.body || undefined,
     requestContext: {
       accountId: '123456789',
       apiId: 'mock-api',

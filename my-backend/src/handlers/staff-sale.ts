@@ -449,7 +449,7 @@ export const generateSaleQr = authorizedHandler([], async (event: APIGatewayProx
         const stage = (event.requestContext as any)?.stage;
         const callbackBaseUrl = domainName
             ? `https://${domainName}${stage && stage !== '$default' ? `/${stage}` : ''}`
-            : (config.app.slsBackendUrl || '');
+            : (config.extendedApp.slsBackendUrl || '');
 
         let qrResult: any;
         try {

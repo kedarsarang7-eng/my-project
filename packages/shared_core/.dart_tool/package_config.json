@@ -99,9 +99,9 @@
     },
     {
       "name": "code_assets",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/code_assets-1.0.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/code_assets-1.2.1",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "code_builder",
@@ -173,7 +173,7 @@
       "name": "flutter",
       "rootUri": "file:///G:/flutter_windows_3.41.6-stable/flutter/packages/flutter",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "flutter_riverpod",
@@ -221,13 +221,13 @@
       "name": "flutter_test",
       "rootUri": "file:///G:/flutter_windows_3.41.6-stable/flutter/packages/flutter_test",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "flutter_web_plugins",
       "rootUri": "file:///G:/flutter_windows_3.41.6-stable/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "freezed",
@@ -261,7 +261,7 @@
     },
     {
       "name": "hooks",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/hooks-1.0.3",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/hooks-2.0.2",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -369,7 +369,7 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/meta-1.17.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/meta-1.18.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -386,14 +386,8 @@
       "languageVersion": "3.7"
     },
     {
-      "name": "native_toolchain_c",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/native_toolchain_c-0.17.6",
-      "packageUri": "lib/",
-      "languageVersion": "3.10"
-    },
-    {
       "name": "objective_c",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/objective_c-9.3.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/objective_c-9.4.1",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -509,7 +503,7 @@
       "name": "sky_engine",
       "rootUri": "file:///G:/flutter_windows_3.41.6-stable/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "source_gen",
@@ -567,7 +561,7 @@
     },
     {
       "name": "test_api",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/test_api-0.7.10",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/test_api-0.7.11",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -651,8 +645,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.11.5",
+  "generatorVersion": "3.12.1",
   "flutterRoot": "file:///G:/flutter_windows_3.41.6-stable/flutter",
-  "flutterVersion": "3.41.9",
+  "flutterVersion": "3.44.1",
   "pubCache": "file:///C:/Users/sarang/AppData/Local/Pub/Cache"
 }

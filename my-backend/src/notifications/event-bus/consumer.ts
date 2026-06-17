@@ -26,6 +26,7 @@
 // Validates: REQ 3.4, 3.5, 3.9, 3.10, 9.3, 9.8.
 // ============================================================================
 
+import { configureAwsClient } from '../../config/aws.config';
 import {
     SQSClient,
     ReceiveMessageCommand,
@@ -76,7 +77,7 @@ let sqsClient: SQSClient | null = null;
 
 function getSqsClient(): SQSClient {
     if (!sqsClient) {
-        sqsClient = new SQSClient({ region: config.aws.region });
+        sqsClient = new SQSClient(configureAwsClient({ region: config.aws.region }));
     }
     return sqsClient;
 }

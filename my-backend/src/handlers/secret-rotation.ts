@@ -1,9 +1,10 @@
+import { configureAwsClient } from '../config/aws.config';
 import { SecretsManagerClient, PutSecretValueCommand, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
 import { randomBytes } from 'crypto';
 import { logger } from '../utils/logger';
 import { config } from '../config/environment';
 
-const smClient = new SecretsManagerClient({ region: config.aws.region });
+const smClient = new SecretsManagerClient(configureAwsClient({ region: config.aws.region }));
 
 export const rotateInternalSecret = async (event: any): Promise<void> => {
     logger.info('Starting scheduled INTERNAL_API_SECRET rotation');

@@ -68,7 +68,7 @@ class _CollectionProgress extends StatelessWidget {
         const SizedBox(height: 10),
         ClipRRect(
           borderRadius: BorderRadius.circular(6),
-          child: LinearProgressIndicator(value: pct, backgroundColor: AppTheme.error.withOpacity(0.1), valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.success), minHeight: 10),
+          child: LinearProgressIndicator(value: pct, backgroundColor: AppTheme.error.withValues(alpha: 0.1), valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.success), minHeight: 10),
         ),
         const SizedBox(height: 8),
         Row(children: [
@@ -114,12 +114,12 @@ class _PendingFeeList extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: isOverdue ? AppTheme.error.withOpacity(0.04) : AppTheme.cardBg,
+                color: isOverdue ? AppTheme.error.withValues(alpha: 0.04) : AppTheme.cardBg,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: isOverdue ? AppTheme.error.withOpacity(0.2) : AppTheme.divider),
+                border: Border.all(color: isOverdue ? AppTheme.error.withValues(alpha: 0.2) : AppTheme.divider),
               ),
               child: Row(children: [
-                CircleAvatar(radius: 18, backgroundColor: (isOverdue ? AppTheme.error : AppTheme.warning).withOpacity(0.1), child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?', style: TextStyle(color: isOverdue ? AppTheme.error : AppTheme.warning, fontWeight: FontWeight.w700, fontSize: 13))),
+                CircleAvatar(radius: 18, backgroundColor: (isOverdue ? AppTheme.error : AppTheme.warning).withValues(alpha: 0.1), child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?', style: TextStyle(color: isOverdue ? AppTheme.error : AppTheme.warning, fontWeight: FontWeight.w700, fontSize: 13))),
                 const SizedBox(width: 10),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),

@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // Invoice Service — Create & Finalize Invoices (DynamoDB)
 // ============================================================================
 // Handles invoice creation from the Flutter billing screen.
@@ -65,7 +65,7 @@ import { config } from '../config/environment';
 // ---- Types ----
 
 /** Helper: Find variant record for clothing items */
-async function findClothingVariant(
+export async function findClothingVariant(
     tenantId: string,
     productId: string,
     size?: string,

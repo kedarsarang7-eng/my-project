@@ -5,6 +5,7 @@
 //           Exams, Results, Timetable, Study Materials, Invoices, Dashboard
 // All routes: /ac/*   (require JWT + BusinessType.SCHOOL_ERP)
 // ============================================================================
+import { configureAwsClient } from '../config/aws.config';
 import { authorizedHandler } from '../middleware/handler-wrapper';
 import {
     Keys,
@@ -29,8 +30,8 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'; // install: n
 import { config } from '../config/environment';
 
 const storageService = new StorageService();
-const snsClient = new SNSClient({ region: config.aws.region });
-const sesClient = new SESClient({ region: config.aws.region });
+const snsClient = new SNSClient(configureAwsClient({ region: config.aws.region }));
+const sesClient = new SESClient(configureAwsClient({ region: config.aws.region }));
 
 async function sendSmsViaSns(phone: string, message: string, tenantId: string): Promise<void> {
     if (!config.aws.region || phone.length < 10) return;

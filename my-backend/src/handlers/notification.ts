@@ -1,6 +1,7 @@
 // ============================================================================
-// Lambda Handler — Push Notifications (Device Registration) (DynamoDB)
+// Lambda Handler ï¿½ Push Notifications (Device Registration) (DynamoDB)
 // ============================================================================
+import { configureAwsClient } from '../config/aws.config';
 import { SNSClient, CreatePlatformEndpointCommand } from "@aws-sdk/client-sns";
 import { authorizedHandler } from '../middleware/handler-wrapper';
 import { Keys, updateItem } from '../config/dynamodb.config';
@@ -10,7 +11,7 @@ import { logger } from '../utils/logger';
 import * as response from '../utils/response';
 import { config } from '../config/environment';
 
-const snsClient = new SNSClient({ region: config.aws.region });
+const snsClient = new SNSClient(configureAwsClient({ region: config.aws.region }));
 const PLATFORM_APPLICATION_ARN = config.awsSns.platformApplicationArn;
 
 /**

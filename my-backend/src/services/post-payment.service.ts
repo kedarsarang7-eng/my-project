@@ -4,6 +4,7 @@
 // Migrated from PostgreSQL to DynamoDB single-table design.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import * as whatsappService from './whatsapp.service';
 import { Keys, getItem, queryItems, updateItem } from '../config/dynamodb.config';
@@ -11,7 +12,7 @@ import { logger } from '../utils/logger';
 import { recordRevision } from './revision-history.service';
 import { config } from '../config/environment';
 
-const s3Client = new S3Client({ region: config.aws.region });
+const s3Client = new S3Client(configureAwsClient({ region: config.aws.region }));
 const S3_BUCKET = config.s3.bucketName;
 
 interface PostPaymentInput {

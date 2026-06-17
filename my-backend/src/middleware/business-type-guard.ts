@@ -19,16 +19,18 @@
 //   );
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { BusinessType, AuthContext, normalizeBusinessType } from '../types/tenant.types';
 import { logger } from '../utils/logger';
 import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
 import { getItem, Keys } from '../config/dynamodb.config';
 import { isValidBusinessType } from '../config/business-types.config';
 import { config } from '../config/environment';
+import { AppError } from '../utils/errors';
 
 let _cloudwatchClient: CloudWatchClient | null = null;
 function getCloudWatchClient(): CloudWatchClient {
-    if (!_cloudwatchClient) _cloudwatchClient = new CloudWatchClient({ region: config.aws.region });
+    if (!_cloudwatchClient) _cloudwatchClient = new CloudWatchClient(configureAwsClient({ region: config.aws.region }));
     return _cloudwatchClient;
 }
 
@@ -54,10 +56,7 @@ export async function validateBusinessType(
             requestPath,
             correlationId,
         });
-        const err: any = new Error(`Invalid business type configuration: "${requiredBusinessType}"`);
-        err.statusCode = 500;
-        err.code = 'INVALID_BUSINESS_TYPE';
-        throw err;
+        throw new AppError(`Invalid business type configuration: "${requiredBusinessType}"`, 500, 'INVALID_BUSINESS_TYPE');
     }
 
     const normalizedRequiredType = normalizeBusinessType(requiredBusinessType);
@@ -149,18 +148,17 @@ export async function validateBusinessType(
             });
         }
 
-        const err: any = new Error(
+        throw new AppError(
             `ACCESS_DENIED: Your license does not include access to the "${normalizedRequiredType}" business type. ` +
-            `Current license includes: ${allowedBusinessTypes.join(', ') || 'none'}`
+            `Current license includes: ${allowedBusinessTypes.join(', ') || 'none'}`,
+            403,
+            'BUSINESS_TYPE_NOT_LICENSED',
+            {
+                requiredBusinessType: normalizedRequiredType,
+                allowedBusinessTypes,
+                licenseSource,
+            }
         );
-        err.statusCode = 403;
-        err.code = 'BUSINESS_TYPE_NOT_LICENSED';
-        err.details = {
-            requiredBusinessType: normalizedRequiredType,
-            allowedBusinessTypes,
-            licenseSource,
-        };
-        throw err;
     }
 
     logger.debug('Business type authorization successful', {

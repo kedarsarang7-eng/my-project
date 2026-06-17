@@ -490,7 +490,7 @@ class _LeadingIcon extends StatelessWidget {
       clipBehavior: Clip.none,
       children: <Widget>[
         CircleAvatar(
-          backgroundColor: color.withOpacity(0.15),
+          backgroundColor: color.withValues(alpha: 0.15),
           foregroundColor: color,
           child: Icon(_categoryIcon()),
         ),

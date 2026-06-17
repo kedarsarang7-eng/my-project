@@ -96,7 +96,7 @@ class _RetryInterceptor extends Interceptor {
 
   @override
   Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
-    final retryCount = err.requestOptions.extra['retryCount'] ?? 0;
+    final retryCount = (err.requestOptions.extra['retryCount'] as num? ?? 0).toInt();
     final shouldRetry = retryCount < 3 &&
         (err.type == DioExceptionType.connectionTimeout ||
          err.type == DioExceptionType.connectionError ||

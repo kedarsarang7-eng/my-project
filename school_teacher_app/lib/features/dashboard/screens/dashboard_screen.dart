@@ -117,7 +117,7 @@ class _QuickActions extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(color: AppTheme.cardBg, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppTheme.divider)),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Container(width: 42, height: 42, decoration: BoxDecoration(color: a.$4.withOpacity(0.1), borderRadius: BorderRadius.circular(12)), child: Icon(a.$1, color: a.$4, size: 20)),
+            Container(width: 42, height: 42, decoration: BoxDecoration(color: a.$4.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Icon(a.$1, color: a.$4, size: 20)),
             const SizedBox(height: 8),
             Text(a.$2, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500), textAlign: TextAlign.center),
           ]),

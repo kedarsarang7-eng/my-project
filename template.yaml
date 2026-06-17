@@ -13,6 +13,13 @@ Parameters:
   DomainName:
     Type: String
     Default: yourdomain.com
+  MainTableStreamArn:
+    Type: String
+    Default: ""
+    Description: 'ARN of the DynamoDB Stream for the main data table (DukanXTable)'
+
+Conditions:
+  HasStreamArn: !Not [!Equals [!Ref MainTableStreamArn, ""]]
 
 Globals:
   Function:
@@ -33,6 +40,7 @@ Globals:
         COGNITO_CLIENT_ID: !Ref CognitoUserPoolClient
         AWS_REGION: !Ref AWS::Region
         ENVIRONMENT: !Ref Environment
+        SEARCH_INDEX_TABLE: !Ref SearchIndexTable
 
 Resources:
   # Cognito User Pool
@@ -171,6 +179,115 @@ Resources:
   # See docs/ARCHITECTURE.md §4.1 for the ownership decision.
   # The source file lambda/authHandler/index.mjs is retained (marked DEPRECATED)
   # for git history; do not re-wire it.
+
+  # Batch Handler — Atomic Multi-Operation Endpoint (C-02 FIX)
+  # Accepts batch operations and executes them atomically via TransactWriteItems
+  BatchHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-batch-handler'
+      CodeUri: lambda/batchHandler/
+      Handler: index.handler
+      MemorySize: 256
+      Timeout: 30
+      Events:
+        BatchWrite:
+          Type: HttpApi
+          Properties:
+            Path: /api/v1/batch
+            Method: POST
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:DeleteItem
+                - dynamodb:Query
+              Resource: '*'
+
+  # Storage Handler — S3 Presigned URL Generator
+  # Provides upload/download/delete/list via presigned URLs
+  StorageHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-storage-handler'
+      CodeUri: lambda/storageHandler/
+      Handler: index.handler
+      MemorySize: 256
+      Timeout: 15
+      Environment:
+        Variables:
+          S3_BUCKET_NAME: !Ref StorageBucket
+      Events:
+        Presign:
+          Type: HttpApi
+          Properties:
+            Path: /storage/presign
+            Method: POST
+        GetUrl:
+          Type: HttpApi
+          Properties:
+            Path: /storage/url/{key}
+            Method: GET
+        DeleteObject:
+          Type: HttpApi
+          Properties:
+            Path: /storage/{key}
+            Method: DELETE
+        ListObjects:
+          Type: HttpApi
+          Properties:
+            Path: /storage/list
+            Method: GET
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:GetObject
+                - s3:DeleteObject
+                - s3:ListBucket
+                - s3:HeadObject
+              Resource:
+                - !GetAtt StorageBucket.Arn
+                - !Sub '${StorageBucket.Arn}/*'
+
+  # S3 Bucket — Tenant-scoped file storage
+  StorageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${AWS::StackName}-storage'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders: ['*']
+            AllowedMethods: [GET, PUT, HEAD]
+            AllowedOrigins: ['*']
+            MaxAge: 3600
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOcrImagesAfter30Days
+            Prefix: '*/ocr/'
+            Status: Enabled
+            ExpirationInDays: 30
+          - Id: DeleteAudioAfter7Days
+            Prefix: '*/audio/'
+            Status: Enabled
+            ExpirationInDays: 7
 
   TenantHandler:
     Type: AWS::Serverless::Function
@@ -670,8 +787,6 @@ Resources:
       EvaluationPeriods: 1
       Dimensions:
         - Name: FunctionName
-          Value: !Ref AuthHandler
-        - Name: FunctionName
           Value: !Ref TenantHandler
         - Name: FunctionName
           Value: !Ref UserHandler
@@ -693,8 +808,6 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 1
       Dimensions:
-        - Name: FunctionName
-          Value: !Ref AuthHandler
         - Name: FunctionName
           Value: !Ref TenantHandler
         - Name: FunctionName
@@ -1526,6 +1639,138 @@ Resources:
               Action: execute-api:ManageConnections
               Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${CustomerWebSocketApi}/*'
 
+  # ============================================================================
+  # SEARCH INDEX — DynamoDB-Native Search (replaces OpenSearch)
+  # ============================================================================
+
+  SearchIndexTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Sub '${AWS::StackName}-search-index'
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+        - AttributeName: GSI2PK
+          AttributeType: S
+        - AttributeName: GSI2SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        # GSI1: Type-scoped search
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        # GSI2: Reverse lookup for cleanup
+        - IndexName: GSI2
+          KeySchema:
+            - AttributeName: GSI2PK
+              KeyType: HASH
+            - AttributeName: GSI2SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: KEYS_ONLY
+
+  # Search Query Lambda — HTTP search endpoint
+  SearchQueryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-search-query'
+      Description: 'DynamoDB-native search query handler — replaces OpenSearch'
+      CodeUri: my-backend/
+      Handler: dist/handlers/search-query-v2.handler
+      MemorySize: 256
+      Timeout: 10
+      Events:
+        GlobalSearch:
+          Type: HttpApi
+          Properties:
+            Path: /search
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+        TypedSearch:
+          Type: HttpApi
+          Properties:
+            Path: /search/{entityType}
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Query
+              Resource:
+                - !GetAtt SearchIndexTable.Arn
+                - !Sub '${SearchIndexTable.Arn}/index/*'
+
+  # Search Indexer Lambda — DynamoDB Streams trigger
+  # Processes INSERT/MODIFY/REMOVE from main data table
+  # and writes/deletes search tokens in SearchIndexTable
+  SearchIndexerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-search-indexer'
+      Description: 'Stream processor: main table → SearchIndex tokens'
+      CodeUri: my-backend/
+      Handler: dist/handlers/search-indexer-v2.handler
+      MemorySize: 256
+      Timeout: 60
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Query
+                - dynamodb:BatchWriteItem
+                - dynamodb:DeleteItem
+              Resource:
+                - !GetAtt SearchIndexTable.Arn
+                - !Sub '${SearchIndexTable.Arn}/index/*'
+            - Effect: Allow
+              Action:
+                - dynamodb:DescribeStream
+                - dynamodb:GetRecords
+                - dynamodb:GetShardIterator
+                - dynamodb:ListStreams
+              Resource:
+                - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*/stream/*'
+
+  SearchIndexerEventSourceMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Condition: HasStreamArn
+    Properties:
+      BatchSize: 100
+      EventSourceArn: !Ref MainTableStreamArn
+      FunctionName: !Ref SearchIndexerFunction
+      StartingPosition: TRIM_HORIZON
+
+
 Outputs:
   CustomerWebSocketUrl:
     Description: Customer App WebSocket URL
@@ -1566,5 +1811,24 @@ Outputs:
     Description: Desktop App Cognito Client ID
     Value: !Ref DesktopAppClient
     Export:
-      Name: !Sub '${AWS::StackName}-desktop-client-id'</content>
-<parameter name="filePath">g:\desktop app genuine\template.yaml
+      Name: !Sub '${AWS::StackName}-desktop-client-id'
+  StorageBucketName:
+    Description: S3 Storage Bucket Name
+    Value: !Ref StorageBucket
+    Export:
+      Name: !Sub '${AWS::StackName}-storage-bucket'
+  StorageBucketArn:
+    Description: S3 Storage Bucket ARN
+    Value: !GetAtt StorageBucket.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-storage-bucket-arn'
+  SearchIndexTableName:
+    Description: DynamoDB SearchIndex Table Name
+    Value: !Ref SearchIndexTable
+    Export:
+      Name: !Sub '${AWS::StackName}-search-index-table'
+  SearchIndexTableArn:
+    Description: DynamoDB SearchIndex Table ARN
+    Value: !GetAtt SearchIndexTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-search-index-table-arn'

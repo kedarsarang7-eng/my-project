@@ -48,7 +48,7 @@ class _AttendanceBody extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [color, color.withOpacity(0.7)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+              gradient: LinearGradient(colors: [color, color.withValues(alpha: 0.7)], begin: Alignment.topLeft, end: Alignment.bottomRight),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -63,9 +63,9 @@ class _AttendanceBody extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          _pill('✅ $present Present', Colors.white.withOpacity(0.25)),
+                          _pill('✅ $present Present', Colors.white.withValues(alpha: 0.25)),
                           const SizedBox(width: 8),
-                          _pill('❌ $absent Absent', Colors.white.withOpacity(0.25)),
+                          _pill('❌ $absent Absent', Colors.white.withValues(alpha: 0.25)),
                         ],
                       ),
                     ],
@@ -76,7 +76,7 @@ class _AttendanceBody extends StatelessWidget {
                   child: CircularProgressIndicator(
                     value: percent / 100,
                     strokeWidth: 8,
-                    backgroundColor: Colors.white.withOpacity(0.3),
+                    backgroundColor: Colors.white.withValues(alpha: 0.3),
                     valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                 ),
@@ -139,7 +139,7 @@ class _RecordTile extends StatelessWidget {
             Container(
               width: 36, height: 36,
               decoration: BoxDecoration(
-                color: (isPresent ? AppTheme.success : AppTheme.error).withOpacity(0.1),
+                color: (isPresent ? AppTheme.success : AppTheme.error).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(

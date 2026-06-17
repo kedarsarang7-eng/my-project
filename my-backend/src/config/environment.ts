@@ -20,13 +20,22 @@ const environmentSchema = z.object({
     // ── AWS Core ──────────────────────────────────────────────────────────
     AWS_REGION: z.string().min(1, 'AWS_REGION is required'),
 
+    // ── LocalStack / Local Mode ──────────────────────────────────────────
+    USE_LOCALSTACK: z.string().optional().default('false'),
+    LOCALSTACK_ENDPOINT: z.string().optional().default('http://localhost:4566'),
+    AUTH_PROVIDER: z.string().optional().default('cognito'),
+    KEYCLOAK_REALM_URL: z.string().optional().default(''),
+    KEYCLOAK_JWKS_URI: z.string().optional().default(''),
+    KEYCLOAK_CLIENT_ID: z.string().optional().default(''),
+    KEYCLOAK_CLIENT_SECRET: z.string().optional().default(''),
+
     // ── DynamoDB ──────────────────────────────────────────────────────────
     DYNAMODB_TABLE: z.string().min(1, 'DYNAMODB_TABLE is required'),
     RATE_LIMIT_TABLE: z.string().optional(),
 
     // ── Cognito ───────────────────────────────────────────────────────────
-    COGNITO_USER_POOL_ID: z.string().min(1, 'COGNITO_USER_POOL_ID is required'),
-    COGNITO_CLIENT_ID: z.string().min(1, 'COGNITO_CLIENT_ID is required'),
+    COGNITO_USER_POOL_ID: z.string().optional().default(''),
+    COGNITO_CLIENT_ID: z.string().optional().default(''),
     COGNITO_REGION: z.string().optional(),
     COGNITO_DESKTOP_CLIENT_ID: z.string().optional().default(''),
     COGNITO_MOBILE_CLIENT_ID: z.string().optional().default(''),
@@ -34,28 +43,48 @@ const environmentSchema = z.object({
     COGNITO_IDENTITY_POOL_ID: z.string().optional().default(''),
 
     // ── S3 Storage ────────────────────────────────────────────────────────
-    S3_BUCKET_NAME: z.string().min(1, 'S3_BUCKET_NAME is required'),
+    S3_BUCKET_NAME: z.string().optional().default(''),
     S3_REGION: z.string().optional(),
 
     // ── WebSocket ─────────────────────────────────────────────────────────
     WEBSOCKET_API_ENDPOINT: z.string().optional().default(''),
 
     // ── Application ───────────────────────────────────────────────────────
-    NODE_ENV: z.enum(['development', 'staging', 'production']).default('development'),
+    NODE_ENV: z.enum(['development', 'staging', 'production', 'local']).default('development'),
     ENVIRONMENT: z.string().optional().default('development'),
     LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
 
     // ── Internal Secrets ──────────────────────────────────────────────────
-    INTERNAL_API_SECRET: z.string().min(32, 'INTERNAL_API_SECRET must be >= 32 chars'),
-    MANIFEST_JWT_SECRET: z.string().min(32, 'MANIFEST_JWT_SECRET must be >= 32 chars'),
+    INTERNAL_API_SECRET: z.string().optional().default('local-dev-internal-api-secret-00000000'),
+    MANIFEST_JWT_SECRET: z.string().optional().default('local-dev-manifest-jwt-secret-00000000'),
+
+    // ── Offline License Token Signing (RS256) ─────────────────────────────
+    // RSA key material for the offline License_Token and local-auth JWT signing
+    // layer. Optional so existing cloud-mode startup is unaffected when unset;
+    // the signing service fails closed with a clear error if used without keys.
+    // Provide EITHER an inline PEM (…_KEY) OR a path to a PEM file (…_KEY_PATH).
+    // Inline PEM values may use literal "\n" sequences for newlines.
+    // Generate a key pair with: openssl genrsa -out license_private.pem 2048
+    //                           openssl rsa -in license_private.pem -pubout -out license_public.pem
+    LICENSE_TOKEN_PRIVATE_KEY: z.string().optional().default(''),
+    LICENSE_TOKEN_PUBLIC_KEY: z.string().optional().default(''),
+    LICENSE_TOKEN_PRIVATE_KEY_PATH: z.string().optional().default(''),
+    LICENSE_TOKEN_PUBLIC_KEY_PATH: z.string().optional().default(''),
+    LOCAL_AUTH_PRIVATE_KEY: z.string().optional().default(''),
+    LOCAL_AUTH_PUBLIC_KEY: z.string().optional().default(''),
+    LOCAL_AUTH_PRIVATE_KEY_PATH: z.string().optional().default(''),
+    LOCAL_AUTH_PUBLIC_KEY_PATH: z.string().optional().default(''),
 
     // ── AI Configuration ──────────────────────────────────────────────────
     DUKANX_AI_DEFAULT_PROVIDER: z.string().optional().default('ollama'),
     DUKANX_AI_API_KEY: z.string().optional().default(''),
     ANTHROPIC_API_KEY: z.string().optional().default(''),
 
-    // ── OpenSearch ─────────────────────────────────────────────────────────
+    // ── OpenSearch (deprecated — being replaced by DynamoDB SearchIndex) ──
     OPENSEARCH_ENDPOINT: z.string().optional().default(''),
+
+    // ── DynamoDB Search Index ─────────────────────────────────────────────
+    SEARCH_INDEX_TABLE: z.string().optional().default('DukanX-SearchIndex'),
 
     // ── Payment / Razorpay ────────────────────────────────────────────────
     RAZORPAY_KEY_ID: z.string().optional().default(''),
@@ -181,22 +210,36 @@ export const config = Object.freeze({
         region: env.AWS_REGION,
     },
 
+    local: {
+        isLocal: env.NODE_ENV === 'local' || env.USE_LOCALSTACK === 'true',
+        useLocalStack: env.USE_LOCALSTACK === 'true',
+        localStackEndpoint: env.LOCALSTACK_ENDPOINT,
+        authProvider: env.AUTH_PROVIDER as 'cognito' | 'keycloak',
+    },
+
+    keycloak: {
+        realmUrl: env.KEYCLOAK_REALM_URL,
+        jwksUri: env.KEYCLOAK_JWKS_URI,
+        clientId: env.KEYCLOAK_CLIENT_ID,
+        clientSecret: env.KEYCLOAK_CLIENT_SECRET,
+    },
+
     dynamodb: {
-        tableName: env.DYNAMODB_TABLE,
-        rateLimitTable: env.RATE_LIMIT_TABLE || `${env.DYNAMODB_TABLE}-rate-limits`,
-        auditTable: env.AUDIT_TABLE_NAME || env.DYNAMODB_TABLE,
-        licenseTable: env.LICENSE_TABLE_NAME || env.DYNAMODB_TABLE,
+        tableName: env.DYNAMODB_TABLE === '[object Object]' ? 'DukanX-dev' : (env.DYNAMODB_TABLE || 'DukanX-dev'),
+        rateLimitTable: env.RATE_LIMIT_TABLE || `${env.DYNAMODB_TABLE === '[object Object]' ? 'DukanX-dev' : (env.DYNAMODB_TABLE || 'DukanX-dev')}-rate-limits`,
+        auditTable: env.AUDIT_TABLE_NAME || (env.DYNAMODB_TABLE === '[object Object]' ? 'DukanX-dev' : (env.DYNAMODB_TABLE || 'DukanX-dev')),
+        licenseTable: env.LICENSE_TABLE_NAME || (env.DYNAMODB_TABLE === '[object Object]' ? 'DukanX-dev' : (env.DYNAMODB_TABLE || 'DukanX-dev')),
         local: env.DYNAMODB_LOCAL === 'true',
     },
 
     cognito: {
-        userPoolId: env.COGNITO_USER_POOL_ID,
-        clientId: env.COGNITO_CLIENT_ID,
+        userPoolId: env.COGNITO_USER_POOL_ID === '[object Object]' ? 'local-pool-id' : (env.COGNITO_USER_POOL_ID || 'local-pool-id'),
+        clientId: env.COGNITO_CLIENT_ID === '[object Object]' ? 'local-client-id' : (env.COGNITO_CLIENT_ID || 'local-client-id'),
         region: env.COGNITO_REGION || env.AWS_REGION,
-        desktopClientId: env.COGNITO_DESKTOP_CLIENT_ID,
-        mobileClientId: env.COGNITO_MOBILE_CLIENT_ID,
-        adminClientId: env.COGNITO_ADMIN_CLIENT_ID,
-        identityPoolId: env.COGNITO_IDENTITY_POOL_ID,
+        desktopClientId: env.COGNITO_DESKTOP_CLIENT_ID === '[object Object]' ? 'dukanx-desktop-app' : (env.COGNITO_DESKTOP_CLIENT_ID || 'dukanx-desktop-app'),
+        mobileClientId: env.COGNITO_MOBILE_CLIENT_ID === '[object Object]' ? 'dukanx-mobile-app' : (env.COGNITO_MOBILE_CLIENT_ID || 'dukanx-mobile-app'),
+        adminClientId: env.COGNITO_ADMIN_CLIENT_ID === '[object Object]' ? 'dukanx-backend' : (env.COGNITO_ADMIN_CLIENT_ID || 'dukanx-backend'),
+        identityPoolId: env.COGNITO_IDENTITY_POOL_ID === '[object Object]' ? 'local-identity-pool-id' : (env.COGNITO_IDENTITY_POOL_ID || 'local-identity-pool-id'),
         get allClientIds(): string[] {
             return [
                 this.clientId,
@@ -208,7 +251,7 @@ export const config = Object.freeze({
     },
 
     s3: {
-        bucketName: env.S3_BUCKET_NAME,
+        bucketName: env.S3_BUCKET_NAME === '[object Object]' ? 'dukan-saas-dev-uploads' : (env.S3_BUCKET_NAME || 'dukan-saas-dev-uploads'),
         region: env.S3_REGION || env.AWS_REGION,
         signedUrlExpiry: 300, // 5 minutes
     },
@@ -223,11 +266,28 @@ export const config = Object.freeze({
         logLevel: env.LOG_LEVEL,
         isProduction: env.NODE_ENV === 'production',
         isDevelopment: env.NODE_ENV === 'development',
+        isLocal: env.NODE_ENV === 'local' || env.USE_LOCALSTACK === 'true',
     },
 
     secrets: {
         internalApiSecret: env.INTERNAL_API_SECRET,
         manifestJwtSecret: env.MANIFEST_JWT_SECRET,
+    },
+
+    // Offline License_Token + local-auth RS256 signing material.
+    // Keys are NEVER hardcoded in source — they are supplied via env (inline PEM
+    // or a PEM file path). Empty defaults keep cloud-mode startup unaffected.
+    licenseToken: {
+        privateKey: env.LICENSE_TOKEN_PRIVATE_KEY,
+        publicKey: env.LICENSE_TOKEN_PUBLIC_KEY,
+        privateKeyPath: env.LICENSE_TOKEN_PRIVATE_KEY_PATH,
+        publicKeyPath: env.LICENSE_TOKEN_PUBLIC_KEY_PATH,
+        // Local-auth JWT keys fall back to the License_Token keys when not set
+        // separately, so a single key pair is enough for a basic deployment.
+        localAuthPrivateKey: env.LOCAL_AUTH_PRIVATE_KEY,
+        localAuthPublicKey: env.LOCAL_AUTH_PUBLIC_KEY,
+        localAuthPrivateKeyPath: env.LOCAL_AUTH_PRIVATE_KEY_PATH,
+        localAuthPublicKeyPath: env.LOCAL_AUTH_PUBLIC_KEY_PATH,
     },
 
     ai: {
@@ -238,6 +298,7 @@ export const config = Object.freeze({
 
     search: {
         opensearchEndpoint: env.OPENSEARCH_ENDPOINT,
+        searchIndexTable: env.SEARCH_INDEX_TABLE,
         fuzzyThreshold: parseFloat(env.FUZZY_THRESHOLD),
     },
 

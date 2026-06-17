@@ -37,7 +37,7 @@ android {
     defaultConfig {
         applicationId = "com.dukanx.customer"
         // flutter_secure_storage AES-GCM requires minSdk 23
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

@@ -24,6 +24,23 @@ const JEWELLERY_OPTS = {
 const generateId = () => crypto.randomUUID();
 const nowISO = () => new Date().toISOString();
 
+async function dynamicallyUpdate(pk: string, sk: string, updates: Record<string, any>) {
+  const updateExpr = Object.keys(updates).map((k, i) => `#${k} = :v${i}`).join(', ');
+  const exprNames: Record<string, string> = {};
+  const exprValues: Record<string, unknown> = {};
+  
+  Object.entries(updates).forEach(([k, v], i) => {
+    exprNames[`#${k}`] = k;
+    exprValues[`:v${i}`] = v;
+  });
+  
+  return updateItem(pk, sk, {
+    updateExpression: `SET ${updateExpr}`,
+    expressionAttributeNames: exprNames,
+    expressionAttributeValues: exprValues,
+  });
+}
+
 // ============================================================================
 // ZOD SCHEMAS
 // ============================================================================
@@ -110,7 +127,7 @@ export const createGoldRateAlert = authorizedHandler([UserRole.OWNER, UserRole.A
   event: APIGatewayProxyEventV2, context: Context, auth: AuthContext
 ) => {
   const valid = parseBody(goldRateAlertSchema, event);
-  if (!valid.success) return response.error(400, 'BAD_REQUEST', valid.error);
+  if (!valid.success) return valid.error;
 
   const id = generateId();
   const timestamp = nowISO();
@@ -132,12 +149,12 @@ export const createGoldRateAlert = authorizedHandler([UserRole.OWNER, UserRole.A
   };
 
   await putItem(item);
-  logger.info({ alertId: id }, 'Gold rate alert created');
+  logger.info('Gold rate alert created', { alertId: id });
 
   return response.success({ id, message: 'Alert created successfully' }, 201);
 }, JEWELLERY_OPTS);
 
-export const listGoldRateAlerts = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.STAFF], async (
+export const listGoldRateAlerts = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.STAFF, UserRole.VIEWER], async (
   event: APIGatewayProxyEventV2, context: Context, auth: AuthContext
 ) => {
   const result = await queryItems(Keys.tenantPK(auth.tenantId), 'ALERT#');
@@ -151,7 +168,7 @@ export const updateGoldRateAlert = authorizedHandler([UserRole.OWNER, UserRole.A
   if (!id) return response.error(400, 'BAD_REQUEST', 'Alert ID required');
 
   const valid = parseBody(goldRateAlertSchema.partial(), event);
-  if (!valid.success) return response.error(400, 'BAD_REQUEST', valid.error);
+  if (!valid.success) return valid.error;
 
   const timestamp = nowISO();
   const updateExpr = Object.keys(valid.data).map((k, i) => `#${k} = :v${i}`).join(', ');
@@ -192,7 +209,7 @@ export const createMakingChargesConfig = authorizedHandler([UserRole.OWNER, User
   event: APIGatewayProxyEventV2, context: Context, auth: AuthContext
 ) => {
   const valid = parseBody(makingChargesConfigSchema, event);
-  if (!valid.success) return response.error(400, 'BAD_REQUEST', JSON.stringify(valid.error));
+  if (!valid.success) return valid.error;
 
   const id = generateId();
   const timestamp = nowISO();
@@ -229,7 +246,7 @@ export const updateMakingChargesConfig = authorizedHandler([UserRole.OWNER, User
   if (!id) return response.error(400, 'BAD_REQUEST', 'Config ID required');
 
   const valid = parseBody(makingChargesConfigSchema.partial(), event);
-  if (!valid.success) return response.error(400, 'BAD_REQUEST', valid.error);
+  if (!valid.success) return valid.error;
 
   const timestamp = nowISO();
   const updateExpr = Object.keys(valid.data).map((k, i) => `#${k} = :v${i}`).join(', ');
@@ -270,7 +287,7 @@ export const createRepairJob = authorizedHandler([UserRole.OWNER, UserRole.ADMIN
   event: APIGatewayProxyEventV2, context: Context, auth: AuthContext
 ) => {
   const valid = parseBody(createRepairSchema, event);
-  if (!valid.success) return response.error(400, 'BAD_REQUEST', valid.error);
+  if (!valid.success) return valid.error;
 
   const id = generateId();
   const timestamp = nowISO();
@@ -333,7 +350,7 @@ export const updateRepairJob = authorizedHandler([UserRole.OWNER, UserRole.ADMIN
   if (!id) return response.error(400, 'BAD_REQUEST', 'Job ID required');
 
   const valid = parseBody(updateRepairSchema, event);
-  if (!valid.success) return response.error(400, 'BAD_REQUEST', valid.error);
+  if (!valid.success) return valid.error;
 
   const timestamp = nowISO();
   const updates: any = { ...valid.data, updatedAt: timestamp, updatedBy: auth.sub };
@@ -393,7 +410,7 @@ export const updateRepairStatus = authorizedHandler([UserRole.OWNER, UserRole.AD
     notes: z.string().optional() 
   });
   const valid = parseBody(schema, event);
-  if (!valid.success) return response.error(400, 'BAD_REQUEST', valid.error);
+  if (!valid.success) return valid.error;
 
   const { status, notes } = valid.data;
   const timestamp = nowISO();
@@ -416,14 +433,15 @@ export const updateRepairStatus = authorizedHandler([UserRole.OWNER, UserRole.AD
     updates.deliveredDate = timestamp;
   }
 
-  await updateItem(Keys.tenantPK(auth.tenantId), Keys.repairJobSK(id), updates);
+  await dynamicallyUpdate(Keys.tenantPK(auth.tenantId), Keys.repairJobSK(id), updates);
   return response.success({ message: `Status updated to ${status}` });
 }, JEWELLERY_OPTS);
 
 export const getRepairStatistics = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER], async (
   event: APIGatewayProxyEventV2, context: Context, auth: AuthContext
 ) => {
-  const items = await queryItems(Keys.tenantPK(auth.tenantId), 'REPAIR#');
+  const result = await queryItems(Keys.tenantPK(auth.tenantId), 'REPAIR#');
+  const items = result.items;
 
   const stats = {
     totalJobs: items.length,
@@ -448,7 +466,7 @@ export const createGoldScheme = authorizedHandler([UserRole.OWNER, UserRole.ADMI
   event: APIGatewayProxyEventV2, context: Context, auth: AuthContext
 ) => {
   const valid = parseBody(createGoldSchemeSchema, event);
-  if (!valid.success) return response.error(400, 'BAD_REQUEST', valid.error);
+  if (!valid.success) return valid.error;
 
   const id = generateId();
   const timestamp = nowISO();
@@ -541,14 +559,14 @@ export const updateGoldScheme = authorizedHandler([UserRole.OWNER, UserRole.ADMI
     plannedRedemptionType: z.enum(['goldJewellery', 'goldCoin', 'cashPayout', 'bankTransfer']).optional(),
   });
   const valid = parseBody(schema, event);
-  if (!valid.success) return response.error(400, 'BAD_REQUEST', valid.error);
+  if (!valid.success) return valid.error;
 
   const updates: any = { ...valid.data, updatedAt: nowISO(), updatedBy: auth.sub };
   if (valid.data.status) {
     updates.GSI1SK = `STATUS#${valid.data.status}#${new Date().toISOString()}`;
   }
 
-  await updateItem(Keys.tenantPK(auth.tenantId), Keys.goldSchemeSK(id), updates);
+  await dynamicallyUpdate(Keys.tenantPK(auth.tenantId), Keys.goldSchemeSK(id), updates);
   return response.success({ message: 'Gold scheme updated' });
 }, JEWELLERY_OPTS);
 
@@ -559,9 +577,9 @@ export const recordSchemePayment = authorizedHandler([UserRole.OWNER, UserRole.A
   if (!id) return response.error(400, 'BAD_REQUEST', 'Scheme ID required');
 
   const valid = parseBody(recordPaymentSchema, event);
-  if (!valid.success) return response.error(400, 'BAD_REQUEST', valid.error);
+  if (!valid.success) return valid.error;
 
-  const existing = await getItem(Keys.tenantPK(auth.tenantId), Keys.goldSchemeSK(id));
+  const existing = await getItem<any>(Keys.tenantPK(auth.tenantId), Keys.goldSchemeSK(id));
   if (!existing) return response.error(404, 'NOT_FOUND', 'Scheme not found');
 
   const { installmentNumber, paidAmountPaisa, paymentMode } = valid.data;
@@ -598,7 +616,7 @@ export const recordSchemePayment = authorizedHandler([UserRole.OWNER, UserRole.A
     newStatus = 'completed';
   }
 
-  await updateItem(Keys.tenantPK(auth.tenantId), Keys.goldSchemeSK(id), {
+  await dynamicallyUpdate(Keys.tenantPK(auth.tenantId), Keys.goldSchemeSK(id), {
     payments,
     status: newStatus,
     GSI1SK: `STATUS#${newStatus}#${existing.createdAt}`,
@@ -618,13 +636,17 @@ export const redeemGoldScheme = authorizedHandler([UserRole.OWNER, UserRole.ADMI
   if (!id) return response.error(400, 'BAD_REQUEST', 'Scheme ID required');
 
   const valid = parseBody(redeemSchemeSchema, event);
-  if (!valid.success) return response.error(400, 'BAD_REQUEST', valid.error);
+  if (!valid.success) return valid.error;
 
-  const existing = await getItem(Keys.tenantPK(auth.tenantId), Keys.goldSchemeSK(id));
+  const existing = await getItem<any>(Keys.tenantPK(auth.tenantId), Keys.goldSchemeSK(id));
   if (!existing) return response.error(404, 'NOT_FOUND', 'Scheme not found');
 
   if (existing.status === 'redeemed') {
     return response.error(400, 'BAD_REQUEST', 'Scheme already redeemed');
+  }
+
+  if (existing.completedInstallments < existing.totalInstallments) {
+    return response.error(400, 'BAD_REQUEST', 'Scheme is not fully paid');
   }
 
   const timestamp = nowISO();
@@ -648,7 +670,7 @@ export const redeemGoldScheme = authorizedHandler([UserRole.OWNER, UserRole.ADMI
     processedBy: auth.sub,
   };
 
-  await updateItem(Keys.tenantPK(auth.tenantId), Keys.goldSchemeSK(id), {
+  await dynamicallyUpdate(Keys.tenantPK(auth.tenantId), Keys.goldSchemeSK(id), {
     status: 'redeemed',
     GSI1SK: `STATUS#redeemed#${existing.createdAt}`,
     redemption,

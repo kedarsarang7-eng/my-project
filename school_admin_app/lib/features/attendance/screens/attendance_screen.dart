@@ -143,7 +143,7 @@ class _State extends ConsumerState<AttendanceScreen> {
                   padding: const EdgeInsets.only(bottom: 6),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(color: AppTheme.error.withOpacity(0.04), borderRadius: BorderRadius.circular(8), border: Border.all(color: AppTheme.error.withOpacity(0.2))),
+                    decoration: BoxDecoration(color: AppTheme.error.withValues(alpha: 0.04), borderRadius: BorderRadius.circular(8), border: Border.all(color: AppTheme.error.withValues(alpha: 0.2))),
                     child: Row(children: [
                       const Icon(Icons.warning_rounded, color: AppTheme.error, size: 16),
                       const SizedBox(width: 8),

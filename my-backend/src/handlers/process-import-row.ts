@@ -18,6 +18,7 @@
 //   - Job counter updates use ADD (atomic, no read-modify-write)
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { SQSEvent, SQSRecord } from 'aws-lambda';
 import {
     DynamoDBClient,
@@ -49,7 +50,7 @@ const TABLE_NAME = config.dynamodb.tableName;
 
 let dynamoClient: DynamoDBClient | null = null;
 function getDynamo(): DynamoDBClient {
-    if (!dynamoClient) dynamoClient = new DynamoDBClient({ region: REGION });
+    if (!dynamoClient) dynamoClient = new DynamoDBClient(configureAwsClient({ region: REGION }));
     return dynamoClient;
 }
 

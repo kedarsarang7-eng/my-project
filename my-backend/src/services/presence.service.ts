@@ -1,5 +1,5 @@
 // ============================================================================
-// Presence Service — Online/Offline Staff Tracking (Phase 4)
+// Presence Service ï¿½ Online/Offline Staff Tracking (Phase 4)
 // ============================================================================
 // Tracks which staff/users are currently online and broadcasts
 // presence changes to the business owner's dashboard.
@@ -11,6 +11,7 @@
 //   - Graceful fallback: if presence tracking fails, core broadcast continues
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import {
     DynamoDBClient,
     PutItemCommand,
@@ -34,7 +35,7 @@ let dynamoClient: DynamoDBClient | null = null;
 
 function getDynamoClient(): DynamoDBClient {
     if (!dynamoClient) {
-        dynamoClient = new DynamoDBClient({ region: REGION });
+        dynamoClient = new DynamoDBClient(configureAwsClient({ region: REGION }));
     }
     return dynamoClient;
 }
@@ -66,7 +67,7 @@ export async function markOnline(
 
         logger.info('[Presence] User marked online', { userId, businessId, connectionId });
     } catch (error) {
-        logger.warn('[Presence] Failed to mark online — non-critical', {
+        logger.warn('[Presence] Failed to mark online ï¿½ non-critical', {
             userId,
             error: (error as Error).message,
         });
@@ -108,12 +109,12 @@ export async function markOffline(
 
         // Only broadcast offline status if no other connections remain
         if (isFullyOffline) {
-            logger.info('[Presence] User fully offline — no remaining connections', {
+            logger.info('[Presence] User fully offline ï¿½ no remaining connections', {
                 userId, businessId,
             });
         }
     } catch (error) {
-        logger.warn('[Presence] Failed to process offline — non-critical', {
+        logger.warn('[Presence] Failed to process offline ï¿½ non-critical', {
             userId, connectionId,
             error: (error as Error).message,
         });
@@ -137,7 +138,7 @@ export async function updateLastSeen(
             },
         }));
     } catch (error) {
-        // Silently fail — presence is non-critical
+        // Silently fail ï¿½ presence is non-critical
         logger.debug('[Presence] Failed to update lastSeen', {
             connectionId,
             error: (error as Error).message,

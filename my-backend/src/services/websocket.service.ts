@@ -1,5 +1,5 @@
 // ============================================================================
-// WebSocket Broadcasting Service — Real-Time Event Delivery
+// WebSocket Broadcasting Service ï¿½ Real-Time Event Delivery
 // ============================================================================
 // Manages WebSocket connections via DynamoDB and broadcasts events
 // to connected clients through AWS API Gateway Management API.
@@ -14,6 +14,7 @@
 //   await ws.broadcastToBusiness(tenantId, { event, data });
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import {
     DynamoDBClient,
     PutItemCommand,
@@ -126,7 +127,7 @@ let cwClient: CloudWatchClient | null = null;
 
 function getCwClient(): CloudWatchClient {
     if (!cwClient) {
-        cwClient = new CloudWatchClient({ region: REGION });
+        cwClient = new CloudWatchClient(configureAwsClient({ region: REGION }));
     }
     return cwClient;
 }
@@ -150,7 +151,7 @@ async function emitMetric(
             }],
         }));
     } catch {
-        // Metrics are non-critical — silently fail
+        // Metrics are non-critical ï¿½ silently fail
     }
 }
 
@@ -161,7 +162,7 @@ let apiGwClient: ApiGatewayManagementApiClient | null = null;
 
 function getDynamoClient(): DynamoDBClient {
     if (!dynamoClient) {
-        dynamoClient = new DynamoDBClient({ region: REGION });
+        dynamoClient = new DynamoDBClient(configureAwsClient({ region: REGION }));
     }
     return dynamoClient;
 }
@@ -465,7 +466,7 @@ export async function broadcastToDevice(
 /**
  * Broadcast a global event to ALL connected clients (all businesses).
  *
- * Use sparingly — only for platform-wide admin actions.
+ * Use sparingly ï¿½ only for platform-wide admin actions.
  */
 export async function broadcastToAll(
     event: WSEventName,
@@ -594,6 +595,7 @@ export async function emitEvent(
         // Inventory ? business-wide
         case WSEventName.INVENTORY_UPDATED:
         case WSEventName.LOW_STOCK_ALERT:
+        case WSEventName.LOW_STOCK_RESOLVED:
         case WSEventName.EXPIRY_ALERT:
             await broadcastToBusiness(businessId, event, data);
             break;
@@ -745,7 +747,7 @@ async function sendToConnections(
                 }));
             } catch (error) {
                 if (error instanceof GoneException || (error as any)?.statusCode === 410) {
-                    // Connection is stale — mark for cleanup
+                    // Connection is stale ï¿½ mark for cleanup
                     staleConnectionIds.push(conn.connectionId);
                 } else {
                     logger.warn('[WebSocket] Failed to post to connection', {

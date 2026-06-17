@@ -10,6 +10,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import * as response from '../utils/response';
 import { logger } from '../utils/logger';
 import { docClient } from '../config/dynamodb.config';
+import { QueryCommand } from '@aws-sdk/lib-dynamodb';
 
 /**
  * GET /health
@@ -19,23 +20,30 @@ import { docClient } from '../config/dynamodb.config';
  * - No authentication required (public endpoint)
  */
 export async function health(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
+    console.log('[DEBUG] health handler invoked');
     const startTime = Date.now();
     const correlationId = event.requestContext?.requestId || 'health-check';
 
     try {
-        // Check DynamoDB connectivity (lightweight operation)
-        // Uses a quick describe operation that doesn't consume RCU
+        console.log('[DEBUG] checking DynamoDB connection');
         let dbStatus: 'healthy' | 'degraded' | 'unavailable' = 'healthy';
         try {
-            // Quick check: just verify we can reach DynamoDB
-            // We don't need to query actual data for a health check
+            console.log('[DEBUG] sending QueryCommand check');
+            const queryPromise = docClient.send(new QueryCommand({
+                TableName: config.dynamodb.tableName,
+                KeyConditionExpression: 'PK = :pk',
+                ExpressionAttributeValues: { ':pk': 'HEALTH_CHECK' },
+                Limit: 1,
+            }));
             await Promise.race([
-                docClient.config.endpointProvider?.({} as any),
+                queryPromise,
                 new Promise((_, reject) => 
                     setTimeout(() => reject(new Error('DynamoDB timeout')), 2000)
                 ),
             ]);
+            console.log('[DEBUG] DynamoDB check completed successfully');
         } catch (dbErr) {
+            console.log('[DEBUG] DynamoDB check caught error:', dbErr);
             dbStatus = 'degraded';
             logger.warn('Health check: DynamoDB connectivity warning', {
                 correlationId,
@@ -44,12 +52,13 @@ export async function health(event: APIGatewayProxyEventV2): Promise<APIGatewayP
         }
 
         const responseTime = Date.now() - startTime;
+        console.log('[DEBUG] health check success, responseTime:', responseTime);
 
         return response.success({
             status: dbStatus === 'healthy' ? 'healthy' : 'degraded',
             timestamp: new Date().toISOString(),
             responseTimeMs: responseTime,
-            version: config.app.version || '1.0.0',
+            version: (config.app as any).version || '1.0.0',
             environment: config.app.env || 'development',
             services: {
                 dynamodb: dbStatus,
@@ -57,6 +66,7 @@ export async function health(event: APIGatewayProxyEventV2): Promise<APIGatewayP
             },
         });
     } catch (err) {
+        console.log('[DEBUG] health check outer catch error:', err);
         logger.error('Health check failed', {
             correlationId,
             error: (err as Error).message,

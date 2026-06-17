@@ -6,6 +6,7 @@
 // Confidence threshold for Textract words: >= 0.70 (else row goes to errors).
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { logger } from '../utils/logger';
 import { ImportJobError } from '../types/import.types';
@@ -46,7 +47,7 @@ let s3: S3Client | null = null;
 let _textractClient: { send: (cmd: unknown) => Promise<{ Blocks?: Block[] }> } | null = null;
 
 function getS3(): S3Client {
-    if (!s3) s3 = new S3Client({ region: REGION });
+    if (!s3) s3 = new S3Client(configureAwsClient({ region: REGION }));
     return s3;
 }
 

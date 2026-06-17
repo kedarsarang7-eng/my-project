@@ -32,6 +32,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   _PaymentMethod _method = _PaymentMethod.upi;
   bool _isSubmitting = false;
   String? _errorMessage;
+  // ignore: unused_field
   String? _placedOrderId;
 
   @override
@@ -255,9 +256,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red.withOpacity(0.3)),
+                  border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
@@ -384,7 +385,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: selected ? _orange.withOpacity(0.12) : const Color(0xFF1A1A1A),
+          color: selected ? _orange.withValues(alpha: 0.12) : const Color(0xFF1A1A1A),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: selected ? _orange : const Color(0xFF2E2E2E),

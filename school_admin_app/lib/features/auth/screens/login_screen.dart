@@ -98,7 +98,7 @@ class _State extends ConsumerState<LoginScreen> with SingleTickerProviderStateMi
 
   Widget _buildForm(AuthState auth) => Container(
     padding: const EdgeInsets.all(32),
-    decoration: BoxDecoration(color: AppTheme.cardBg, borderRadius: BorderRadius.circular(24), border: Border.all(color: AppTheme.divider), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 32, offset: const Offset(0, 8))]),
+    decoration: BoxDecoration(color: AppTheme.cardBg, borderRadius: BorderRadius.circular(24), border: Border.all(color: AppTheme.divider), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 32, offset: const Offset(0, 8))]),
     child: Form(
       key: _formKey,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

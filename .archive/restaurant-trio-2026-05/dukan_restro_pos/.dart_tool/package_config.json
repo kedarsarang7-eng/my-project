@@ -9,7 +9,7 @@
     },
     {
       "name": "amazon_cognito_identity_dart_2",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/amazon_cognito_identity_dart_2-3.8.1",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/amazon_cognito_identity_dart_2-3.8.2",
       "packageUri": "lib/",
       "languageVersion": "2.13"
     },
@@ -45,7 +45,7 @@
     },
     {
       "name": "build",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/build-4.0.5",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/build-4.0.6",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -63,7 +63,7 @@
     },
     {
       "name": "build_runner",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/build_runner-2.13.1",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/build_runner-2.15.0",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -75,7 +75,7 @@
     },
     {
       "name": "built_value",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/built_value-8.12.5",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/built_value-8.12.6",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -105,9 +105,9 @@
     },
     {
       "name": "code_assets",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/code_assets-1.0.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/code_assets-1.2.1",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "code_builder",
@@ -159,7 +159,7 @@
     },
     {
       "name": "dbus",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/dbus-0.7.12",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/dbus-0.7.14",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -182,6 +182,12 @@
       "languageVersion": "3.7"
     },
     {
+      "name": "ffi_leak_tracker",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/ffi_leak_tracker-0.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.10"
+    },
+    {
       "name": "file",
       "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/file-7.0.1",
       "packageUri": "lib/",
@@ -197,7 +203,7 @@
       "name": "flutter",
       "rootUri": "file:///G:/flutter_windows_3.41.6-stable/flutter/packages/flutter",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "flutter_lints",
@@ -213,19 +219,19 @@
     },
     {
       "name": "flutter_secure_storage",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage-10.0.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage-10.3.1",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
     {
       "name": "flutter_secure_storage_darwin",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_darwin-0.2.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_darwin-0.3.2",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
     {
       "name": "flutter_secure_storage_linux",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_linux-3.0.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_linux-3.0.1",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -237,13 +243,13 @@
     },
     {
       "name": "flutter_secure_storage_web",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_web-2.1.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_web-2.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
     {
       "name": "flutter_secure_storage_windows",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_windows-4.1.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_secure_storage_windows-4.2.2",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -251,13 +257,13 @@
       "name": "flutter_test",
       "rootUri": "file:///G:/flutter_windows_3.41.6-stable/flutter/packages/flutter_test",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "flutter_web_plugins",
       "rootUri": "file:///G:/flutter_windows_3.41.6-stable/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "freezed_annotation",
@@ -279,13 +285,13 @@
     },
     {
       "name": "go_router",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/go_router-17.2.1",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/go_router-17.3.0",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "google_fonts",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/google_fonts-8.0.2",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/google_fonts-8.1.0",
       "packageUri": "lib/",
       "languageVersion": "3.9"
     },
@@ -297,7 +303,7 @@
     },
     {
       "name": "hooks",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/hooks-1.0.2",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/hooks-2.0.2",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -351,7 +357,7 @@
     },
     {
       "name": "json_annotation",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/json_annotation-4.11.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/json_annotation-4.12.0",
       "packageUri": "lib/",
       "languageVersion": "3.9"
     },
@@ -399,7 +405,7 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/meta-1.17.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/meta-1.18.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -416,12 +422,6 @@
       "languageVersion": "3.7"
     },
     {
-      "name": "native_toolchain_c",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/native_toolchain_c-0.17.6",
-      "packageUri": "lib/",
-      "languageVersion": "3.10"
-    },
-    {
       "name": "nm",
       "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/nm-0.5.0",
       "packageUri": "lib/",
@@ -435,7 +435,7 @@
     },
     {
       "name": "objective_c",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/objective_c-9.3.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/objective_c-9.4.1",
       "packageUri": "lib/",
       "languageVersion": "3.10"
     },
@@ -524,6 +524,12 @@
       "languageVersion": "3.6"
     },
     {
+      "name": "record_use",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/record_use-0.6.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.10"
+    },
+    {
       "name": "riverpod",
       "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/riverpod-3.2.1",
       "packageUri": "lib/",
@@ -555,9 +561,9 @@
     },
     {
       "name": "shared_preferences_android",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_android-2.4.23",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_android-2.4.25",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.12"
     },
     {
       "name": "shared_preferences_foundation",
@@ -617,11 +623,11 @@
       "name": "sky_engine",
       "rootUri": "file:///G:/flutter_windows_3.41.6-stable/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.10"
     },
     {
       "name": "source_gen",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/source_gen-4.2.2",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/source_gen-4.2.3",
       "packageUri": "lib/",
       "languageVersion": "3.9"
     },
@@ -645,33 +651,33 @@
     },
     {
       "name": "sqflite",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite-2.4.2",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite-2.4.3",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.12"
     },
     {
       "name": "sqflite_android",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_android-2.4.2+3",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_android-2.4.3",
       "packageUri": "lib/",
-      "languageVersion": "3.10"
+      "languageVersion": "3.12"
     },
     {
       "name": "sqflite_common",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_common-2.5.6",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_common-2.5.9",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.12"
     },
     {
       "name": "sqflite_darwin",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_darwin-2.4.2",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_darwin-2.4.3",
       "packageUri": "lib/",
-      "languageVersion": "3.7"
+      "languageVersion": "3.12"
     },
     {
       "name": "sqflite_platform_interface",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_platform_interface-2.4.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/sqflite_platform_interface-2.4.1",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.12"
     },
     {
       "name": "stack_trace",
@@ -705,9 +711,9 @@
     },
     {
       "name": "synchronized",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/synchronized-3.4.0+1",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/synchronized-3.4.1",
       "packageUri": "lib/",
-      "languageVersion": "3.11"
+      "languageVersion": "3.12"
     },
     {
       "name": "term_glyph",
@@ -717,19 +723,19 @@
     },
     {
       "name": "test",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/test-1.30.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/test-1.31.0",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
     {
       "name": "test_api",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/test_api-0.7.10",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/test_api-0.7.11",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
     {
       "name": "test_core",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/test_core-0.6.16",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/test_core-0.6.17",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -753,7 +759,7 @@
     },
     {
       "name": "vm_service",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/vm_service-15.1.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/vm_service-15.2.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -789,9 +795,9 @@
     },
     {
       "name": "win32",
-      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/win32-5.15.0",
+      "rootUri": "file:///C:/Users/sarang/AppData/Local/Pub/Cache/hosted/pub.dev/win32-6.3.0",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.10"
     },
     {
       "name": "xdg_directories",
@@ -819,8 +825,8 @@
     }
   ],
   "generator": "pub",
-  "generatorVersion": "3.11.5",
+  "generatorVersion": "3.12.1",
   "flutterRoot": "file:///G:/flutter_windows_3.41.6-stable/flutter",
-  "flutterVersion": "3.41.9",
+  "flutterVersion": "3.44.1",
   "pubCache": "file:///C:/Users/sarang/AppData/Local/Pub/Cache"
 }

@@ -13,6 +13,7 @@
 // On rate limit exceeded: returns 429 with Retry-After header
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, GetCommand, UpdateCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { AuthContext } from '../types/tenant.types';
@@ -20,7 +21,7 @@ import { config } from '../config/environment';
 import { logger } from '../utils/logger';
 
 // Initialize DynamoDB client (singleton)
-const client = new DynamoDBClient({});
+const client = new DynamoDBClient(configureAwsClient({}));
 const docClient = DynamoDBDocumentClient.from(client);
 
 const TABLE_NAME = config.dynamodb.rateLimitTable;

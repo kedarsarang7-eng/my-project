@@ -1,16 +1,17 @@
 // ============================================================================
-// Lambda Handler — DynamoDB Streams: Post-Payment Automation
+// Lambda Handler ï¿½ DynamoDB Streams: Post-Payment Automation
 // ============================================================================
 // Triggered by DynamoDB Stream on the main table.
 // Filters for INSTORE_ORDER records transitioning to status=CONFIRMED.
 //
 // Fan-out actions (each in its own try/catch so one failure doesn't block):
 //   1. Inventory reduction (deduct stock for each cart item)
-//   2. Invoice PDF generation + S3 upload (async — does not block confirm)
+//   2. Invoice PDF generation + S3 upload (async ï¿½ does not block confirm)
 //   3. Push notification to customer (FCM via SNS)
 //   4. Analytics update (store sales dashboard)
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { DynamoDBStreamEvent, DynamoDBRecord } from 'aws-lambda';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { AttributeValue } from '@aws-sdk/client-dynamodb';
@@ -25,8 +26,8 @@ import * as wsService from '../services/websocket.service';
 import { WSEventName } from '../types/websocket.types';
 import { config } from '../config/environment';
 
-const sns = new SNSClient({ region: config.aws.region });
-const sqs = new SQSClient({ region: config.aws.region });
+const sns = new SNSClient(configureAwsClient({ region: config.aws.region }));
+const sqs = new SQSClient(configureAwsClient({ region: config.aws.region }));
 
 const INVOICE_GEN_QUEUE_URL = config.awsQueue.invoiceGenQueueUrl || '';
 const FCM_SNS_TOPIC_ARN = config.awsSns.fcmTopicArn || '';
@@ -58,7 +59,7 @@ async function processRecord(record: DynamoDBRecord): Promise<void> {
     if (oldImage.status !== 'PAYMENT_PENDING' || newImage.status !== 'CONFIRMED') return;
 
     const order = newImage as unknown as InStoreOrder;
-    logger.info('InStore order confirmed — running post-payment automation', {
+    logger.info('InStore order confirmed ï¿½ running post-payment automation', {
         orderId: order.orderId,
         tenantId: order.tenantId,
     });
@@ -98,7 +99,7 @@ async function reduceInventory(order: InStoreOrder): Promise<void> {
             });
         } catch (err: unknown) {
             // ConditionalCheckFailed means stock went to 0 between checkout & confirm
-            // Log for reconciliation — don't block order flow
+            // Log for reconciliation ï¿½ don't block order flow
             logger.error('Stock reduction failed', {
                 productId: item.productId,
                 productName: item.name,
@@ -120,7 +121,7 @@ async function reduceInventory(order: InStoreOrder): Promise<void> {
 
 async function queueInvoiceGeneration(order: InStoreOrder): Promise<void> {
     if (!INVOICE_GEN_QUEUE_URL) {
-        logger.warn('INVOICE_GEN_QUEUE_URL not set — skipping invoice generation');
+        logger.warn('INVOICE_GEN_QUEUE_URL not set ï¿½ skipping invoice generation');
         return;
     }
 
@@ -147,7 +148,7 @@ async function queueInvoiceGeneration(order: InStoreOrder): Promise<void> {
 
 async function sendPushNotification(order: InStoreOrder): Promise<void> {
     if (!FCM_SNS_TOPIC_ARN) {
-        logger.warn('FCM_SNS_TOPIC_ARN not set — skipping push notification');
+        logger.warn('FCM_SNS_TOPIC_ARN not set ï¿½ skipping push notification');
         return;
     }
 
@@ -160,7 +161,7 @@ async function sendPushNotification(order: InStoreOrder): Promise<void> {
 
     const fcmToken = customerRecord?.fcmToken;
     if (!fcmToken) {
-        logger.info('No FCM token for customer — skipping push', { customerId: order.customerId });
+        logger.info('No FCM token for customer ï¿½ skipping push', { customerId: order.customerId });
         return;
     }
 

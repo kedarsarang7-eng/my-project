@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: DukanX SearchIndex Table — DynamoDB-native search replacing OpenSearch
+
+Resources:
+  SearchIndexTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: DukanX-SearchIndex
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+        - AttributeName: GSI2PK
+          AttributeType: S
+        - AttributeName: GSI2SK
+          AttributeType: S
+
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+
+      GlobalSecondaryIndexes:
+        # GSI1: Type-scoped search
+        # PK = TENANT#{tenantId}#TYPE#{entityType}
+        # SK = TOKEN#{token}#{entityId} or EXACT#{field}#{value}#{entityId}
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+        # GSI2: Reverse lookup (entity → all its tokens) for cleanup
+        # PK = ENTITY#{entityType}#{entityId}
+        # SK = TENANT#{tenantId}
+        - IndexName: GSI2
+          KeySchema:
+            - AttributeName: GSI2PK
+              KeyType: HASH
+            - AttributeName: GSI2SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: KEYS_ONLY
+
+Outputs:
+  SearchIndexTableName:
+    Value: !Ref SearchIndexTable
+    Export:
+      Name: DukanX-SearchIndex-TableName
+  SearchIndexTableArn:
+    Value: !GetAtt SearchIndexTable.Arn
+    Export:
+      Name: DukanX-SearchIndex-TableArn

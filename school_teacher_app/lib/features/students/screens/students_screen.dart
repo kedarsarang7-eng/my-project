@@ -112,7 +112,7 @@ class _StudentList extends ConsumerWidget {
                 decoration: BoxDecoration(color: AppTheme.cardBg, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.divider)),
                 child: Row(children: [
                   CircleAvatar(
-                    radius: 22, backgroundColor: AppTheme.primary.withOpacity(0.1),
+                    radius: 22, backgroundColor: AppTheme.primary.withValues(alpha: 0.1),
                     child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?', style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.w700, fontSize: 16)),
                   ),
                   const SizedBox(width: 12),

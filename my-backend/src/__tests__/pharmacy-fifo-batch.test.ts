@@ -163,6 +163,7 @@ import {
     medBatchSK,
 } from '../services/pharmacy-batch.service';
 import * as invoiceService from '../services/invoice.service';
+import { BusinessType } from '../types/tenant.types';
 
 // ============================================================================
 // (a) SINGLE BATCH FULL DEDUCTION
@@ -526,7 +527,7 @@ describe('Integration: Pharmacy Invoice FIFO', () => {
                 metadata: { prescriptionId: 'RX-001' },
             },
             'owner',
-            'pharmacy',  // businessType triggers FIFO
+            BusinessType.PHARMACY,  // businessType triggers FIFO
         );
 
         expect(result.id).toBeDefined();
@@ -571,7 +572,7 @@ describe('Integration: Pharmacy Invoice FIFO', () => {
                     metadata: { prescriptionId: 'RX-002' },
                 },
                 'owner',
-                'pharmacy',
+                BusinessType.PHARMACY,
             ),
         ).rejects.toThrow(/Insufficient batch stock/);
     });
@@ -623,7 +624,7 @@ describe('Non-Pharmacy: No FIFO Batch Deduction', () => {
                 }],
             },
             'owner',
-            'grocery',  // Not pharmacy — no FIFO
+            BusinessType.GROCERY,  // Not pharmacy — no FIFO
         );
 
         expect(result.id).toBeDefined();
@@ -685,3 +686,4 @@ describe('medBatchSK Key Builder', () => {
             .toBe('MEDBATCH#prod-002#B2026/01-LOT123');
     });
 });
+

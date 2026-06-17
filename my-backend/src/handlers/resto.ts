@@ -7,20 +7,21 @@
 
 import { APIGatewayProxyEventV2, Context } from 'aws-lambda';
 import * as crypto from 'crypto';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { authorizedHandler } from '../middleware/handler-wrapper';
 import { parseBody, parseQuery } from '../middleware/validation';
 import * as schemas from '../schemas/mobile.schema';
 import * as response from '../utils/response';
 import { logger } from '../utils/logger';
 import { logAudit } from '../middleware/audit';
-import { Keys, tableName, queryItems, putItem, updateItem, getItem, transactWrite, batchGetItems, batchWrite } from '../config/dynamodb.config';
+import { Keys, TABLE_NAME, queryItems, putItem, updateItem, getItem, transactWrite, batchGetItems, batchWrite } from '../config/dynamodb.config';
 import { getCached, invalidateCacheByPrefix } from '../utils/cache';
 import * as invoiceService from '../services/invoice.service';
-import { wsService, ClientType, WSEventName } from '../services/websocket.service';
-import { recordRevision } from '../services/audit.service';
-import { UserRole } from '../types/tenant.types';
-import { MANAGER_OVERRIDE_MASTER_PIN } from '../config/environment';
+import * as wsService from '../services/websocket.service';
+import { ClientType, WSEventName } from '../types/websocket.types';
+import { recordRevision } from '../services/revision-history.service';
+import { UserRole, AuthContext, BusinessType } from '../types/tenant.types';
+import { config } from '../config/environment';
 import type { ManagerOverrideInput } from '../schemas/mobile.schema';
 
 // ============================================================================
@@ -28,7 +29,7 @@ import type { ManagerOverrideInput } from '../schemas/mobile.schema';
 // ============================================================================
 const ITEM_DISCOUNT_PERCENT_CAP = 20;  // Max 20% per item
 const BILL_DISCOUNT_PERCENT_CAP = 25;   // Max 25% per bill
-const RESTO_OPTS = { bizVertical: 'restaurant' };
+const RESTO_OPTS = { requiredBusinessType: BusinessType.RESTAURANT };
 
 // ============================================================================
 // Types
@@ -173,14 +174,14 @@ async function validateManagerOverride(
     }
     const manager = await getItem<Record<string, any>>(Keys.tenantPK(tenantId), Keys.userSK(override.managerUserId));
     if (!manager || manager.isDeleted) {
-        if (MANAGER_OVERRIDE_MASTER_PIN && override.managerPin === MANAGER_OVERRIDE_MASTER_PIN) {
+        if (config.resto.managerOverrideMasterPin && override.managerPin === config.resto.managerOverrideMasterPin) {
             return { approvedBy: override.managerUserId, reason: override.reason || null };
         }
         throw new Error('Manager override user not found');
     }
     const role = String(manager.role || '').toLowerCase();
     if (!['owner', 'admin', 'manager'].includes(role)) throw new Error('Override approver must be owner/admin/manager');
-    const expectedPin = String(manager.managerPin || manager.overridePin || manager.pin || MANAGER_OVERRIDE_MASTER_PIN || '');
+    const expectedPin = String(manager.managerPin || manager.overridePin || manager.pin || config.resto.managerOverrideMasterPin || '');
     if (!expectedPin || expectedPin !== override.managerPin) throw new Error('Invalid manager PIN');
     return { approvedBy: override.managerUserId, reason: override.reason || null };
 }
@@ -552,7 +553,7 @@ export const createKOT = authorizedHandler(
                         await transactWrite([
                             {
                                 Put: {
-                                    TableName: tableName,
+                                    TableName: TABLE_NAME,
                                     Item: {
                                         PK: pk,
                                         SK: `RESTOBILL#${billId}`,
@@ -575,7 +576,7 @@ export const createKOT = authorizedHandler(
                             },
                             {
                                 Update: {
-                                    TableName: tableName,
+                                    TableName: TABLE_NAME,
                                     Key: { PK: pk, SK: `RESTOTABLE#${tableId}` },
                                     UpdateExpression:
                                         'SET #s = :occupied, currentBillId = :bid, updatedAt = :now',
@@ -1094,7 +1095,7 @@ export const releaseTable = authorizedHandler(
             await transactWrite([
                 {
                     Update: {
-                        TableName: tableName,
+                        TableName: TABLE_NAME,
                         Key: { PK: pk, SK: `RESTOBILL#${billId}` },
                         UpdateExpression: 'SET #s = :closed, updatedAt = :now',
                         ConditionExpression: '#s = :settled',
@@ -1104,7 +1105,7 @@ export const releaseTable = authorizedHandler(
                 },
                 {
                     Update: {
-                        TableName: tableName,
+                        TableName: TABLE_NAME,
                         Key: { PK: pk, SK: `RESTOTABLE#${tableId}` },
                         UpdateExpression: 'SET #s = :available, currentBillId = :null, updatedAt = :now',
                         ConditionExpression: 'currentBillId = :bid',
@@ -1280,7 +1281,7 @@ export const cancelKotItem = authorizedHandler(
             await transactWrite([
                 {
                     Update: {
-                        TableName: tableName,
+                        TableName: TABLE_NAME,
                         Key: { PK: pk, SK: `KOTITEM#${itemId}` },
                         UpdateExpression:
                             'SET itemStatus = :cancelled, cancellationReason = :reason, cancelledBy = :user, cancelledAt = :now, updatedAt = :now',
@@ -1296,7 +1297,7 @@ export const cancelKotItem = authorizedHandler(
                 },
                 {
                     Update: {
-                        TableName: tableName,
+                        TableName: TABLE_NAME,
                         Key: { PK: pk, SK: `RESTOBILL#${kot.billId}` },
                         UpdateExpression: 'SET totalAmountCents = totalAmountCents - :amount, updatedAt = :now',
                         ExpressionAttributeValues: { ':amount': lineTotalCents, ':now': now },
@@ -1475,7 +1476,7 @@ export const transferTable = authorizedHandler(
         await transactWrite([
             {
                 Update: {
-                    TableName: tableName,
+                    TableName: TABLE_NAME,
                     Key: { PK: pk, SK: `RESTOTABLE#${fromTableId}` },
                     UpdateExpression: 'SET #s = :available, currentBillId = :null, updatedAt = :now',
                     ExpressionAttributeNames: { '#s': 'status' },
@@ -1485,7 +1486,7 @@ export const transferTable = authorizedHandler(
             },
             {
                 Update: {
-                    TableName: tableName,
+                    TableName: TABLE_NAME,
                     Key: { PK: pk, SK: `RESTOTABLE#${toTableId}` },
                     UpdateExpression: 'SET #s = :occupied, currentBillId = :billId, updatedAt = :now',
                     ExpressionAttributeNames: { '#s': 'status' },
@@ -1495,7 +1496,7 @@ export const transferTable = authorizedHandler(
             },
             {
                 Update: {
-                    TableName: tableName,
+                    TableName: TABLE_NAME,
                     Key: { PK: pk, SK: `RESTOBILL#${billId}` },
                     UpdateExpression: 'SET tableId = :toTableId, updatedAt = :now, transferReason = :reason',
                     ExpressionAttributeValues: { ':toTableId': toTableId, ':now': now, ':reason': reason || null },
@@ -1571,7 +1572,7 @@ export const mergeTables = authorizedHandler(
         await transactWrite([
             {
                 Update: {
-                    TableName: tableName,
+                    TableName: TABLE_NAME,
                     Key: { PK: pk, SK: `RESTOBILL#${primaryBillId}` },
                     UpdateExpression:
                         'SET totalAmountCents = :mergedTotal, mergedFromBillIds = list_append(if_not_exists(mergedFromBillIds, :empty), :src), updatedAt = :now',
@@ -1580,7 +1581,7 @@ export const mergeTables = authorizedHandler(
             },
             {
                 Update: {
-                    TableName: tableName,
+                    TableName: TABLE_NAME,
                     Key: { PK: pk, SK: `RESTOBILL#${secondaryBillId}` },
                     UpdateExpression: 'SET #s = :merged, mergedIntoBillId = :target, mergeReason = :reason, updatedAt = :now',
                     ExpressionAttributeNames: { '#s': 'status' },
@@ -1589,7 +1590,7 @@ export const mergeTables = authorizedHandler(
             },
             {
                 Update: {
-                    TableName: tableName,
+                    TableName: TABLE_NAME,
                     Key: { PK: pk, SK: `RESTOTABLE#${secondaryTableId}` },
                     UpdateExpression: 'SET #s = :available, currentBillId = :null, updatedAt = :now',
                     ExpressionAttributeNames: { '#s': 'status' },

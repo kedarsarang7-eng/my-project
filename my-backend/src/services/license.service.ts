@@ -1,5 +1,5 @@
 // ============================================================================
-// License Service � Key Generation, Activation & Validation (DynamoDB)
+// License Service � Key Generation, Activation & Validation (DynamoDB)
 // ============================================================================
 // Manages the full license key lifecycle:
 //   1. Generate DKX-format license keys (admin-only)
@@ -10,7 +10,8 @@
 // Migrated from PostgreSQL to DynamoDB single-table design.
 // ============================================================================
 
-import { randomBytes } from 'crypto';
+import { configureAwsClient } from '../config/aws.config';
+import { randomBytes, createHash } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import {
     Keys, TABLE_NAME,
@@ -22,8 +23,11 @@ import { AppError, NotFoundError } from '../utils/errors';
 import { PlanTier, mapToPlanTier } from '../config/plan-feature-registry';
 import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
 import { config } from '../config/environment';
+import { LicenseKeyPayload } from '../types/license.types';
+import { isKeyDenylisted } from './license-denylist.service';
+import { signLicenseToken, LICENSE_TOKEN_TTL_SECONDS } from './license-token.service';
 
-const cloudwatchClient = new CloudWatchClient({ region: config.aws.region });
+const cloudwatchClient = new CloudWatchClient(configureAwsClient({ region: config.aws.region }));
 
 // -- In-Memory License Validation Cache --------------------------------------
 // Lambda warm instances cache validated licenses to avoid repeated DynamoDB reads.
@@ -191,7 +195,7 @@ export async function generateLicenseKey(
     return { licenseKey, tenantId, planTier, expiresAt };
 }
 
-// -- Generate Standalone License Key (Admin � Auto Tenant Creation) ----------
+// -- Generate Standalone License Key (Admin � Auto Tenant Creation) ----------
 
 export interface StandaloneLicenseResult {
     license_key: string;
@@ -271,7 +275,7 @@ export async function generateStandaloneLicenseKey(
     // BUG-LIC-003: Use real owner info or fallback
     const tenantName = ownerInfo?.businessName || ownerInfo?.ownerName || `Auto-${businessType}-${shortUuid}`;
 
-    // BUG-LIC-004: Duplicate prevention � check if email/phone already has active license
+    // BUG-LIC-004: Duplicate prevention � check if email/phone already has active license
     if (ownerInfo?.ownerEmail) {
         const existing = await checkDuplicateLicense('email', ownerInfo.ownerEmail);
         if (existing) {
@@ -279,7 +283,7 @@ export async function generateStandaloneLicenseKey(
                 existingKey: existing.substring(0, 8) + '...',
                 email: ownerInfo.ownerEmail,
             });
-            // Warn but don't block � Super Admin may intentionally create multiple
+            // Warn but don't block � Super Admin may intentionally create multiple
         }
     }
 
@@ -1076,7 +1080,7 @@ export async function validateLicenseKey(licenseKey: string): Promise<LicenseVal
  * Return default feature list based on plan tier.
  *
  * Authoritative source: plan-feature-registry.ts PLAN_CORE_FEATURES.
- * This keeps one source of truth � no divergence between what the generator
+ * This keeps one source of truth � no divergence between what the generator
  * stamps into a new license and what the plan-guard later enforces.
  * BusinessType-specific features are deliberately NOT included here; the
  * manifest service layers them on at serve time based on the license's
@@ -1180,13 +1184,77 @@ export async function updateBusinessType(licenseKey: string, businessType: strin
     logger.info('Business type updated', { licenseKey, oldBusinessType, newBusinessType: businessType, adminId });
 }
 
+// -- Device Allowance Configuration Validation (Req 5.8, 5.10) ---------------
+// The device allowance is the number of machines a single license may activate.
+// Per the offline-license-activation spec it defaults to one machine per license
+// (Req 5.8) and a Super_Admin may only configure it to an integer in [1, 3];
+// any other value is rejected and the previously configured allowance is kept
+// (Req 5.10). The pure helpers below are the single source of truth for that
+// rule so the handler, the service, and the property tests all agree.
+
+/** Default device allowance: one machine per license (Req 5.8). */
+export const DEFAULT_DEVICE_ALLOWANCE = 1;
+
+/** Inclusive lower bound for a configurable device allowance (Req 5.10). */
+export const MIN_DEVICE_ALLOWANCE = 1;
+
+/** Inclusive upper bound for a configurable device allowance (Req 5.10). */
+export const MAX_DEVICE_ALLOWANCE = 3;
+
+/**
+ * A device allowance is configurable only when it is an integer within the
+ * inclusive range [1, 3] (Req 5.10). Everything else is invalid: a non-number,
+ * a non-integer such as 2.5, NaN/Infinity, or an out-of-range value such as 0
+ * or 4.
+ */
+export function isValidDeviceAllowance(value: unknown): value is number {
+    return typeof value === 'number'
+        && Number.isInteger(value)
+        && value >= MIN_DEVICE_ALLOWANCE
+        && value <= MAX_DEVICE_ALLOWANCE;
+}
+
+/**
+ * Resolve the effective device allowance for a Super_Admin configuration update.
+ *
+ * Pure and deterministic (Property 8): the proposed value is accepted if and
+ * only if it is an integer in [1, 3]; otherwise the previously configured
+ * allowance is retained unchanged (Req 5.10). When no previous allowance is
+ * supplied it falls back to the default of one machine per license (Req 5.8).
+ *
+ * @param proposed The allowance value the Super_Admin is attempting to set.
+ * @param previous The currently configured allowance (defaults to 1).
+ * @returns        The proposed value when valid, otherwise the previous value.
+ */
+export function resolveDeviceAllowance(
+    proposed: unknown,
+    previous: number = DEFAULT_DEVICE_ALLOWANCE,
+): number {
+    return isValidDeviceAllowance(proposed) ? proposed : previous;
+}
+
 /** BUG-LIC-018: Update max devices on a license */
 export async function updateMaxDevices(licenseKey: string, maxDevices: number, adminId: string): Promise<void> {
     const now = new Date().toISOString();
     const license = await getItem<Record<string, any>>(Keys.licensePK(licenseKey), Keys.licenseMetaSK());
     if (!license) throw new NotFoundError('License key not found');
 
-    const oldMaxDevices = license.maxDevices || 1;
+    const oldMaxDevices = license.maxDevices || DEFAULT_DEVICE_ALLOWANCE;
+
+    // Req 5.10: Accept the allowance update only when it is an integer in [1, 3].
+    // Any other value is rejected and the previously configured allowance is
+    // retained — by throwing before the write, the stored value is left intact.
+    if (!isValidDeviceAllowance(maxDevices)) {
+        logger.warn('Rejected device allowance update; retaining previous allowance', {
+            licenseKey, proposed: maxDevices, retained: oldMaxDevices, adminId,
+        });
+        throw new AppError(
+            `Device allowance must be an integer between ${MIN_DEVICE_ALLOWANCE} and ${MAX_DEVICE_ALLOWANCE}. ` +
+                `Retained the previously configured allowance of ${oldMaxDevices}.`,
+            400,
+            'INVALID_DEVICE_ALLOWANCE',
+        );
+    }
 
     await updateItem(Keys.licensePK(licenseKey), Keys.licenseMetaSK(), {
         updateExpression: 'SET maxDevices = :md, updatedAt = :now',
@@ -1487,7 +1555,7 @@ async function checkDuplicateLicense(field: 'email' | 'phone', value: string): P
             return match.licenseKey;
         }
     } catch {
-        // Non-critical � don't block generation
+        // Non-critical � don't block generation
     }
     return null;
 }
@@ -1546,4 +1614,251 @@ async function emitMetric(
     } catch (err) {
         logger.warn('Failed to emit license metric', { error: (err as Error).message });
     }
+}
+
+// ============================================================================
+// Offline License Activation (Task 3.2 — additive, reuse-don't-rebuild)
+// ============================================================================
+// One-time, machine-bound activation for Offline_Lifetime_Mode. This endpoint
+// does NOT reimplement validation, denylist, or activation logic: it composes
+// the existing building blocks —
+//   • validateLicenseKey()        — invalid / expired / revoked / suspended gate
+//   • isKeyDenylisted()           — fail-closed denylist (Req 17.13)
+//   • the device-allowance rules  — DEFAULT/MIN/MAX + isValidDeviceAllowance()
+//   • signLicenseToken()          — RS256 365-day token over the UNCHANGED
+//                                   LicenseKeyPayload, bound to fingerprintHash
+// and persists the bound device on the existing LICENSE# record.
+//
+// On ANY rejection (invalid/expired/revoked/suspended/denylisted/allowance
+// exhausted) it throws an AppError and issues NO token (Req 5.3, 5.9, 17.13).
+// Cloud_Subscription_Mode is untouched: this is a new function only.
+// ============================================================================
+
+/**
+ * The Machine_Fingerprint sent by the Activation_Service (Req 5.1). Only the
+ * three bound components contribute to the Fingerprint_Hash (Req 5.2); osType
+ * and hostname are carried for auditing/drift but never bind the token.
+ */
+export interface MachineFingerprint {
+    cpuId: string;
+    macAddress: string;
+    hddSerial: string;
+    osType?: string;
+    hostname?: string;
+}
+
+/** Successful offline-activation result: the signed, machine-bound token. */
+export interface OfflineActivationResult {
+    success: true;
+    licenseToken: string;
+    fingerprintHash: string;
+    tenantId: string;
+    plan: string;
+    maxDevices: number;
+    activatedDeviceCount: number;
+    /** Token TTL in seconds (365 days) — informational for the client. */
+    ttlSeconds: number;
+    expiresAt: string | null;
+}
+
+/**
+ * Compute the Fingerprint_Hash exactly as the spec defines it (Req 5.2):
+ * SHA256(cpuId + macAddress + hddSerial). osType and hostname are intentionally
+ * excluded so a hostname/OS change does not rebind the license.
+ */
+export function computeFingerprintHash(fp: MachineFingerprint): string {
+    return createHash('sha256')
+        .update(`${fp.cpuId}${fp.macAddress}${fp.hddSerial}`)
+        .digest('hex');
+}
+
+/**
+ * Assemble the UNCHANGED LicenseKeyPayload from a stored license record plus the
+ * already-validated public view. No LicenseKeyPayload field is added, removed,
+ * renamed, or retyped (Req 2.2) — values are simply read from the record with
+ * safe fallbacks that mirror the existing defaults used elsewhere in this file.
+ */
+function buildLicensePayload(
+    license: Record<string, any>,
+    validation: LicenseValidationResult,
+    allowance: number,
+): LicenseKeyPayload {
+    const allowedBusinessTypes: string[] = Array.isArray(license.allowedBusinessTypes)
+        && license.allowedBusinessTypes.length > 0
+        ? license.allowedBusinessTypes
+        : [license.businessType || validation.businessType || 'general'];
+
+    return {
+        tenantId: license.tenantId,
+        plan: mapToPlanTier(license.plan || validation.plan || 'basic'),
+        allowedBusinessTypes,
+        maxUsers: license.maxUsers || validation.maxUsers || 10,
+        maxDevices: allowance,
+        features: validation.features,
+        expiresAt: validation.expiresAt,
+        issuedAt: license.issuedAt || license.createdAt || new Date().toISOString(),
+        keyVersion: typeof license.keyVersion === 'number' ? license.keyVersion : 1,
+        superAdminOverride: license.superAdminOverride === true,
+    };
+}
+
+/**
+ * Activate a license for a specific machine and return a signed License_Token.
+ *
+ * Flow (Req 5.3, 5.9, 17.13):
+ *   1. Reuse validateLicenseKey() — rejects invalid/expired/revoked/suspended/
+ *      inactive keys via the existing, unchanged logic.
+ *   2. Reuse isKeyDenylisted() — fail-closed: a denylisted key, OR a denylist
+ *      check that errors, denies activation before any token is issued.
+ *   3. Enforce the device allowance against the existing activatedDevices list:
+ *      re-activating an already-bound machine is idempotent; a brand-new machine
+ *      is allowed only while the bound-device count is below the allowance.
+ *   4. Sign and return the 365-day RS256 License_Token bound to fingerprintHash.
+ *
+ * Throws an AppError on every rejection path and issues NO token in that case.
+ */
+export async function activateOfflineLicense(
+    licenseKey: string,
+    fingerprint: MachineFingerprint,
+    userId?: string,
+    sourceIp?: string,
+): Promise<OfflineActivationResult> {
+    if (!fingerprint || !fingerprint.cpuId || !fingerprint.macAddress || !fingerprint.hddSerial) {
+        throw new AppError(
+            'A Machine_Fingerprint with cpuId, macAddress, and hddSerial is required.',
+            400,
+            'FINGERPRINT_REQUIRED',
+        );
+    }
+
+    // 1. Reuse the existing validation gate (invalid/expired/revoked/suspended).
+    //    Throws AppError with the precise rejection reason — no token issued.
+    const validation = await validateLicenseKey(licenseKey);
+
+    // 2. Fail-closed denylist enforcement (Req 17.13). isKeyDenylisted already
+    //    returns true on internal error, so a check failure also denies.
+    if (await isKeyDenylisted(licenseKey)) {
+        await emitMetric('OfflineActivationDenylisted', 1);
+        throw new AppError('License key is denylisted.', 403, 'KEY_DENYLISTED');
+    }
+
+    // Load the full record to read the bound-device list and the fields the
+    // token payload needs. validateLicenseKey already proved it exists/valid.
+    const license = await getItem<Record<string, any>>(
+        Keys.licensePK(licenseKey),
+        Keys.licenseMetaSK(),
+    );
+    if (!license) {
+        // Defensive: should not happen after a successful validation.
+        throw new NotFoundError('License key not found');
+    }
+
+    // 3. Device-allowance enforcement (Req 5.8, 5.9). The configured allowance is
+    //    range-clamped by the same single-source-of-truth helper used by 3.3.
+    const allowance = resolveDeviceAllowance(
+        license.maxDevices,
+        DEFAULT_DEVICE_ALLOWANCE,
+    );
+    const fingerprintHash = computeFingerprintHash(fingerprint);
+    const boundDevices: string[] = Array.isArray(license.activatedDevices)
+        ? license.activatedDevices.map((d: unknown) => String(d))
+        : [];
+    const alreadyBound = boundDevices.includes(fingerprintHash);
+
+    if (!alreadyBound && boundDevices.length >= allowance) {
+        await emitMetric('OfflineActivationAllowanceExhausted', 1);
+        throw new AppError(
+            `Device allowance exhausted: this license permits ${allowance} machine(s).`,
+            403,
+            'DEVICE_ALLOWANCE_EXHAUSTED',
+        );
+    }
+
+    // Bind the new machine atomically. The condition guards against a race that
+    // would otherwise exceed the allowance; on conflict we reject the same way.
+    if (!alreadyBound) {
+        const now = new Date().toISOString();
+        try {
+            await updateItem(
+                Keys.licensePK(licenseKey),
+                Keys.licenseMetaSK(),
+                {
+                    updateExpression:
+                        'SET activatedDevices = list_append(if_not_exists(activatedDevices, :empty), :dev), updatedAt = :now',
+                    expressionAttributeValues: {
+                        ':empty': [],
+                        ':dev': [fingerprintHash],
+                        ':now': now,
+                        ':allowance': allowance,
+                    },
+                    // size() of the existing list must still be below the allowance.
+                    conditionExpression:
+                        'attribute_not_exists(activatedDevices) OR size(activatedDevices) < :allowance',
+                },
+            );
+        } catch (err: any) {
+            if (err?.name === 'ConditionalCheckFailedException') {
+                await emitMetric('OfflineActivationAllowanceExhausted', 1);
+                throw new AppError(
+                    `Device allowance exhausted: this license permits ${allowance} machine(s).`,
+                    403,
+                    'DEVICE_ALLOWANCE_EXHAUSTED',
+                );
+            }
+            throw err;
+        }
+
+        // Best-effort activation audit (mirrors activateLicense()).
+        try {
+            await putItem({
+                PK: Keys.licensePK(licenseKey),
+                SK: Keys.licenseActivationSK(now),
+                entityType: 'LICENSE_OFFLINE_ACTIVATION',
+                tenantId: license.tenantId,
+                licenseKey,
+                action: 'offline_activate',
+                fingerprintHash,
+                osType: fingerprint.osType || null,
+                hostname: fingerprint.hostname || null,
+                ipAddress: sourceIp || null,
+                activatedBy: userId || 'system',
+                createdAt: now,
+            });
+        } catch (auditErr) {
+            logger.warn('Failed to record offline activation audit', {
+                error: (auditErr as Error).message,
+            });
+        }
+        invalidateLicenseCache(licenseKey);
+    }
+
+    // 4. Sign the machine-bound 365-day License_Token over the UNCHANGED payload.
+    const payload = buildLicensePayload(license, validation, allowance);
+    const licenseToken = signLicenseToken(payload, fingerprintHash);
+
+    const activatedDeviceCount = alreadyBound
+        ? boundDevices.length
+        : boundDevices.length + 1;
+
+    logger.info('Offline license activated', {
+        tenantId: license.tenantId,
+        plan: payload.plan,
+        licenseKey: `${licenseKey.substring(0, 8)}...`,
+        activatedDeviceCount,
+        allowance,
+        reactivation: alreadyBound,
+    });
+    await emitMetric('OfflineActivation', 1, [{ Name: 'PlanTier', Value: String(payload.plan) }]);
+
+    return {
+        success: true,
+        licenseToken,
+        fingerprintHash,
+        tenantId: license.tenantId,
+        plan: String(payload.plan),
+        maxDevices: allowance,
+        activatedDeviceCount,
+        ttlSeconds: LICENSE_TOKEN_TTL_SECONDS,
+        expiresAt: validation.expiresAt,
+    };
 }

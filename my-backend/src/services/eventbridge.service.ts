@@ -1,5 +1,5 @@
 // ============================================================================
-// EventBridge Service — Event Bus Integration (Phase 2)
+// EventBridge Service ï¿½ Event Bus Integration (Phase 2)
 // ============================================================================
 // Provides a simple interface for REST handlers to emit events to
 // EventBridge instead of directly calling wsService.broadcastToBusiness().
@@ -19,6 +19,7 @@
 //   });
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import {
     EventBridgeClient,
     PutEventsCommand,
@@ -42,7 +43,7 @@ let ebClient: EventBridgeClient | null = null;
 
 function getClient(): EventBridgeClient {
     if (!ebClient) {
-        ebClient = new EventBridgeClient({ region: REGION });
+        ebClient = new EventBridgeClient(configureAwsClient({ region: REGION }));
     }
     return ebClient;
 }
@@ -62,7 +63,7 @@ export const EB_SOURCES = {
 } as const;
 
 // Map event names to EventBridge sources for auto-routing
-const EVENT_SOURCE_MAP: Record<WSEventName, string> = {
+const EVENT_SOURCE_MAP: Partial<Record<WSEventName, string>> = {
     [WSEventName.ORDER_CREATED]: EB_SOURCES.ORDERS,
     [WSEventName.ORDER_UPDATED]: EB_SOURCES.ORDERS,
     [WSEventName.ORDER_COMPLETED]: EB_SOURCES.ORDERS,
@@ -76,6 +77,7 @@ const EVENT_SOURCE_MAP: Record<WSEventName, string> = {
     [WSEventName.BILL_UPDATED]: EB_SOURCES.BILLING,
     [WSEventName.INVENTORY_UPDATED]: EB_SOURCES.INVENTORY,
     [WSEventName.LOW_STOCK_ALERT]: EB_SOURCES.INVENTORY,
+    [WSEventName.LOW_STOCK_RESOLVED]: EB_SOURCES.INVENTORY,
     [WSEventName.EXPIRY_ALERT]: EB_SOURCES.INVENTORY,
     [WSEventName.STAFF_ACTIVITY]: EB_SOURCES.STAFF,
     [WSEventName.STAFF_SALE_CREATED]: EB_SOURCES.STAFF,
@@ -102,7 +104,7 @@ const EVENT_SOURCE_MAP: Record<WSEventName, string> = {
 };
 
 // Map event names to default target audiences
-const EVENT_AUDIENCE_MAP: Record<WSEventName, WSEventBridgeDetail['targetAudience']> = {
+const EVENT_AUDIENCE_MAP: Partial<Record<WSEventName, WSEventBridgeDetail['targetAudience']>> = {
     [WSEventName.ORDER_CREATED]: 'business',
     [WSEventName.ORDER_UPDATED]: 'business',
     [WSEventName.ORDER_COMPLETED]: 'business',
@@ -116,6 +118,7 @@ const EVENT_AUDIENCE_MAP: Record<WSEventName, WSEventBridgeDetail['targetAudienc
     [WSEventName.BILL_UPDATED]: 'business',
     [WSEventName.INVENTORY_UPDATED]: 'business',
     [WSEventName.LOW_STOCK_ALERT]: 'business',
+    [WSEventName.LOW_STOCK_RESOLVED]: 'business',
     [WSEventName.EXPIRY_ALERT]: 'business',
     [WSEventName.STAFF_ACTIVITY]: 'owner',
     [WSEventName.STAFF_SALE_CREATED]: 'business',
@@ -197,7 +200,7 @@ export async function emitToEventBridge(
             targetAudience,
         });
     } catch (error) {
-        logger.error('[EventBridge] Failed to emit event — falling back to direct broadcast', {
+        logger.error('[EventBridge] Failed to emit event ï¿½ falling back to direct broadcast', {
             event,
             businessId,
             error: (error as Error).message,

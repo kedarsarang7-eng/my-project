@@ -227,8 +227,8 @@ export const logAdminLogin = authorizedHandler(
 
             await billingService.logAdminLogin({
                 admin_sub: body.admin_sub,
-                email: body.email,
-                success: body.success,
+                email: body.email || '',
+                success: body.success ?? false,
                 failure_reason: body.failure_reason,
                 ip_address: event.requestContext?.http?.sourceIp,
                 user_agent: event.requestContext?.http?.userAgent,

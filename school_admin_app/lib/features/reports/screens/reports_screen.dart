@@ -69,7 +69,7 @@ class _State extends ConsumerState<ReportsScreen> {
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 3),
             padding: const EdgeInsets.symmetric(vertical: 8),
-            decoration: BoxDecoration(color: sel ? t.$4.withOpacity(0.1) : Colors.transparent, borderRadius: BorderRadius.circular(8), border: Border.all(color: sel ? t.$4 : AppTheme.divider)),
+            decoration: BoxDecoration(color: sel ? t.$4.withValues(alpha: 0.1) : Colors.transparent, borderRadius: BorderRadius.circular(8), border: Border.all(color: sel ? t.$4 : AppTheme.divider)),
             child: Column(children: [Icon(t.$3, size: 18, color: sel ? t.$4 : AppTheme.textSecondary), const SizedBox(height: 3), Text(t.$2, style: TextStyle(fontSize: 10, color: sel ? t.$4 : AppTheme.textSecondary, fontWeight: sel ? FontWeight.w600 : FontWeight.w400), textAlign: TextAlign.center)]),
           ),
         ));
@@ -80,6 +80,7 @@ class _State extends ConsumerState<ReportsScreen> {
   Widget _buildReport(Map<String, dynamic> data) {
     final fmt = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
     final metrics = (data['metrics'] as List?) ?? [];
+    // ignore: unused_local_variable
     final chartData = (data['chartData'] as List?) ?? [];
     final breakdown = (data['breakdown'] as List?) ?? [];
 

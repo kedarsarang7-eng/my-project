@@ -48,7 +48,7 @@ class PayrollScreen extends ConsumerWidget {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(color: AppTheme.cardBg, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.divider)),
                     child: Row(children: [
-                      CircleAvatar(radius: 20, backgroundColor: AppTheme.secondary.withOpacity(0.1), child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?', style: const TextStyle(color: AppTheme.secondary, fontWeight: FontWeight.w700))),
+                      CircleAvatar(radius: 20, backgroundColor: AppTheme.secondary.withValues(alpha: 0.1), child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?', style: const TextStyle(color: AppTheme.secondary, fontWeight: FontWeight.w700))),
                       const SizedBox(width: 10),
                       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text(name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),

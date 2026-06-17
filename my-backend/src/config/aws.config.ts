@@ -36,3 +36,24 @@ export const appConfig = {
     stage: config.app.env,
     logLevel: config.app.logLevel,
 };
+
+/**
+ * Wraps AWS Client configuration options to automatically inject LocalStack
+ * endpoint, credentials, and settings when running in local development mode.
+ */
+export function configureAwsClient<T extends Record<string, any>>(options: T): T {
+    if (config.local.isLocal) {
+        return {
+            ...options,
+            endpoint: config.local.localStackEndpoint,
+            credentials: {
+                accessKeyId: 'test',
+                secretAccessKey: 'test',
+            },
+            // Force path style for local S3 buckets (needed for LocalStack)
+            forcePathStyle: true,
+        };
+    }
+    return options;
+}
+

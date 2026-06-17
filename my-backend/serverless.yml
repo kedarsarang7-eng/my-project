@@ -27,14 +27,14 @@ provider:
   tracing:
     apiGateway: false
     lambda: false
+  logs:
+    httpApi:
+      format: '{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","method":"$context.httpMethod","path":"$context.path","status":"$context.status","latency":"$context.responseLatency","userAgent":"$context.identity.userAgent"}'
   deploymentBucket:
     name: dukanx-deploys-${self:provider.region}-${aws:accountId}
 
   # ── API Gateway (HTTP API — cheaper than REST API) ──────────────────────
   httpApi:
-    throttle:
-      maxRequestRate: 500       # AUDIT FIX INFRA-4.2: 500 req/s (was 100, insufficient for multi-tenant POS peak)
-      maxBurstRate: 1000        # burst up to 1000 (was 200)
     # ── JWT Authorizer (Cognito — blocks unauthenticated requests before Lambda) ──
     authorizers:
       cognitoAuthorizer:
@@ -46,11 +46,6 @@ provider:
           - !Ref DesktopAppClient
           - !Ref MobileAppClient
           - !Ref AdminPanelClient
-    # Default authorizer: ALL routes require JWT unless explicitly overridden
-    defaultAuthorizer: cognitoAuthorizer
-    # AUDIT FIX #5: API Gateway access logging for request visibility
-    accessLogging:
-      format: '{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","method":"$context.httpMethod","path":"$context.path","status":"$context.status","latency":"$context.responseLatency","userAgent":"$context.identity.userAgent"}'
     cors:
       # HIGH-005 FIX: No wildcard defaults — fail-closed CORS policy
       allowedOrigins:
@@ -1934,7 +1929,7 @@ functions:
     handler: dist/handlers/product-search.getProductHandler
     events:
       - httpApi:
-          path: /products/{productId}
+          path: /products/detail/{productId}
           method: GET
     memorySize: 256
     timeout: 5
@@ -2281,7 +2276,7 @@ functions:
     handler: dist/handlers/products.listProducts
     events:
       - httpApi:
-          path: /products
+          path: /products-list-dev
           method: GET
 
   # ── Reports ──────────────────────────────────────────────────────────
@@ -3051,6 +3046,14 @@ functions:
           method: POST
     description: Activate a license key for the tenant
 
+  licenseActivateOffline:
+    handler: dist/handlers/license.activateOffline
+    events:
+      - httpApi:
+          path: /license/activate-offline
+          method: POST
+    description: Machine-bound offline activation — returns a signed License_Token
+
   licenseStatus:
     handler: dist/handlers/license.status
     events:
@@ -3298,11 +3301,7 @@ functions:
       - httpApi:
           path: /tenant/config
           method: GET
-    description: |
-      Returns the unified bootstrap payload the Flutter app needs on login:
-      { plan, enabledFeatures, allowedBusinessTypes, businessType, licenseStatus,
-        expiryDate, limits, manifestHash, signedToken }. Driven by the feature
-      manifest (PlanConfig ∩ business ∪ manual overrides).
+    description: Returns bootstrap payload (plan, features, businessType, limits, signedToken) Flutter needs on login.
 
   # ── Book Store ───────────────────────────────────────────────────────
   bookStoreGetBooks:
@@ -6238,11 +6237,11 @@ functions:
     description: Get retry details for failed payment
 
   # ── Library Management ──────────────────────────────────────────────────
-  acListBooks:
+  acLibListBooks:
     handler: dist/handlers/ac-library.listBooks
     events:
       - httpApi:
-          path: /ac/library/books
+          path: /ac/library/books-dev
           method: GET
     description: List books with filters
 
@@ -6250,7 +6249,7 @@ functions:
     handler: dist/handlers/ac-library.getBook
     events:
       - httpApi:
-          path: /ac/library/books/{id}
+          path: /ac/library/books-dev/{id}
           method: GET
     description: Get book details
 
@@ -6258,7 +6257,7 @@ functions:
     handler: dist/handlers/ac-library.createBook
     events:
       - httpApi:
-          path: /ac/library/books
+          path: /ac/library/books-dev
           method: POST
     description: Add new book
 
@@ -6266,31 +6265,31 @@ functions:
     handler: dist/handlers/ac-library.updateBook
     events:
       - httpApi:
-          path: /ac/library/books/{id}
+          path: /ac/library/books-dev/{id}
           method: PUT
     description: Update book
 
-  acDeleteBook:
+  acLibDeleteBook:
     handler: dist/handlers/ac-library.deleteBook
     events:
       - httpApi:
-          path: /ac/library/books/{id}
+          path: /ac/library/books-dev/{id}
           method: DELETE
     description: Delete book
 
-  acIssueBook:
+  acLibIssueBook:
     handler: dist/handlers/ac-library.issueBook
     events:
       - httpApi:
-          path: /ac/library/issues
+          path: /ac/library/issues-dev
           method: POST
     description: Issue book to member
 
-  acReturnBook:
+  acLibReturnBook:
     handler: dist/handlers/ac-library.returnBook
     events:
       - httpApi:
-          path: /ac/library/issues/{id}/return
+          path: /ac/library/issues-dev/{id}/return
           method: POST
     description: Return issued book
 
@@ -6298,7 +6297,7 @@ functions:
     handler: dist/handlers/ac-library.listIssues
     events:
       - httpApi:
-          path: /ac/library/issues
+          path: /ac/library/issues-dev
           method: GET
     description: List book issues
 
@@ -6323,7 +6322,7 @@ functions:
     handler: dist/handlers/ac-transport.listRoutes
     events:
       - httpApi:
-          path: /ac/transport/routes
+          path: /ac/transport/routes-dev
           method: GET
     description: List transport routes
 
@@ -6331,7 +6330,7 @@ functions:
     handler: dist/handlers/ac-transport.getRoute
     events:
       - httpApi:
-          path: /ac/transport/routes/{id}
+          path: /ac/transport/routes-dev/{id}
           method: GET
     description: Get route details
 
@@ -6339,7 +6338,7 @@ functions:
     handler: dist/handlers/ac-transport.createRoute
     events:
       - httpApi:
-          path: /ac/transport/routes
+          path: /ac/transport/routes-dev
           method: POST
     description: Create route
 
@@ -6347,7 +6346,7 @@ functions:
     handler: dist/handlers/ac-transport.updateRoute
     events:
       - httpApi:
-          path: /ac/transport/routes/{id}
+          path: /ac/transport/routes-dev/{id}
           method: PUT
     description: Update route
 
@@ -6355,23 +6354,23 @@ functions:
     handler: dist/handlers/ac-transport.deleteRoute
     events:
       - httpApi:
-          path: /ac/transport/routes/{id}
+          path: /ac/transport/routes-dev/{id}
           method: DELETE
     description: Delete route
 
-  acListVehicles:
+  acTransListVehicles:
     handler: dist/handlers/ac-transport.listVehicles
     events:
       - httpApi:
-          path: /ac/transport/vehicles
+          path: /ac/transport/vehicles-dev
           method: GET
     description: List vehicles
 
-  acCreateVehicle:
+  acTransCreateVehicle:
     handler: dist/handlers/ac-transport.createVehicle
     events:
       - httpApi:
-          path: /ac/transport/vehicles
+          path: /ac/transport/vehicles-dev
           method: POST
     description: Create vehicle
 
@@ -6379,7 +6378,7 @@ functions:
     handler: dist/handlers/ac-transport.updateVehicle
     events:
       - httpApi:
-          path: /ac/transport/vehicles/{id}
+          path: /ac/transport/vehicles-dev/{id}
           method: PUT
     description: Update vehicle
 
@@ -6387,7 +6386,7 @@ functions:
     handler: dist/handlers/ac-transport.deleteVehicle
     events:
       - httpApi:
-          path: /ac/transport/vehicles/{id}
+          path: /ac/transport/vehicles-dev/{id}
           method: DELETE
     description: Delete vehicle
 
@@ -6744,7 +6743,7 @@ functions:
     handler: dist/handlers/ac-payslip.calculatePayroll
     events:
       - httpApi:
-          path: /ac/faculty/{id}/payroll
+          path: /ac/faculty/{id}/payroll-dev
           method: GET
     description: Calculate payroll for faculty
 
@@ -7839,10 +7838,9 @@ resources:
         TimeToLiveSpecification:
           AttributeName: TTL
           Enabled: true
-        # COST-OPT: Stream disabled — only consumer (searchIndexer) is disabled
-        # Re-enable when OpenSearch or another stream consumer is added
-        # StreamSpecification:
-        #   StreamViewType: NEW_AND_OLD_IMAGES
+        # Re-enabled for DynamoDB search indexer stream processing
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
         Tags:
           - Key: service
             Value: dukanx

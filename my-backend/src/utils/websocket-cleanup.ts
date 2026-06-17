@@ -14,6 +14,7 @@
 // Invoked by: EventBridge scheduled rule (every 6 hours)
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { DynamoDBClient, QueryCommand, DeleteItemCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { logger } from './logger';
 import { config } from '../config/environment';
@@ -33,9 +34,9 @@ let cachedClient: DynamoDBClient;
 
 function getDynamoClient(): DynamoDBClient {
     if (!cachedClient) {
-        cachedClient = new DynamoDBClient({
+        cachedClient = new DynamoDBClient(configureAwsClient({
             region: config.aws.region,
-        });
+        }));
     }
     return cachedClient;
 }
@@ -73,7 +74,7 @@ export async function cleanupStaleConnections(): Promise<{
         });
 
         // Optional: Direct manual cleanup for connections that somehow bypass TTL
-        // This would scan the table, but that's expensive — better to rely on TTL
+        // This would scan the table, but that's expensive ï¿½ better to rely on TTL
         
         // Instead, implement a best-effort cleanup:
         // 1. Check connections that were active recently but haven't sent heartbeat

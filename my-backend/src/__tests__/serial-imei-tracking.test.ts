@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // Serial/IMEI Tracking Tests — Consumer Protection Act Compliance
 // ============================================================================
 // Tests for IMEI/serial number enforcement on electronics and mobile_shop
@@ -15,6 +15,7 @@
 // ============================================================================
 
 import { APIGatewayProxyEventV2, Context } from 'aws-lambda';
+import { BusinessType } from '../types/tenant.types';
 
 // ---- Mock Auth ----
 const mockVerifyAuth = jest.fn().mockResolvedValue({
@@ -244,7 +245,7 @@ describe('SERIAL-001: Mobile Shop IMEI Enforcement', () => {
                     }],
                 },
                 'cashier',
-                'mobile_shop',
+                BusinessType.MOBILE_SHOP,
             )
         ).rejects.toThrow(/IMEI number is required/);
     });
@@ -265,7 +266,7 @@ describe('SERIAL-001: Mobile Shop IMEI Enforcement', () => {
                     }],
                 },
                 'cashier',
-                'mobile_shop',
+                BusinessType.MOBILE_SHOP,
             )
         ).rejects.toThrow(/IMEI number is required/);
     });
@@ -285,7 +286,7 @@ describe('SERIAL-001: Mobile Shop IMEI Enforcement', () => {
                     }],
                 },
                 'cashier',
-                'mobile_shop',
+                BusinessType.MOBILE_SHOP,
             );
             fail('Expected InvoiceValidationError');
         } catch (err: any) {
@@ -312,7 +313,7 @@ describe('SERIAL-001: Mobile Shop IMEI Enforcement', () => {
                 }],
             },
             'cashier',
-            'mobile_shop',
+            BusinessType.MOBILE_SHOP,
         );
 
         expect(result.id).toBeDefined();
@@ -370,7 +371,7 @@ describe('SERIAL-002: Duplicate IMEI/Serial Prevention', () => {
                     }],
                 },
                 'cashier',
-                'mobile_shop',
+                BusinessType.MOBILE_SHOP,
             )
         ).rejects.toThrow(/already been sold|concurrent/i);
     });
@@ -402,7 +403,7 @@ describe('SERIAL-003: Accessory Exemption', () => {
                 }],
             },
             'cashier',
-            'mobile_shop',
+            BusinessType.MOBILE_SHOP,
         );
 
         expect(result.id).toBeDefined();
@@ -429,7 +430,7 @@ describe('SERIAL-003: Accessory Exemption', () => {
                 }],
             },
             'cashier',
-            'electronics',
+            BusinessType.ELECTRONICS,
         );
 
         expect(result.id).toBeDefined();
@@ -548,7 +549,7 @@ describe('SERIAL-005: Electronics Serial Number Enforcement', () => {
                     }],
                 },
                 'cashier',
-                'electronics',
+                BusinessType.ELECTRONICS,
             )
         ).rejects.toThrow(/Serial number is required/);
     });
@@ -569,7 +570,7 @@ describe('SERIAL-005: Electronics Serial Number Enforcement', () => {
                 }],
             },
             'cashier',
-            'electronics',
+            BusinessType.ELECTRONICS,
         );
 
         expect(result.id).toBeDefined();
@@ -611,7 +612,7 @@ describe('SERIAL-006: Service Item Exemption', () => {
                 }],
             },
             'cashier',
-            'electronics',
+            BusinessType.ELECTRONICS,
         );
 
         expect(result.id).toBeDefined();
@@ -633,7 +634,7 @@ describe('SERIAL-006: Service Item Exemption', () => {
                 }],
             },
             'cashier',
-            'mobile_shop',
+            BusinessType.MOBILE_SHOP,
         );
 
         expect(result.id).toBeDefined();
@@ -714,3 +715,4 @@ describe('SERIAL-007: IMEI Format Validation (Zod)', () => {
         expect(result.success).toBe(true);
     });
 });
+

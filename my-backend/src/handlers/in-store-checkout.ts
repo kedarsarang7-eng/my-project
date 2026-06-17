@@ -1,11 +1,12 @@
 // ============================================================================
-// Lambda Handler — In-Store Checkout, Payment & Exit QR
+// Lambda Handler ï¿½ In-Store Checkout, Payment & Exit QR
 // ============================================================================
-// POST /in-store/session/{sessionId}/checkout  — create order + payment order
-// POST /in-store/verify-exit                   — staff exit QR verification
-// POST /in-store/session/{sessionId}/exit-qr/refresh — regenerate expired QR
+// POST /in-store/session/{sessionId}/checkout  ï¿½ create order + payment order
+// POST /in-store/verify-exit                   ï¿½ staff exit QR verification
+// POST /in-store/session/{sessionId}/exit-qr/refresh ï¿½ regenerate expired QR
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { APIGatewayProxyEventV2, Context } from 'aws-lambda';
 import { authorizedHandler } from '../middleware/handler-wrapper';
 import {
@@ -28,7 +29,7 @@ import {
 } from '@aws-sdk/client-secrets-manager';
 import { config } from '../config/environment';
 
-const secretsClient = new SecretsManagerClient({ region: config.aws.region });
+const secretsClient = new SecretsManagerClient(configureAwsClient({ region: config.aws.region }));
 
 const EXIT_QR_TTL_MINUTES = 20;
 const PAYMENT_GATEWAY = config.extendedPayment.gateway || 'razorpay'; // razorpay | cashfree
@@ -190,7 +191,7 @@ async function createGatewayOrder(
     amountCents: number,
     tenantId: string
 ): Promise<{ paymentOrderId: string; gatewayKey: string }> {
-    // Razorpay integration — fetches per-tenant credentials from Secrets Manager
+    // Razorpay integration ï¿½ fetches per-tenant credentials from Secrets Manager
     const secretName = `dukanx/${config.app.stage || 'prod'}/tenant/${tenantId}/razorpay`;
     let keyId = config.payment.razorpay.keyId || '';
     let keySecret = config.payment.razorpay.keySecret || '';
@@ -326,7 +327,7 @@ export const verifyExitQR = authorizedHandler(
             return response.success({ valid: false, reason: 'QR data is malformed' });
         }
 
-        // Tenant isolation — QR must belong to this tenant
+        // Tenant isolation ï¿½ QR must belong to this tenant
         if (qrData.tenantId !== auth.tenantId) {
             return response.success({ valid: false, reason: 'QR does not belong to this store' });
         }
@@ -346,10 +347,10 @@ export const verifyExitQR = authorizedHandler(
 
         if (!crypto.timingSafeEqual(Buffer.from(signature, 'hex'), Buffer.from(expectedSig, 'hex'))) {
             logger.warn('Exit QR signature mismatch', { orderId: qrData.orderId, tenantId: auth.tenantId });
-            return response.success({ valid: false, reason: 'QR signature invalid — possible tampering' });
+            return response.success({ valid: false, reason: 'QR signature invalid ï¿½ possible tampering' });
         }
 
-        // Fetch order and check one-time use — atomic conditional update
+        // Fetch order and check one-time use ï¿½ atomic conditional update
         const tenantPK = Keys.tenantPK(auth.tenantId);
         const order = await getItem<InStoreOrder>(tenantPK, orderSK(qrData.orderId));
 
@@ -360,7 +361,7 @@ export const verifyExitQR = authorizedHandler(
             return response.success({ valid: false, reason: `Order status is ${order.status}` });
         }
         if (order.exitQR?.verified) {
-            return response.success({ valid: false, reason: 'QR already scanned — cannot exit again' });
+            return response.success({ valid: false, reason: 'QR already scanned ï¿½ cannot exit again' });
         }
 
         // Atomic mark-as-verified with condition to prevent race condition
@@ -446,7 +447,7 @@ export const refreshExitQR = authorizedHandler(
         const order = orders.items[0];
 
         if (order.exitQR?.verified) {
-            return response.badRequest('Exit QR already used — order is complete');
+            return response.badRequest('Exit QR already used ï¿½ order is complete');
         }
 
         const summary = calcCartSummary(order.cartItems);

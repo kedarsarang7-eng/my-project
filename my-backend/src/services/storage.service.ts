@@ -5,11 +5,12 @@
 // The client NEVER gets raw S3 credentials — only temporary signed URLs.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl as awsGetSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3Config } from '../config/aws.config';
 
-const s3Client = new S3Client({ region: s3Config.region });
+const s3Client = new S3Client(configureAwsClient({ region: s3Config.region }));
 
 export class StorageService {
 

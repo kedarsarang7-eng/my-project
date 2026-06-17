@@ -1,0 +1,247 @@
+﻿src/handlers/billing.ts(157,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/billing.ts(230,17): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/handlers/billing.ts(231,17): error TS2322: Type 'boolean | undefined' is not assignable to type 'boolean'.
+  Type 'undefined' is not assignable to type 'boolean'.
+src/handlers/billing.ts(298,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/clothing.ts(135,14): error TS18047: 'invoice' is possibly 'null'.
+src/handlers/clothing.ts(135,31): error TS18047: 'invoice' is possibly 'null'.
+src/handlers/clothing.ts(157,55): error TS2554: Expected 1-2 arguments, but got 3.
+src/handlers/clothing.ts(200,10): error TS18047: 'result' is possibly 'null'.
+src/handlers/clothing.ts(200,26): error TS18047: 'result' is possibly 'null'.
+src/handlers/clothing.ts(204,29): error TS18047: 'result' is possibly 'null'.
+src/handlers/clothing.ts(223,14): error TS18047: 'existing' is possibly 'null'.
+src/handlers/clothing.ts(223,32): error TS18047: 'existing' is possibly 'null'.
+src/handlers/clothing.ts(258,14): error TS18047: 'existing' is possibly 'null'.
+src/handlers/clothing.ts(289,14): error TS18047: 'existing' is possibly 'null'.
+src/handlers/clothing.ts(289,32): error TS18047: 'existing' is possibly 'null'.
+src/handlers/clothing.ts(309,14): error TS18047: 'existing' is possibly 'null'.
+src/handlers/clothing.ts(387,14): error TS18047: 'existingVariant' is possibly 'null'.
+src/handlers/clothing.ts(387,39): error TS18047: 'existingVariant' is possibly 'null'.
+src/handlers/clothing.ts(418,14): error TS18047: 'existingVariant' is possibly 'null'.
+src/handlers/customer.ts(7,10): error TS2305: Module '"../middleware/cognito-auth"' has no exported member 'authorizedHandler'.
+src/handlers/customer.ts(8,10): error TS2305: Module '"../utils/response"' has no exported member 'response'.
+src/handlers/customer.ts(8,20): error TS2305: Module '"../utils/response"' has no exported member 'errorResponse'.
+src/handlers/customer.ts(24,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(59,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(99,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(134,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(141,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(180,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(187,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(222,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(229,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(274,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(281,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(321,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(328,23): error TS2554: Expected 3-4 arguments, but got 2.
+src/handlers/customer.ts(360,45): error TS2339: Property 'path' does not exist on type 'APIGatewayProxyEventV2'.
+src/handlers/customer.ts(361,68): error TS2339: Property 'httpMethod' does not exist on type 'APIGatewayProxyEventV2'.
+src/handlers/duplicate-bill-detection.ts(11,35): error TS2307: Cannot find module '../middleware/auth' or its corresponding type declarations.
+src/handlers/duplicate-bill-detection.ts(12,26): error TS2307: Cannot find module '../types/auth.types' or its corresponding type declarations.
+src/handlers/duplicate-bill-detection.ts(13,10): error TS2305: Module '"../utils/response"' has no exported member 'response'.
+src/handlers/duplicate-bill-detection.ts(13,20): error TS2305: Module '"../utils/response"' has no exported member 'withRequestContext'.
+src/handlers/duplicate-bill-detection.ts(15,10): error TS2305: Module '"../config/dynamodb.config"' has no exported member 'dynamoDb'.
+src/handlers/duplicate-bill-detection.ts(15,20): error TS2724: '"../config/dynamodb.config"' has no exported member named 'TableNames'. Did you mean 'TABLE_NAME'?
+src/handlers/duplicate-bill-detection.ts(35,62): error TS7006: Parameter 'auth' implicitly has an 'any' type.
+src/handlers/duplicate-bill-detection.ts(36,57): error TS7006: Parameter 'rid' implicitly has an 'any' type.
+src/handlers/duplicate-bill-detection.ts(171,34): error TS2339: Property 'imageHashPK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/handlers/duplicate-bill-detection.ts(172,34): error TS2339: Property 'imageHashSK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/handlers/duplicate-bill-detection.ts(205,34): error TS2339: Property 'billFingerprintPK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/handlers/duplicate-bill-detection.ts(206,34): error TS2339: Property 'billFingerprintSK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/handlers/duplicate-bill-detection.ts(242,34): error TS2339: Property 'purchaseEntryDatePK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/handlers/duplicate-bill-detection.ts(249,42): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/handlers/duplicate-bill-detection.ts(252,31): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/handlers/duplicate-bill-detection.ts(282,31): error TS2339: Property 'purchaseEntryPK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/handlers/duplicate-bill-detection.ts(283,31): error TS2339: Property 'purchaseEntryMetadataSK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/handlers/duplicate-bill-detection.ts(284,35): error TS2339: Property 'imageHashPK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/handlers/duplicate-bill-detection.ts(285,35): error TS2339: Property 'imageHashSK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/handlers/duplicate-bill-detection.ts(286,35): error TS2339: Property 'billFingerprintPK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/handlers/duplicate-bill-detection.ts(287,35): error TS2339: Property 'billFingerprintSK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/handlers/feature-flag.ts(20,5): error TS2345: Argument of type '(event: APIGatewayProxyEventV2, context: Context) => Promise<APIGatewayProxyResultV2>' is not assignable to parameter of type 'UserRole[]'.
+src/handlers/feature-flag.ts(24,33): error TS2345: Argument of type '{ success: boolean; data: featureFlagService.FeatureFlag[]; count: number; }' is not assignable to parameter of type 'number'.
+src/handlers/feature-flag.ts(42,5): error TS2345: Argument of type '(event: APIGatewayProxyEventV2, context: Context) => Promise<APIGatewayProxyResultV2>' is not assignable to parameter of type 'UserRole[]'.
+src/handlers/feature-flag.ts(51,37): error TS2345: Argument of type '{ success: boolean; error: string; message: string; }' is not assignable to parameter of type 'number'.
+src/handlers/feature-flag.ts(58,33): error TS2345: Argument of type '{ success: boolean; data: featureFlagService.FeatureFlag; }' is not assignable to parameter of type 'number'.
+src/handlers/feature-flag.ts(75,5): error TS2345: Argument of type '(event: APIGatewayProxyEventV2, context: Context) => Promise<APIGatewayProxyResultV2>' is not assignable to parameter of type 'UserRole[]'.
+src/handlers/feature-flag.ts(101,33): error TS2345: Argument of type '{ success: boolean; data: featureFlagService.FeatureFlag; }' is not assignable to parameter of type 'number'.
+src/handlers/feature-flag.ts(118,5): error TS2345: Argument of type '(event: APIGatewayProxyEventV2, context: Context) => Promise<APIGatewayProxyResultV2>' is not assignable to parameter of type 'UserRole[]'.
+src/handlers/feature-flag.ts(143,37): error TS2345: Argument of type '{ success: boolean; error: string; message: string; }' is not assignable to parameter of type 'number'.
+src/handlers/feature-flag.ts(155,33): error TS2345: Argument of type '{ success: boolean; data: featureFlagService.FeatureFlag; }' is not assignable to parameter of type 'number'.
+src/handlers/feature-flag.ts(172,5): error TS2345: Argument of type '(event: APIGatewayProxyEventV2, context: Context) => Promise<APIGatewayProxyResultV2>' is not assignable to parameter of type 'UserRole[]'.
+src/handlers/feature-flag.ts(182,24): error TS2349: This expression is not callable.
+  Type 'Boolean' has no call signatures.
+src/handlers/feature-flag.ts(191,20): error TS2349: This expression is not callable.
+  Type 'Boolean' has no call signatures.
+src/handlers/feature-flag.ts(210,5): error TS2345: Argument of type '(event: APIGatewayProxyEventV2, context: Context) => Promise<APIGatewayProxyResultV2>' is not assignable to parameter of type 'UserRole[]'.
+src/handlers/feature-flag.ts(225,33): error TS2345: Argument of type '{ success: boolean; data: { flags: Record<string, any>; config_hash: string; }; }' is not assignable to parameter of type 'number'.
+src/handlers/feature-flag.ts(242,24): error TS2554: Expected 2-3 arguments, but got 1.
+src/handlers/feature-flag.ts(269,29): error TS2345: Argument of type '{ success: boolean; error: string; message: string; }' is not assignable to parameter of type 'number'.
+src/handlers/health.ts(61,33): error TS2339: Property 'version' does not exist on type '{ env: "development" | "staging" | "production" | "local"; stage: string; logLevel: "error" | "warn" | "info" | "debug"; isProduction: boolean; isDevelopment: boolean; isLocal: boolean; }'.
+src/handlers/jewellery-extended.ts(113,65): error TS2345: Argument of type 'APIGatewayProxyResultV2' is not assignable to parameter of type 'string'.
+  Type 'APIGatewayProxyStructuredResultV2' is not assignable to type 'string'.
+src/handlers/jewellery-extended.ts(135,15): error TS2345: Argument of type '{ alertId: `${string}-${string}-${string}-${string}-${string}`; }' is not assignable to parameter of type 'string'.
+src/handlers/jewellery-extended.ts(154,65): error TS2345: Argument of type 'APIGatewayProxyResultV2' is not assignable to parameter of type 'string'.
+  Type 'APIGatewayProxyStructuredResultV2' is not assignable to type 'string'.
+src/handlers/jewellery-extended.ts(232,65): error TS2345: Argument of type 'APIGatewayProxyResultV2' is not assignable to parameter of type 'string'.
+  Type 'APIGatewayProxyStructuredResultV2' is not assignable to type 'string'.
+src/handlers/jewellery-extended.ts(273,65): error TS2345: Argument of type 'APIGatewayProxyResultV2' is not assignable to parameter of type 'string'.
+  Type 'APIGatewayProxyStructuredResultV2' is not assignable to type 'string'.
+src/handlers/jewellery-extended.ts(336,65): error TS2345: Argument of type 'APIGatewayProxyResultV2' is not assignable to parameter of type 'string'.
+  Type 'APIGatewayProxyStructuredResultV2' is not assignable to type 'string'.
+src/handlers/jewellery-extended.ts(396,65): error TS2345: Argument of type 'APIGatewayProxyResultV2' is not assignable to parameter of type 'string'.
+  Type 'APIGatewayProxyStructuredResultV2' is not assignable to type 'string'.
+src/handlers/jewellery-extended.ts(429,22): error TS2339: Property 'length' does not exist on type '{ items: Record<string, unknown>[]; lastKey?: Record<string, unknown> | undefined; }'.
+src/handlers/jewellery-extended.ts(430,24): error TS2339: Property 'filter' does not exist on type '{ items: Record<string, unknown>[]; lastKey?: Record<string, unknown> | undefined; }'.
+src/handlers/jewellery-extended.ts(431,27): error TS2339: Property 'filter' does not exist on type '{ items: Record<string, unknown>[]; lastKey?: Record<string, unknown> | undefined; }'.
+src/handlers/jewellery-extended.ts(432,26): error TS2339: Property 'filter' does not exist on type '{ items: Record<string, unknown>[]; lastKey?: Record<string, unknown> | undefined; }'.
+src/handlers/jewellery-extended.ts(433,26): error TS2339: Property 'filter' does not exist on type '{ items: Record<string, unknown>[]; lastKey?: Record<string, unknown> | undefined; }'.
+src/handlers/jewellery-extended.ts(434,24): error TS2339: Property 'filter' does not exist on type '{ items: Record<string, unknown>[]; lastKey?: Record<string, unknown> | undefined; }'.
+src/handlers/jewellery-extended.ts(435,30): error TS2339: Property 'reduce' does not exist on type '{ items: Record<string, unknown>[]; lastKey?: Record<string, unknown> | undefined; }'.
+src/handlers/jewellery-extended.ts(436,35): error TS2339: Property 'reduce' does not exist on type '{ items: Record<string, unknown>[]; lastKey?: Record<string, unknown> | undefined; }'.
+src/handlers/jewellery-extended.ts(437,32): error TS2339: Property 'reduce' does not exist on type '{ items: Record<string, unknown>[]; lastKey?: Record<string, unknown> | undefined; }'.
+src/handlers/jewellery-extended.ts(451,65): error TS2345: Argument of type 'APIGatewayProxyResultV2' is not assignable to parameter of type 'string'.
+  Type 'APIGatewayProxyStructuredResultV2' is not assignable to type 'string'.
+src/handlers/jewellery-extended.ts(544,65): error TS2345: Argument of type 'APIGatewayProxyResultV2' is not assignable to parameter of type 'string'.
+  Type 'APIGatewayProxyStructuredResultV2' is not assignable to type 'string'.
+src/handlers/jewellery-extended.ts(562,65): error TS2345: Argument of type 'APIGatewayProxyResultV2' is not assignable to parameter of type 'string'.
+  Type 'APIGatewayProxyStructuredResultV2' is not assignable to type 'string'.
+src/handlers/jewellery-extended.ts(572,24): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/handlers/jewellery-extended.ts(602,5): error TS2353: Object literal may only specify known properties, and 'payments' does not exist in type '{ updateExpression: string; expressionAttributeValues?: Record<string, unknown> | undefined; expressionAttributeNames?: Record<string, string> | undefined; conditionExpression?: string | undefined; }'.
+src/handlers/jewellery-extended.ts(621,65): error TS2345: Argument of type 'APIGatewayProxyResultV2' is not assignable to parameter of type 'string'.
+  Type 'APIGatewayProxyStructuredResultV2' is not assignable to type 'string'.
+src/handlers/jewellery-extended.ts(636,30): error TS18046: 'existing.totalPaidPaisa' is of type 'unknown'.
+src/handlers/jewellery-extended.ts(636,57): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/handlers/jewellery-extended.ts(639,44): error TS18046: 'existing.totalPaidPaisa' is of type 'unknown'.
+src/handlers/jewellery-extended.ts(646,23): error TS2365: Operator '>' cannot be applied to types '{}' and 'number'.
+src/handlers/jewellery-extended.ts(652,5): error TS2353: Object literal may only specify known properties, and 'status' does not exist in type '{ updateExpression: string; expressionAttributeValues?: Record<string, unknown> | undefined; expressionAttributeNames?: Record<string, string> | undefined; conditionExpression?: string | undefined; }'.
+src/handlers/payment.ts(53,27): error TS2339: Property 'slsBackendUrl' does not exist on type '{ env: "development" | "staging" | "production" | "local"; stage: string; logLevel: "error" | "warn" | "info" | "debug"; isProduction: boolean; isDevelopment: boolean; isLocal: boolean; }'.
+src/handlers/product-search.ts(10,35): error TS2307: Cannot find module '../middleware/auth' or its corresponding type declarations.
+src/handlers/product-search.ts(11,26): error TS2307: Cannot find module '../types/auth.types' or its corresponding type declarations.
+src/handlers/product-search.ts(12,10): error TS2305: Module '"../utils/response"' has no exported member 'response'.
+src/handlers/product-search.ts(12,20): error TS2305: Module '"../utils/response"' has no exported member 'withRequestContext'.
+src/handlers/product-search.ts(14,10): error TS2305: Module '"../config/dynamodb.config"' has no exported member 'dynamoDb'.
+src/handlers/product-search.ts(14,20): error TS2724: '"../config/dynamodb.config"' has no exported member named 'TableNames'. Did you mean 'TABLE_NAME'?
+src/handlers/product-search.ts(17,10): error TS2305: Module '"../services/product-matcher.service"' has no exported member 'calculateSimilarity'.
+src/handlers/product-search.ts(33,62): error TS7006: Parameter 'auth' implicitly has an 'any' type.
+src/handlers/product-search.ts(34,57): error TS7006: Parameter 'rid' implicitly has an 'any' type.
+src/handlers/product-search.ts(159,34): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/handlers/product-search.ts(208,34): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/handlers/product-search.ts(290,62): error TS7006: Parameter 'auth' implicitly has an 'any' type.
+src/handlers/product-search.ts(291,57): error TS7006: Parameter 'rid' implicitly has an 'any' type.
+src/handlers/purchase-order-matching.ts(9,35): error TS2307: Cannot find module '../middleware/auth' or its corresponding type declarations.
+src/handlers/purchase-order-matching.ts(10,26): error TS2307: Cannot find module '../types/auth.types' or its corresponding type declarations.
+src/handlers/purchase-order-matching.ts(11,10): error TS2305: Module '"../utils/response"' has no exported member 'response'.
+src/handlers/purchase-order-matching.ts(11,20): error TS2305: Module '"../utils/response"' has no exported member 'withRequestContext'.
+src/handlers/purchase-order-matching.ts(13,10): error TS2305: Module '"../config/dynamodb.config"' has no exported member 'dynamoDb'.
+src/handlers/purchase-order-matching.ts(13,20): error TS2724: '"../config/dynamodb.config"' has no exported member named 'TableNames'. Did you mean 'TABLE_NAME'?
+src/handlers/purchase-order-matching.ts(34,62): error TS7006: Parameter 'auth' implicitly has an 'any' type.
+src/handlers/purchase-order-matching.ts(35,57): error TS7006: Parameter 'rid' implicitly has an 'any' type.
+src/handlers/purchase-order-matching.ts(154,34): error TS2551: Property 'purchaseOrderStatusPK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'. Did you mean 'purchaseOrderSK'?
+src/handlers/purchase-order-matching.ts(160,34): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/handlers/resto.ts(17,16): error TS2724: '"../config/dynamodb.config"' has no exported member named 'tableName'. Did you mean 'TABLE_NAME'?
+src/handlers/resto.ts(20,10): error TS2305: Module '"../services/websocket.service"' has no exported member 'wsService'.
+src/handlers/resto.ts(20,21): error TS2459: Module '"../services/websocket.service"' declares 'ClientType' locally, but it is not exported.
+src/handlers/resto.ts(20,33): error TS2459: Module '"../services/websocket.service"' declares 'WSEventName' locally, but it is not exported.
+src/handlers/resto.ts(21,10): error TS2305: Module '"../services/audit.service"' has no exported member 'recordRevision'.
+src/handlers/resto.ts(23,10): error TS2305: Module '"../config/environment"' has no exported member 'MANAGER_OVERRIDE_MASTER_PIN'.
+src/handlers/resto.ts(112,17): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(306,110): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(336,4): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(338,108): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(360,4): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(364,69): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(375,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(384,67): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(769,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(777,67): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(819,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(824,67): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1053,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(1058,67): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1156,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(1164,67): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1246,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(1251,67): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1369,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(1374,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1400,21): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(1410,59): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(1441,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(1449,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1519,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(1524,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1625,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(1630,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1749,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(1757,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1803,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(1808,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1866,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(1871,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1894,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(1903,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1908,41): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(1909,37): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(1936,42): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(1936,66): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(1946,20): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(1946,40): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(1952,36): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(1978,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(1983,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(1993,21): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(1996,47): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(2002,41): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(2023,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(2031,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(2082,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(2087,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(2158,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(2176,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(2212,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/resto.ts(2217,68): error TS2304: Cannot find name 'AuthContext'.
+src/handlers/resto.ts(2218,63): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(2219,59): error TS2349: This expression is not callable.
+  Type 'typeof import("G:/desktop app genuine/my-backend/node_modules/dayjs/index.d.ts")' has no call signatures.
+src/handlers/resto.ts(2269,5): error TS2559: Type '{ bizVertical: string; }' has no properties in common with type 'HandlerOptions'.
+src/handlers/staff-sale.ts(452,27): error TS2339: Property 'slsBackendUrl' does not exist on type '{ env: "development" | "staging" | "production" | "local"; stage: string; logLevel: "error" | "warn" | "info" | "debug"; isProduction: boolean; isDevelopment: boolean; isLocal: boolean; }'.
+src/handlers/subscription.ts(61,68): error TS2339: Property 'businessType' does not exist on type 'SubscriptionContext'.
+src/handlers/tenant-config.ts(151,13): error TS2322: Type 'PlanLimits' is not assignable to type '{ maxUsers: number; maxProducts: number; maxBranches: number; maxDevices: number; maxBusinessTypes: number; }'.
+  Types of property 'maxUsers' are incompatible.
+    Type 'number | null' is not assignable to type 'number'.
+      Type 'null' is not assignable to type 'number'.
+src/services/estimate.service.ts(345,92): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'BusinessType | undefined'.
+  Type 'string' is not assignable to type 'BusinessType | undefined'.
+src/services/eventbridge.service.ts(66,7): error TS2740: Type '{ order_created: "dukanx.orders"; order_updated: "dukanx.orders"; order_completed: "dukanx.orders"; kot_created: "dukanx.orders"; kot_status_updated: "dukanx.orders"; kot_item_cancelled: "dukanx.orders"; ... 30 more ...; connection_status: "dukanx.system"; }' is missing the following properties from type 'Record<WSEventName, string>': stock_updated, invoice_created, manifest_invalidated, import_progress, and 32 more.
+src/services/eventbridge.service.ts(107,7): error TS2740: Type '{ order_created: "business"; order_updated: "business"; order_completed: "business"; kot_created: "client_type"; kot_status_updated: "client_type"; kot_item_cancelled: "client_type"; ... 30 more ...; connection_status: "business"; }' is missing the following properties from type 'Record<WSEventName, "owner" | "staff" | "business" | "customer" | "client_type">': stock_updated, invoice_created, manifest_invalidated, import_progress, and 32 more.
+src/services/smart-suggestions.service.ts(8,10): error TS2305: Module '"../config/dynamodb.config"' has no exported member 'dynamoDb'.
+src/services/smart-suggestions.service.ts(8,20): error TS2724: '"../config/dynamodb.config"' has no exported member named 'TableNames'. Did you mean 'TABLE_NAME'?
+src/services/smart-suggestions.service.ts(55,31): error TS2339: Property 'correctionPK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/services/smart-suggestions.service.ts(56,31): error TS2339: Property 'correctionSK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/services/smart-suggestions.service.ts(138,34): error TS2339: Property 'correctionPK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/services/smart-suggestions.service.ts(143,34): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/services/smart-suggestions.service.ts(164,34): error TS2339: Property 'correctionTenantPK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/services/smart-suggestions.service.ts(171,46): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/services/smart-suggestions.service.ts(175,18): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/services/smart-suggestions.service.ts(179,21): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/services/smart-suggestions.service.ts(180,20): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/services/smart-suggestions.service.ts(180,23): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/services/smart-suggestions.service.ts(181,18): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/services/smart-suggestions.service.ts(252,27): error TS2339: Property 'correctionTenantPK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/services/smart-suggestions.service.ts(292,34): error TS2339: Property 'correctionTenantPK' does not exist on type '{ tenantPK: (tenantId: string) => string; tenantProfileSK: () => string; tenantSettingsSK: () => string; tenantLicenseSK: () => string; userSK: (userId: string) => string; emailGSI1PK: (email: string) => string; cognitoSubGSI2PK: (sub: string) => string; ... 110 more ...; lrNumberGSI4SK: (lrNumber: string) => string...'.
+src/services/smart-suggestions.service.ts(297,47): error TS7006: Parameter 'i' implicitly has an 'any' type.

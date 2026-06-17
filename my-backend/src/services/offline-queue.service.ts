@@ -17,6 +17,7 @@
 //   const missed = await offlineQueue.getAndDeleteMessages(userId);
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import {
     DynamoDBClient,
     PutItemCommand,
@@ -40,7 +41,7 @@ let dynamoClient: DynamoDBClient | null = null;
 
 function getDynamoClient(): DynamoDBClient {
     if (!dynamoClient) {
-        dynamoClient = new DynamoDBClient({ region: REGION });
+        dynamoClient = new DynamoDBClient(configureAwsClient({ region: REGION }));
     }
     return dynamoClient;
 }
@@ -96,7 +97,7 @@ export async function queueMessage(
             businessId,
         });
     } catch (error) {
-        logger.warn('[OfflineQueue] Failed to queue message — non-critical', {
+        logger.warn('[OfflineQueue] Failed to queue message ï¿½ non-critical', {
             userId,
             event,
             error: (error as Error).message,

@@ -12,7 +12,7 @@
 #   make test      — Run integration tests
 # =============================================================================
 
-.PHONY: help up down restart status logs seed test invoke deploy clean
+.PHONY: help up down restart status logs seed test invoke deploy clean validate keycloak-token
 
 COMPOSE := docker compose -f local-cloud/docker-compose.yml
 COMPOSE_ALL := $(COMPOSE) --profile observability --profile analytics
@@ -32,17 +32,22 @@ help: ## Show this help
 
 # ─── Environment Lifecycle ──────────────────────────────────────────────
 
-up: ## Boot full local AWS cloud
+up: ## Boot full local AWS cloud (LocalStack + Keycloak + Redis + Mailhog)
 	@echo "$(GREEN)━━━ Starting DukanX Local Cloud ━━━$(NC)"
 	$(COMPOSE) up -d
 	@echo "$(YELLOW)Waiting for LocalStack health check...$(NC)"
 	@timeout 120 bash -c 'until curl -s http://localhost:4566/_localstack/health | grep -q running; do sleep 2; done'
 	@echo "$(GREEN)✓ LocalStack ready$(NC)"
+	@echo "$(YELLOW)Waiting for Keycloak health check (may take 60-90s on first boot)...$(NC)"
+	@timeout 180 bash -c 'until curl -sf http://localhost:8080/health/ready 2>/dev/null | grep -qi "UP\|200"; do sleep 5; done' 2>/dev/null || echo "$(YELLOW)⚠ Keycloak still starting — check: docker compose logs keycloak$(NC)"
+	@echo "$(GREEN)✓ Keycloak ready$(NC)"
 	@echo ""
 	@echo "$(GREEN)━━━ Services Running ━━━$(NC)"
-	@echo "  LocalStack:  http://localhost:4566"
-	@echo "  Redis:       redis://localhost:6379"
-	@echo "  Mailhog UI:  http://localhost:8025"
+	@echo "  LocalStack:      http://localhost:4566"
+	@echo "  Keycloak Admin:  http://localhost:8080   (admin / admin123)"
+	@echo "  Keycloak OIDC:   http://localhost:8080/realms/dukanx"
+	@echo "  Redis:           redis://localhost:6379"
+	@echo "  Mailhog UI:      http://localhost:8025"
 	@echo ""
 
 up-full: ## Boot everything including Jaeger and PostgreSQL
@@ -136,6 +141,15 @@ test: ## Run all integration tests
 
 test-smoke: ## Run smoke tests against local API
 	@node local-cloud/scripts/smoke-test.mjs
+
+validate: ## Validate entire local environment (LocalStack + Keycloak + tables + auth)
+	@node local-cloud/scripts/validate-local-env.mjs
+
+keycloak-token: ## Get a JWT token from Keycloak for testing
+	@curl -s -X POST http://localhost:8080/realms/dukanx/protocol/openid-connect/token \
+		-H 'Content-Type: application/x-www-form-urlencoded' \
+		-d 'grant_type=password&client_id=dukanx-flutter-app&username=owner_test_001&password=Test@1234' \
+		| python3 -m json.tool
 
 test-e2e: ## Run Playwright e2e tests
 	npx playwright test

@@ -1,32 +1,76 @@
 // ============================================================================
-// Cognito JWT Auth Middleware for Lambda
+// JWT Auth Middleware for Lambda — Cognito (prod) + Keycloak (local)
 // ============================================================================
-// Verifies the Cognito ID Token and extracts tenant context.
-// Uses `aws-jwt-verify` which caches JWKS keys automatically.
+// Verifies the JWT and extracts tenant context.
+// In production: uses aws-jwt-verify with Cognito JWKS (cached).
+// In local mode: uses generic JWKS verification against Keycloak.
 // ============================================================================
 
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { CognitoJwtVerifier } from 'aws-jwt-verify';
 import { cognitoConfig } from '../config/aws.config';
+import { config } from '../config/environment';
 import { AuthContext, normalizeBusinessType } from '../types/tenant.types';
 import { AuthError } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { normalizeJwtRole } from '../utils/jwt-role';
 
-// ── Singleton Verifier (cached across warm Lambda invocations) ───────────
-// Accepts tokens from ANY registered app client (Desktop, Mobile, Admin, Legacy)
-let verifier: ReturnType<typeof CognitoJwtVerifier.create> | null = null;
+// ── Auth Mode Detection ──────────────────────────────────────────────────
+const IS_LOCAL = config.app.isLocal;
+const USE_KEYCLOAK = config.local.authProvider === 'keycloak';
 
-function getVerifier() {
-    if (!verifier) {
+// ── Cognito Verifier (production) ────────────────────────────────────────
+let cognitoVerifier: ReturnType<typeof CognitoJwtVerifier.create> | null = null;
+
+function getCognitoVerifier() {
+    if (!cognitoVerifier) {
         const clientIds = cognitoConfig.allClientIds;
-        verifier = CognitoJwtVerifier.create({
+        cognitoVerifier = CognitoJwtVerifier.create({
             userPoolId: cognitoConfig.userPoolId,
-            tokenUse: 'id', // We use ID tokens (they contain custom attributes)
+            tokenUse: 'id',
             clientId: clientIds.length > 0 ? clientIds : cognitoConfig.clientId,
         });
     }
-    return verifier;
+    return cognitoVerifier;
+}
+
+// ── Keycloak JWKS Verifier (local mode) ──────────────────────────────────
+// Uses jose library for generic JWKS verification when available,
+// falls back to manual JWT decode for local development.
+async function verifyKeycloakToken(token: string): Promise<Record<string, unknown>> {
+    try {
+        // Try jose for proper RS256 verification
+        const { createRemoteJWKSet, jwtVerify } = await import('jose');
+        const jwksUri = config.keycloak.jwksUri
+            || 'http://localhost:8080/realms/dukanx/protocol/openid-connect/certs';
+        const JWKS = createRemoteJWKSet(new URL(jwksUri));
+        const { payload } = await jwtVerify(token, JWKS, {
+            algorithms: ['RS256'],
+        });
+        return payload as Record<string, unknown>;
+    } catch (joseErr: any) {
+        // If jose is not installed, decode the JWT without signature verification
+        // (acceptable for local development only).
+        if (joseErr.code === 'MODULE_NOT_FOUND' || joseErr.code === 'ERR_MODULE_NOT_FOUND') {
+            logger.warn('[LOCAL] jose not installed — decoding JWT without signature verification');
+            const parts = token.split('.');
+            if (parts.length !== 3) throw new AuthError('Invalid JWT format');
+            const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
+            return payload;
+        }
+        throw joseErr;
+    }
+}
+
+// ── Unified Token Verifier ───────────────────────────────────────────────
+async function verifyToken(token: string): Promise<Record<string, unknown>> {
+    if (IS_LOCAL && USE_KEYCLOAK) {
+        logger.debug('[LOCAL] Verifying JWT via Keycloak JWKS');
+        return verifyKeycloakToken(token);
+    }
+    // Production path: Cognito jwt-verify
+    const payload = await getCognitoVerifier().verify(token);
+    return payload as Record<string, unknown>;
 }
 
 /**
@@ -57,9 +101,10 @@ export async function verifyAuth(event: APIGatewayProxyEventV2): Promise<AuthCon
     }
 
     try {
-        const payload = await getVerifier().verify(token);
+        const payload = await verifyToken(token) as any;
 
-        const tenantId = (payload as Record<string, unknown>)['custom:tenant_id'] as string;
+        const tenantId = (payload)['custom:tenant_id'] as string
+            || (payload)['tenantId'] as string;
         const businessId = (payload as Record<string, unknown>)['custom:business_id'] as string;
         const role = (payload as Record<string, unknown>)['custom:role'] as string;
         const userRole = (payload as Record<string, unknown>)['custom:user_role'] as string;

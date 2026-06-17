@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../auth/auth_service.dart';
@@ -36,22 +35,34 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       ShellRoute(
-        builder: (context, state, child) => WsNotificationListener(child: MainShell(child: child)),
+        builder: (context, state, child) =>
+            WsNotificationListener(child: MainShell(child: child)),
         routes: [
-          GoRoute(path: '/dashboard', builder: (_, __) => const DashboardScreen()),
-          GoRoute(path: '/timetable', builder: (_, __) => const TimetableScreen()),
-          GoRoute(path: '/attendance', builder: (_, __) => const AttendanceScreen()),
+          GoRoute(
+              path: '/dashboard', builder: (_, __) => const DashboardScreen()),
+          GoRoute(
+              path: '/timetable', builder: (_, __) => const TimetableScreen()),
+          GoRoute(
+              path: '/attendance',
+              builder: (_, __) => const AttendanceScreen()),
           GoRoute(path: '/exams', builder: (_, __) => const ExamsScreen()),
           GoRoute(path: '/fees', builder: (_, __) => const FeesScreen()),
-          GoRoute(path: '/materials', builder: (_, __) => const MaterialsScreen()),
-          GoRoute(path: '/homework', builder: (_, __) => const HomeworkScreen()),
+          GoRoute(
+              path: '/materials', builder: (_, __) => const MaterialsScreen()),
+          GoRoute(
+              path: '/homework', builder: (_, __) => const HomeworkScreen()),
           GoRoute(path: '/leave', builder: (_, __) => const LeaveScreen()),
-          GoRoute(path: '/notifications', builder: (_, __) => const NotificationsScreen()),
+          GoRoute(
+              path: '/notifications',
+              builder: (_, __) => const NotificationsScreen()),
           GoRoute(path: '/library', builder: (_, __) => const LibraryScreen()),
-          GoRoute(path: '/transport', builder: (_, __) => const TransportScreen()),
+          GoRoute(
+              path: '/transport', builder: (_, __) => const TransportScreen()),
           GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
           GoRoute(path: '/results', builder: (_, __) => const ResultsScreen()),
-          GoRoute(path: '/fee-payment', builder: (_, __) => const FeePaymentScreen()),
+          GoRoute(
+              path: '/fee-payment',
+              builder: (_, __) => const FeePaymentScreen()),
         ],
       ),
     ],

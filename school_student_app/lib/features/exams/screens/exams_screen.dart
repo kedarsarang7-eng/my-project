@@ -92,7 +92,7 @@ class _ExamCard extends StatelessWidget {
         children: [
           Container(
             width: 52, height: 52,
-            decoration: BoxDecoration(color: AppTheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(color: AppTheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
             child: const Icon(Icons.quiz_outlined, color: AppTheme.primary, size: 26),
           ),
           const SizedBox(width: 12),
@@ -190,7 +190,7 @@ class _ResultCard extends StatelessWidget {
           const SizedBox(width: 12),
           Container(
             width: 44, height: 44,
-            decoration: BoxDecoration(color: gradeColor.withOpacity(0.1), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: gradeColor.withValues(alpha: 0.1), shape: BoxShape.circle),
             child: Center(child: Text(grade, style: TextStyle(color: gradeColor, fontWeight: FontWeight.w800, fontSize: 16))),
           ),
         ],

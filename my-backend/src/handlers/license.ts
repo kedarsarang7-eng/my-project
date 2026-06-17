@@ -3,6 +3,7 @@
 // ============================================================================
 // POST /license/validate    — Validate key (PUBLIC, rate-limited)
 // POST /license/activate    — Activate a license key (OWNER/ADMIN)
+// POST /license/activate-offline — Machine-bound offline activation (OWNER/ADMIN)
 // GET  /license/status      — Get license status (authenticated)
 // POST /license/generate    — Generate a new key (SuperAdmin only)
 // POST /license/manage      — Change license status (SuperAdmin only)
@@ -19,6 +20,7 @@
 // GET  /license/:key/history — Audit history timeline (SuperAdmin only)
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2, Context } from 'aws-lambda';
 import { authorizedHandler } from '../middleware/handler-wrapper';
 import { UserRole, AuthContext } from '../types/tenant.types';
@@ -40,7 +42,7 @@ const RATE_LIMIT_WINDOW_SEC = 60; // 1 minute window
 const RATE_LIMIT_MAX_ATTEMPTS = 10; // Max 10 attempts per IP per minute
 
 const _rlClient = DynamoDBDocumentClient.from(
-    new DynamoDBClient({ region: config.aws.region }),
+    new DynamoDBClient(configureAwsClient({ region: config.aws.region })),
     { marshallOptions: { removeUndefinedValues: true } },
 );
 
@@ -166,6 +168,55 @@ export const activate = authorizedHandler(
             body.deviceInfo,
             event.requestContext?.http?.sourceIp,
             auth.sub,
+        );
+
+        return response.success(result, 200);
+    },
+);
+
+// ── POST /license/activate-offline ──────────────────────────────────────────
+// Machine-bound offline activation (Task 3.2 / Req 5.3, 5.9, 17.13).
+// Requires auth (any OWNER/ADMIN); reuses validateLicenseKey + fail-closed
+// isKeyDenylisted, enforces the device allowance, and returns a signed,
+// machine-bound 365-day License_Token on success. On any rejection it returns
+// the matching failure status WITHOUT issuing a token.
+
+export const activateOffline = authorizedHandler(
+    [UserRole.OWNER, UserRole.ADMIN],
+    async (event: APIGatewayProxyEventV2, _ctx: Context, auth: AuthContext): Promise<APIGatewayProxyResultV2> => {
+        if (!event.body) {
+            return response.error(400, 'MISSING_BODY', 'Request body is required');
+        }
+
+        const body = JSON.parse(event.body);
+
+        if (!body.licenseKey || typeof body.licenseKey !== 'string') {
+            return response.error(400, 'MISSING_LICENSE_KEY', 'licenseKey is required');
+        }
+
+        const fp = body.fingerprint || body.machineFingerprint;
+        if (!fp || typeof fp !== 'object'
+            || typeof fp.cpuId !== 'string'
+            || typeof fp.macAddress !== 'string'
+            || typeof fp.hddSerial !== 'string') {
+            return response.error(
+                400,
+                'MISSING_FINGERPRINT',
+                'fingerprint with cpuId, macAddress, and hddSerial is required',
+            );
+        }
+
+        const result = await licenseService.activateOfflineLicense(
+            body.licenseKey.trim().toUpperCase(),
+            {
+                cpuId: fp.cpuId,
+                macAddress: fp.macAddress,
+                hddSerial: fp.hddSerial,
+                osType: typeof fp.osType === 'string' ? fp.osType : undefined,
+                hostname: typeof fp.hostname === 'string' ? fp.hostname : undefined,
+            },
+            auth.sub,
+            event.requestContext?.http?.sourceIp,
         );
 
         return response.success(result, 200);
@@ -463,8 +514,14 @@ export const updateDevices = authorizedHandler(
         if (!key) return response.error(400, 'MISSING_KEY', 'License key is required');
 
         const body = JSON.parse(event.body);
-        if (!body.maxDevices || typeof body.maxDevices !== 'number' || body.maxDevices < 1) {
-            return response.error(400, 'INVALID_DEVICES', 'maxDevices must be a positive number');
+        // Req 5.10: accept only an integer device allowance in [1, 3]; any other
+        // value is rejected so the previously configured allowance is retained.
+        if (!licenseService.isValidDeviceAllowance(body.maxDevices)) {
+            return response.error(
+                400,
+                'INVALID_DEVICE_ALLOWANCE',
+                `maxDevices must be an integer between ${licenseService.MIN_DEVICE_ALLOWANCE} and ${licenseService.MAX_DEVICE_ALLOWANCE}`,
+            );
         }
 
         await licenseService.updateMaxDevices(key, body.maxDevices, auth.sub);

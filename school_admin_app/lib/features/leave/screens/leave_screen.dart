@@ -40,7 +40,7 @@ class LeaveScreen extends ConsumerWidget {
                         decoration: BoxDecoration(color: AppTheme.cardBg, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppTheme.divider)),
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Row(children: [
-                            CircleAvatar(radius: 20, backgroundColor: AppTheme.warning.withOpacity(0.1), child: Text(name[0].toUpperCase(), style: const TextStyle(color: AppTheme.warning, fontWeight: FontWeight.w700))),
+                            CircleAvatar(radius: 20, backgroundColor: AppTheme.warning.withValues(alpha: 0.1), child: Text(name[0].toUpperCase(), style: const TextStyle(color: AppTheme.warning, fontWeight: FontWeight.w700))),
                             const SizedBox(width: 10),
                             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               Text(name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),

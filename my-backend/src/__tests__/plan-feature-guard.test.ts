@@ -101,13 +101,14 @@ describe('Plan Feature Registry', () => {
             expect(features).toContain(FeatureKey.GROCERY_FAST_BILLING_POS);
         });
 
-        test('Premium Pharmacy has 4 features (basic + prescription + alternative + returns)', () => {
+        test('Premium Pharmacy has 5 features (basic + prescription + alternative + returns + schedule H)', () => {
             const features = PLAN_BUSINESS_FEATURES[PlanTier.PREMIUM]?.[BusinessType.PHARMACY];
             expect(features).toBeDefined();
-            expect(features!.length).toBe(4);
+            expect(features!.length).toBe(5);
             expect(features).toContain(FeatureKey.PHARMACY_BASIC_BATCH_EXPIRY);
             expect(features).toContain(FeatureKey.PHARMACY_PRESCRIPTION);
             expect(features).toContain(FeatureKey.PHARMACY_RETURNS);
+            expect(features).toContain(FeatureKey.PHARMACY_SCHEDULE_H);
         });
 
         test('Enterprise Pharmacy adds Schedule H + Rack Tracking', () => {

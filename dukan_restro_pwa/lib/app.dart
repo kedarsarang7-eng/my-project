@@ -48,7 +48,7 @@ class RestroCustomerApp extends ConsumerWidget {
           // P1-04: Customer PWA is anonymous-by-default.
           // Customers reach /menu via QR scan, no login required.
           // Login routes exist only for the future "View past orders" CTA.
-          final isAuth = authState.valueOrNull ?? false;
+          final isAuth = authState.value ?? false;
           final isLoggingIn =
               state.uri.path == '/login' ||
               state.uri.path == '/signup' ||

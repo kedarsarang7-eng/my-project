@@ -163,7 +163,7 @@ class AdmissionTrendChart extends StatelessWidget {
               color: AppTheme.warning,
               barWidth: 2.5,
               dotData: const FlDotData(show: false),
-              belowBarData: BarAreaData(show: true, color: AppTheme.warning.withOpacity(0.1)),
+              belowBarData: BarAreaData(show: true, color: AppTheme.warning.withValues(alpha: 0.1)),
             )],
           )),
         ),

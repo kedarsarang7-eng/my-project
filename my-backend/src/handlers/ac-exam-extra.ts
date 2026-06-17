@@ -16,14 +16,14 @@ import {
   updateItem,
   queryAllItems,
 } from '../config/dynamodb.config';
-import { storageService } from '../services/storage.service';
+import { StorageService } from '../services/storage.service';
 
 const AC_EXAM_EXTRA_OPTS = {
   requiredBusinessType: BusinessType.SCHOOL_ERP,
   requiredFeature: FeatureKey.AC_EXAM_MANAGEMENT,
 };
 
-const storageSvc = new storageService();
+const storageSvc = new StorageService();
 
 function uid(): string {
   return Math.random().toString(36).substring(2, 18).toUpperCase();

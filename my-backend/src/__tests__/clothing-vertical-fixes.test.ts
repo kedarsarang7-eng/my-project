@@ -21,12 +21,33 @@ import {
     assignBarcodeToVariant,
     getVariantByBarcode
 } from '../handlers/clothing';
-import { Keys, getItem, putItem, updateItem } from '../config/dynamodb.config';
+import { Keys, getItem, putItem, updateItem, queryItems } from '../config/dynamodb.config';
 import { BusinessType, UserRole } from '../types/tenant.types';
 
 // Mock dependencies
 jest.mock('../config/dynamodb.config');
 jest.mock('../services/revision-history.service');
+jest.mock('../middleware/cognito-auth', () => ({
+    verifyAuth: jest.fn().mockResolvedValue({
+        sub: 'user-123',
+        email: 'admin@clothing.com',
+        tenantId: 'test-tenant-123',
+        role: 'admin',
+        businessType: 'clothing',
+        planTier: 'enterprise',
+    }),
+    requireRole: jest.fn(),
+    AuthError: class AuthError extends Error {
+        statusCode: number;
+        constructor(msg: string, code = 401) { super(msg); this.statusCode = code; this.name = 'AuthError'; }
+    },
+}));
+
+const mockInvoiceId = 'f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
+const mockCustomerId = 'b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22';
+const mockProductId = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
+const mockVariantId = 'd5b4e6ae-88af-4afb-baad-30c73cb7fc2f';
+const mockTailoringId = 'c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a33';
 
 describe('Clothing Vertical Fixes', () => {
     const mockTenantId = 'test-tenant-123';
@@ -39,6 +60,7 @@ describe('Clothing Vertical Fixes', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        (queryItems as jest.Mock).mockResolvedValue({ items: [] });
     });
 
     // ============================================================================
@@ -48,63 +70,64 @@ describe('Clothing Vertical Fixes', () => {
     describe('Variant-Aware Stock Deduction', () => {
         test('should find clothing variant by size and color', async () => {
             const mockVariant = {
-                id: 'variant-123',
-                productId: 'product-123',
+                id: mockVariantId,
+                productId: mockProductId,
                 size: 'M',
                 color: 'Blue',
                 stock: 10,
                 priceCents: 2500
             };
 
-            (getItem as jest.Mock).mockResolvedValue({ Item: mockVariant });
+            (queryItems as jest.Mock).mockResolvedValue({ items: [mockVariant] });
 
             const result = await findClothingVariant(
                 mockTenantId,
-                'product-123',
+                mockProductId,
                 'M',
                 'Blue'
             );
 
             expect(result).toEqual(mockVariant);
-            expect(getItem).toHaveBeenCalledWith(
+            expect(queryItems).toHaveBeenCalledWith(
                 Keys.tenantPK(mockTenantId),
-                expect.stringContaining('VARIANT#product-123#')
+                `VARIANT#${mockProductId}#`,
+                expect.any(Object)
             );
         });
 
         test('should find clothing variant by variant ID', async () => {
             const mockVariant = {
-                id: 'variant-123',
-                productId: 'product-123',
+                id: mockVariantId,
+                productId: mockProductId,
                 size: 'L',
                 color: 'Red',
                 stock: 5,
                 priceCents: 3000
             };
 
-            (getItem as jest.Mock).mockResolvedValue({ Item: mockVariant });
+            (getItem as jest.Mock).mockResolvedValue(mockVariant);
 
             const result = await findClothingVariant(
                 mockTenantId,
-                'product-123',
-                null,
-                null,
-                'variant-123'
+                mockProductId,
+                undefined,
+                undefined,
+                mockVariantId
             );
 
             expect(result).toEqual(mockVariant);
             expect(getItem).toHaveBeenCalledWith(
                 Keys.tenantPK(mockTenantId),
-                'VARIANT#product-123#variant-123'
+                `VARIANT#${mockProductId}#${mockVariantId}`
             );
         });
 
         test('should return null for non-existent variant', async () => {
-            (getItem as jest.Mock).mockResolvedValue({ Item: null });
+            (queryItems as jest.Mock).mockResolvedValue({ items: [] });
 
             const result = await findClothingVariant(
                 mockTenantId,
-                'product-123',
+                mockProductId,
                 'XL',
                 'Green'
             );
@@ -115,7 +138,7 @@ describe('Clothing Vertical Fixes', () => {
         test('should return null when no search criteria provided', async () => {
             const result = await findClothingVariant(
                 mockTenantId,
-                'product-123'
+                mockProductId
             );
 
             expect(result).toBeNull();
@@ -129,8 +152,8 @@ describe('Clothing Vertical Fixes', () => {
     describe('Tailoring Notes Schema', () => {
         test('should validate correct tailoring note creation', () => {
             const validInput = {
-                invoiceId: 'invoice-123',
-                customerId: 'customer-123',
+                invoiceId: mockInvoiceId,
+                customerId: mockCustomerId,
                 measurements: {
                     chest: 40,
                     waist: 32,
@@ -164,7 +187,7 @@ describe('Clothing Vertical Fixes', () => {
 
         test('should reject invalid delivery date format', () => {
             const invalidInput = {
-                invoiceId: 'invoice-123',
+                invoiceId: mockInvoiceId,
                 measurements: { chest: 40 },
                 deliveryDate: '15-12-2024', // Wrong format
                 priority: 'normal'
@@ -175,7 +198,7 @@ describe('Clothing Vertical Fixes', () => {
 
         test('should reject invalid priority', () => {
             const invalidInput = {
-                invoiceId: 'invoice-123',
+                invoiceId: mockInvoiceId,
                 measurements: { chest: 40 },
                 deliveryDate: '2024-12-15',
                 priority: 'super_fast' // Invalid priority
@@ -192,8 +215,8 @@ describe('Clothing Vertical Fixes', () => {
     describe('Variant Barcode Mapping', () => {
         test('should validate correct barcode assignment', () => {
             const validInput = {
-                productId: 'product-123',
-                variantId: 'variant-123',
+                productId: mockProductId,
+                variantId: mockVariantId,
                 barcode: '1234567890123'
             };
 
@@ -203,9 +226,9 @@ describe('Clothing Vertical Fixes', () => {
 
         test('should reject barcode that is too long', () => {
             const invalidInput = {
-                productId: 'product-123',
-                variantId: 'variant-123',
-                barcode: '12345678901234567890' // Too long
+                productId: mockProductId,
+                variantId: mockVariantId,
+                barcode: 'a'.repeat(51) // Too long
             };
 
             expect(() => assignBarcodeToVariantSchema.parse(invalidInput)).toThrow();
@@ -213,70 +236,62 @@ describe('Clothing Vertical Fixes', () => {
 
         test('should assign barcode to variant successfully', async () => {
             const mockEvent = {
-                pathParameters: { variantId: 'variant-123' },
+                pathParameters: { variantId: mockVariantId },
                 body: JSON.stringify({
-                    productId: 'product-123',
+                    productId: mockProductId,
                     barcode: '1234567890123'
                 })
             };
 
             const mockVariant = {
-                id: 'variant-123',
-                productId: 'product-123',
+                id: mockVariantId,
+                productId: mockProductId,
                 size: 'M',
                 color: 'Blue',
-                stock: 10
+                stock: 10,
+                tenantId: mockTenantId
             };
 
-            (getItem as jest.Mock)
-                .mockResolvedValueOnce({ Item: mockVariant }) // Check variant exists
-                .mockResolvedValueOnce({ items: [] }); // Check barcode not already used
-
+            (getItem as jest.Mock).mockResolvedValue(mockVariant); // Check variant exists
+            (queryItems as jest.Mock).mockResolvedValue({ items: [] }); // Check barcode not already used
             (updateItem as jest.Mock).mockResolvedValue({});
 
-            const result = await assignBarcodeToVariant(mockEvent, {}, mockAuth);
+            const result = await assignBarcodeToVariant(mockEvent as any, {} as any) as any;
 
             expect(result.statusCode).toBe(200);
-            expect(JSON.parse(result.body)).toEqual({
+            expect(JSON.parse(result.body).data).toEqual({
                 message: 'Barcode assigned successfully'
             });
         });
 
         test('should reject duplicate barcode assignment', async () => {
             const mockEvent = {
-                pathParameters: { variantId: 'variant-123' },
+                pathParameters: { variantId: mockVariantId },
                 body: JSON.stringify({
-                    productId: 'product-123',
+                    productId: mockProductId,
                     barcode: '1234567890123'
                 })
             };
 
             const mockVariant = {
-                id: 'variant-123',
-                productId: 'product-123',
+                id: mockVariantId,
+                productId: mockProductId,
                 size: 'M',
-                color: 'Blue'
+                color: 'Blue',
+                tenantId: mockTenantId
             };
 
-            (getItem as jest.Mock).mockResolvedValue({ Item: mockVariant });
+            (getItem as jest.Mock).mockResolvedValue(mockVariant);
 
             // Mock queryItems to return existing barcode
-            const mockQueryItems = jest.fn().mockResolvedValue({
+            (queryItems as jest.Mock).mockResolvedValue({
                 items: [{ id: 'other-variant', barcode: '1234567890123' }]
             });
 
-            // Replace the queryItems import
-            jest.doMock('../config/dynamodb.config', () => ({
-                ...jest.requireActual('../config/dynamodb.config'),
-                queryItems: mockQueryItems
-            }));
-
-            const result = await assignBarcodeToVariant(mockEvent, {}, mockAuth);
+            const result = await assignBarcodeToVariant(mockEvent as any, {} as any) as any;
 
             expect(result.statusCode).toBe(400);
-            expect(JSON.parse(result.body)).toEqual({
-                message: 'Barcode already assigned to another variant'
-            });
+            expect(JSON.parse(result.body).message).toBe('Barcode already assigned to another variant');
         });
     });
 
@@ -288,8 +303,8 @@ describe('Clothing Vertical Fixes', () => {
         test('should create tailoring note successfully', async () => {
             const mockEvent = {
                 body: JSON.stringify({
-                    invoiceId: 'invoice-123',
-                    customerId: 'customer-123',
+                    invoiceId: mockInvoiceId,
+                    customerId: mockCustomerId,
                     measurements: {
                         chest: 40,
                         waist: 32,
@@ -302,25 +317,25 @@ describe('Clothing Vertical Fixes', () => {
             };
 
             const mockInvoice = {
-                id: 'invoice-123',
+                id: mockInvoiceId,
                 tenantId: mockTenantId
             };
 
-            (getItem as jest.Mock).mockResolvedValue({ Item: mockInvoice });
+            (getItem as jest.Mock).mockResolvedValue(mockInvoice);
             (putItem as jest.Mock).mockResolvedValue({});
             (updateItem as jest.Mock).mockResolvedValue({});
 
-            const result = await createTailoringNote(mockEvent, {}, mockAuth);
+            const result = await createTailoringNote(mockEvent as any, {} as any) as any;
 
             expect(result.statusCode).toBe(201);
             const responseBody = JSON.parse(result.body);
-            expect(responseBody.id).toBeDefined();
-            expect(responseBody.message).toBe('Tailoring note created successfully');
+            expect(responseBody.data.id).toBeDefined();
+            expect(responseBody.data.message).toBe('Tailoring note created successfully');
         });
 
         test('should update tailoring status successfully', async () => {
             const mockEvent = {
-                pathParameters: { tailoringId: 'tailoring-123' },
+                pathParameters: { tailoringId: mockTailoringId },
                 body: JSON.stringify({
                     status: 'stitching',
                     notes: 'Started stitching process'
@@ -328,38 +343,36 @@ describe('Clothing Vertical Fixes', () => {
             };
 
             const mockTailoringNote = {
-                id: 'tailoring-123',
+                id: mockTailoringId,
                 tenantId: mockTenantId,
                 status: 'measurement_taken'
             };
 
-            (getItem as jest.Mock).mockResolvedValue({ Item: mockTailoringNote });
+            (getItem as jest.Mock).mockResolvedValue(mockTailoringNote);
             (updateItem as jest.Mock).mockResolvedValue({});
 
-            const result = await updateTailoringStatus(mockEvent, {}, mockAuth);
+            const result = await updateTailoringStatus(mockEvent as any, {} as any) as any;
 
             expect(result.statusCode).toBe(200);
-            expect(JSON.parse(result.body)).toEqual({
+            expect(JSON.parse(result.body).data).toEqual({
                 message: 'Tailoring status updated successfully'
             });
         });
 
         test('should return 404 for non-existent tailoring note', async () => {
             const mockEvent = {
-                pathParameters: { tailoringId: 'non-existent' },
+                pathParameters: { tailoringId: 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a44' },
                 body: JSON.stringify({
                     status: 'stitching'
                 })
             };
 
-            (getItem as jest.Mock).mockResolvedValue({ Item: null });
+            (getItem as jest.Mock).mockResolvedValue(null);
 
-            const result = await updateTailoringStatus(mockEvent, {}, mockAuth);
+            const result = await updateTailoringStatus(mockEvent as any, {} as any) as any;
 
             expect(result.statusCode).toBe(404);
-            expect(JSON.parse(result.body)).toEqual({
-                message: 'Tailoring note not found'
-            });
+            expect(JSON.parse(result.body).message).toContain('Tailoring note not found');
         });
     });
 
@@ -370,8 +383,8 @@ describe('Clothing Vertical Fixes', () => {
     describe('Integration Tests', () => {
         test('should handle complete variant workflow', async () => {
             // 1. Create product with variants
-            const productId = 'product-123';
-            const variantId = 'variant-123';
+            const productId = mockProductId;
+            const variantId = mockVariantId;
             const barcode = '1234567890123';
 
             // 2. Assign barcode to variant
@@ -380,11 +393,12 @@ describe('Clothing Vertical Fixes', () => {
                 body: JSON.stringify({ productId, barcode })
             };
 
-            const mockVariant = { id: variantId, productId, size: 'M', color: 'Blue' };
-            (getItem as jest.Mock).mockResolvedValue({ Item: mockVariant });
+            const mockVariant = { id: variantId, productId, size: 'M', color: 'Blue', tenantId: mockTenantId };
+            (getItem as jest.Mock).mockResolvedValue(mockVariant);
+            (queryItems as jest.Mock).mockResolvedValue({ items: [] });
             (updateItem as jest.Mock).mockResolvedValue({});
 
-            const assignResult = await assignBarcodeToVariant(assignEvent, {}, mockAuth);
+            const assignResult = await assignBarcodeToVariant(assignEvent as any, {} as any) as any;
             expect(assignResult.statusCode).toBe(200);
 
             // 3. Lookup variant by barcode
@@ -392,18 +406,13 @@ describe('Clothing Vertical Fixes', () => {
                 pathParameters: { barcode }
             };
 
-            const mockQueryItems = jest.fn().mockResolvedValue({
+            (queryItems as jest.Mock).mockResolvedValue({
                 items: [mockVariant]
             });
 
-            jest.doMock('../config/dynamodb.config', () => ({
-                ...jest.requireActual('../config/dynamodb.config'),
-                queryItems: mockQueryItems
-            }));
-
-            const lookupResult = await getVariantByBarcode(lookupEvent, {}, mockAuth);
+            const lookupResult = await getVariantByBarcode(lookupEvent as any, {} as any) as any;
             expect(lookupResult.statusCode).toBe(200);
-            expect(JSON.parse(lookupResult.body)).toEqual(expect.objectContaining({
+            expect(JSON.parse(lookupResult.body).data).toEqual(expect.objectContaining({
                 id: variantId,
                 size: 'M',
                 color: 'Blue'
@@ -411,8 +420,8 @@ describe('Clothing Vertical Fixes', () => {
         });
 
         test('should handle tailoring workflow from invoice to delivery', async () => {
-            const invoiceId = 'invoice-123';
-            const tailoringId = 'tailoring-123';
+            const invoiceId = mockInvoiceId;
+            const tailoringId = mockTailoringId;
 
             // 1. Create tailoring note
             const createEvent = {
@@ -425,11 +434,11 @@ describe('Clothing Vertical Fixes', () => {
             };
 
             const mockInvoice = { id: invoiceId, tenantId: mockTenantId };
-            (getItem as jest.Mock).mockResolvedValue({ Item: mockInvoice });
+            (getItem as jest.Mock).mockResolvedValue(mockInvoice);
             (putItem as jest.Mock).mockResolvedValue({});
             (updateItem as jest.Mock).mockResolvedValue({});
 
-            const createResult = await createTailoringNote(createEvent, {}, mockAuth);
+            const createResult = await createTailoringNote(createEvent as any, {} as any) as any;
             expect(createResult.statusCode).toBe(201);
 
             // 2. Update status through workflow
@@ -442,9 +451,9 @@ describe('Clothing Vertical Fixes', () => {
                 };
 
                 const mockTailoringNote = { id: tailoringId, tenantId: mockTenantId };
-                (getItem as jest.Mock).mockResolvedValue({ Item: mockTailoringNote });
+                (getItem as jest.Mock).mockResolvedValue(mockTailoringNote);
 
-                const updateResult = await updateTailoringStatus(updateEvent, {}, mockAuth);
+                const updateResult = await updateTailoringStatus(updateEvent as any, {} as any) as any;
                 expect(updateResult.statusCode).toBe(200);
             }
         });
@@ -457,16 +466,16 @@ describe('Clothing Vertical Fixes', () => {
     describe('Error Handling', () => {
         test('should handle database errors gracefully', async () => {
             const mockEvent = {
-                pathParameters: { variantId: 'variant-123' },
+                pathParameters: { variantId: mockVariantId },
                 body: JSON.stringify({
-                    productId: 'product-123',
+                    productId: mockProductId,
                     barcode: '1234567890123'
                 })
             };
 
             (getItem as jest.Mock).mockRejectedValue(new Error('Database connection failed'));
 
-            const result = await assignBarcodeToVariant(mockEvent, {}, mockAuth);
+            const result = await assignBarcodeToVariant(mockEvent as any, {} as any) as any;
 
             expect(result.statusCode).toBe(500);
         });
@@ -483,7 +492,7 @@ describe('Clothing Vertical Fixes', () => {
 
         test('should handle empty measurements array', () => {
             const invalidInput = {
-                invoiceId: 'invoice-123',
+                invoiceId: mockInvoiceId,
                 measurements: {},
                 deliveryDate: '2024-12-15',
                 priority: 'normal'
@@ -494,3 +503,6 @@ describe('Clothing Vertical Fixes', () => {
         });
     });
 });
+
+
+

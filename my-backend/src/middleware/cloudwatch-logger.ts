@@ -8,11 +8,12 @@
 // Wired into authorizedHandler — automatically runs for every request.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { CloudWatchClient, PutMetricDataCommand, StandardUnit } from '@aws-sdk/client-cloudwatch';
 import { logger } from '../utils/logger';
 import { config } from '../config/environment';
 
-const cloudwatchClient = new CloudWatchClient({ region: config.aws.region });
+const cloudwatchClient = new CloudWatchClient(configureAwsClient({ region: config.aws.region }));
 
 // ── Types ───────────────────────────────────────────────────────────────────
 

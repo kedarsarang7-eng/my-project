@@ -58,7 +58,7 @@ class DashboardScreen extends ConsumerWidget {
             ])),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(color: AppTheme.warning.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(color: AppTheme.warning.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
               child: Text(DateFormat('d MMM yyyy').format(DateTime.now()), style: const TextStyle(color: AppTheme.warning, fontSize: 12, fontWeight: FontWeight.w600)),
             ),
           ]),
@@ -101,7 +101,7 @@ class _Body extends StatelessWidget {
       Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [AppTheme.success.withOpacity(0.8), AppTheme.success], begin: Alignment.topLeft, end: Alignment.bottomRight),
+          gradient: LinearGradient(colors: [AppTheme.success.withValues(alpha: 0.8), AppTheme.success], begin: Alignment.topLeft, end: Alignment.bottomRight),
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(children: [
@@ -172,7 +172,7 @@ class _QuickActions extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(color: AppTheme.cardBg, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppTheme.divider)),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Container(width: 42, height: 42, decoration: BoxDecoration(color: a.$4.withOpacity(0.1), borderRadius: BorderRadius.circular(12)), child: Icon(a.$1, color: a.$4, size: 20)),
+            Container(width: 42, height: 42, decoration: BoxDecoration(color: a.$4.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Icon(a.$1, color: a.$4, size: 20)),
             const SizedBox(height: 8),
             Text(a.$2, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500), textAlign: TextAlign.center),
           ]),

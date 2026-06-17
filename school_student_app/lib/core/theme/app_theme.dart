@@ -116,7 +116,7 @@ class AppTheme {
         elevation: 8,
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: primary.withOpacity(0.1),
+        backgroundColor: primary.withValues(alpha: 0.1),
         selectedColor: primary,
         labelStyle: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

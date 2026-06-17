@@ -4,6 +4,7 @@
 // Purpose: Unified CRUD operations with soft-delete support
 // Handles: Products, Customers, Staff, Suppliers, Job Cards, Orders
 // ============================================================================
+import { configureAwsClient } from '../config/aws.config';
 import { authorizedHandler } from '../middleware/handler-wrapper';
 import { FeatureKey } from '../config/plan-feature-registry';
 import { Keys, queryItems, putItem, updateItem, getItem, TABLE_NAME } from '../config/dynamodb.config';
@@ -16,7 +17,7 @@ import * as response from '../utils/response';
 import { logger } from '../utils/logger';
 import { recordRevision } from '../services/revision-history.service';
 
-const dynamo = new DynamoDBClient({});
+const dynamo = new DynamoDBClient(configureAwsClient({}));
 
 // ── Entity Types ─────────────────────────────────────────────────────────────
 

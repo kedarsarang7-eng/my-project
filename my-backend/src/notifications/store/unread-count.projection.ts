@@ -45,6 +45,7 @@
 // Validates: REQ 6.7, REQ 13.1.
 // ============================================================================
 
+import { configureAwsClient } from '../../config/aws.config';
 import type {
     DynamoDBStreamHandler,
     DynamoDBRecord,
@@ -76,9 +77,9 @@ let cachedDocClient: DynamoDBDocumentClient | null = null;
 
 function defaultDocClient(): DynamoDBDocumentClient {
     if (!cachedDocClient) {
-        const ddb = new DynamoDBClient({
+        const ddb = new DynamoDBClient(configureAwsClient({
             region: process.env.AWS_REGION ?? 'us-east-1',
-        });
+        }));
         cachedDocClient = DynamoDBDocumentClient.from(ddb, {
             marshallOptions: {
                 removeUndefinedValues: true,

@@ -98,6 +98,9 @@ export enum WSEventName {
     IMPORT_COMPLETED = 'import_completed',
     IMPORT_FAILED = 'import_failed',
 
+    // Academic Coaching Messaging
+    AC_MESSAGE_RECEIVED = 'ac_message_received',
+
     // In-Store Self Scan & Checkout
     IN_STORE_SESSION_STARTED = 'in_store_session_started',
     IN_STORE_CART_UPDATED = 'in_store_cart_updated',

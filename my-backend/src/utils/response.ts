@@ -1,15 +1,30 @@
 import { config } from '../config/environment';
+import { APIGatewayProxyResultV2 } from 'aws-lambda';
+import { ApiResponse } from '../types/api.types';
+
 // ============================================================================
 // API Response Builder — Standardized Lambda Responses
 // ============================================================================
 
-import { APIGatewayProxyResultV2 } from 'aws-lambda';
-import { ApiResponse } from '../types/api.types';
+export function success<T>(
+    arg1: T | number,
+    arg2?: number | T,
+    arg3?: ApiResponse['meta']
+): APIGatewayProxyResultV2 {
+    let data: any;
+    let statusCode = 200;
+    let meta: any = arg3;
 
-/**
- * Build a successful API response.
- */
-export function success<T>(data: T, statusCode = 200, meta?: ApiResponse['meta']): APIGatewayProxyResultV2 {
+    if (typeof arg1 === 'number') {
+        statusCode = arg1;
+        data = arg2;
+    } else {
+        data = arg1;
+        if (typeof arg2 === 'number') {
+            statusCode = arg2;
+        }
+    }
+
     const body: ApiResponse<T> = {
         status: 'success',
         code: statusCode,
@@ -53,25 +68,43 @@ export function paginated<T>(
  * HIGH FIX: Sanitizes details in production to prevent stack trace leakage.
  */
 export function error(
-    statusCode: number,
-    code: string,
-    message: string,
+    statusCodeOrErr: number | any,
+    code?: string,
+    message?: string,
     details?: unknown,
 ): APIGatewayProxyResultV2 {
+    let statusCode = 500;
+    let errCode = 'INTERNAL_ERROR';
+    let errMsg = 'An unexpected error occurred';
+    let errDetails = details;
+
+    if (typeof statusCodeOrErr !== 'number') {
+        // It's a caught error object!
+        const err = statusCodeOrErr;
+        statusCode = err?.statusCode || err?.status || 500;
+        errCode = err?.code || 'INTERNAL_ERROR';
+        errMsg = err?.message || 'An unexpected error occurred';
+        errDetails = err?.details;
+    } else {
+        statusCode = statusCodeOrErr;
+        errCode = code || 'INTERNAL_ERROR';
+        errMsg = message || 'An unexpected error occurred';
+    }
+
     // HIGH FIX: Sanitize details in production - never leak stack traces or internals
     const isProduction = config.app.env === 'production';
-    const safeDetails = isProduction && details
-        ? sanitizeErrorDetails(details)
-        : details;
+    const safeDetails = isProduction && errDetails
+        ? sanitizeErrorDetails(errDetails)
+        : errDetails;
 
     const body: ApiResponse = {
         status: 'error',
         code: statusCode,
-        message,
+        message: errMsg,
         success: false,
         error: {
-            code,
-            message,
+            code: errCode,
+            message: errMsg,
             ...(safeDetails ? { details: safeDetails } : {}),
         },
         meta: {
@@ -88,10 +121,6 @@ export function error(
     };
 }
 
-/**
- * HIGH FIX: Sanitize error details to prevent stack trace leakage in production.
- * Removes 'stack', 'trace', and other internal fields from error responses.
- */
 function sanitizeErrorDetails(details: unknown): unknown {
     if (typeof details !== 'object' || details === null) {
         return details;
@@ -178,3 +207,52 @@ export function tooManyRequests(message = 'Rate limit exceeded', retryAfterSecon
     };
 }
 
+// ── Compatibility Exports ────────────────────────────────────────────────
+import { withRequestContext, generateRID } from './context';
+export { withRequestContext, generateRID };
+
+export interface ResponseFunction {
+    (statusCode: number, body: any): APIGatewayProxyResultV2;
+    success: typeof success;
+    error: typeof error;
+    paginated: typeof paginated;
+    badRequest: typeof badRequest;
+    unauthorized: typeof unauthorized;
+    forbidden: typeof forbidden;
+    notFound: typeof notFound;
+    conflict: typeof conflict;
+    internalError: typeof internalError;
+    serviceUnavailable: typeof serviceUnavailable;
+    tooManyRequests: typeof tooManyRequests;
+}
+
+const responseFn = function (statusCode: number, body: any): APIGatewayProxyResultV2 {
+    return {
+        statusCode,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: typeof body === 'string' ? body : JSON.stringify(body),
+    };
+} as any;
+
+responseFn.success = success;
+responseFn.error = error;
+responseFn.paginated = paginated;
+responseFn.badRequest = badRequest;
+responseFn.unauthorized = unauthorized;
+responseFn.forbidden = forbidden;
+responseFn.notFound = notFound;
+responseFn.conflict = conflict;
+responseFn.internalError = internalError;
+responseFn.serviceUnavailable = serviceUnavailable;
+responseFn.tooManyRequests = tooManyRequests;
+
+export const response: ResponseFunction = responseFn;
+
+export function errorResponse(err: any): APIGatewayProxyResultV2 {
+    const statusCode = err.statusCode || err.status || 500;
+    const code = err.code || 'INTERNAL_ERROR';
+    const message = err.message || 'An unexpected error occurred';
+    return error(statusCode, code, message, err.details);
+}

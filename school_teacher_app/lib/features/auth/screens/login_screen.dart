@@ -81,7 +81,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> with SingleTickerProv
     padding: const EdgeInsets.all(28),
     decoration: BoxDecoration(
       color: AppTheme.cardBg, borderRadius: BorderRadius.circular(24), border: Border.all(color: AppTheme.divider),
-      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 24, offset: const Offset(0, 8))],
+      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 24, offset: const Offset(0, 8))],
     ),
     child: Form(
       key: _formKey,

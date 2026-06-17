@@ -12,6 +12,7 @@
 // All endpoints use RID (Request ID) pattern for tracing.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { APIGatewayProxyEventV2, Context } from 'aws-lambda';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
@@ -146,12 +147,12 @@ const listEntriesSchema = z.object({
 // Clients
 // ============================================================================
 
-const textractClient = new TextractClient({ 
+const textractClient = new TextractClient(configureAwsClient({ 
     region: config.aws.region 
-});
-const s3Client = new S3Client({ 
+}));
+const s3Client = new S3Client(configureAwsClient({ 
     region: config.aws.region 
-});
+}));
 
 // Get S3 bucket name from environment
 const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME || '';

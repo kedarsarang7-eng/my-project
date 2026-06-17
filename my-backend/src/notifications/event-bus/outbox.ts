@@ -27,6 +27,7 @@
 // Validates: REQ 9.7, 9.8.
 // ============================================================================
 
+import { configureAwsClient } from '../../config/aws.config';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
     DynamoDBDocumentClient,
@@ -96,7 +97,7 @@ let docClient: DynamoDBDocumentClient | null = null;
 
 function getDocClient(): DynamoDBDocumentClient {
     if (!docClient) {
-        const base = new DynamoDBClient({ region: config.aws.region });
+        const base = new DynamoDBClient(configureAwsClient({ region: config.aws.region }));
         docClient = DynamoDBDocumentClient.from(base);
     }
     return docClient;

@@ -32,10 +32,27 @@ import type {
     ScanCommandInput,
 } from '@aws-sdk/lib-dynamodb';
 
+// ── LocalStack Detection ───────────────────────────────────────────────────
+const IS_LOCAL = process.env.NODE_ENV === 'local'
+    || process.env.USE_LOCALSTACK === 'true';
+
+const LOCALSTACK_ENDPOINT = process.env.LOCALSTACK_ENDPOINT || 'http://localhost:4566';
+
 // ── Singleton Client ───────────────────────────────────────────────────────
-const client = new DynamoDBClient({
+const dynamoClientConfig: ConstructorParameters<typeof DynamoDBClient>[0] = {
     region: config.aws.region,
-});
+};
+
+if (IS_LOCAL) {
+    dynamoClientConfig.endpoint = LOCALSTACK_ENDPOINT;
+    dynamoClientConfig.credentials = {
+        accessKeyId: 'test',
+        secretAccessKey: 'test',
+    };
+    console.log(`[LOCAL] DynamoDB client → ${LOCALSTACK_ENDPOINT}`);
+}
+
+const client = new DynamoDBClient(dynamoClientConfig);
 
 const docClient = DynamoDBDocumentClient.from(client, {
     marshallOptions: {
@@ -242,6 +259,24 @@ export const Keys = {
     // GSI4PK = TENANT#{tenantId}, GSI4SK = LR#{lrNumber}
     lrNumberGSI4PK: (tenantId: string) => `TENANT#${tenantId}`,
     lrNumberGSI4SK: (lrNumber: string) => `LR#${lrNumber}`,
+
+    // Duplicate Bill PKs
+    imageHashPK: (tenantId: string) => `TENANT#${tenantId}#IMAGEHASH`,
+    imageHashSK: (imageHash: string) => `IMAGEHASH#${imageHash}`,
+    billFingerprintPK: (tenantId: string) => `TENANT#${tenantId}#FINGERPRINT`,
+    billFingerprintSK: (fingerprint: string) => `FINGERPRINT#${fingerprint}`,
+    purchaseEntryDatePK: (tenantId: string) => `TENANT#${tenantId}#PURCHASE_DATE`,
+    purchaseEntryPK: (tenantId: string, rid: string) => `TENANT#${tenantId}#PURCHASE#${rid}`,
+    purchaseEntryMetadataSK: () => 'METADATA',
+
+    // Purchase Order Status PK
+    purchaseOrderStatusPK: (tenantId: string, status?: string) =>
+        status ? `TENANT#${tenantId}#PO_STATUS#${status.toUpperCase()}` : `TENANT#${tenantId}#PO_STATUS`,
+
+    // Corrections / Smart Suggestions PKs
+    correctionPK: (tenantId: string, itemId: string) => `TENANT#${tenantId}#CORRECTION#${itemId}`,
+    correctionSK: (correctionId: string) => `CORRECTION#${correctionId}`,
+    correctionTenantPK: (tenantId: string) => `TENANT#${tenantId}#CORRECTIONS`,
 };
 
 // ── Helper Functions ───────────────────────────────────────────────────────
@@ -603,3 +638,8 @@ export async function scanTable<T = Record<string, unknown>>(
 
 // ── Exported Client (for advanced use) ─────────────────────────────────────
 export { docClient, client as dynamoClient };
+export const dynamoDb = docClient;
+export const TableNames = new Proxy({} as any, {
+    get: () => TABLE_NAME
+});
+

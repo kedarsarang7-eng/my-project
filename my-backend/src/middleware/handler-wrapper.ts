@@ -12,6 +12,7 @@
 // 8. Validate request nonces (anti-replay)
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2, Context } from 'aws-lambda';
 import { randomUUID } from 'crypto';
 import { verifyAuth } from './cognito-auth';
@@ -35,7 +36,7 @@ import { getRequestLocale, runWithLocale } from '../i18n/i18n.middleware';
 let _cloudwatchClient: CloudWatchClient | null = null;
 function getCloudWatchClient(): CloudWatchClient {
     if (!_cloudwatchClient) {
-        _cloudwatchClient = new CloudWatchClient({ region: config.aws.region });
+        _cloudwatchClient = new CloudWatchClient(configureAwsClient({ region: config.aws.region }));
     }
     return _cloudwatchClient;
 }
@@ -276,7 +277,7 @@ async function detectCrossBusinessAccess(
                 path: event.rawPath,
                 correlationId
             });
-            throw new AuthError('Staff unauthorized for this business.');
+        throw new AuthError('Staff unauthorized for this business.');
         }
     }
 }
@@ -284,21 +285,44 @@ async function detectCrossBusinessAccess(
 /**
  * Wraps a Lambda handler with authentication, role enforcement, tenant context,
  * correlation ID tracking, cross-tenant detection, and uniform error handling.
- *
- * Usage:
- * export const handler = authorizedHandler(
- *   [UserRole.OWNER, UserRole.ADMIN],
- *   async (event, context, auth) => {
- *      // Tenant context is ALREADY set here. Safe to query DB.
- *      return response.success({ message: 'Hello ' + auth.email });
- *   }
- * );
  */
 export function authorizedHandler(
     allowedRoles: UserRole[],
     handlerFn: AuthorizedHandlerFn,
     options?: HandlerOptions
+): (event: APIGatewayProxyEventV2, lambdaContext: Context) => Promise<APIGatewayProxyResultV2>;
+
+export function authorizedHandler(
+    handlerFn: (event: APIGatewayProxyEventV2, context: Context) => Promise<APIGatewayProxyResultV2>,
+    options?: { requireRoles?: string[]; requireAuth?: boolean }
+): (event: APIGatewayProxyEventV2, lambdaContext: Context) => Promise<APIGatewayProxyResultV2>;
+
+export function authorizedHandler(
+    arg1: any,
+    arg2?: any,
+    arg3?: any
 ) {
+    let allowedRoles: UserRole[] = [];
+    let handlerFn: any;
+    let options: any = arg3;
+
+    if (Array.isArray(arg1)) {
+        allowedRoles = arg1;
+        handlerFn = arg2;
+    } else {
+        handlerFn = arg1;
+        const opt = arg2 as { requireRoles?: string[]; requireAuth?: boolean } | undefined;
+        options = {
+            requireAuth: opt?.requireAuth ?? true,
+        };
+        if (opt?.requireRoles) {
+            allowedRoles = opt.requireRoles.map(r => {
+                const normalized = r.toUpperCase().replace('-', '_');
+                return normalized as UserRole;
+            });
+        }
+    }
+
     return async (
         event: APIGatewayProxyEventV2,
         lambdaContext: Context
@@ -314,97 +338,98 @@ export function authorizedHandler(
 
         try {
             // 1. Verify Auth
-            const auth = await verifyAuth(event);
+            let auth: AuthContext | null = null;
+            if (options?.requireAuth !== false) {
+                auth = await verifyAuth(event);
 
-            // 2. Enforce Role
-            if (allowedRoles.length > 0) {
-                if (!allowedRoles.includes(auth.role)) {
-                    throw new AuthError(
-                        `Role '${auth.role}' not authorized. Required: ${allowedRoles.join(', ')}`,
-                        403
+                // 2. Enforce Role
+                if (allowedRoles.length > 0) {
+                    if (!allowedRoles.includes(auth.role)) {
+                        throw new AuthError(
+                            `Role '${auth.role}' not authorized. Required: ${allowedRoles.join(', ')}`,
+                            403
+                        );
+                    }
+                }
+
+                // 2.5. Enforce Global Role Restrictions
+                const method = event.requestContext?.http?.method?.toUpperCase() || 'GET';
+                if (auth.role === UserRole.VIEWER && method !== 'GET' && method !== 'OPTIONS') {
+                    throw new AuthError('Role "viewer" has read-only access and cannot modify data', 403);
+                }
+
+                if (auth.role === UserRole.CHARTERED_ACCOUNTANT) {
+                    const path = event.rawPath || '';
+                    const isFinancialRoute = path.startsWith('/reports') || path.startsWith('/invoices') || path.startsWith('/payments');
+                    if (!isFinancialRoute) {
+                        throw new AuthError('Role "chartered_accountant" is restricted to financial data only', 403);
+                    }
+                }
+
+                // 3. Cross-Tenant Attack Detection
+                await detectCrossTenantAccess(auth, event, correlationId);
+
+                // 3.1. Cross-Business Attack Detection
+                await detectCrossBusinessAccess(auth, event, correlationId);
+
+                // 3.5. Business Type Authorization (if required)
+                if (options?.requiredBusinessType) {
+                    await validateBusinessType(
+                        auth,
+                        options.requiredBusinessType,
+                        correlationId,
+                        event.rawPath || '',
                     );
                 }
-            }
 
-            // 2.5. Enforce Global Role Restrictions
-            const method = event.requestContext?.http?.method?.toUpperCase() || 'GET';
-            if (auth.role === UserRole.VIEWER && method !== 'GET' && method !== 'OPTIONS') {
-                throw new AuthError('Role "viewer" has read-only access and cannot modify data', 403);
-            }
-
-            if (auth.role === UserRole.CHARTERED_ACCOUNTANT) {
-                const path = event.rawPath || '';
-                const isFinancialRoute = path.startsWith('/reports') || path.startsWith('/invoices') || path.startsWith('/payments');
-                if (!isFinancialRoute) {
-                    throw new AuthError('Role "chartered_accountant" is restricted to financial data only', 403);
-                }
-            }
-
-            // 3. Cross-Tenant Attack Detection
-            await detectCrossTenantAccess(auth, event, correlationId);
-
-            // 3.1. Cross-Business Attack Detection
-            await detectCrossBusinessAccess(auth, event, correlationId);
-
-            // 3.5. Business Type Authorization (if required)
-            if (options?.requiredBusinessType) {
-                await validateBusinessType(
-                    auth,
-                    options.requiredBusinessType,
-                    correlationId,
-                    event.rawPath || '',
-                );
-            }
-
-            // 3.6. Plan Feature Guard (if required)
-            if (options?.requiredFeature) {
-                await validateFeatureAccess(
-                    auth,
-                    options.requiredFeature as FeatureKey,
-                    correlationId,
-                    event.rawPath || '',
-                );
-            }
-
-            // 3.7. Combined Permission Guard (role + plan) (if required)
-            if (options?.requiredPermission) {
-                await validatePermission(
-                    auth,
-                    options.requiredPermission,
-                    correlationId,
-                    event.rawPath || '',
-                );
-            }
-
-            // 3.8. Software Lock Check — enforce subscription expiry / grace period
-            // Runs AFTER feature/permission guards so bypass paths still work.
-            // SUPER_ADMIN is exempt from lock (platform-level access).
-            if (auth.role !== UserRole.SUPER_ADMIN) {
-                const lockCheck = await checkSoftwareLock(auth.tenantId, event);
-                if (!lockCheck.allowed) {
-                    logger.warn('Software lock enforced', {
-                        tenantId: auth.tenantId,
-                        lockLevel: lockCheck.lockLevel,
-                        path: event.rawPath,
+                // 3.6. Plan Feature Guard (if required)
+                if (options?.requiredFeature) {
+                    await validateFeatureAccess(
+                        auth,
+                        options.requiredFeature as FeatureKey,
                         correlationId,
-                    });
-                    return addHeaders(
-                        response.error(
-                            402,
-                            'SUBSCRIPTION_LOCK',
-                            lockCheck.userMessage,
-                            lockCheck.metadata,
-                        ),
-                        correlationId,
+                        event.rawPath || '',
                     );
                 }
-                // Attach lock info to event for downstream warning banners
-                if (lockCheck.lockLevel !== LockLevel.NONE) {
-                    (event as unknown as Record<string, unknown>).lockInfo = {
-                        lockLevel: lockCheck.lockLevel,
-                        userMessage: lockCheck.userMessage,
-                        metadata: lockCheck.metadata,
-                    };
+
+                // 3.7. Combined Permission Guard (role + plan) (if required)
+                if (options?.requiredPermission) {
+                    await validatePermission(
+                        auth,
+                        options.requiredPermission,
+                        correlationId,
+                        event.rawPath || '',
+                    );
+                }
+
+                // 3.8. Software Lock Check — enforce subscription expiry / grace period
+                if (auth.role !== UserRole.SUPER_ADMIN) {
+                    const lockCheck = await checkSoftwareLock(auth.tenantId, event);
+                    if (!lockCheck.allowed) {
+                        logger.warn('Software lock enforced', {
+                            tenantId: auth.tenantId,
+                            lockLevel: lockCheck.lockLevel,
+                            path: event.rawPath,
+                            correlationId,
+                        });
+                        return addHeaders(
+                            response.error(
+                                402,
+                                'SUBSCRIPTION_LOCK',
+                                lockCheck.userMessage,
+                                lockCheck.metadata,
+                            ),
+                            correlationId,
+                        );
+                    }
+                    // Attach lock info to event for downstream warning banners
+                    if (lockCheck.lockLevel !== LockLevel.NONE) {
+                        (event as unknown as Record<string, unknown>).lockInfo = {
+                            lockLevel: lockCheck.lockLevel,
+                            userMessage: lockCheck.userMessage,
+                            metadata: lockCheck.metadata,
+                        };
+                    }
                 }
             }
 
@@ -416,13 +441,13 @@ export function authorizedHandler(
             // 4.5. Detect and bind request locale (X-App-Locale → Accept-Language → en)
             const requestLocale = getRequestLocale(event);
 
-            return context.runWithContext(
+            return await context.runWithContext(
                 {
-                    tenantId: auth.tenantId,
+                    tenantId: auth?.tenantId,
                     correlationId,
-                    userId: auth.sub,
+                    userId: auth?.sub,
                     businessId,
-                    role: auth.role,
+                    role: auth?.role,
                 },
                 () => runWithLocale(requestLocale, async () => {
                     // 5. Execute Business Logic
@@ -433,8 +458,8 @@ export function authorizedHandler(
                         ? (result as any).statusCode || 200
                         : 200;
                     logRequest({
-                        client_id: auth.tenantId,
-                        user_id: auth.sub,
+                        client_id: auth?.tenantId || 'anonymous',
+                        user_id: auth?.sub || 'anonymous',
                         path: event.rawPath || '',
                         method: event.requestContext?.http?.method || 'UNKNOWN',
                         status_code: statusCode,
@@ -442,8 +467,8 @@ export function authorizedHandler(
                         correlation_id: correlationId,
                         user_agent: event.headers?.['user-agent'],
                         source_ip: event.requestContext?.http?.sourceIp,
-                        role: auth.role,
-                        business_type: auth.businessType,
+                        role: auth?.role || 'anonymous',
+                        business_type: auth?.businessType,
                     }).catch(() => { /* non-critical */ });
 
                     // 6. Add security + tracing headers to response

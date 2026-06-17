@@ -1,4 +1,4 @@
-﻿import { authorizedHandler } from '../middleware/handler-wrapper';
+import { authorizedHandler } from '../middleware/handler-wrapper';
 import { Keys, queryItems, transactWrite, getItem, putItem, updateItem } from '../config/dynamodb.config';
 import { BusinessType, UserRole } from '../types/tenant.types';
 import { FeatureKey } from '../config/plan-feature-registry';
@@ -132,7 +132,7 @@ export const createTailoringNote = authorizedHandler(
 
         // Verify invoice exists and belongs to tenant
         const invoice = await getItem(pk, `INVOICE#${validated.invoiceId}`);
-        if (!invoice.Item || (invoice.Item as any).tenantId !== auth.tenantId) {
+        if (!invoice || (invoice as any).tenantId !== auth.tenantId) {
             return response.notFound('Invoice not found');
         }
 
@@ -154,7 +154,7 @@ export const createTailoringNote = authorizedHandler(
             createdBy: auth.sub,
         };
 
-        await putItem(pk, `TAILORING#${tailoringId}`, tailoringNote);
+        await putItem(tailoringNote);
 
         // Update invoice with tailoring reference
         await updateItem(pk, `INVOICE#${validated.invoiceId}`, {
@@ -197,11 +197,11 @@ export const getTailoringNote = authorizedHandler([], async (event, _context, au
     const pk = Keys.tenantPK(auth.tenantId);
     const result = await getItem(pk, `TAILORING#${tailoringId}`);
 
-    if (!result.Item || (result.Item as any).tenantId !== auth.tenantId) {
+    if (!result || (result as any).tenantId !== auth.tenantId) {
         return response.notFound('Tailoring note not found');
     }
 
-    return response.success(result.Item);
+    return response.success(result);
 }, CLOTHING_OPTS);
 
 /**
@@ -220,7 +220,7 @@ export const updateTailoringStatus = authorizedHandler(
         const pk = Keys.tenantPK(auth.tenantId);
         const existing = await getItem(pk, `TAILORING#${tailoringId}`);
 
-        if (!existing.Item || (existing.Item as any).tenantId !== auth.tenantId) {
+        if (!existing || (existing as any).tenantId !== auth.tenantId) {
             return response.notFound('Tailoring note not found');
         }
 
@@ -255,7 +255,7 @@ export const updateTailoringStatus = authorizedHandler(
             tailoringId,
             'update' as any, // Fix RevisionAction type
             auth.sub,
-            (existing.Item as any).status,
+            (existing as any).status,
             {
                 newStatus: validated.status,
                 notes: validated.notes,
@@ -286,7 +286,7 @@ export const updateTailoringMeasurements = authorizedHandler(
         const pk = Keys.tenantPK(auth.tenantId);
         const existing = await getItem(pk, `TAILORING#${tailoringId}`);
 
-        if (!existing.Item || (existing.Item as any).tenantId !== auth.tenantId) {
+        if (!existing || (existing as any).tenantId !== auth.tenantId) {
             return response.notFound('Tailoring note not found');
         }
 
@@ -306,7 +306,7 @@ export const updateTailoringMeasurements = authorizedHandler(
             tailoringId,
             'update' as any, // Fix RevisionAction type
             auth.sub,
-            (existing.Item as any).measurements,
+            (existing as any).measurements,
             { newMeasurements: validated.measurements },
             { source: 'clothing.updateTailoringMeasurements' },
         );
@@ -384,7 +384,7 @@ export const assignBarcodeToVariant = authorizedHandler(
 
         // Check if variant exists and belongs to tenant
         const existingVariant = await getItem(pk, `VARIANT#${validated.productId}#${variantId}`);
-        if (!existingVariant.Item || (existingVariant.Item as any).tenantId !== auth.tenantId) {
+        if (!existingVariant || (existingVariant as any).tenantId !== auth.tenantId) {
             return response.notFound('Variant not found');
         }
 
@@ -415,7 +415,7 @@ export const assignBarcodeToVariant = authorizedHandler(
             variantId,
             'update' as any, // Fix RevisionAction type
             auth.sub,
-            (existingVariant.Item as any).barcode,
+            (existingVariant as any).barcode,
             { newBarcode: validated.barcode },
             { source: 'clothing.assignBarcodeToVariant' },
         );

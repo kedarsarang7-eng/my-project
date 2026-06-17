@@ -1,5 +1,5 @@
 // ============================================================================
-// Secrets Manager Service — AWS Secrets Manager Wrapper
+// Secrets Manager Service ï¿½ AWS Secrets Manager Wrapper
 // ============================================================================
 // Optional alternative credential store for tenants who prefer
 // per-secret storage over KMS-encrypted DB columns.
@@ -7,11 +7,12 @@
 // Each secret is namespaced per tenant:
 //   dukanx/<stage>/<tenant_id>/<secret_name>
 //
-// Usage is opt-in — the primary credential flow remains KMS via
+// Usage is opt-in ï¿½ the primary credential flow remains KMS via
 // payment-config.service.ts. This service is offered for ultra-sensitive
 // credentials or integrations requiring Secrets Manager.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import {
     SecretsManagerClient,
     CreateSecretCommand,
@@ -24,9 +25,9 @@ import { logger } from '../utils/logger';
 import { AppError, NotFoundError } from '../utils/errors';
 import { config } from '../config/environment';
 
-const smClient = new SecretsManagerClient({
+const smClient = new SecretsManagerClient(configureAwsClient({
     region: config.aws.region,
-});
+}));
 
 const STAGE = config.app.env || 'dev';
 
@@ -73,7 +74,7 @@ export async function storeSecret(
         return { secretArn: updateResult.ARN || fullName };
     } catch (err) {
         if (err instanceof ResourceNotFoundException) {
-            // Secret doesn't exist — create it
+            // Secret doesn't exist ï¿½ create it
             const createResult = await smClient.send(new CreateSecretCommand({
                 Name: fullName,
                 SecretString: secretValue,

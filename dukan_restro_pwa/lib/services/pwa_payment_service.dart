@@ -7,7 +7,6 @@
 
 import 'dart:convert';
 import 'dart:developer' as developer;
-import 'package:flutter/services.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -38,12 +37,12 @@ class PwaPaymentService {
 
   Future<void> init() async {
     if (_isInitialized) return;
-    
+
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
-    
+
     _isInitialized = true;
     developer.log('PwaPaymentService initialized', name: 'PwaPaymentService');
   }
@@ -68,7 +67,7 @@ class PwaPaymentService {
         vendorId: vendorId,
         tableId: tableId,
       );
-      
+
       if (token == null) {
         developer.log('No auth token available', name: 'PwaPaymentService');
         return null;
@@ -99,8 +98,9 @@ class PwaPaymentService {
           return data;
         }
       }
-      
-      developer.log('Create order failed: ${res.statusCode}', name: 'PwaPaymentService');
+
+      developer.log('Create order failed: ${res.statusCode}',
+          name: 'PwaPaymentService');
       return null;
     } catch (e) {
       developer.log('Create order error: $e', name: 'PwaPaymentService');
@@ -121,7 +121,7 @@ class PwaPaymentService {
         vendorId: vendorId,
         tableId: tableId,
       );
-      
+
       if (token == null) return false;
 
       final uri = Uri.parse('$_base/payment/verify');
@@ -146,7 +146,7 @@ class PwaPaymentService {
         final data = jsonDecode(res.body) as Map<String, dynamic>;
         return data['success'] == true;
       }
-      
+
       return false;
     } catch (e) {
       developer.log('Verify payment error: $e', name: 'PwaPaymentService');
@@ -166,7 +166,8 @@ class PwaPaymentService {
     required Function(bool success, String message, String? paymentId) onResult,
   }) async {
     if (!await _isOnline()) {
-      onResult(false, 'No internet connection. Please check your network.', null);
+      onResult(
+          false, 'No internet connection. Please check your network.', null);
       return;
     }
 
@@ -187,7 +188,8 @@ class PwaPaymentService {
       );
 
       if (orderResponse == null) {
-        onResult(false, 'Failed to create payment order. Please try again.', null);
+        onResult(
+            false, 'Failed to create payment order. Please try again.', null);
         return;
       }
 
@@ -241,7 +243,8 @@ class PwaPaymentService {
       final onResult = _onPaymentResult;
 
       if (context.isEmpty || onResult == null) {
-        developer.log('Payment success but no context', name: 'PwaPaymentService');
+        developer.log('Payment success but no context',
+            name: 'PwaPaymentService');
         return;
       }
 
@@ -258,12 +261,15 @@ class PwaPaymentService {
       _onPaymentResult = null;
 
       if (verified) {
-        onResult(true, 'Payment successful! Your order is confirmed.', response.paymentId);
+        onResult(true, 'Payment successful! Your order is confirmed.',
+            response.paymentId);
       } else {
-        onResult(false, 'Payment verification failed. Please contact support.', null);
+        onResult(false, 'Payment verification failed. Please contact support.',
+            null);
       }
     } catch (e) {
-      developer.log('Payment success handler error: $e', name: 'PwaPaymentService');
+      developer.log('Payment success handler error: $e',
+          name: 'PwaPaymentService');
       _onPaymentResult?.call(false, 'Error processing payment: $e', null);
       _currentPaymentContext = {};
       _onPaymentResult = null;
@@ -271,10 +277,11 @@ class PwaPaymentService {
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    developer.log('Payment error: ${response.message}', name: 'PwaPaymentService');
-    
+    developer.log('Payment error: ${response.message}',
+        name: 'PwaPaymentService');
+
     String message = response.message ?? 'Payment failed';
-    
+
     // User-friendly error messages
     if (message.contains('cancelled') || message.contains('CANCELLED')) {
       message = 'Payment was cancelled. You can try again.';
@@ -290,7 +297,8 @@ class PwaPaymentService {
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    developer.log('External wallet: ${response.walletName}', name: 'PwaPaymentService');
+    developer.log('External wallet: ${response.walletName}',
+        name: 'PwaPaymentService');
     // Keep waiting for actual payment success/failure
   }
 
@@ -308,7 +316,7 @@ class PwaPaymentService {
     // Clear previous state
     _currentPaymentContext = {};
     _onPaymentResult = null;
-    
+
     // Initiate fresh payment
     await initiatePayment(
       vendorId: vendorId,

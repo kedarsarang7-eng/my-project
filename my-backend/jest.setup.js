@@ -14,3 +14,15 @@ jest.mock('./src/middleware/cloudwatch-logger', () => ({
     logRequest: jest.fn().mockResolvedValue(undefined),
     logAuthFailure: jest.fn().mockResolvedValue(undefined),
 }));
+
+/** Mock software lock to prevent external DB calls and dynamic imports in tests */
+jest.mock('./src/middleware/software-lock', () => ({
+    checkSoftwareLock: jest.fn().mockResolvedValue({ allowed: true, lockLevel: 'none', userMessage: '' }),
+    withSoftwareLock: (handler) => handler,
+    LockLevel: {
+        NONE: 'none',
+        WARNING: 'warning',
+        PARTIAL: 'partial',
+        FULL: 'full',
+    },
+}));

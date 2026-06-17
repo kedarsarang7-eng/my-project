@@ -64,7 +64,7 @@ class _HomeworkCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.cardBg,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: isOverdue ? AppTheme.error.withOpacity(0.4) : AppTheme.divider),
+        border: Border.all(color: isOverdue ? AppTheme.error.withValues(alpha: 0.4) : AppTheme.divider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,7 +73,7 @@ class _HomeworkCard extends StatelessWidget {
             children: [
               Container(
                 width: 36, height: 36,
-                decoration: BoxDecoration(color: AppTheme.warning.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(color: AppTheme.warning.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
                 child: const Icon(Icons.assignment_outlined, color: AppTheme.warning, size: 18),
               ),
               const SizedBox(width: 10),

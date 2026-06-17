@@ -14,7 +14,7 @@ import { logger } from '../utils/logger';
 import { dynamoDb, TableNames } from '../config/dynamodb.config';
 import { QueryCommand, ScanCommand } from '@aws-sdk/client-dynamodb';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
-import { calculateSimilarity } from '../services/product-matcher.service';
+
 
 // Search schema
 const searchSchema = z.object({

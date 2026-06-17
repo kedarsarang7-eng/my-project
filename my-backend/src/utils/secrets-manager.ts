@@ -24,6 +24,7 @@
 //   3. Monitor rotation via CloudTrail
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import {
     SecretsManagerClient,
     GetSecretValueCommand,
@@ -43,9 +44,9 @@ const CACHE_TTL_MINUTES = 60; // Cache secrets for 1 hour
 
 function getSecretsClient(): SecretsManagerClient {
     if (!secretsClient) {
-        secretsClient = new SecretsManagerClient({
+        secretsClient = new SecretsManagerClient(configureAwsClient({
             region: config.aws.region,
-        });
+        }));
     }
     return secretsClient;
 }

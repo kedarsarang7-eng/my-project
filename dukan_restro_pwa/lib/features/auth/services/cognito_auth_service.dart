@@ -159,6 +159,6 @@ class CognitoAuthServicePWA {
 }
 
 @riverpod
-CognitoAuthServicePWA authService(AuthServiceRef ref) {
+CognitoAuthServicePWA authService(Ref ref) {
   return CognitoAuthServicePWA();
 }

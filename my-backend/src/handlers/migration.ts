@@ -9,6 +9,7 @@
 // POST /migration/rollback   — purge all data from a failed migration run
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { APIGatewayProxyHandlerV2WithJWTAuthorizer } from 'aws-lambda';
 import {
   DynamoDBClient,
@@ -32,11 +33,17 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { randomUUID } from 'crypto';
-import { createJsonResponse } from '../utils/response';
+function createJsonResponse(statusCode: number, body: any) {
+  return {
+    statusCode,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  };
+}
 
-const ddb = new DynamoDBClient({});
-const cognito = new CognitoIdentityProviderClient({});
-const s3 = new S3Client({});
+const ddb = new DynamoDBClient(configureAwsClient({}));
+const cognito = new CognitoIdentityProviderClient(configureAwsClient({}));
+const s3 = new S3Client(configureAwsClient({}));
 
 const TABLE = process.env.DYNAMODB_TABLE ?? 'DukanXTable';
 const BUCKET = process.env.S3_BUCKET ?? 'dukanx-assets';

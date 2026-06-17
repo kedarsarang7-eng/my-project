@@ -17,6 +17,8 @@ import {
 } from '../config/dynamodb.config';
 import { safeDynamoDbOperation } from './dynamodb-errors';
 import { logger } from './logger';
+import { emitToEventBridge } from '../services/eventbridge.service';
+import { WSEventName } from '../types/websocket.types';
 
 export interface LowStockItem {
     productId: string;
@@ -61,6 +63,19 @@ export async function updateLowStockStatus(
             { tenantId, productId, quantity: currentQuantity }
         );
     } else {
+        // Check if the product was previously low-stock (transition from low → OK)
+        const mainPKCheck = Keys.tenantPK(tenantId);
+        const mainSKCheck = `PRODUCT#${productId}`;
+        let wasLowStock = false;
+        try {
+            const existing = await getItem<Record<string, any>>(mainPKCheck, mainSKCheck);
+            wasLowStock = existing?.isLowStock === true;
+        } catch (err) {
+            logger.warn('[LowStockAlerts] Failed to check previous low-stock state', {
+                tenantId, productId, error: (err as Error).message,
+            });
+        }
+
         // Remove from low-stock index
         await safeDynamoDbOperation(
             'remove_low_stock_index',
@@ -74,6 +89,24 @@ export async function updateLowStockStatus(
             }),
             { tenantId, productId, quantity: currentQuantity }
         );
+
+        // Emit LOW_STOCK_RESOLVED if transitioning from low → OK
+        if (wasLowStock) {
+            emitToEventBridge(
+                WSEventName.LOW_STOCK_RESOLVED,
+                tenantId,
+                {
+                    productId,
+                    productName,
+                    currentQuantity,
+                    reorderLevel,
+                },
+            ).catch(err => {
+                logger.warn('[LowStockAlerts] Failed to emit LOW_STOCK_RESOLVED', {
+                    tenantId, productId, error: (err as Error).message,
+                });
+            });
+        }
     }
 }
 

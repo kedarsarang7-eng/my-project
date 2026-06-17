@@ -1,0 +1,197 @@
+// FIXED VERSION: WebSocket Service with ScanCommand replaced by Query
+// BUG-001 FIX: Replaced full table scan with GSI-based tenant-scoped queries
+
+import {
+    DynamoDBClient,
+    GetItemCommand,
+    PutItemCommand,
+    DeleteItemCommand,
+    UpdateItemCommand,
+    QueryCommand,
+    // REMOVED: ScanCommand - no longer needed
+} from '@aws-sdk/client-dynamodb';
+import {
+    ApiGatewayManagementApiClient,
+    PostToConnectionCommand,
+    GoneException,
+} from '@aws-sdk/client-apigatewaymanagementapi';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
+import { config } from '../config/environment';
+import { logger } from '../utils/logger';
+
+const dynamo = new DynamoDBClient({ region: config.aws.region });
+const TABLE_NAME = config.dynamodb.websocketTable || 'dukanx-websocket-connections';
+const WS_API_ENDPOINT = config.websocket.apiEndpoint;
+
+// Connection record interface
+interface WSConnectionRecord {
+    connectionId: string;
+    tenantId: string;
+    businessId?: string;
+    deviceId?: string;
+    userId: string;
+    role: string;
+    connectedAt: string;
+    lastPing: string;
+    metadata?: Record<string, unknown>;
+    // NEW: GSI keys for efficient queries
+    GSI1PK: string; // TENANT#${tenantId}
+    GSI1SK: string; // CONN#${connectionId}
+    GSI2PK?: string; // DEVICE#${deviceId} (for device lookups)
+    GSI2SK?: string; // CONN#${connectionId}
+}
+
+/**
+ * FIXED: Get connections by device ID using GSI instead of Scan
+ * REPLACES: ScanCommand with FilterExpression
+ * USES: QueryCommand on GSI2 (device-based index)
+ */
+async function getConnectionsByDeviceFIXED(deviceId: string, tenantId: string): Promise<WSConnectionRecord[]> {
+    // FIX: Use Query on GSI2 instead of Scan
+    const result = await dynamo.send(new QueryCommand({
+        TableName: TABLE_NAME,
+        IndexName: 'GSI2', // Device lookup index
+        KeyConditionExpression: 'GSI2PK = :deviceKey AND begins_with(GSI2SK, :connPrefix)',
+        ExpressionAttributeValues: marshall({
+            ':deviceKey': `DEVICE#${deviceId}`,
+            ':connPrefix': 'CONN#',
+        }),
+        // SECURITY: Also filter by tenant for extra safety
+        FilterExpression: 'tenantId = :tenantId',
+        ExpressionAttributeNames: {
+            '#t': 'tenantId',
+        },
+        ExpressionAttributeValues: marshall({
+            ':deviceKey': `DEVICE#${deviceId}`,
+            ':connPrefix': 'CONN#',
+            ':tenantId': tenantId,
+        }),
+    }));
+
+    return (result.Items || []).map(item => unmarshall(item) as WSConnectionRecord);
+}
+
+/**
+ * FIXED: Broadcast to all connections in a tenant using GSI
+ * REPLACES: Full table ScanCommand
+ * USES: QueryCommand on GSI1 (tenant-based index)
+ */
+async function broadcastToTenantFIXED(
+    tenantId: string,
+    event: string,
+    data: Record<string, unknown>,
+): Promise<void> {
+    // FIX: Query only this tenant's connections instead of scanning all
+    const result = await dynamo.send(new QueryCommand({
+        TableName: TABLE_NAME,
+        IndexName: 'GSI1', // Tenant lookup index
+        KeyConditionExpression: 'GSI1PK = :tenantKey',
+        ExpressionAttributeValues: marshall({
+            ':tenantKey': `TENANT#${tenantId}`,
+        }),
+    }));
+
+    const connections = (result.Items || []).map(item => unmarshall(item) as WSConnectionRecord);
+    const payload = buildPayload(event, tenantId, data);
+    
+    await sendToConnections(connections, payload, event);
+}
+
+/**
+ * FIXED: List all tenant connections (admin only)
+ * REPLACES: ScanCommand for listing
+ * USES: QueryCommand with pagination
+ */
+async function listTenantConnectionsFIXED(
+    tenantId: string,
+    limit: number = 100,
+    lastEvaluatedKey?: Record<string, unknown>,
+): Promise<{ connections: WSConnectionRecord[]; lastKey?: Record<string, unknown> }> {
+    const result = await dynamo.send(new QueryCommand({
+        TableName: TABLE_NAME,
+        IndexName: 'GSI1',
+        KeyConditionExpression: 'GSI1PK = :tenantKey',
+        ExpressionAttributeValues: marshall({
+            ':tenantKey': `TENANT#${tenantId}`,
+        }),
+        Limit: limit,
+        ExclusiveStartKey: lastEvaluatedKey,
+    }));
+
+    const connections = (result.Items || []).map(item => unmarshall(item) as WSConnectionRecord);
+    
+    return {
+        connections,
+        lastKey: result.LastEvaluatedKey,
+    };
+}
+
+// Helper functions (unchanged)
+function buildPayload(event: string, tenantId: string, data: Record<string, unknown>): string {
+    return JSON.stringify({
+        event,
+        tenantId,
+        timestamp: new Date().toISOString(),
+        data,
+    });
+}
+
+async function sendToConnections(
+    connections: WSConnectionRecord[],
+    payload: string,
+    event: string,
+): Promise<void> {
+    const apiGw = new ApiGatewayManagementApiClient({
+        region: config.aws.region,
+        endpoint: WS_API_ENDPOINT,
+    });
+
+    const results = await Promise.allSettled(
+        connections.map(async (conn) => {
+            try {
+                await apiGw.send(new PostToConnectionCommand({
+                    ConnectionId: conn.connectionId,
+                    Data: new TextEncoder().encode(payload),
+                }));
+                return { success: true, connectionId: conn.connectionId };
+            } catch (error) {
+                if (error instanceof GoneException) {
+                    // Connection is stale, remove it
+                    await removeConnection(conn.connectionId);
+                }
+                return { success: false, connectionId: conn.connectionId, error };
+            }
+        }),
+    );
+
+    const succeeded = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
+    const failed = results.length - succeeded;
+
+    logger.info('WebSocket broadcast completed', {
+        event,
+        totalConnections: connections.length,
+        succeeded,
+        failed,
+        tenantId: connections[0]?.tenantId,
+    });
+}
+
+async function removeConnection(connectionId: string): Promise<void> {
+    await dynamo.send(new DeleteItemCommand({
+        TableName: TABLE_NAME,
+        Key: marshall({ connectionId }),
+    }));
+}
+
+// Export fixed functions
+export {
+    getConnectionsByDeviceFIXED,
+    broadcastToTenantFIXED,
+    listTenantConnectionsFIXED,
+};
+
+// Schema Migration Required:
+// 1. Add GSI1: PK = GSI1PK (TENANT#${tenantId}), SK = GSI1SK (CONN#${connectionId})
+// 2. Add GSI2: PK = GSI2PK (DEVICE#${deviceId}), SK = GSI2SK (CONN#${connectionId})
+// 3. Backfill existing records with new GSI keys
+// 4. Update all writes to include GSI keys

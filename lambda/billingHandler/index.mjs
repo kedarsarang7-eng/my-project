@@ -1,35 +1,10 @@
 import { randomUUID } from 'crypto';
 import { success, error, verifyToken, getItem, putItem, updateItem, queryItems, logAuditEvent } from '../shared/utils.mjs';
 
-const PLAN_CYCLES = {
-  monthly: 1, quarterly: 3, biannual: 6, yearly: 12, biennial: 24, triennial: 36,
-};
-
 const PLANS = [
-  {
-    id: 'basic', name: 'Basic', currency: 'INR',
-    features: ['1 user', '1 branch', 'Basic billing', 'Basic support'],
-    maxUsers: 1, storageGb: 5,
-    pricing: { monthly: 249, quarterly: 699, biannual: 1299, yearly: 2399, biennial: 4299, triennial: 5999 },
-  },
-  {
-    id: 'pro', name: 'Pro', currency: 'INR',
-    features: ['3 users', '1 branch', 'Advanced billing', 'Priority support', 'Reports'],
-    maxUsers: 3, storageGb: 20,
-    pricing: { monthly: 499, quarterly: 1399, biannual: 2699, yearly: 4999, biennial: 8999, triennial: 12999 },
-  },
-  {
-    id: 'premium', name: 'Premium', currency: 'INR',
-    features: ['10 users', '3 branches', 'Multi-branch', '24/7 support', 'Custom integrations'],
-    maxUsers: 10, storageGb: 100,
-    pricing: { monthly: 999, quarterly: 2799, biannual: 5299, yearly: 9999, biennial: 17999, triennial: 24999 },
-  },
-  {
-    id: 'enterprise', name: 'Enterprise', currency: 'INR',
-    features: ['Unlimited users', '10 branches', 'Dedicated support', 'Custom integrations', 'Advanced security', 'SLA'],
-    maxUsers: null, storageGb: 500,
-    pricing: { monthly: 1999, quarterly: 5499, biannual: 10499, yearly: 19999, biennial: 35999, triennial: 49999 },
-  },
+  { id: 'free', name: 'Free', price: 0, currency: 'INR', interval: 'month', features: ['Up to 5 users', '1GB storage', 'Basic support'], maxUsers: 5, storageGb: 1 },
+  { id: 'pro', name: 'Professional', price: 599, currency: 'INR', interval: 'month', features: ['Up to 50 users', '10GB storage', 'Priority support', 'Advanced features'], maxUsers: 50, storageGb: 10 },
+  { id: 'enterprise', name: 'Enterprise', price: 1499, currency: 'INR', interval: 'month', features: ['Up to 500 users', '100GB storage', '24/7 support', 'Custom integrations', 'Advanced security'], maxUsers: 500, storageGb: 100 },
 ];
 
 function requireBillingAdmin(role) {
@@ -48,7 +23,7 @@ function mapSubscriptionFromDynamoDB(item) {
     seats: item.seats ?? 1,
     pricePerSeat: item.pricePerSeat ?? 0,
     currency: item.currency || 'INR',
-    plan: item.plan || 'basic',
+    plan: item.plan || 'free',
     startDate: item.startDate || null,
     createdAt: item.createdAt || null,
     updatedAt: item.updatedAt || null,
@@ -203,7 +178,7 @@ export async function getInvoice(event) {
     const mapped = {
       ...invoice,
       status: invoice.status || 'unknown',
-      currency: invoice.currency || 'USD',
+      currency: invoice.currency || 'INR',
       amount: invoice.amount ?? 0,
     };
 
@@ -224,6 +199,7 @@ export async function cancelSubscription(event) {
 
     const token = authHeader.substring(7);
     const decoded = await verifyToken(token);
+    requireBillingAdmin(decoded.role);
 
     const tenantId = decoded.tenantId;
     const { reason } = JSON.parse(event.body || '{}');
@@ -269,27 +245,5 @@ export async function cancelSubscription(event) {
     console.error('Cancel subscription error:', err);
     if (err.message === 'FORBIDDEN') return error('Access denied', 403);
     return error('Failed to cancel subscription', 500);
-  }
-}
-
-export async function handler(event) {
-  const method = event.requestContext?.http?.method || event.httpMethod || '';
-  const path = event.requestContext?.http?.path || event.rawPath || '';
-  const route = `${method.toUpperCase()} ${path}`;
-
-  switch (route) {
-    case 'GET /billing/plans':
-      return listPlans(event);
-    case 'POST /billing/subscribe':
-      return subscribe(event);
-    case 'GET /billing/invoices':
-      return listInvoices(event);
-    case 'GET /billing/invoices/{id}':
-    case 'GET /billing/invoices/' + (event.pathParameters?.id || ''):
-      return getInvoice(event);
-    case 'POST /billing/cancel':
-      return cancelSubscription(event);
-    default:
-      return error(`Unsupported billing route: ${route}`, 404);
   }
 }

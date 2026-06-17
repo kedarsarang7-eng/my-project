@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // Estimate / Quotation Service — Hardware Shop
 // ============================================================================
 // Handles estimate CRUD and conversion to invoice.
@@ -342,7 +342,7 @@ export async function convertToInvoice(
     };
 
     // Create invoice
-    const invoiceResult = await createInvoice(tenantId, createdBy, invoiceInput, userRole, businessType);
+    const invoiceResult = await createInvoice(tenantId, createdBy, invoiceInput, userRole, businessType as any);
 
     // Mark estimate as converted
     await updateItem(Keys.tenantPK(tenantId), Keys.estimateSK(estimateId), {

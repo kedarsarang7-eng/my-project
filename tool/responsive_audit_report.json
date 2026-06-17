@@ -1,0 +1,3718 @@
+{
+  "generatedBy": "tool/responsive_audit.dart",
+  "feature": "cross-platform-responsive-ui",
+  "summary": {
+    "totalScanned": 492,
+    "compliant": 125,
+    "nonCompliant": 367,
+    "byCategory": {
+      "responsive_component": 12,
+      "business_screen": 367,
+      "shared_component": 113
+    },
+    "byCondition": {
+      "notAdaptiveBody": 367,
+      "handRolledBreakpoint": 10,
+      "legacyImport": 1
+    }
+  },
+  "items": [
+    {
+      "path": "lib/core/responsive/adaptive_shell.dart",
+      "category": "responsive_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/core/responsive/adaptive_widgets.dart",
+      "category": "responsive_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/core/responsive/async_feedback.dart",
+      "category": "responsive_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/core/responsive/desktop_chrome_provider.dart",
+      "category": "responsive_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/core/responsive/mobile_bottom_nav.dart",
+      "category": "responsive_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/core/responsive/mobile_drawer.dart",
+      "category": "responsive_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/core/responsive/navigation_destinations.dart",
+      "category": "responsive_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/core/responsive/responsive.dart",
+      "category": "responsive_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/core/responsive/responsive_breakpoints.dart",
+      "category": "responsive_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/core/responsive/responsive_context.dart",
+      "category": "responsive_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/core/responsive/responsive_layout.dart",
+      "category": "responsive_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/core/responsive/responsive_value.dart",
+      "category": "responsive_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_academic_year_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_admissions_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_attendance_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_batches_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_bulk_operations_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_certificate_generator_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_class_sections_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_classwise_fee_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_courses_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_documents_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_exams_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_faculty_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_fee_collection_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_financial_reports_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_homework_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_hostel_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_id_cards_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_inventory_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_leave_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_lesson_plans_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_library_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_materials_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_notifications_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_payments_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_report_cards_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_reports_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_risk_detection_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_sibling_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_student_registration_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_students_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_timetable_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/academic_coaching/presentation/screens/ac_transport_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/accounting/screens/accounting_reports_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/ai_assistant/presentation/screens/desktop_ai_assistant_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/alerts/presentation/screens/alerts_notifications_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/alerts/presentation/screens/alerts_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/analytics/analytics_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/auth/presentation/screens/customer_auth_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/auth/presentation/screens/forgot_password_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/auth/presentation/screens/license_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/auth/presentation/screens/otp_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/auth/presentation/screens/pin_login_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/auth/presentation/screens/pin_setup_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/auth/presentation/screens/vendor_auth_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/auto_parts/presentation/screens/job_card_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/avatar/presentation/screens/avatar_editor_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/backup/screens/backup_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/bank/presentation/screens/bank_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/bank/presentation/screens/bank_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/barcode/presentation/screens/barcode_label_printing_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/barcode/presentation/screens/quick_bill_with_barcode_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/advanced_bill_creation_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/advanced_billing_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/bill_scan_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/bill_search_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/billing_reports_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/create_invoice_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/credit_note_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/desktop_invoices_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/edit_bill_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/editable_invoice_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/invoice_preview_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/owner_bill_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/return_bill_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/presentation/screens/total_bills_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/screens/bills_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/screens/dunning_config_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/billing/screens/manage_subscriptions_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/book_store/presentation/screens/book_inventory_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/book_store/presentation/screens/book_pos_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/book_store/presentation/screens/book_supplier_returns_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/book_store/presentation/screens/consignment_settlement_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/book_store/presentation/screens/school_order_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/buy_flow/screens/buy_orders_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/buy_flow/screens/procurement_log_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/buy_flow/screens/stock_entry_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/buy_flow/screens/stock_reversal_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/buy_flow/screens/supplier_bills_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/buy_flow/screens/vendor_payouts_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/cash_closing/presentation/screens/day_end_close_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/catalogue/presentation/screens/catalogue_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/clinic/presentation/screens/clinic_calendar_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/clinic/presentation/screens/consultation_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/clinic/presentation/screens/lab_order_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/clinic/presentation/screens/patient_history_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/clinic/presentation/screens/patient_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/clinic/presentation/screens/patient_queue_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/clinic/screens/clinic_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "handRolledBreakpoint",
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/clothing/presentation/screens/clothing_inventory_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/clothing/presentation/screens/tailoring_measurements_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/clothing/presentation/screens/variant_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/computer_shop/presentation/screens/create_job_card_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/computer_shop/presentation/screens/job_card_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/computer_shop/presentation/screens/job_card_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/computer_shop/presentation/screens/multi_unit_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/computer_shop/presentation/screens/serial_history_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/computer_shop/presentation/screens/warranty_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/credit_notes/presentation/screens/credit_note_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/add_customer_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/customer_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/customer_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/customer_home_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/customer_invoice_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/customer_ledger_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/customer_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/customer_notifications_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/customer_payment_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/customer_profile_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/customers_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/edit_profile_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/my_linked_shops_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/my_shops_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/notification_settings_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/customers/presentation/screens/security_settings_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/dashboard/presentation/screens/business_profile_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/dashboard/presentation/screens/daily_snapshot_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/dashboard/presentation/screens/dashboard_selection_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/dashboard/presentation/screens/home_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "handRolledBreakpoint",
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/dashboard/presentation/screens/live_business_health_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/dashboard/presentation/screens/manage_business_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/dashboard/presentation/screens/owner_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/dashboard/v2/screens/dashboard_v2_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "handRolledBreakpoint",
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/dashboard/v2/screens/pharmacy_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "handRolledBreakpoint",
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/daybook/presentation/screens/day_book_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_billing_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_bookings_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_calendar_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_catering_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_decoration_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_event_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_inventory_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_profitability_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_quote_conversion_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_quotes_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_reports_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_shopping_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_staff_attendance_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_staff_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/decoration_catering/presentation/screens/dc_vendor_payments_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/delivery_challan/presentation/screens/create_delivery_challan_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/delivery_challan/presentation/screens/delivery_challan_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/add_patient_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/add_prescription_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/appointment_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/doctor_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/doctor_revenue_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/lab_reports_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/medicine_master_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/patient_history_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/patient_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/prescriptions_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/refill_data_repair_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/refill_queue_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/doctor/presentation/screens/visit_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/document_scanner/screens/document_scanner_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/e_invoice/presentation/screens/e_invoices_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/expenses/presentation/screens/expenses_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/gst/screens/gst_reports_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/gst/screens/gst_settings_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/hardware/presentation/screens/hardware_command_center_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/hardware/presentation/screens/hardware_credit_control_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/hardware/presentation/screens/hardware_invoice_profile_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/hardware/presentation/screens/hardware_operations_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/hardware/presentation/screens/hardware_phase12_workspace_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/hardware/presentation/screens/hardware_supplier_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/in_store/presentation/screens/active_sessions_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/in_store/presentation/screens/exit_verification_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/in_store/presentation/screens/in_store_orders_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/insights/presentation/screens/health_score_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/insights/presentation/screens/insights_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/inventory/presentation/screens/barcode_scanner_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/inventory/presentation/screens/batch_tracking_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/inventory/presentation/screens/categories_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/inventory/presentation/screens/category_products_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/inventory/presentation/screens/damage_logs_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/inventory/presentation/screens/import_inventory_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/inventory/presentation/screens/inventory_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "handRolledBreakpoint",
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/inventory/presentation/screens/low_stock_alerts_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/inventory/presentation/screens/product_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/inventory/presentation/screens/stock_adjustment_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/inventory/presentation/screens/stock_summary_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/inventory/presentation/screens/stock_valuation_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/invoice/screens/invoice_preview_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/invoice/screens/invoice_settings_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/jewellery/presentation/screens/custom_order_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/jewellery/presentation/screens/gold_rate_alert_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/jewellery/presentation/screens/gold_rate_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/jewellery/presentation/screens/gold_scheme_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/jewellery/presentation/screens/hallmark_inventory_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/jewellery/presentation/screens/jewellery_repair_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/jewellery/presentation/screens/making_charges_calculator_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/jewellery/presentation/screens/old_gold_exchange_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/localization/presentation/screens/language_selection_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/localization/presentation/screens/language_setup_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/marketing/presentation/screens/campaigns_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/marketing/presentation/screens/create_campaign_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/marketplace/presentation/screens/order_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/onboarding/login_onboarding_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/onboarding/vendor_onboarding_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/party_ledger/screens/add_vendor_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/party_ledger/screens/collect_payment_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/party_ledger/screens/party_ledger_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "handRolledBreakpoint",
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/party_ledger/screens/party_statement_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/patient/presentation/screens/medical_records_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/patient/presentation/screens/patient_appointments_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/patient/presentation/screens/patient_home_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/patients/screens/patient_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/patients/screens/patient_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/patients/screens/patient_registration_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/payment/presentation/screens/payment_analytics_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/payment/presentation/screens/payment_gateway_settings_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/payment/presentation/screens/payments_history_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/add_staff_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/dispenser_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/fuel_rates_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/petrol_pump_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/reports/ca_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/reports/cash_deposit_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/reports/density_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/reports/dsr_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/reports/fuel_profit_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/reports/nozzle_sales_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/reports/outstanding_analysis_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/reports/shift_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/reports/tank_stock_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/revenue_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/shift_history_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/staff_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/staff_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/petrol_pump/presentation/screens/tank_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/pharmacy/screens/narcotic_register_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/pharmacy/screens/patient_registry_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/pharmacy/screens/product_catalog_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/pharmacy/screens/salt_search_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/physical_to_digital/ui/screens/p2d_camera_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/physical_to_digital/ui/screens/p2d_crop_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/physical_to_digital/ui/screens/p2d_export_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/physical_to_digital/ui/screens/p2d_filter_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/physical_to_digital/ui/screens/p2d_ocr_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/pre_order/presentation/customer/customer_pre_order_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/pre_order/presentation/customer/vendor_catalog_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/pre_order/presentation/vendor/vendor_request_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/pre_order/presentation/vendor/vendor_requests_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/prescriptions/presentation/screens/h1_register_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "handRolledBreakpoint",
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/prescriptions/presentation/screens/narcotic_register_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "handRolledBreakpoint",
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/profile/screens/vendor_profile_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/purchase/presentation/screens/purchase_entries_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/purchase/presentation/screens/scan_bill_image_picker_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/purchase/presentation/screens/scan_bill_processing_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/purchase/presentation/screens/scan_bill_review_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/purchase/presentation/screens/scan_bill_supplier_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/purchase/screens/add_purchase_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/purchase/screens/purchase_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/purchase/screens/purchase_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/purchase/screens/purchase_history_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/all_transactions_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/balance_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/bill_wise_profit_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/cashflow_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/commission_ledger_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/discount_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/expense_register_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/hallmark_register_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/job_card_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/low_stock_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/old_gold_register_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/party_wise_pnl_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/petty_cash_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/pnl_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/print_menu_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/product_performance_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/product_sales_breakdown_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/purchase_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/reports_hub_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/rma_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/salesman_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/stock_summary_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/tally_export_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/tax_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/reports/presentation/screens/trial_balance_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/customer/customer_menu_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/customer/order_tracking_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/customer/rate_review_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/floor_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/food_menu_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/kitchen_display_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/kot_report_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/menu_item_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/recipe_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/restaurant_aggregator_receipt_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/restaurant_daily_summary_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/restaurant_delivery_ops_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/restaurant_inventory_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/restaurant_owner_command_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "handRolledBreakpoint",
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/restaurant_pricing_admin_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/restaurant_table_ops_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/restaurant/presentation/screens/table_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/revenue/screens/booking_order_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/revenue/screens/commission_ledger_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/revenue/screens/dispatch_note_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/revenue/screens/proforma_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/revenue/screens/receipt_entry_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/revenue/screens/refund_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/revenue/screens/return_inwards_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/revenue/screens/revenue_overview_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/revenue/screens/sales_register_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/service/presentation/screens/create_exchange_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/service/presentation/screens/create_service_job_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/service/presentation/screens/exchange_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/service/presentation/screens/exchange_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/service/presentation/screens/service_job_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/service/presentation/screens/service_job_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/business_settings_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/migration/migration_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/presentation/screens/audit_log_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/presentation/screens/customer_app_entry_qr_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/presentation/screens/device_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/presentation/screens/device_settings_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/presentation/screens/error_logs_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/presentation/screens/main_settings_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "handRolledBreakpoint",
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/presentation/screens/payment_reminders_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/presentation/screens/printer_settings_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/presentation/screens/settings_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/presentation/screens/template_designer_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/presentation/screens/user_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/screens/currency_settings_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/settings/screens/tax_config_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/shared/charts/aging_bucket_bar_chart.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/charts/category_donut_chart.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/charts/funnel_chart.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/charts/occupancy_grid_widget.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/charts/sales_line_chart.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/charts/sparkline_widget.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/charts/stock_heatmap_grid.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/export/models/export_data.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/export/services/adapters/excel_export_adapter.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/export/services/adapters/export_adapter.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/export/services/adapters/pdf_export_adapter.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/export/services/adapters/word_export_adapter.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/export/services/export_service.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/presentation/screens/no_internet_screen.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/services/email_repository.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/services/entity_action_service.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/services/whatsapp_service.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/shared_exports.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/widgets/context_menu.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/widgets/entity_action_panel.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/widgets/error_retry_widget.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/widgets/illustrated_empty_state.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/widgets/kpi_card.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shared/widgets/shimmer_loading.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/features/shop_linking/presentation/screens/manual_shop_add_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/shop_linking/presentation/screens/qr_display_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/shop_linking/presentation/screens/qr_scanner_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/shop_linking/presentation/screens/shop_confirmation_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/staff/presentation/screens/add_staff_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/staff/presentation/screens/id_card_designer_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/staff/presentation/screens/staff_attendance_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/staff/presentation/screens/staff_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/staff/presentation/screens/staff_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "legacyImport",
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/staff/presentation/screens/staff_payroll_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/staff/presentation/screens/staff_sale_entry_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/staff/presentation/screens/staff_transaction_history_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/staff/presentation/screens/unified_staff_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/statements/presentation/screens/batch_expiry_statement_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/statements/presentation/screens/commission_statement_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/statements/presentation/screens/customer_invoice_statement_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/statements/presentation/screens/event_booking_statement_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/statements/presentation/screens/fee_statement_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/statements/presentation/screens/fuel_sales_statement_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/statements/presentation/screens/imei_tracking_statement_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/statements/presentation/screens/patient_visit_statement_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/statements/presentation/screens/service_job_statement_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/statements/presentation/screens/stock_valuation_statement_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/stock/presentation/screens/add_stock_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/super_admin/presentation/screens/admin_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/super_admin/presentation/screens/alert_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/super_admin/presentation/screens/audit_viewer_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/super_admin/presentation/screens/generate_license_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/super_admin/presentation/screens/license_detail_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/super_admin/presentation/screens/license_feature_override_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/super_admin/presentation/screens/license_list_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/super_admin/presentation/screens/plan_override_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/super_admin/presentation/screens/super_admin_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/super_admin/presentation/screens/tenant_management_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/super_admin/presentation/screens/usage_dashboard_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/visits/screens/clinic_invoice_preview_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/visits/screens/consultation_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/features/visits/screens/visit_queue_screen.dart",
+      "category": "business_screen",
+      "conditions": [
+        "notAdaptiveBody"
+      ],
+      "compliant": false
+    },
+    {
+      "path": "lib/widgets/animated_buttons.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/animated_widgets.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/async_value_widget.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/bill_display_table.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/bill_payment_toggle.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/confirmation_dialog.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/daily_summary_card.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/action_toolbar.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/business_switcher_widget.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/content_host.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/dashboard_stat_card.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/desktop_content_container.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/desktop_quick_section.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/desktop_root_shell.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/desktop_shell.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/empty_state.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/enterprise_button.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/enterprise_desktop_shell.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/enterprise_dialog.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/enterprise_sidebar.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/enterprise_table.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/expense_breakdown_chart.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/fuel_sales_chart.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/futuristic_kpi_card.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/keyboard_help_overlay.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/low_stock_chart.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/modern_tab_bar.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/neon_card.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/nozzle_performance_chart.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/payment_method_chart.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/permission_wrapper.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/premium_content_wrapper.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/premium_form_section.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/premium_hover.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/recent_transactions_table.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/restaurant_order_trend_chart.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/revenue_analytics_chart.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/sidebar_configuration.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/sidebar_menu_item_widget.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/sidebar_navigation_handler.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/smart_form.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/star_field_background.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/status_badge.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/stock_value_category_chart.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/desktop/tax_summary_panel.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/enhanced_customer_panel.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/error_boundary.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/expiry_badge.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/feature_error_boundary.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/feature_locked_dialog.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/glass_bottom_sheet.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/glass_container.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/glass_morphism.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/licensing/plan_feature_gate.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/loading/loading_states.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/modern_ui_components.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/neo_gradient_card.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/neo_text_field.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/neon_button.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/owner_bill_paid_toggle.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/owner_summary_cards.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/payment_mode_selector.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/plan_status_banner.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/premium_tabs.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/product_image_widget.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/product_thumbnail_widget.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/sakura_background.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/search_widget.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/security/permission_guard.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/security/pin_verification_dialog.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/security/security_dashboard_widget.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/security/security_setup_widget.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/trial_banner.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/button_hierarchy.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/empty_state.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/futuristic_button.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/glass_card.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/micro_animations.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/page_transitions.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/premium_chip.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/premium_floating_button.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/premium_toggle.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/primary_button.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/quick_action_toolbar.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/shortcut_pill.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/skeleton_loader.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/ui/smart_table.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/virtualized_list/virtualized_list.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    },
+    {
+      "path": "lib/widgets/weighing_scale_widget.dart",
+      "category": "shared_component",
+      "conditions": [],
+      "compliant": true
+    }
+  ]
+}

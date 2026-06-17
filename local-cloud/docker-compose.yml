@@ -1,5 +1,5 @@
 # =============================================================================
-# DukanX Local AWS Cloud — Docker Compose
+# DukanX Local AWS Cloud — Docker Compose (with Keycloak for Cognito)
 # =============================================================================
 # Usage:
 #   docker compose up -d              # Start all services
@@ -55,6 +55,32 @@ services:
       timeout: 5s
       retries: 10
       start_period: 20s
+    networks:
+      - dukan-local-net
+    restart: unless-stopped
+
+  # ─── Keycloak — Cognito Replacement (JWT, OIDC, User Management) ──────
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: dukan-keycloak
+    command: start-dev --import-realm
+    ports:
+      - "8080:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin123
+      - KC_DB=dev-file
+      - KC_HEALTH_ENABLED=true
+      - KC_HTTP_RELATIVE_PATH=/
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+      - "./keycloak-config:/opt/keycloak/data/import"
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200\\|UP'"]
+      interval: 15s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
     networks:
       - dukan-local-net
     restart: unless-stopped
@@ -140,6 +166,8 @@ services:
       - analytics
 
 volumes:
+  keycloak-data:
+    driver: local
   redis-data:
     driver: local
   jaeger-data:

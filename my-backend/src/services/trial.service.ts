@@ -12,6 +12,7 @@
 //   - Manual admin downgrade
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { Keys, getItem, putItem, updateItem, queryItems } from '../config/dynamodb.config';
 import { CognitoIdentityProviderClient, AdminUpdateUserAttributesCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { logger } from '../utils/logger';
@@ -21,9 +22,9 @@ import { regenerateManifest } from './feature-manifest.service';
 import { invalidateManifest } from '../config/manifest-cache';
 import { config } from '../config/environment';
 
-const cognitoClient = new CognitoIdentityProviderClient({
+const cognitoClient = new CognitoIdentityProviderClient(configureAwsClient({
     region: config.aws.region,
-});
+}));
 const USER_POOL_ID = config.cognito.userPoolId;
 
 export interface TrialStatus {

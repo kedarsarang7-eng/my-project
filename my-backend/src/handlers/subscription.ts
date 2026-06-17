@@ -58,7 +58,7 @@ export const getCurrentSubscription = authorizedHandler(
 
             // F011: Include allowedFeatures so Flutter hasFeature() checks actual feature keys,
             // not just whether the subscription is active.
-            const businessType = auth.businessType || subscription.businessType;
+            const businessType = auth.businessType || (subscription as any).businessType;
             const allowedFeatures = getAllowedFeatures(subscription.currentPlan, businessType as any);
 
             // Format response

@@ -66,7 +66,7 @@ class _ExamCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [AppTheme.primary.withOpacity(0.05), Colors.transparent], begin: Alignment.topLeft, end: Alignment.bottomRight),
+            gradient: LinearGradient(colors: [AppTheme.primary.withValues(alpha: 0.05), Colors.transparent], begin: Alignment.topLeft, end: Alignment.bottomRight),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           ),
           child: Row(children: [
@@ -77,7 +77,7 @@ class _ExamCard extends StatelessWidget {
             ])),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(color: gradeColor.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
+              decoration: BoxDecoration(color: gradeColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
               child: Text(grade, style: TextStyle(color: gradeColor, fontWeight: FontWeight.w800, fontSize: 18)),
             ),
           ]),

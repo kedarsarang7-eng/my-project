@@ -8,6 +8,7 @@
 // the Cognito user is deleted to prevent orphaned accounts.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import {
     CognitoIdentityProviderClient,
     SignUpCommand,
@@ -35,9 +36,9 @@ import { BusinessType, SubscriptionPlan, UserRole } from '../types/tenant.types'
 import { logger } from '../utils/logger';
 import { config } from '../config/environment';
 
-const cognitoClient = new CognitoIdentityProviderClient({
+const cognitoClient = new CognitoIdentityProviderClient(configureAwsClient({
     region: cognitoConfig.region,
-});
+}));
 
 export interface SignupInput {
     email: string;

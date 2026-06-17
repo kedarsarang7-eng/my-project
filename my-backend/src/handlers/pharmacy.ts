@@ -1,10 +1,10 @@
 // ============================================================================
-// Lambda Handler — Pharmacy
+// Lambda Handler ï¿½ Pharmacy
 // ============================================================================
 // Endpoints:
-//   POST /pharmacy/batch-intake        — Record drug batch stock received
-//   POST /pharmacy/narcotic-register   — Record narcotic (Schedule X) sale entry
-//   GET  /pharmacy/narcotic-register   — Paginated register with date filter
+//   POST /pharmacy/batch-intake        ï¿½ Record drug batch stock received
+//   POST /pharmacy/narcotic-register   ï¿½ Record narcotic (Schedule X) sale entry
+//   GET  /pharmacy/narcotic-register   ï¿½ Paginated register with date filter
 //
 // Security:
 //   - Business type guard: pharmacy only
@@ -13,6 +13,7 @@
 //   - CloudWatch metric: NarcoticRegisterAccess on every narcotic API call
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { authorizedHandler } from '../middleware/handler-wrapper';
 import { FeatureKey } from '../config/plan-feature-registry';
 import {
@@ -60,11 +61,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
 import { config } from '../config/environment';
 
-// PERF-9 FIX: Lazy-load CloudWatchClient — initialized on first use only
+// PERF-9 FIX: Lazy-load CloudWatchClient ï¿½ initialized on first use only
 let _cwClient: CloudWatchClient | null = null;
 function getCloudWatchClient(): CloudWatchClient {
     if (!_cwClient) {
-        _cwClient = new CloudWatchClient({ region: config.aws.region });
+        _cwClient = new CloudWatchClient(configureAwsClient({ region: config.aws.region }));
     }
     return _cwClient;
 }
@@ -544,7 +545,7 @@ export const createNarcoticEntry = authorizedHandler(
 // GET /pharmacy/narcotic-register
 // ============================================================================
 // Paginated narcotic drug register with date-range filter.
-// Restricted to owner/manager only — NOT accessible to cashier or staff.
+// Restricted to owner/manager only ï¿½ NOT accessible to cashier or staff.
 // ============================================================================
 
 export const getNarcoticRegister = authorizedHandler(
@@ -720,7 +721,7 @@ export const exportNarcoticRegister = authorizedHandler(
 );
 
 // ============================================================================
-// Schedule H1 Register — POST / GET / EXPORT
+// Schedule H1 Register ï¿½ POST / GET / EXPORT
 // ============================================================================
 // Per Drugs and Cosmetics Rules, 1945 (Schedule H1 Rule), pharmacies must
 // maintain a separate register for H1 drugs (certain antibiotics, anti-TB,
@@ -1698,7 +1699,7 @@ export function buildNarcoticLogTransactItem(
  * drugName, qty, batchNumber, expiryDate for every H1 sale. patientAddress
  * is recommended but not strictly mandated.
  *
- * Returns null if any required H1 register field is missing — caller MUST
+ * Returns null if any required H1 register field is missing ï¿½ caller MUST
  * reject the invoice.
  */
 export function buildH1RegisterTransactItem(
@@ -2469,7 +2470,7 @@ export const recordProgramTrackEvent = authorizedHandler(
 );
 
 // ============================================================================
-// FEFO OVERRIDE — Backend-Authorized Supervisor PIN Verification
+// FEFO OVERRIDE ï¿½ Backend-Authorized Supervisor PIN Verification
 // ----------------------------------------------------------------------------
 // Replaces the previous client-side hardcoded supervisor PIN. The frontend
 // posts the cashier-typed PIN here; the backend verifies against the caller

@@ -15,6 +15,7 @@
 // `AuditLogImmutableError` immediately and write nothing to DynamoDB.
 // ============================================================================
 
+import { configureAwsClient } from '../../config/aws.config';
 import {
     DynamoDBDocumentClient,
     PutCommand,
@@ -42,9 +43,9 @@ let cachedDocClient: DynamoDBDocumentClient | null = null;
 
 function defaultDocClient(): DynamoDBDocumentClient {
     if (!cachedDocClient) {
-        const ddb = new DynamoDBClient({
+        const ddb = new DynamoDBClient(configureAwsClient({
             region: process.env.AWS_REGION ?? 'us-east-1',
-        });
+        }));
         cachedDocClient = DynamoDBDocumentClient.from(ddb, {
             marshallOptions: {
                 removeUndefinedValues: true,

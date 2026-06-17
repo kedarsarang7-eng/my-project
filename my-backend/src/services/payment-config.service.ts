@@ -1,9 +1,10 @@
 // ============================================================================
-// Payment Config Service — Merchant Credential Management (DynamoDB)
+// Payment Config Service ï¿½ Merchant Credential Management (DynamoDB)
 // ============================================================================
 // Migrated from PostgreSQL to DynamoDB single-table design.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { v4 as uuidv4 } from 'uuid';
 import {
     Keys,
@@ -163,7 +164,7 @@ export async function deleteGatewayConfig(tenantId: string, gatewayType: Gateway
 
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 import { config } from '../config/environment';
-const snsClient = new SNSClient({ region: config.aws.region });
+const snsClient = new SNSClient(configureAwsClient({ region: config.aws.region }));
 
 export async function autoDisableMerchant(tenantId: string, reason: string, triggeredBy = 'system'): Promise<void> {
     const configs = await queryItems<Record<string, any>>(
@@ -195,7 +196,7 @@ export async function autoDisableMerchant(tenantId: string, reason: string, trig
         try {
             await snsClient.send(new PublishCommand({
                 TopicArn: topicArn,
-                Subject: `SECURITY: Merchant auto-disabled — ${tenantId}`,
+                Subject: `SECURITY: Merchant auto-disabled ï¿½ ${tenantId}`,
                 Message: JSON.stringify({ event: 'merchant_auto_disabled', tenantId, reason, triggeredBy, timestamp: new Date().toISOString() }, null, 2),
             }));
         } catch (err) { logger.warn('Failed to send SNS alert', { error: (err as Error).message }); }

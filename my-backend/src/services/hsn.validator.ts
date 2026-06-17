@@ -15,12 +15,13 @@
 //   - Exempted HSN codes (0% GST) reject any non-zero rate submission.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { Keys, getItem } from '../config/dynamodb.config';
 import { logger } from '../utils/logger';
 import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
 import { config } from '../config/environment';
 
-const cloudwatchClient = new CloudWatchClient({ region: config.aws.region });
+const cloudwatchClient = new CloudWatchClient(configureAwsClient({ region: config.aws.region }));
 
 // ── Types ──────────────────────────────────────────────────────────────────
 

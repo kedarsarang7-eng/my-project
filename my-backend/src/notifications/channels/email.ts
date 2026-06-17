@@ -23,6 +23,7 @@
 // other channel adapters.
 // ============================================================================
 
+import { configureAwsClient } from '../../config/aws.config';
 import {
     SESClient,
     SendEmailCommand,
@@ -151,7 +152,7 @@ export class CognitoEmailResolver implements EmailRecipientResolver {
     }) {
         this.cognito =
             opts?.client ??
-            new CognitoIdentityProviderClient({ region: config.cognito.region });
+            new CognitoIdentityProviderClient(configureAwsClient({ region: config.cognito.region }));
         this.userPoolId = opts?.userPoolId ?? config.cognito.userPoolId;
         // 5-minute default cache — same horizon as license cache.
         this.cacheTtlMs = opts?.cacheTtlMs ?? 5 * 60 * 1000;
@@ -237,7 +238,7 @@ export class EmailChannelAdapter {
 
     constructor(options: EmailAdapterOptions = {}) {
         this.ses =
-            options.sesClient ?? new SESClient({ region: config.aws.region });
+            options.sesClient ?? new SESClient(configureAwsClient({ region: config.aws.region }));
         this.resolver = options.resolver ?? new CognitoEmailResolver();
         this.fromEmail =
             options.fromEmail ??

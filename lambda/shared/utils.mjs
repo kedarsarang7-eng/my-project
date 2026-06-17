@@ -47,11 +47,13 @@ export async function withRetry(operation, maxRetries = 3, baseDelay = 100) {
   throw lastError;
 }
 
-// JWT Verifier - uses environment variables without TypeScript non-null assertions
+// JWT Verifier — audience (clientId) is already validated by the API Gateway
+// JWT Authorizer which accepts all 4 clients (App, Admin, Mobile, Desktop).
+// FIX (C-05): Previous single-clientId verifier rejected tokens from 3 of 4 clients.
 const verifier = CognitoJwtVerifier.create({
   userPoolId: process.env.COGNITO_USER_POOL_ID,
   tokenUse: 'access',
-  clientId: process.env.COGNITO_CLIENT_ID,
+  clientId: null, // Accept any client — gateway handles audience check
 });
 
 // Response Helpers

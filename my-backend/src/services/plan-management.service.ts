@@ -1,7 +1,8 @@
 // ============================================================================
-// Plan Management Service — Upgrade/Downgrade Lifecycle (DynamoDB)
+// Plan Management Service ï¿½ Upgrade/Downgrade Lifecycle (DynamoDB)
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import {
     Keys,
     getItem, putItem, queryItems, updateItem,
@@ -15,7 +16,7 @@ import { CognitoIdentityProviderClient, AdminUpdateUserAttributesCommand } from 
 import { createHmac } from 'crypto';
 import { config } from '../config/environment';
 
-const cognitoClient = new CognitoIdentityProviderClient({ region: config.aws.region });
+const cognitoClient = new CognitoIdentityProviderClient(configureAwsClient({ region: config.aws.region }));
 const USER_POOL_ID = config.cognito.userPoolId;
 
 export interface PlanChangeResult { success: boolean; tenantId: string; previousPlan: PlanTier; newPlan: PlanTier; manifest: FeatureManifest; message: string; }
@@ -214,7 +215,7 @@ async function updateCognitoPlan(cognitoUsername: string | undefined, newPlan: P
             if (attempt === 0) await new Promise(r => setTimeout(r, 500));
         }
     }
-    // Both attempts failed — throw so caller knows plan is desynced
+    // Both attempts failed ï¿½ throw so caller knows plan is desynced
     throw new Error(`Failed to sync plan to Cognito after 2 attempts for user ${cognitoUsername}`);
 }
 

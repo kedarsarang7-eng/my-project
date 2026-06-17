@@ -88,7 +88,7 @@ class _BottomNav extends StatelessWidget {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(color: sel ? AppTheme.primary.withOpacity(0.1) : Colors.transparent, borderRadius: BorderRadius.circular(12)),
+                decoration: BoxDecoration(color: sel ? AppTheme.primary.withValues(alpha: 0.1) : Colors.transparent, borderRadius: BorderRadius.circular(12)),
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
                   Icon(sel ? item.activeIcon : item.icon, color: sel ? AppTheme.primary : AppTheme.textSecondary, size: 24),
                   const SizedBox(height: 3),
@@ -127,7 +127,7 @@ class _SideNav extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-          decoration: BoxDecoration(color: AppTheme.warning.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+          decoration: BoxDecoration(color: AppTheme.warning.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
           child: const Text('ADMIN', style: TextStyle(color: AppTheme.warning, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1)),
         ),
       ),
@@ -145,11 +145,11 @@ class _SideNav extends StatelessWidget {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 150),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(color: sel ? Colors.white.withOpacity(0.12) : Colors.transparent, borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(color: sel ? Colors.white.withValues(alpha: 0.12) : Colors.transparent, borderRadius: BorderRadius.circular(10)),
                   child: Row(children: [
-                    Icon(sel ? item.activeIcon : item.icon, size: 18, color: sel ? Colors.white : Colors.white.withOpacity(0.6)),
+                    Icon(sel ? item.activeIcon : item.icon, size: 18, color: sel ? Colors.white : Colors.white.withValues(alpha: 0.6)),
                     const SizedBox(width: 10),
-                    Text(item.label, style: TextStyle(color: sel ? Colors.white : Colors.white.withOpacity(0.6), fontSize: 13, fontWeight: sel ? FontWeight.w600 : FontWeight.w400)),
+                    Text(item.label, style: TextStyle(color: sel ? Colors.white : Colors.white.withValues(alpha: 0.6), fontSize: 13, fontWeight: sel ? FontWeight.w600 : FontWeight.w400)),
                   ]),
                 ),
               ),

@@ -1,10 +1,11 @@
+import { configureAwsClient } from '../config/aws.config';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { v4 as uuidv4 } from 'uuid';
 import { getItem, Keys, putItem, queryAllItems, queryItems } from '../config/dynamodb.config';
 import { logger } from '../utils/logger';
 import { config } from '../config/environment';
 
-const sns = new SNSClient({ region: config.aws.region });
+const sns = new SNSClient(configureAwsClient({ region: config.aws.region }));
 
 interface ReminderCandidate {
     customerId: string;

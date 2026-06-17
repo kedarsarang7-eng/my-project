@@ -9,6 +9,7 @@
 // Applied at the start of Lambda handlers that create resources.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { AuthContext } from '../types/tenant.types';
 import { PlanLimits, mapToPlanTier } from '../config/plan-feature-registry';
 import { Keys, getItem } from '../config/dynamodb.config';
@@ -173,7 +174,7 @@ export async function atomicIncrementInvoiceCounter(tenantId: string, maxInvoice
     const { ConditionalCheckFailedException } = await import('@aws-sdk/client-dynamodb');
 
     const currentMonth = new Date().toISOString().slice(0, 7).replace('-', '');
-    const dynamodb = new DynamoDBClient({ region: config.aws.region });
+    const dynamodb = new DynamoDBClient(configureAwsClient({ region: config.aws.region }));
 
     if (maxInvoices === null || maxInvoices === undefined) {
         // Unlimited — just increment without condition

@@ -5,6 +5,7 @@
 // Used by /subscription/usage endpoint and limit guard middleware.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { DynamoDBClient, QueryCommand, ScanCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { logger } from '../utils/logger';
@@ -25,7 +26,7 @@ export interface TenantUsage {
 // ── Configuration ───────────────────────────────────────────────────────────
 
 const DYNAMODB_TABLE = config.dynamodb.tableName;
-const dynamodb = new DynamoDBClient({ region: config.aws.region });
+const dynamodb = new DynamoDBClient(configureAwsClient({ region: config.aws.region }));
 
 // ── Core Functions ─────────────────────────────────────────────────────────
 

@@ -38,6 +38,7 @@
 // Validates: REQ 5.4, REQ 5.11
 // ============================================================================
 
+import { configureAwsClient } from '../../config/aws.config';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 
 import { config } from '../../config/environment';
@@ -76,7 +77,7 @@ const DEFAULT_COUNTRY_PREFIX = '+91';
 
 // ---- Module-level SNS client (one per Lambda container) ---------------------
 
-const snsClient = new SNSClient({ region: config.aws.region });
+const snsClient = new SNSClient(configureAwsClient({ region: config.aws.region }));
 
 // ---- Recipient phone resolution --------------------------------------------
 

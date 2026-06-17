@@ -8,6 +8,7 @@
 // Falls back to a scan of PRODUCT# prefix with barcode filter.
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { APIGatewayProxyEventV2, Context } from 'aws-lambda';
 import { authorizedHandler } from '../middleware/handler-wrapper';
 import { Keys, queryItems, getItem } from '../config/dynamodb.config';
@@ -19,7 +20,7 @@ import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { config } from '../config/environment';
 
-const s3 = new S3Client({ region: config.aws.region });
+const s3 = new S3Client(configureAwsClient({ region: config.aws.region }));
 const BUCKET = config.s3.bucketName;
 const PRESIGN_TTL = 900; // 15 minutes
 

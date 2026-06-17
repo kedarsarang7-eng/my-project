@@ -176,9 +176,9 @@ export const deleteFeatureFlag = authorizedHandler(
                 throw new AppError('MISSING_FLAG_KEY', 400, 'MISSING_FLAG_KEY', 'Flag key is required');
             }
 
-            const success = await featureFlagService.deleteFeatureFlag(flagKey);
+            const isDeleted = await featureFlagService.deleteFeatureFlag(flagKey);
 
-            if (!success) {
+            if (!isDeleted) {
                 return success(500, {
                     success: false,
                     error: 'DELETE_FAILED',

@@ -148,9 +148,9 @@ export const get = authorizedHandler(
             allowedBusinessTypes,
             plan,
             enabledFeatures,
-            limits: manifest?.limits ?? {
+            limits: (manifest?.limits ?? {
                 maxUsers: 0, maxProducts: 0, maxBranches: 0, maxDevices: 0, maxBusinessTypes: 0,
-            },
+            }) as any,
             licenseStatus: effectiveLicenseStatus,
             expiryDate: licenseRecord?.expiresAt || licenseRecord?.expiryDate || null,
             renewalPeriodDays: typeof licenseRecord?.renewalPeriodDays === 'number'

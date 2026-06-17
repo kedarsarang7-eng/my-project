@@ -249,7 +249,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   }
 
   Widget _buildAddressCard(BuildContext context, String? selectedAddressId) {
-    // Mock addresses - in real app, fetch from API
+    // Default delivery addresses for order checkout
     final addresses = [
       DeliveryAddress(
         id: 'addr1',

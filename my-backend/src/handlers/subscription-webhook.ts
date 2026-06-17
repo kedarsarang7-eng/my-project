@@ -11,6 +11,7 @@
 // Security: HMAC signature verification, idempotent processing
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2, Context } from 'aws-lambda';
 import * as crypto from 'crypto';
 import { DynamoDBClient, GetItemCommand, PutItemCommand, QueryCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
@@ -107,7 +108,7 @@ const WEBHOOK_SECRET = config.payment.razorpay.webhookSecret || '';
 const DYNAMODB_TABLE = config.dynamodb.tableName;
 const IS_PRODUCTION = config.app.env === 'production';
 
-const dynamodb = new DynamoDBClient({ region: config.aws.region });
+const dynamodb = new DynamoDBClient(configureAwsClient({ region: config.aws.region }));
 
 // F017: Build a deterministic reverse-lookup map from Razorpay plan ID → PlanTier.
 // Avoids fragile string.includes() matching that breaks with real opaque plan IDs.
@@ -677,7 +678,7 @@ async function updateCognitoAttributes(tenantId: string, attributes: Record<stri
     const marshall = (await import('@aws-sdk/util-dynamodb')).marshall;
     const unmarshall = (await import('@aws-sdk/util-dynamodb')).unmarshall;
 
-    const cognito = new CognitoIdentityProviderClient({ region: config.aws.region });
+    const cognito = new CognitoIdentityProviderClient(configureAwsClient({ region: config.aws.region }));
     const userAttributes = Object.entries(attributes).map(([Name, Value]) => ({ Name, Value }));
 
     const command = new QueryCommand({

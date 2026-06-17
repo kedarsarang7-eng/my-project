@@ -42,7 +42,7 @@ class ClassesScreen extends ConsumerWidget {
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(color: AppTheme.cardBg, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppTheme.divider)),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Container(width: 40, height: 40, decoration: BoxDecoration(color: color.withOpacity(0.12), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.class_rounded, color: color, size: 20)),
+                        Container(width: 40, height: 40, decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.class_rounded, color: color, size: 20)),
                         const SizedBox(height: 10),
                         Text(name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
                         if (subject.isNotEmpty) Text(subject, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),

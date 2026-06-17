@@ -1,0 +1,627 @@
+{
+  "id": "dukanx",
+  "realm": "dukanx",
+  "enabled": true,
+  "displayName": "DukanX Local Development",
+  "sslRequired": "none",
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": false,
+  "permanentLockout": false,
+  "accessTokenLifespan": 3600,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "offlineSessionIdleTimeout": 2592000,
+  "accessCodeLifespan": 60,
+  "accessCodeLifespanUserAction": 300,
+  "accessCodeLifespanLogin": 1800,
+  "defaultSignatureAlgorithm": "RS256",
+  "roles": {
+    "realm": [
+      { "name": "OWNER", "description": "Business owner with full access" },
+      { "name": "MANAGER", "description": "Manager with limited admin access" },
+      { "name": "STAFF", "description": "Staff member with operational access" },
+      { "name": "VIEWER", "description": "Read-only access" },
+      { "name": "SCHOOL_ADMIN", "description": "School administration access" },
+      { "name": "SCHOOL_STAFF", "description": "School staff access" },
+      { "name": "CUSTOMER", "description": "Customer app access" }
+    ]
+  },
+  "groups": [
+    { "name": "owners", "path": "/owners" },
+    { "name": "managers", "path": "/managers" },
+    { "name": "staff", "path": "/staff" },
+    { "name": "admin", "path": "/admin" },
+    { "name": "school_admin", "path": "/school_admin" },
+    { "name": "school_staff", "path": "/school_staff" },
+    { "name": "customers", "path": "/customers" }
+  ],
+  "clients": [
+    {
+      "clientId": "dukanx-backend",
+      "name": "DukanX Backend Service",
+      "description": "Server-to-server client for backend API",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "dukanx-backend-secret-local",
+      "serviceAccountsEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": false,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "access.token.lifespan": "3600"
+      },
+      "protocolMappers": [
+        {
+          "name": "tenant_id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "tenantId",
+            "claim.name": "custom:tenant_id",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "tenant_id_alt",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "tenantId",
+            "claim.name": "tenantId",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "role_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "role",
+            "claim.name": "custom:role",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "user_role_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "role",
+            "claim.name": "custom:user_role",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "business_type_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "businessType",
+            "claim.name": "custom:business_type",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "business_id_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "businessId",
+            "claim.name": "custom:business_id",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "plan_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "plan",
+            "claim.name": "custom:plan",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "plan_status_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "planStatus",
+            "claim.name": "custom:plan_status",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "license_status_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "licenseStatus",
+            "claim.name": "custom:license_status",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "vertical_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "vertical",
+            "claim.name": "custom:vertical",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "groups_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "claim.name": "groups",
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "dukanx-flutter-app",
+      "name": "DukanX Flutter App",
+      "description": "Public client for Flutter Desktop/Mobile apps",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "protocol": "openid-connect",
+      "redirectUris": [
+        "http://localhost:*",
+        "http://127.0.0.1:*",
+        "dukanx://callback",
+        "dukanx://auth/callback"
+      ],
+      "webOrigins": [
+        "http://localhost:*",
+        "http://127.0.0.1:*"
+      ],
+      "attributes": {
+        "access.token.lifespan": "3600",
+        "pkce.code.challenge.method": "S256"
+      },
+      "protocolMappers": [
+        {
+          "name": "tenant_id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "tenantId",
+            "claim.name": "custom:tenant_id",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "tenant_id_alt",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "tenantId",
+            "claim.name": "tenantId",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "role_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "role",
+            "claim.name": "custom:role",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "user_role_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "role",
+            "claim.name": "custom:user_role",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "business_type_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "businessType",
+            "claim.name": "custom:business_type",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "business_id_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "businessId",
+            "claim.name": "custom:business_id",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "plan_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "plan",
+            "claim.name": "custom:plan",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "plan_status_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "planStatus",
+            "claim.name": "custom:plan_status",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "license_status_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "licenseStatus",
+            "claim.name": "custom:license_status",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "vertical_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "vertical",
+            "claim.name": "custom:vertical",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "groups_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "claim.name": "groups",
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "dukanx-desktop-app",
+      "name": "DukanX Desktop App",
+      "description": "Public client for Flutter Desktop app (mirrors Cognito DesktopAppClient)",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "protocol": "openid-connect",
+      "redirectUris": ["http://localhost:*", "dukanx://callback"],
+      "webOrigins": ["http://localhost:*"],
+      "protocolMappers": [
+        {
+          "name": "tenant_id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "tenantId",
+            "claim.name": "custom:tenant_id",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "role_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "role",
+            "claim.name": "custom:role",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "business_type_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "businessType",
+            "claim.name": "custom:business_type",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "plan_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "plan",
+            "claim.name": "custom:plan",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "groups_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "claim.name": "groups",
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "dukanx-mobile-app",
+      "name": "DukanX Mobile App",
+      "description": "Public client for Flutter Mobile app (mirrors Cognito MobileAppClient)",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "protocol": "openid-connect",
+      "redirectUris": ["http://localhost:*", "dukanx://callback"],
+      "webOrigins": ["*"],
+      "protocolMappers": [
+        {
+          "name": "tenant_id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "tenantId",
+            "claim.name": "custom:tenant_id",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "role_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "role",
+            "claim.name": "custom:role",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "business_type_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "businessType",
+            "claim.name": "custom:business_type",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "plan_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "plan",
+            "claim.name": "custom:plan",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "groups_mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "claim.name": "groups",
+            "full.path": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "owner_test_001",
+      "email": "owner@test.dukanx.in",
+      "firstName": "Rajesh",
+      "lastName": "Sharma",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Test@1234", "temporary": false }
+      ],
+      "attributes": {
+        "tenantId": ["tenant-001"],
+        "businessId": ["tenant-001"],
+        "vertical": ["electronics"],
+        "businessType": ["electronics"],
+        "role": ["superadmin"],
+        "plan": ["premium"],
+        "planStatus": ["active"],
+        "licenseStatus": ["active"]
+      },
+      "groups": ["owners", "admin"]
+    },
+    {
+      "username": "owner_test_002",
+      "email": "owner2@test.dukanx.in",
+      "firstName": "Amit",
+      "lastName": "Patel",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Test@1234", "temporary": false }
+      ],
+      "attributes": {
+        "tenantId": ["tenant-002"],
+        "businessId": ["tenant-002"],
+        "vertical": ["fuelStation"],
+        "businessType": ["fuelStation"],
+        "role": ["admin"],
+        "plan": ["pro"],
+        "planStatus": ["active"],
+        "licenseStatus": ["active"]
+      },
+      "groups": ["owners"]
+    },
+    {
+      "username": "staff_test_001",
+      "email": "staff@test.dukanx.in",
+      "firstName": "Priya",
+      "lastName": "Verma",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Staff@1234", "temporary": false }
+      ],
+      "attributes": {
+        "tenantId": ["tenant-001"],
+        "businessId": ["tenant-001"],
+        "vertical": ["electronics"],
+        "businessType": ["electronics"],
+        "role": ["staff"],
+        "plan": ["premium"],
+        "planStatus": ["active"],
+        "licenseStatus": ["active"]
+      },
+      "groups": ["staff"]
+    },
+    {
+      "username": "school_admin_001",
+      "email": "schooladmin@test.dukanx.in",
+      "firstName": "Sneha",
+      "lastName": "Kulkarni",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "School@1234", "temporary": false }
+      ],
+      "attributes": {
+        "tenantId": ["tenant-school-001"],
+        "businessId": ["tenant-school-001"],
+        "vertical": ["school"],
+        "businessType": ["school"],
+        "role": ["superadmin"],
+        "plan": ["premium"],
+        "planStatus": ["active"],
+        "licenseStatus": ["active"]
+      },
+      "groups": ["owners", "school_admin"]
+    },
+    {
+      "username": "trial_user_001",
+      "email": "trial@test.dukanx.in",
+      "firstName": "Trial",
+      "lastName": "User",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Trial@1234", "temporary": false }
+      ],
+      "attributes": {
+        "tenantId": ["tenant-003"],
+        "businessId": ["tenant-003"],
+        "vertical": ["clinic"],
+        "businessType": ["clinic"],
+        "role": ["admin"],
+        "plan": ["basic"],
+        "planStatus": ["trial"],
+        "licenseStatus": ["active"]
+      },
+      "groups": ["owners"]
+    },
+    {
+      "username": "customer_test_001",
+      "email": "customer@test.dukanx.in",
+      "firstName": "Rahul",
+      "lastName": "Desai",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "Cust@1234", "temporary": false }
+      ],
+      "attributes": {
+        "tenantId": ["tenant-001"],
+        "role": ["customer"],
+        "planStatus": ["active"],
+        "licenseStatus": ["active"]
+      },
+      "groups": ["customers"]
+    }
+  ]
+}

@@ -1,15 +1,16 @@
 // ============================================================================
-// Fraud Detection Service — Payment Anomaly & Abuse Prevention (DynamoDB)
+// Fraud Detection Service ï¿½ Payment Anomaly & Abuse Prevention (DynamoDB)
 // ============================================================================
 
+import { configureAwsClient } from '../config/aws.config';
 import { Keys, queryItems } from '../config/dynamodb.config';
 import { logger } from '../utils/logger';
 import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 import { config } from '../config/environment';
 
-const cloudwatchClient = new CloudWatchClient({ region: config.aws.region });
-const snsClient = new SNSClient({ region: config.aws.region });
+const cloudwatchClient = new CloudWatchClient(configureAwsClient({ region: config.aws.region }));
+const snsClient = new SNSClient(configureAwsClient({ region: config.aws.region }));
 
 const FRAUD_CONFIG = {
     velocityMaxPerHour: 50,
@@ -107,7 +108,7 @@ async function emitFraudAlert(ctx: FraudCheckContext, result: FraudCheckResult):
     if (result.severity === 'HIGH' || result.severity === 'CRITICAL') {
         const topicArn = config.awsSns.securityAlertTopicArn;
         if (topicArn) {
-            try { await snsClient.send(new PublishCommand({ TopicArn: topicArn, Subject: `FRAUD ALERT: ${result.severity} — ${ctx.tenantId}`, Message: JSON.stringify({ tenantId: ctx.tenantId, amountCents: ctx.amountCents, invoiceId: ctx.invoiceId, severity: result.severity, blocked: result.blocked, reasons: result.reasons, timestamp: new Date().toISOString() }, null, 2) })); }
+            try { await snsClient.send(new PublishCommand({ TopicArn: topicArn, Subject: `FRAUD ALERT: ${result.severity} ï¿½ ${ctx.tenantId}`, Message: JSON.stringify({ tenantId: ctx.tenantId, amountCents: ctx.amountCents, invoiceId: ctx.invoiceId, severity: result.severity, blocked: result.blocked, reasons: result.reasons, timestamp: new Date().toISOString() }, null, 2) })); }
             catch (err) { logger.warn('Failed to send fraud SNS alert', { error: (err as Error).message }); }
         }
     }
