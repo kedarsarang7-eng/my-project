@@ -1,4 +1,4 @@
-package com.dukanx.dukanx
+package com.dukanx.customer
 
 import io.flutter.embedding.android.FlutterActivity
 

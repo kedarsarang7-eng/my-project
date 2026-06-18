@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:782683401944:android:442cf8122899f941db71ad",
         "android_client_info": {
-          "package_name": "com.dukanx.app"
+          "package_name": "com.dukanx.customer"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "782683401944-807bi8oash85lbafm8ekbr1cobqbjmii.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.dukanx.app",
+            "package_name": "com.dukanx.customer",
             "certificate_hash": "bdfb645ce405f42f51f2dee2df1802fcc72c7973"
           }
         },

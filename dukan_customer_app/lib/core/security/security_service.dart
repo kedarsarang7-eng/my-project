@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
+import 'package:flutter_jailbreak_detection_plus/flutter_jailbreak_detection_plus.dart';
 
 /// Performs security checks on app startup.
 /// In production, a rooted/jailbroken device triggers a non-dismissible warning.
@@ -25,8 +25,8 @@ class SecurityService {
     }
 
     try {
-      final isJailbroken = await FlutterJailbreakDetection.jailbroken;
-      final isDeveloperMode = await FlutterJailbreakDetection.developerMode;
+      final isJailbroken = await FlutterJailbreakDetectionPlus.jailbroken;
+      final isDeveloperMode = await FlutterJailbreakDetectionPlus.developerMode;
 
       if (isJailbroken) {
         _isCompromised = true;

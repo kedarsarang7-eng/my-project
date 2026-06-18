@@ -106,7 +106,7 @@ dependencies:
   rxdart: ^0.28.0
 
   # Root/jailbreak detection
-  flutter_jailbreak_detection: ^1.9.0
+  flutter_jailbreak_detection_plus: ^1.10.7
 
 dev_dependencies:
   flutter_test:

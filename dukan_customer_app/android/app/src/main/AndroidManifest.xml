@@ -43,20 +43,8 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="dukanx"/>
             </intent-filter>
-        </activity>
-        <!-- Razorpay: Standard Checkout activity for payment WebView -->
-        <activity
-            android:name="com.razorpay.CheckoutActivity"
-            android:exported="false"
-            android:hardwareAccelerated="true"
-            android:theme="@style/Checkout.Theme"
-            />
 
-        <!-- Razorpay: UPI intent redirect back into the app -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop">
+            <!-- Razorpay: UPI intent redirect back into the app -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -64,6 +52,7 @@
                 <data android:scheme="dukanxpay"/>
             </intent-filter>
         </activity>
+
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

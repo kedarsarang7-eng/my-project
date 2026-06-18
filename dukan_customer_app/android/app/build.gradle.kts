@@ -55,7 +55,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            val keystoreFile = file(System.getenv("KEYSTORE_PATH") ?: "keystore/debug.keystore")
+            if (System.getenv("KEYSTORE_PATH") != null || keystoreFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                signingConfig = signingConfigs.getByName("debug")
+            }
         }
     }
 

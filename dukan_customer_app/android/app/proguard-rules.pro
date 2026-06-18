@@ -24,3 +24,7 @@
 # OkHttp (used by http package under the hood on some paths)
 -dontwarn okhttp3.**
 -dontwarn okio.**
+
+# Flutter Play Core Deferred Components fallback
+-dontwarn com.google.android.play.core.**
+
