@@ -1,0 +1,153 @@
+{
+  "mockDetection": {
+    "hardcodedArrayPatterns": [
+      "\\[\\s*\\{[^}]+\\}\\s*,\\s*\\{",
+      "\\[\\s*'[^']+',\\s*'[^']+'",
+      "\\[\\s*\"[^\"]+\",\\s*\"[^\"]+\""
+    ],
+    "todoCommentPatterns": [
+      "//\\s*TODO.*(?:fake|mock|dummy|placeholder|sample|hardcode)",
+      "//\\s*FIXME.*(?:fake|mock|dummy|placeholder|sample|hardcode)",
+      "//\\s*HACK.*(?:fake|mock|dummy|placeholder|sample)",
+      "//\\s*placeholder",
+      "//\\s*dummy data",
+      "//\\s*sample data"
+    ],
+    "mockImportPatterns": [
+      "import\\s+['\"].*(?:mock|dummy|fake|sample).*['\"]",
+      "import\\s+['\"].*\\/mocks\\/.*['\"]",
+      "import\\s+['\"].*\\/mock_.*['\"]",
+      "import\\s+['\"].*\\/fake_.*['\"]"
+    ],
+    "inlineLiteralPatterns": [
+      "return\\s+\\[\\s*\\{",
+      "return\\s+\\[\\s*'",
+      "return\\s+\\[\\s*\"",
+      "final\\s+\\w+\\s*=\\s*\\[\\s*\\{[^}]+\\}\\s*,\\s*\\{"
+    ],
+    "excludeDirectories": [
+      "test",
+      "test_*",
+      "mocks",
+      "integration_test"
+    ],
+    "excludeFileSuffixes": [
+      "_test.dart",
+      "_mock.dart",
+      "_fake.dart"
+    ]
+  },
+  "tenantIdPatterns": [
+    "tenantId",
+    "tenant_id"
+  ],
+  "priority": {
+    "levels": {
+      "P0": {
+        "name": "Critical Security",
+        "description": "Security/data-leak issues requiring immediate fix",
+        "slaHours": 0
+      },
+      "P1": {
+        "name": "Blocking",
+        "description": "Blocking user flow, fix within 24 hours",
+        "slaHours": 24
+      },
+      "P2": {
+        "name": "Degraded",
+        "description": "Degraded experience, fix within 1 week",
+        "slaHours": 168
+      },
+      "P3": {
+        "name": "Enhancement",
+        "description": "Cosmetic/enhancement, fix within 2 weeks",
+        "slaHours": 336
+      }
+    },
+    "rules": [
+      {
+        "issueType": "tenant_leak",
+        "priority": "P0",
+        "description": "Tenant data leakage or missing tenant isolation"
+      },
+      {
+        "issueType": "mock_data_production",
+        "priority": "P1",
+        "description": "Screen displaying mock data to end users in production"
+      },
+      {
+        "issueType": "broken_navigation",
+        "priority": "P1",
+        "description": "Broken navigation preventing users from reaching a feature"
+      },
+      {
+        "issueType": "broken_api_dependency",
+        "priority": "P1",
+        "description": "Screen references API endpoint that does not exist"
+      },
+      {
+        "issueType": "dynamic_construction",
+        "priority": "P1",
+        "description": "Dynamically constructed table/key requiring manual review"
+      },
+      {
+        "issueType": "missing_offline_write",
+        "priority": "P2",
+        "description": "Missing offline mode on a screen that performs write operations"
+      },
+      {
+        "issueType": "orphaned_route",
+        "priority": "P2",
+        "description": "Backend route with no matching frontend call site"
+      },
+      {
+        "issueType": "scan_instead_of_query",
+        "priority": "P2",
+        "description": "DynamoDB scan used where query is possible"
+      },
+      {
+        "issueType": "ui_inconsistency",
+        "priority": "P3",
+        "description": "UI inconsistency (wrong theme, broken layout, non-responsive)"
+      },
+      {
+        "issueType": "missing_validation",
+        "priority": "P3",
+        "description": "Missing input validation in handler"
+      },
+      {
+        "issueType": "inadequate_error_handling",
+        "priority": "P3",
+        "description": "Inadequate catch blocks in handler"
+      },
+      {
+        "issueType": "repository_bypass",
+        "priority": "P1",
+        "description": "Direct DynamoDB client usage bypassing repository layer"
+      }
+    ],
+    "thresholds": {
+      "highPriorityScreen": {
+        "description": "Dashboard or entry-point screens",
+        "patterns": ["dashboard", "home", "main"]
+      },
+      "mediumPriorityScreen": {
+        "description": "Standard feature screens with navigation wired",
+        "requiresNavWired": true
+      },
+      "lowPriorityScreen": {
+        "description": "Secondary/utility screens",
+        "fallback": true
+      }
+    }
+  },
+  "scanning": {
+    "screenPatterns": {
+      "fileNamePatterns": ["screen", "page"],
+      "classPatterns": ["screen", "page"],
+      "widgetBaseClasses": ["StatelessWidget", "StatefulWidget"]
+    },
+    "featureRootPath": "lib/features/",
+    "defaultVertical": "core/general"
+  }
+}

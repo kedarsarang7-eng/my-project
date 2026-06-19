@@ -1,0 +1,144 @@
+{
+  "verticals": [
+    {
+      "id": "restaurant",
+      "name": "Restaurant",
+      "featureFolder": "restaurant",
+      "businessType": "Restaurant",
+      "primaryEntity": "menu_item",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["menu_screen", "order_screen", "table_screen", "kot_screen"],
+      "dashboardRoute": "/restaurant/dashboard"
+    },
+    {
+      "id": "pharmacy",
+      "name": "Pharmacy",
+      "featureFolder": "pharmacy",
+      "businessType": "Pharmacy",
+      "primaryEntity": "medicine",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["medicine_screen", "prescription_screen", "inventory_screen", "expiry_screen"],
+      "dashboardRoute": "/pharmacy/dashboard"
+    },
+    {
+      "id": "petrol_pump",
+      "name": "Petrol Pump",
+      "featureFolder": "petrol_pump",
+      "businessType": "Petrol Pump",
+      "primaryEntity": "fuel_sale",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["fuel_sale_screen", "tank_screen", "shift_screen", "dip_reading_screen"],
+      "dashboardRoute": "/petrol-pump/dashboard"
+    },
+    {
+      "id": "jewellery",
+      "name": "Jewellery",
+      "featureFolder": "jewellery",
+      "businessType": "Jewellery",
+      "primaryEntity": "jewellery_item",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["custom_order_screen", "gold_rate_screen", "gold_scheme_screen", "melting_screen"],
+      "dashboardRoute": "/jewellery/dashboard"
+    },
+    {
+      "id": "clinic",
+      "name": "Clinic",
+      "featureFolder": "clinic",
+      "businessType": "Clinic",
+      "primaryEntity": "patient",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["patient_management_screen", "appointment_screen", "prescription_screen", "billing_screen"],
+      "dashboardRoute": "/clinic/dashboard"
+    },
+    {
+      "id": "academic_coaching",
+      "name": "Academic Coaching",
+      "featureFolder": "academic_coaching",
+      "businessType": "School ERP",
+      "primaryEntity": "student",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["student_registration_screen", "attendance_screen", "timetable_screen", "exams_screen", "fee_screen"],
+      "dashboardRoute": "/academic-coaching/dashboard"
+    },
+    {
+      "id": "clothing",
+      "name": "Clothing",
+      "featureFolder": "clothing",
+      "businessType": "Clothing",
+      "primaryEntity": "garment",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["clothing_inventory_screen", "tailoring_measurements_screen", "alteration_screen"],
+      "dashboardRoute": "/clothing/dashboard"
+    },
+    {
+      "id": "hardware",
+      "name": "Hardware",
+      "featureFolder": "hardware",
+      "businessType": "Hardware",
+      "primaryEntity": "hardware_item",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["dimension_calculator_screen", "cut_list_screen", "hardware_inventory_screen"],
+      "dashboardRoute": "/hardware/dashboard"
+    },
+    {
+      "id": "book_store",
+      "name": "Book Store",
+      "featureFolder": "book_store",
+      "businessType": "Book Store",
+      "primaryEntity": "book",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["book_inventory_screen", "publisher_screen", "rental_screen"],
+      "dashboardRoute": "/book-store/dashboard"
+    },
+    {
+      "id": "computer_shop",
+      "name": "Computer Shop",
+      "featureFolder": "computer_shop",
+      "businessType": "Computer Shop",
+      "primaryEntity": "job_card",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["create_job_card_screen", "job_card_detail_screen", "multi_unit_screen", "repair_status_screen"],
+      "dashboardRoute": "/computer-shop/dashboard"
+    },
+    {
+      "id": "decoration_catering",
+      "name": "Decoration/Catering",
+      "featureFolder": "decoration_catering",
+      "businessType": "Decoration/Catering",
+      "primaryEntity": "event_booking",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["quote_conversion_screen", "event_booking_screen", "vendor_screen", "package_screen"],
+      "dashboardRoute": "/decoration-catering/dashboard"
+    },
+    {
+      "id": "auto_parts",
+      "name": "Auto Parts",
+      "featureFolder": "auto_parts",
+      "businessType": "Auto Parts",
+      "primaryEntity": "vehicle_part",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["job_card_management_screen", "vehicle_screen", "parts_inventory_screen"],
+      "dashboardRoute": "/auto-parts/dashboard"
+    },
+    {
+      "id": "vegetable_broker",
+      "name": "Vegetable Broker",
+      "featureFolder": "vegetable_broker",
+      "businessType": "Vegetable Broker",
+      "primaryEntity": "lot",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["lot_screen", "commission_screen", "farmer_screen", "market_rate_screen"],
+      "dashboardRoute": "/vegetable-broker/dashboard"
+    },
+    {
+      "id": "general_retail",
+      "name": "General Retail",
+      "featureFolder": "billing",
+      "businessType": "General Retail",
+      "primaryEntity": "invoice",
+      "criticalJourney": ["create", "list", "edit", "report", "export"],
+      "domainScreens": ["bill_creation_screen", "inventory_screen", "customer_screen", "report_screen"],
+      "dashboardRoute": "/dashboard"
+    }
+  ]
+}
