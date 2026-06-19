@@ -1,0 +1,27 @@
+{
+  "name": "dukanx-audit-scripts",
+  "version": "1.0.0",
+  "description": "DukanX Full-Stack Audit and Remediation System — TypeScript Analyzers",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --runInBand",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^24.0.0",
+    "fast-check": "^3.23.2",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
