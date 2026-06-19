@@ -24,7 +24,7 @@ This implementation plan covers the automated audit and remediation pipeline for
     - Create `scripts/audit/models/navigation_models.dart` with NavigationGraph, ScreenNode, NavType, UnreachableScreen, and BrokenLink classes
     - _Requirements: 1.1, 1.2, 3.1_
 
-- [ ] 2. Implement Screen Discovery Engine
+- [x] 2. Implement Screen Discovery Engine
   - [x] 2.1 Implement the Screen Discovery Engine scanner (`screen_discovery.dart`)
     - Implement `scan()` method to recursively find all Dart files under `lib/`
     - Implement `classifyFile()` to detect StatelessWidget/StatefulWidget classes where filename or class name contains "screen" or "page" (case-insensitive)
@@ -32,12 +32,12 @@ This implementation plan covers the automated audit and remediation pipeline for
     - Exclude files matching naming pattern but lacking valid widget class declarations (log as skipped false-positives)
     - _Requirements: 1.1, 1.2, 1.6_
 
-  - [-] 2.2 Implement mock data detection in Screen Discovery
+  - [x] 2.2 Implement mock data detection in Screen Discovery
     - Implement `detectMockData()` to identify: hardcoded sample data arrays with 2+ literal entries, TODO/placeholder comments indicating fake data, imports from paths containing "mock"/"dummy"/"fake"/"sample", conditional logic returning inline literal data without API calls
     - Return MockDetectionResult with boolean flag and comma-separated list of detected patterns
     - _Requirements: 6.1_
 
-  - [~] 2.3 Implement priority assignment and CSV output
+  - [x] 2.3 Implement priority assignment and CSV output
     - Implement `assignPriority()` based on: dashboards/entry-points → High, standard feature screens with navigation wired → Medium, all others → Low
     - Implement CSV serialization matching the Discovery Registry schema (Project, Feature, FileName, RelativePath, BusinessTypes, MockData, MockReasons, ApiConnected, OfflineReady, UiConsistent, NavWired, Priority, Status, StatusReason, StatusTimestamp)
     - Handle file additions and deletions between scan cycles (append new, mark removed)
@@ -63,20 +63,20 @@ This implementation plan covers the automated audit and remediation pipeline for
     - Use `glados` to generate Dart file contents with and without mock patterns, verify detection aligns with the four defined indicator categories
     - **Validates: Requirements 6.1**
 
-- [ ] 3. Implement API Surface Mapper
+- [x] 3. Implement API Surface Mapper
   - [x] 3.1 Implement backend route parser (`api_mapper.ts`)
     - Implement `parseRoutes()` to parse `serverless.yml` and `template.yaml` extracting HTTP method, path, handler file, and authentication status
     - Handle YAML parse errors gracefully: skip file, log warning with path and error, continue
     - Implement `normalizePath()` to replace path parameters (e.g., `{id}`) with wildcards for matching
     - _Requirements: 2.1, 2.5_
 
-  - [-] 3.2 Implement Flutter HTTP call site scanner
+  - [x] 3.2 Implement Flutter HTTP call site scanner
     - Implement `scanCallSites()` to find all HTTP request call sites in Flutter code (direct HTTP calls, service wrappers, repository methods)
     - Extract request path, HTTP method, source file, and line number for each call site
     - Normalize discovered call site paths using the same normalization as routes
     - _Requirements: 2.2_
 
-  - [~] 3.3 Implement call-site-to-route matching and reporting
+  - [x] 3.3 Implement call-site-to-route matching and reporting
     - Implement `matchCallSitesToRoutes()` to match normalized call site paths to normalized route paths
     - Identify broken dependencies (call sites with no matching route → P1) and orphaned routes (routes with no matching call site → P2)
     - Generate summary with totals: cataloged routes, mapped call sites, broken dependencies, orphaned routes
@@ -87,14 +87,14 @@ This implementation plan covers the automated audit and remediation pipeline for
     - Use `fast-check` to generate random HTTP paths and route sets, verify connection IFF normalized paths are equal, and broken/orphaned classification is correct
     - **Validates: Requirements 2.2, 2.3, 2.4**
 
-- [ ] 4. Implement Navigation Graph Builder
+- [x] 4. Implement Navigation Graph Builder
   - [x] 4.1 Implement navigation graph construction (`navigation_graph.dart`)
     - Implement `buildGraph()` to parse all navigation calls (Navigator.push, Navigator.pushNamed, GoRouter routes, context.go, context.push, named routes) and construct a directed graph
     - Set the app's root route as the reachability root
     - Handle circular navigation routes by breaking cycles at second visit and logging warnings
     - _Requirements: 3.1_
 
-  - [-] 4.2 Implement reachability analysis and broken link detection
+  - [x] 4.2 Implement reachability analysis and broken link detection
     - Implement `findUnreachable()` using BFS/DFS from root to identify screens with no inbound path from any reachable screen (flag as P2)
     - Implement `findBrokenLinks()` to detect route references that don't resolve to registered screens (flag as P1)
     - Implement `toAdjacencyList()` to export graph grouped by vertical entry points
@@ -105,16 +105,16 @@ This implementation plan covers the automated audit and remediation pipeline for
     - Use `glados` to generate random directed graphs with root nodes, verify unreachable detection IFF no directed path from root exists, and broken link detection for unresolved routes
     - **Validates: Requirements 3.2, 3.3**
 
-- [~] 5. Checkpoint - Ensure discovery tools pass tests
+- [-] 5. Checkpoint - Ensure discovery tools pass tests
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Implement DynamoDB Access Analyzer
+- [x] 6. Implement DynamoDB Access Analyzer
   - [x] 6.1 Implement DynamoDB operation scanner (`dynamodb_analyzer.ts`)
     - Implement `scanOperations()` to parse handler files for DynamoDB operations (get, put, query, scan, update, delete) extracting table name, key conditions, filter expressions, handler file, and line number
     - Implement `isDynamicConstruction()` to detect dynamically constructed table names or key conditions that can't be statically resolved (flag as P1)
     - _Requirements: 4.1, 4.5_
 
-  - [-] 6.2 Implement tenant isolation and efficiency checks
+  - [x] 6.2 Implement tenant isolation and efficiency checks
     - Implement `hasTenantIsolation()` to check if partition key or filter expression references tenant identifier matching configurable pattern (default: `tenantId` or `tenant_id`)
     - Flag operations without tenant isolation as P0 security issues
     - Implement `detectInefficientScans()` to flag scan operations where partition key is determinable (P2 performance issue)
@@ -125,14 +125,14 @@ This implementation plan covers the automated audit and remediation pipeline for
     - Use `fast-check` to generate random DynamoDB operations with varying key conditions, verify P0 flagging IFF no tenant identifier reference exists
     - **Validates: Requirements 4.2, 4.3**
 
-- [ ] 7. Implement Triage Classifier
-  - [-] 7.1 Implement priority classification logic (`triage_classifier.ts`)
+- [x] 7. Implement Triage Classifier
+  - [x] 7.1 Implement priority classification logic (`triage_classifier.ts`)
     - Implement `classify()` with priority rules: P0 for tenant leakage, P1 for mock data in production or broken navigation, P2 for missing offline on write screens, P3 for UI inconsistency
     - Implement highest-priority-wins logic when multiple criteria match
     - Default to P3 for issues matching no specific criteria
     - _Requirements: 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8_
 
-  - [~] 7.2 Implement triage report generation
+  - [x] 7.2 Implement triage report generation
     - Implement `generateReport()` to group issues by priority level with total counts per Vertical and overall totals
     - Output summary on each scan completion
     - _Requirements: 5.9_
@@ -142,15 +142,15 @@ This implementation plan covers the automated audit and remediation pipeline for
     - Use `fast-check` to generate random AuditIssue objects, verify P0/P1/P2/P3 assignment matches rules and highest-priority-wins for multi-criteria matches
     - **Validates: Requirements 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8**
 
-- [ ] 8. Implement UI Auditor and Lambda Auditor
-  - [~] 8.1 Implement UI consistency auditor (`ui_auditor.dart`)
+- [x] 8. Implement UI Auditor and Lambda Auditor
+  - [x] 8.1 Implement UI consistency auditor (`ui_auditor.dart`)
     - Detect hardcoded Color literals, TextStyle literals, and numeric padding/margin that duplicate theme-available values
     - Verify sidebar usage (EnterpriseDesktopSidebar on desktop, MobileDrawer on mobile), KpiCard usage, shared DataTable/ListView, FormFields, and theme-defined button styles
     - Verify responsive breakpoint compliance (mobile < 600px, tablet 600–1100px, desktop ≥ 1100px)
     - Check accessibility: 48x48dp touch targets, semantic labels on interactive elements
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
-  - [~] 8.2 Implement Lambda handler auditor (`lambda_auditor.ts`)
+  - [x] 8.2 Implement Lambda handler auditor (`lambda_auditor.ts`)
     - Verify input validation (Zod/schema library usage), structured error responses with correlation IDs, correct HTTP status codes, and request/response logging
     - Detect batch operation opportunities (2+ DynamoDB ops on same table)
     - Detect inadequate catch blocks (neither re-throw, error response, nor logging)

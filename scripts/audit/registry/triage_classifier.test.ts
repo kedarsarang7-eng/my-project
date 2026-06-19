@@ -1,4 +1,4 @@
-import { classify, PRIORITY_MAP, DEFAULT_PRIORITY } from './triage_classifier';
+import { classify, generateReport, PRIORITY_MAP, DEFAULT_PRIORITY } from './triage_classifier';
 import { AuditIssue, IssueType, PriorityLevel } from '../types';
 
 /** Helper to create a minimal AuditIssue for testing */
@@ -132,5 +132,109 @@ describe('TriageClassifier.classify()', () => {
 
       expect(highest).toBe('P1');
     });
+  });
+});
+
+
+describe('TriageClassifier.generateReport()', () => {
+  it('returns a valid TriageReport for an empty issues array', () => {
+    const report = generateReport([]);
+
+    expect(report.totalIssues).toBe(0);
+    expect(report.byPriority).toEqual({ P0: 0, P1: 0, P2: 0, P3: 0 });
+    expect(report.byVertical).toEqual({});
+    expect(report.issues).toEqual([]);
+    expect(report.generatedAt).toBeDefined();
+    // Should be valid ISO8601
+    expect(new Date(report.generatedAt).toISOString()).toBe(report.generatedAt);
+  });
+
+  it('correctly counts total issues', () => {
+    const issues = [
+      makeIssue('tenant_leak', { vertical: 'restaurant' }),
+      makeIssue('broken_navigation', { vertical: 'pharmacy' }),
+      makeIssue('ui_inconsistency', { vertical: 'restaurant' }),
+    ];
+
+    const report = generateReport(issues);
+    expect(report.totalIssues).toBe(3);
+  });
+
+  it('groups issues by priority level with correct counts', () => {
+    const issues = [
+      makeIssue('tenant_leak'),           // P0
+      makeIssue('mock_data_production'),   // P1
+      makeIssue('broken_navigation'),      // P1
+      makeIssue('missing_offline_write'),  // P2
+      makeIssue('ui_inconsistency'),       // P3
+      makeIssue('missing_validation'),     // P3
+    ];
+
+    const report = generateReport(issues);
+
+    expect(report.byPriority.P0).toBe(1);
+    expect(report.byPriority.P1).toBe(2);
+    expect(report.byPriority.P2).toBe(1);
+    expect(report.byPriority.P3).toBe(2);
+  });
+
+  it('groups issues by vertical with per-priority counts', () => {
+    const issues = [
+      makeIssue('tenant_leak', { vertical: 'restaurant' }),         // P0
+      makeIssue('broken_navigation', { vertical: 'restaurant' }),   // P1
+      makeIssue('ui_inconsistency', { vertical: 'restaurant' }),    // P3
+      makeIssue('mock_data_production', { vertical: 'pharmacy' }),   // P1
+      makeIssue('missing_offline_write', { vertical: 'pharmacy' }), // P2
+    ];
+
+    const report = generateReport(issues);
+
+    expect(report.byVertical['restaurant']).toEqual({ P0: 1, P1: 1, P2: 0, P3: 1 });
+    expect(report.byVertical['pharmacy']).toEqual({ P0: 0, P1: 1, P2: 1, P3: 0 });
+  });
+
+  it('calls classify() on each issue to assign priority', () => {
+    // Issue has incorrect priority initially; generateReport should re-classify
+    const issue = makeIssue('tenant_leak', { priority: 'P3' as PriorityLevel });
+
+    const report = generateReport([issue]);
+
+    // After classification, tenant_leak should be P0
+    expect(report.issues[0].priority).toBe('P0');
+    expect(report.byPriority.P0).toBe(1);
+    expect(report.byPriority.P3).toBe(0);
+  });
+
+  it('returns all issues in the report issues array', () => {
+    const issues = [
+      makeIssue('tenant_leak', { vertical: 'clinic', id: 'issue-1' }),
+      makeIssue('orphaned_route', { vertical: 'jewellery', id: 'issue-2' }),
+    ];
+
+    const report = generateReport(issues);
+
+    expect(report.issues).toHaveLength(2);
+    expect(report.issues[0].id).toBe('issue-1');
+    expect(report.issues[1].id).toBe('issue-2');
+  });
+
+  it('handles multiple verticals correctly', () => {
+    const verticals = ['restaurant', 'pharmacy', 'clinic', 'jewellery', 'clothing'];
+    const issues = verticals.map((v) => makeIssue('ui_inconsistency', { vertical: v }));
+
+    const report = generateReport(issues);
+
+    expect(Object.keys(report.byVertical)).toHaveLength(5);
+    for (const v of verticals) {
+      expect(report.byVertical[v]).toEqual({ P0: 0, P1: 0, P2: 0, P3: 1 });
+    }
+  });
+
+  it('generatedAt is a valid ISO8601 timestamp', () => {
+    const report = generateReport([makeIssue('tenant_leak')]);
+    const parsed = new Date(report.generatedAt);
+
+    expect(parsed.getTime()).not.toBeNaN();
+    expect(report.generatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
   });
 });

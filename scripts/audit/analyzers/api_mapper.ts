@@ -507,3 +507,115 @@ function deduplicateCallSites(sites: CallSite[]): CallSite[] {
 
   return unique;
 }
+
+// ─── Call Site to Route Matching ────────────────────────────────────────────────
+
+/**
+ * Match normalized call site paths to normalized route paths.
+ *
+ * Matching logic:
+ * - For each call site, find a route where the normalized paths match
+ *   (case-insensitive) AND HTTP methods match.
+ * - A call site without any matching route is a broken dependency (P1).
+ * - A route not matched by any call site is an orphaned route (P2).
+ *
+ * Requirements: 2.3, 2.4, 2.6
+ *
+ * @param callSites - Array of HTTP call sites found in Flutter code
+ * @param routes - Array of backend routes parsed from config files
+ * @returns MatchResult with matched pairs, broken dependencies, and orphaned routes
+ */
+export function matchCallSitesToRoutes(callSites: CallSite[], routes: Route[]): MatchResult {
+  const matched: Array<{ callSite: CallSite; route: Route }> = [];
+  const brokenDependencies: CallSite[] = [];
+  const matchedRouteIndices = new Set<number>();
+
+  for (const callSite of callSites) {
+    const callNormalized = callSite.normalizedPath.toLowerCase();
+    const callMethod = callSite.httpMethod.toUpperCase();
+    let found = false;
+
+    for (let i = 0; i < routes.length; i++) {
+      const route = routes[i];
+      const routeNormalized = route.normalizedPath.toLowerCase();
+      const routeMethod = route.method.toUpperCase();
+
+      if (callNormalized === routeNormalized && callMethod === routeMethod) {
+        matched.push({ callSite, route });
+        matchedRouteIndices.add(i);
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      brokenDependencies.push(callSite);
+    }
+  }
+
+  // Routes not matched by any call site are orphaned
+  const orphanedRoutes: Route[] = routes.filter((_, index) => !matchedRouteIndices.has(index));
+
+  return { matched, brokenDependencies, orphanedRoutes };
+}
+
+/**
+ * Generate a human-readable summary of the match results.
+ *
+ * Prints totals for:
+ * - Cataloged routes
+ * - Mapped call sites
+ * - Broken dependencies (P1)
+ * - Orphaned routes (P2)
+ *
+ * Also lists specific broken dependencies and orphaned routes for debugging.
+ *
+ * @param result - The MatchResult from matchCallSitesToRoutes()
+ * @param totalRoutes - Total number of routes that were cataloged
+ * @param totalCallSites - Total number of call sites that were scanned
+ * @returns A formatted summary string
+ */
+export function generateMatchSummary(
+  result: MatchResult,
+  totalRoutes: number,
+  totalCallSites: number
+): string {
+  const lines: string[] = [];
+
+  lines.push('═══════════════════════════════════════════════════════');
+  lines.push('  API Mapping Summary');
+  lines.push('═══════════════════════════════════════════════════════');
+  lines.push('');
+  lines.push(`  Cataloged routes:       ${totalRoutes}`);
+  lines.push(`  Mapped call sites:      ${totalCallSites}`);
+  lines.push(`  Matched pairs:          ${result.matched.length}`);
+  lines.push(`  Broken dependencies:    ${result.brokenDependencies.length} (P1)`);
+  lines.push(`  Orphaned routes:        ${result.orphanedRoutes.length} (P2)`);
+  lines.push('');
+
+  if (result.brokenDependencies.length > 0) {
+    lines.push('───────────────────────────────────────────────────────');
+    lines.push('  Broken Dependencies (P1) — Call sites with no matching route');
+    lines.push('───────────────────────────────────────────────────────');
+    for (const cs of result.brokenDependencies) {
+      lines.push(`  [${cs.httpMethod}] ${cs.requestPath}`);
+      lines.push(`       → ${cs.screenFile}:${cs.lineNumber}`);
+    }
+    lines.push('');
+  }
+
+  if (result.orphanedRoutes.length > 0) {
+    lines.push('───────────────────────────────────────────────────────');
+    lines.push('  Orphaned Routes (P2) — Routes with no matching call site');
+    lines.push('───────────────────────────────────────────────────────');
+    for (const route of result.orphanedRoutes) {
+      lines.push(`  [${route.method}] ${route.path}`);
+      lines.push(`       → ${route.handlerFile} (${route.source})`);
+    }
+    lines.push('');
+  }
+
+  lines.push('═══════════════════════════════════════════════════════');
+
+  return lines.join('\n');
+}

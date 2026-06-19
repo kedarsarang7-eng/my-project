@@ -289,6 +289,9 @@ class ScreenDiscoveryEngine {
       uiConsistent: entry.uiConsistent,
       navWired: entry.navWired,
       priority: priority,
+      status: entry.status,
+      statusReason: entry.statusReason,
+      statusTimestamp: entry.statusTimestamp,
     );
   }
 }

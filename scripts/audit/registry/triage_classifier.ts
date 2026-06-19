@@ -60,11 +60,43 @@ export function classify(issue: AuditIssue): PriorityLevel {
 
 /**
  * Generates a triage summary report grouped by priority and vertical.
- * (Stub — full implementation in Task 7.2)
+ *
+ * For each issue:
+ * 1. Calls classify() to assign/confirm the priority level
+ * 2. Aggregates counts by priority and by vertical
+ *
+ * Returns a TriageReport with ISO8601 timestamp, totals, and the
+ * classified issues array.
  */
 export function generateReport(issues: AuditIssue[]): TriageReport {
-  // TODO: Implement in Task 7.2
-  throw new Error('generateReport not yet implemented — see Task 7.2');
+  const byPriority: Record<PriorityLevel, number> = { P0: 0, P1: 0, P2: 0, P3: 0 };
+  const byVertical: Record<string, Record<PriorityLevel, number>> = {};
+
+  const classifiedIssues: AuditIssue[] = issues.map((issue) => {
+    const priority = classify(issue);
+    return { ...issue, priority };
+  });
+
+  for (const issue of classifiedIssues) {
+    // Increment overall priority count
+    byPriority[issue.priority]++;
+
+    // Ensure vertical entry exists
+    if (!byVertical[issue.vertical]) {
+      byVertical[issue.vertical] = { P0: 0, P1: 0, P2: 0, P3: 0 };
+    }
+
+    // Increment per-vertical priority count
+    byVertical[issue.vertical][issue.priority]++;
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    totalIssues: classifiedIssues.length,
+    byPriority,
+    byVertical,
+    issues: classifiedIssues,
+  };
 }
 
 /** Exported classifier object matching the TriageClassifier interface */

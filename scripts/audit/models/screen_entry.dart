@@ -70,6 +70,15 @@ class ScreenEntry {
   /// Assigned priority level.
   final Priority priority;
 
+  /// Remediation status (e.g., "Not Started", "In Progress", "Validated").
+  final String status;
+
+  /// Reason for the last status change.
+  final String statusReason;
+
+  /// ISO8601 timestamp of the last status change.
+  final String statusTimestamp;
+
   const ScreenEntry({
     required this.project,
     required this.feature,
@@ -83,6 +92,9 @@ class ScreenEntry {
     required this.uiConsistent,
     required this.navWired,
     required this.priority,
+    this.status = 'Not Started',
+    this.statusReason = '',
+    this.statusTimestamp = '',
   });
 
   /// Serializes this entry to a CSV row (list of field values).
@@ -99,6 +111,9 @@ class ScreenEntry {
     uiConsistent.toString(),
     navWired.toString(),
     priority.label,
+    status,
+    statusReason,
+    statusTimestamp,
   ];
 
   /// CSV header row matching the Discovery Registry schema.
@@ -115,6 +130,9 @@ class ScreenEntry {
     'UiConsistent',
     'NavWired',
     'Priority',
+    'Status',
+    'StatusReason',
+    'StatusTimestamp',
   ];
 
   /// Parses a ScreenEntry from a CSV row (list of field values).
@@ -137,6 +155,9 @@ class ScreenEntry {
       uiConsistent: row[9].toLowerCase() == 'true',
       navWired: row[10].toLowerCase() == 'true',
       priority: Priority.fromLabel(row[11]),
+      status: row.length > 12 ? row[12] : 'Not Started',
+      statusReason: row.length > 13 ? row[13] : '',
+      statusTimestamp: row.length > 14 ? row[14] : '',
     );
   }
 
@@ -155,7 +176,10 @@ class ScreenEntry {
           offlineReady == other.offlineReady &&
           uiConsistent == other.uiConsistent &&
           navWired == other.navWired &&
-          priority == other.priority;
+          priority == other.priority &&
+          status == other.status &&
+          statusReason == other.statusReason &&
+          statusTimestamp == other.statusTimestamp;
 
   @override
   int get hashCode => Object.hash(
@@ -171,6 +195,9 @@ class ScreenEntry {
     uiConsistent,
     navWired,
     priority,
+    status,
+    statusReason,
+    statusTimestamp,
   );
 
   @override

@@ -702,3 +702,240 @@ class ExprRepo {
     expect(match!.normalizedPath).toBe('/users/{*}/profile');
   });
 });
+
+
+// ─── matchCallSitesToRoutes Tests ───────────────────────────────────────────
+
+import { matchCallSitesToRoutes, generateMatchSummary } from './api_mapper';
+import { CallSite, MatchResult } from '../types';
+
+describe('matchCallSitesToRoutes', () => {
+  const makeRoute = (method: string, routePath: string, handlerFile = 'handler.ts'): Route => ({
+    method: method.toUpperCase(),
+    path: routePath,
+    normalizedPath: normalizePath(routePath),
+    handlerFile,
+    authenticated: true,
+    source: 'serverless.yml',
+  });
+
+  const makeCallSite = (httpMethod: string, requestPath: string, screenFile = 'lib/test.dart'): CallSite => ({
+    screenFile,
+    requestPath,
+    normalizedPath: normalizePath(requestPath),
+    httpMethod: httpMethod.toUpperCase(),
+    lineNumber: 1,
+  });
+
+  it('matches call sites to routes by normalized path and method', () => {
+    const routes = [makeRoute('GET', '/users/{userId}')];
+    const callSites = [makeCallSite('GET', '/users/{id}')];
+
+    const result = matchCallSitesToRoutes(callSites, routes);
+
+    expect(result.matched).toHaveLength(1);
+    expect(result.matched[0].callSite).toBe(callSites[0]);
+    expect(result.matched[0].route).toBe(routes[0]);
+    expect(result.brokenDependencies).toHaveLength(0);
+    expect(result.orphanedRoutes).toHaveLength(0);
+  });
+
+  it('identifies broken dependencies (call sites with no matching route)', () => {
+    const routes = [makeRoute('GET', '/products')];
+    const callSites = [makeCallSite('GET', '/nonexistent/path')];
+
+    const result = matchCallSitesToRoutes(callSites, routes);
+
+    expect(result.matched).toHaveLength(0);
+    expect(result.brokenDependencies).toHaveLength(1);
+    expect(result.brokenDependencies[0]).toBe(callSites[0]);
+  });
+
+  it('identifies orphaned routes (routes with no matching call site)', () => {
+    const routes = [makeRoute('GET', '/orphaned'), makeRoute('POST', '/used')];
+    const callSites = [makeCallSite('POST', '/used')];
+
+    const result = matchCallSitesToRoutes(callSites, routes);
+
+    expect(result.matched).toHaveLength(1);
+    expect(result.orphanedRoutes).toHaveLength(1);
+    expect(result.orphanedRoutes[0].path).toBe('/orphaned');
+  });
+
+  it('does not match when methods differ', () => {
+    const routes = [makeRoute('POST', '/items')];
+    const callSites = [makeCallSite('GET', '/items')];
+
+    const result = matchCallSitesToRoutes(callSites, routes);
+
+    expect(result.matched).toHaveLength(0);
+    expect(result.brokenDependencies).toHaveLength(1);
+    expect(result.orphanedRoutes).toHaveLength(1);
+  });
+
+  it('performs case-insensitive path matching', () => {
+    const routes = [makeRoute('GET', '/Users/{userId}')];
+    const callSites = [makeCallSite('GET', '/users/{id}')];
+
+    const result = matchCallSitesToRoutes(callSites, routes);
+
+    expect(result.matched).toHaveLength(1);
+  });
+
+  it('handles empty call sites array', () => {
+    const routes = [makeRoute('GET', '/test')];
+    const callSites: CallSite[] = [];
+
+    const result = matchCallSitesToRoutes(callSites, routes);
+
+    expect(result.matched).toHaveLength(0);
+    expect(result.brokenDependencies).toHaveLength(0);
+    expect(result.orphanedRoutes).toHaveLength(1);
+  });
+
+  it('handles empty routes array', () => {
+    const routes: Route[] = [];
+    const callSites = [makeCallSite('GET', '/test')];
+
+    const result = matchCallSitesToRoutes(callSites, routes);
+
+    expect(result.matched).toHaveLength(0);
+    expect(result.brokenDependencies).toHaveLength(1);
+    expect(result.orphanedRoutes).toHaveLength(0);
+  });
+
+  it('handles both arrays empty', () => {
+    const result = matchCallSitesToRoutes([], []);
+
+    expect(result.matched).toHaveLength(0);
+    expect(result.brokenDependencies).toHaveLength(0);
+    expect(result.orphanedRoutes).toHaveLength(0);
+  });
+
+  it('matches multiple call sites to same route', () => {
+    const routes = [makeRoute('GET', '/items')];
+    const callSites = [
+      makeCallSite('GET', '/items', 'lib/screen_a.dart'),
+      makeCallSite('GET', '/items', 'lib/screen_b.dart'),
+    ];
+
+    const result = matchCallSitesToRoutes(callSites, routes);
+
+    // Both call sites should match the same route
+    expect(result.matched).toHaveLength(2);
+    expect(result.brokenDependencies).toHaveLength(0);
+    expect(result.orphanedRoutes).toHaveLength(0);
+  });
+
+  it('handles mixed scenario with matches, broken deps, and orphans', () => {
+    const routes = [
+      makeRoute('GET', '/items'),
+      makeRoute('POST', '/items'),
+      makeRoute('DELETE', '/admin/cleanup'),
+    ];
+    const callSites = [
+      makeCallSite('GET', '/items'),
+      makeCallSite('POST', '/items'),
+      makeCallSite('PUT', '/items/{id}'),
+    ];
+
+    const result = matchCallSitesToRoutes(callSites, routes);
+
+    expect(result.matched).toHaveLength(2);
+    expect(result.brokenDependencies).toHaveLength(1);
+    expect(result.brokenDependencies[0].httpMethod).toBe('PUT');
+    expect(result.orphanedRoutes).toHaveLength(1);
+    expect(result.orphanedRoutes[0].path).toBe('/admin/cleanup');
+  });
+});
+
+// ─── generateMatchSummary Tests ─────────────────────────────────────────────
+
+describe('generateMatchSummary', () => {
+  it('generates summary with correct totals', () => {
+    const result: MatchResult = {
+      matched: [{ callSite: {} as CallSite, route: {} as Route }],
+      brokenDependencies: [],
+      orphanedRoutes: [],
+    };
+
+    const summary = generateMatchSummary(result, 5, 3);
+
+    expect(summary).toContain('Cataloged routes:       5');
+    expect(summary).toContain('Mapped call sites:      3');
+    expect(summary).toContain('Matched pairs:          1');
+    expect(summary).toContain('Broken dependencies:    0 (P1)');
+    expect(summary).toContain('Orphaned routes:        0 (P2)');
+  });
+
+  it('lists broken dependencies when present', () => {
+    const brokenCallSite: CallSite = {
+      screenFile: 'lib/features/billing/repo.dart',
+      requestPath: '/billing/unknown',
+      normalizedPath: '/billing/unknown',
+      httpMethod: 'GET',
+      lineNumber: 42,
+    };
+
+    const result: MatchResult = {
+      matched: [],
+      brokenDependencies: [brokenCallSite],
+      orphanedRoutes: [],
+    };
+
+    const summary = generateMatchSummary(result, 2, 1);
+
+    expect(summary).toContain('Broken Dependencies (P1)');
+    expect(summary).toContain('[GET] /billing/unknown');
+    expect(summary).toContain('lib/features/billing/repo.dart:42');
+  });
+
+  it('lists orphaned routes when present', () => {
+    const orphanedRoute: Route = {
+      method: 'DELETE',
+      path: '/admin/purge/{tenantId}',
+      normalizedPath: '/admin/purge/{*}',
+      handlerFile: 'dist/handlers/admin.purge',
+      authenticated: true,
+      source: 'serverless.yml',
+    };
+
+    const result: MatchResult = {
+      matched: [],
+      brokenDependencies: [],
+      orphanedRoutes: [orphanedRoute],
+    };
+
+    const summary = generateMatchSummary(result, 3, 0);
+
+    expect(summary).toContain('Orphaned Routes (P2)');
+    expect(summary).toContain('[DELETE] /admin/purge/{tenantId}');
+    expect(summary).toContain('dist/handlers/admin.purge (serverless.yml)');
+  });
+
+  it('omits broken dependencies section when none exist', () => {
+    const result: MatchResult = {
+      matched: [],
+      brokenDependencies: [],
+      orphanedRoutes: [{ method: 'GET', path: '/x', normalizedPath: '/x', handlerFile: 'h', authenticated: true, source: 'serverless.yml' }],
+    };
+
+    const summary = generateMatchSummary(result, 1, 0);
+
+    expect(summary).not.toContain('Broken Dependencies (P1) —');
+    expect(summary).toContain('Orphaned Routes (P2)');
+  });
+
+  it('omits orphaned routes section when none exist', () => {
+    const result: MatchResult = {
+      matched: [],
+      brokenDependencies: [{ screenFile: 'a.dart', requestPath: '/x', normalizedPath: '/x', httpMethod: 'GET', lineNumber: 1 }],
+      orphanedRoutes: [],
+    };
+
+    const summary = generateMatchSummary(result, 0, 1);
+
+    expect(summary).toContain('Broken Dependencies (P1)');
+    expect(summary).not.toContain('Orphaned Routes (P2) —');
+  });
+});
