@@ -70,29 +70,98 @@ class NavigationGraphBuilder {
   }
 
   /// Find unreachable screens from the navigation graph root.
-  /// (Implemented in Task 4.2)
+  ///
+  /// Uses BFS from root via [NavigationGraph.findReachableFromRoot()] and returns
+  /// all screens in the graph that are NOT in the reachable set. These are flagged
+  /// as P2 issues per Requirement 3.2.
   List<UnreachableScreen> findUnreachable(NavigationGraph graph) {
-    // TODO: Implement in Task 4.2
-    return [];
+    final reachable = graph.findReachableFromRoot();
+    final allScreens = graph.allScreenIds;
+
+    final unreachable = <UnreachableScreen>[];
+    for (final screenId in allScreens) {
+      if (!reachable.contains(screenId)) {
+        // Skip route-reference nodes (these are unresolved links, not real screens)
+        if (screenId.startsWith('route:')) continue;
+
+        unreachable.add(
+          UnreachableScreen(
+            screenId: screenId,
+            filePath: _filePathFromScreenId(screenId),
+            vertical: _verticalFromScreenId(screenId),
+          ),
+        );
+      }
+    }
+
+    return unreachable;
   }
 
   /// Find broken navigation links that reference unregistered routes.
-  /// (Implemented in Task 4.2)
+  ///
+  /// A broken link exists when an edge target starts with 'route:' (meaning the
+  /// navigation target couldn't be resolved to a registered screen during graph
+  /// construction) AND the route path is not in [registeredRoutes].
+  /// These are flagged as P1 issues per Requirement 3.3.
   List<BrokenLink> findBrokenLinks(
     NavigationGraph graph,
     Set<String> registeredRoutes,
   ) {
-    // TODO: Implement in Task 4.2
-    return [];
+    final brokenLinks = <BrokenLink>[];
+
+    for (final entry in graph.edges.entries) {
+      final sourceId = entry.key;
+      final targets = entry.value;
+
+      for (final target in targets) {
+        if (!target.startsWith('route:')) continue;
+
+        // Extract the route path from the 'route:/path' format
+        final routePath = target.substring('route:'.length);
+
+        // Check if this route resolves to any registered route
+        if (!registeredRoutes.contains(routePath)) {
+          brokenLinks.add(
+            BrokenLink(
+              sourceScreenId: sourceId,
+              unresolvedRoute: routePath,
+              sourceFile: _filePathFromScreenId(sourceId),
+              lineNumber:
+                  0, // Line number not available from graph-level analysis
+            ),
+          );
+        }
+      }
+    }
+
+    return brokenLinks;
   }
 
   /// Export graph as adjacency list grouped by vertical.
-  /// (Implemented in Task 4.2)
+  ///
+  /// Returns a nested map: vertical → { screenId → [targetScreenIds] }.
+  /// Each vertical's entry contains all screens belonging to that vertical
+  /// with their outbound navigation targets (per Requirement 3.4).
   Map<String, Map<String, List<String>>> toAdjacencyList(
     NavigationGraph graph,
   ) {
-    // TODO: Implement in Task 4.2
-    return {};
+    final result = <String, Map<String, List<String>>>{};
+
+    // Gather all screen IDs (both sources and targets)
+    final allScreens = graph.allScreenIds;
+
+    for (final screenId in allScreens) {
+      // Skip unresolved route references — they're not real screens
+      if (screenId.startsWith('route:')) continue;
+
+      final vertical = _verticalFromScreenId(screenId);
+      final targets = graph.targetsOf(screenId).toList()..sort();
+
+      result.putIfAbsent(vertical, () => <String, List<String>>{});
+      result[vertical]![screenId] = targets;
+    }
+
+    return result;
   }
 
   // ─── Private helpers ─────────────────────────────────────────────────────────
@@ -366,6 +435,32 @@ class NavigationGraphBuilder {
   /// e.g., `/restaurant/menu` → `route:/restaurant/menu`
   String _routeAsScreenId(String route) {
     return 'route:$route';
+  }
+
+  /// Derive the vertical from a screen ID.
+  /// Screen IDs have format `vertical/filename` or `core/filename`.
+  String _verticalFromScreenId(String screenId) {
+    final parts = screenId.split('/');
+    if (parts.length >= 2) {
+      // Handle 'core/general' prefix: IDs like 'core/main_screen'
+      if (parts[0] == 'core') return 'core/general';
+      return parts[0];
+    }
+    return 'core/general';
+  }
+
+  /// Derive a file path from a screen ID.
+  /// Screen IDs have format `vertical/filename` → `lib/features/vertical/.../<filename>.dart`
+  /// Core screens: `core/filename` → `lib/core/.../<filename>.dart`
+  String _filePathFromScreenId(String screenId) {
+    final parts = screenId.split('/');
+    if (parts.length >= 2 && parts[0] != 'core') {
+      return 'lib/features/${parts[0]}/presentation/screens/${parts.sublist(1).join('/')}.dart';
+    }
+    if (parts.length >= 2 && parts[0] == 'core') {
+      return 'lib/core/${parts.sublist(1).join('/')}.dart';
+    }
+    return 'lib/$screenId.dart';
   }
 
   /// Detect cycles in the graph using DFS and break them at second visit.

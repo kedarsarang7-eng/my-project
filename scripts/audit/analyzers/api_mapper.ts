@@ -268,3 +268,242 @@ function isSamRouteAuthenticated(
 
   return true;
 }
+
+// ─── Flutter HTTP Call Site Scanner ─────────────────────────────────────────────
+
+/**
+ * Regex patterns for detecting HTTP call sites in Flutter/Dart code.
+ *
+ * Pattern 1: ApiClient calls — `_apiClient.get('/path')`, `apiClient.post('/path', ...)`
+ * Pattern 2: Direct http calls — `http.get(Uri.parse('$baseUrl/path'))`, `http.post(Uri.parse(...))`
+ * Pattern 3: Dio calls — `_dio.get('/path')`, `dio.post('/path', ...)`
+ */
+
+/** Matches _apiClient.method('/path' or apiClient.method('/path' */
+const API_CLIENT_PATTERN =
+  /(?:_?apiClient|_?api_client|_?client)\.(\w+)\(\s*['"`]([^'"`]+)['"`]/g;
+
+/** Matches http.get(, http.post(, etc. followed by Uri.parse('...url...') */
+const HTTP_DIRECT_PATTERN =
+  /http\.(\w+)\(\s*\n?\s*Uri\.parse\(\s*['"`]([^'"`]+)['"`]\s*\)/g;
+
+/** Matches http.method(\n  Uri.parse('...') on separate lines */
+const HTTP_MULTILINE_PATTERN =
+  /http\.(\w+)\([^)]*?Uri\.parse\(\s*['"`]([^'"`]+)['"`]\s*\)/gs;
+
+/** Matches _dio.method('/path' or dio.method('/path' */
+const DIO_PATTERN =
+  /(?:_?dio)\.(\w+)\(\s*['"`]([^'"`]+)['"`]/g;
+
+/** Matches ApiClient path strings on separate lines: .get(\n  '/path', */
+const API_CLIENT_MULTILINE_PATTERN =
+  /(?:_?apiClient|_?api_client|_?client)\.(\w+)\(\s*\n\s*['"`]([^'"`]+)['"`]/g;
+
+/** HTTP methods we recognize */
+const VALID_HTTP_METHODS = new Set(['get', 'post', 'put', 'delete', 'patch', 'head', 'options']);
+
+/**
+ * Extract the API path from a URL string that may include base URL prefixes.
+ *
+ * Examples:
+ *   '$baseUrl/tenant/config' → '/tenant/config'
+ *   '${ApiConfig.baseUrl}/admin/tenants' → '/admin/tenants'
+ *   '/ac/students' → '/ac/students'
+ *   '$_baseUrl/subscription/current' → '/subscription/current'
+ */
+function extractApiPath(rawPath: string): string | null {
+  // Already a clean path starting with /
+  if (rawPath.startsWith('/')) {
+    return rawPath;
+  }
+
+  // Strip Dart string interpolation prefixes like $baseUrl, ${ApiConfig.baseUrl}, $_baseUrl, etc.
+  const prefixStripped = rawPath.replace(
+    /^(?:\$\{[^}]+\}|\$[a-zA-Z_][a-zA-Z0-9_]*)/, ''
+  );
+
+  if (prefixStripped.startsWith('/')) {
+    return prefixStripped;
+  }
+
+  // Try to find the first path segment after any URL-like prefix
+  const pathMatch = rawPath.match(/(?:https?:\/\/[^/]+)?(\/.+)/);
+  if (pathMatch) {
+    return pathMatch[1];
+  }
+
+  return null;
+}
+
+/**
+ * Replace Dart string interpolation variables in paths with parameter wildcards.
+ *
+ * Examples:
+ *   '/ac/students/$id' → '/ac/students/{id}'
+ *   '/computer/job-cards/$jobCardId/parts' → '/computer/job-cards/{jobCardId}/parts'
+ *   '/staff/$staffId/dashboard' → '/staff/{staffId}/dashboard'
+ */
+function replaceDartInterpolation(pathStr: string): string {
+  // Replace ${expr} patterns
+  let result = pathStr.replace(/\$\{([^}]+)\}/g, '{$1}');
+  // Replace $variable patterns (simple identifiers after $)
+  result = result.replace(/\$([a-zA-Z_][a-zA-Z0-9_]*)/g, '{$1}');
+  return result;
+}
+
+/**
+ * Scan Flutter code for all HTTP request call sites.
+ *
+ * Identifies three main patterns:
+ * 1. ApiClient/service wrapper calls: `_apiClient.get('/path')`, `apiClient.post('/path')`
+ * 2. Direct http package calls: `http.get(Uri.parse('$baseUrl/path'))`
+ * 3. Dio client calls: `_dio.get('/path')`, `dio.post('/path')`
+ *
+ * @param flutterRoot - Root directory of the Flutter project (e.g., 'Dukan_x/')
+ * @returns Array of CallSite objects with source file, path, method, and line number
+ */
+export function scanCallSites(flutterRoot: string): CallSite[] {
+  const callSites: CallSite[] = [];
+  const libDir = path.join(flutterRoot, 'lib');
+
+  if (!fs.existsSync(libDir)) {
+    console.warn(`[api_mapper] Flutter lib directory not found: ${libDir}`);
+    return callSites;
+  }
+
+  const dartFiles = findDartFiles(libDir);
+
+  for (const filePath of dartFiles) {
+    try {
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const relativePath = path.relative(flutterRoot, filePath).replace(/\\/g, '/');
+      const sites = extractCallSitesFromFile(content, relativePath);
+      callSites.push(...sites);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`[api_mapper] Skipping ${filePath}: read error — ${message}`);
+      continue;
+    }
+  }
+
+  return callSites;
+}
+
+/**
+ * Recursively find all .dart files under a directory.
+ */
+function findDartFiles(dir: string): string[] {
+  const files: string[] = [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      // Skip build, generated, and test directories
+      if (entry.name === '.dart_tool' || entry.name === 'build' || entry.name === '.symlinks') {
+        continue;
+      }
+      files.push(...findDartFiles(fullPath));
+    } else if (entry.name.endsWith('.dart')) {
+      files.push(fullPath);
+    }
+  }
+
+  return files;
+}
+
+/**
+ * Extract HTTP call sites from a single Dart file's content.
+ */
+function extractCallSitesFromFile(content: string, filePath: string): CallSite[] {
+  const sites: CallSite[] = [];
+  const lines = content.split('\n');
+
+  // Pattern 1: ApiClient calls — single-line and multi-line
+  extractWithPattern(content, lines, filePath, API_CLIENT_PATTERN, sites);
+  extractWithPattern(content, lines, filePath, API_CLIENT_MULTILINE_PATTERN, sites);
+
+  // Pattern 2: Direct http package calls
+  extractWithPattern(content, lines, filePath, HTTP_DIRECT_PATTERN, sites);
+  extractWithPattern(content, lines, filePath, HTTP_MULTILINE_PATTERN, sites);
+
+  // Pattern 3: Dio calls
+  extractWithPattern(content, lines, filePath, DIO_PATTERN, sites);
+
+  // Deduplicate by (filePath, lineNumber, normalizedPath)
+  return deduplicateCallSites(sites);
+}
+
+/**
+ * Apply a regex pattern to file content and extract call sites.
+ */
+function extractWithPattern(
+  content: string,
+  lines: string[],
+  filePath: string,
+  pattern: RegExp,
+  results: CallSite[]
+): void {
+  // Reset regex state (global flag)
+  const regex = new RegExp(pattern.source, pattern.flags);
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(content)) !== null) {
+    const method = match[1].toLowerCase();
+    const rawPath = match[2];
+
+    // Only process recognized HTTP methods
+    if (!VALID_HTTP_METHODS.has(method)) continue;
+
+    // Extract clean API path
+    const apiPath = extractApiPath(rawPath);
+    if (!apiPath) continue;
+
+    // Skip non-API paths (tel:, upi:, file:, data:, etc.)
+    if (/^(tel|upi|file|data|mailto|sms|market):/.test(rawPath)) continue;
+
+    // Replace Dart string interpolation with parameter placeholders
+    const pathWithParams = replaceDartInterpolation(apiPath);
+
+    // Calculate line number from match position
+    const lineNumber = getLineNumber(content, match.index);
+
+    results.push({
+      screenFile: filePath,
+      requestPath: pathWithParams,
+      normalizedPath: normalizePath(pathWithParams),
+      httpMethod: method.toUpperCase(),
+      lineNumber,
+    });
+  }
+}
+
+/**
+ * Get line number (1-indexed) from a character offset in a string.
+ */
+function getLineNumber(content: string, offset: number): number {
+  let line = 1;
+  for (let i = 0; i < offset && i < content.length; i++) {
+    if (content[i] === '\n') line++;
+  }
+  return line;
+}
+
+/**
+ * Remove duplicate call sites that may be matched by multiple patterns.
+ * Deduplication key: (screenFile, lineNumber, normalizedPath, httpMethod)
+ */
+function deduplicateCallSites(sites: CallSite[]): CallSite[] {
+  const seen = new Set<string>();
+  const unique: CallSite[] = [];
+
+  for (const site of sites) {
+    const key = `${site.screenFile}:${site.lineNumber}:${site.normalizedPath}:${site.httpMethod}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      unique.push(site);
+    }
+  }
+
+  return unique;
+}

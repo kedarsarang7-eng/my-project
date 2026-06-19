@@ -25,14 +25,14 @@ This implementation plan covers the automated audit and remediation pipeline for
     - _Requirements: 1.1, 1.2, 3.1_
 
 - [ ] 2. Implement Screen Discovery Engine
-  - [-] 2.1 Implement the Screen Discovery Engine scanner (`screen_discovery.dart`)
+  - [x] 2.1 Implement the Screen Discovery Engine scanner (`screen_discovery.dart`)
     - Implement `scan()` method to recursively find all Dart files under `lib/`
     - Implement `classifyFile()` to detect StatelessWidget/StatefulWidget classes where filename or class name contains "screen" or "page" (case-insensitive)
     - Implement `deriveVertical()` to extract vertical from `lib/features/<folder>/` paths, defaulting to "core/general"
     - Exclude files matching naming pattern but lacking valid widget class declarations (log as skipped false-positives)
     - _Requirements: 1.1, 1.2, 1.6_
 
-  - [~] 2.2 Implement mock data detection in Screen Discovery
+  - [-] 2.2 Implement mock data detection in Screen Discovery
     - Implement `detectMockData()` to identify: hardcoded sample data arrays with 2+ literal entries, TODO/placeholder comments indicating fake data, imports from paths containing "mock"/"dummy"/"fake"/"sample", conditional logic returning inline literal data without API calls
     - Return MockDetectionResult with boolean flag and comma-separated list of detected patterns
     - _Requirements: 6.1_
@@ -64,13 +64,13 @@ This implementation plan covers the automated audit and remediation pipeline for
     - **Validates: Requirements 6.1**
 
 - [ ] 3. Implement API Surface Mapper
-  - [-] 3.1 Implement backend route parser (`api_mapper.ts`)
+  - [x] 3.1 Implement backend route parser (`api_mapper.ts`)
     - Implement `parseRoutes()` to parse `serverless.yml` and `template.yaml` extracting HTTP method, path, handler file, and authentication status
     - Handle YAML parse errors gracefully: skip file, log warning with path and error, continue
     - Implement `normalizePath()` to replace path parameters (e.g., `{id}`) with wildcards for matching
     - _Requirements: 2.1, 2.5_
 
-  - [~] 3.2 Implement Flutter HTTP call site scanner
+  - [-] 3.2 Implement Flutter HTTP call site scanner
     - Implement `scanCallSites()` to find all HTTP request call sites in Flutter code (direct HTTP calls, service wrappers, repository methods)
     - Extract request path, HTTP method, source file, and line number for each call site
     - Normalize discovered call site paths using the same normalization as routes
@@ -88,13 +88,13 @@ This implementation plan covers the automated audit and remediation pipeline for
     - **Validates: Requirements 2.2, 2.3, 2.4**
 
 - [ ] 4. Implement Navigation Graph Builder
-  - [-] 4.1 Implement navigation graph construction (`navigation_graph.dart`)
+  - [x] 4.1 Implement navigation graph construction (`navigation_graph.dart`)
     - Implement `buildGraph()` to parse all navigation calls (Navigator.push, Navigator.pushNamed, GoRouter routes, context.go, context.push, named routes) and construct a directed graph
     - Set the app's root route as the reachability root
     - Handle circular navigation routes by breaking cycles at second visit and logging warnings
     - _Requirements: 3.1_
 
-  - [~] 4.2 Implement reachability analysis and broken link detection
+  - [-] 4.2 Implement reachability analysis and broken link detection
     - Implement `findUnreachable()` using BFS/DFS from root to identify screens with no inbound path from any reachable screen (flag as P2)
     - Implement `findBrokenLinks()` to detect route references that don't resolve to registered screens (flag as P1)
     - Implement `toAdjacencyList()` to export graph grouped by vertical entry points
@@ -109,12 +109,12 @@ This implementation plan covers the automated audit and remediation pipeline for
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 6. Implement DynamoDB Access Analyzer
-  - [-] 6.1 Implement DynamoDB operation scanner (`dynamodb_analyzer.ts`)
+  - [x] 6.1 Implement DynamoDB operation scanner (`dynamodb_analyzer.ts`)
     - Implement `scanOperations()` to parse handler files for DynamoDB operations (get, put, query, scan, update, delete) extracting table name, key conditions, filter expressions, handler file, and line number
     - Implement `isDynamicConstruction()` to detect dynamically constructed table names or key conditions that can't be statically resolved (flag as P1)
     - _Requirements: 4.1, 4.5_
 
-  - [~] 6.2 Implement tenant isolation and efficiency checks
+  - [-] 6.2 Implement tenant isolation and efficiency checks
     - Implement `hasTenantIsolation()` to check if partition key or filter expression references tenant identifier matching configurable pattern (default: `tenantId` or `tenant_id`)
     - Flag operations without tenant isolation as P0 security issues
     - Implement `detectInefficientScans()` to flag scan operations where partition key is determinable (P2 performance issue)
@@ -126,7 +126,7 @@ This implementation plan covers the automated audit and remediation pipeline for
     - **Validates: Requirements 4.2, 4.3**
 
 - [ ] 7. Implement Triage Classifier
-  - [~] 7.1 Implement priority classification logic (`triage_classifier.ts`)
+  - [-] 7.1 Implement priority classification logic (`triage_classifier.ts`)
     - Implement `classify()` with priority rules: P0 for tenant leakage, P1 for mock data in production or broken navigation, P2 for missing offline on write screens, P3 for UI inconsistency
     - Implement highest-priority-wins logic when multiple criteria match
     - Default to P3 for issues matching no specific criteria

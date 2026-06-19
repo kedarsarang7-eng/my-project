@@ -473,3 +473,232 @@ describe('parseRoutes — multiple config files', () => {
     expect(routes[1].source).toBe('template.yaml');
   });
 });
+
+
+// ─── scanCallSites Tests ────────────────────────────────────────────────────
+
+import { scanCallSites } from './api_mapper';
+
+describe('scanCallSites', () => {
+  const tmpDir = path.join(__dirname, '__test_tmp_callsites__');
+  const libDir = path.join(tmpDir, 'lib');
+
+  beforeAll(() => {
+    fs.mkdirSync(libDir, { recursive: true });
+  });
+
+  afterAll(() => {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  function writeDartFile(relativePath: string, content: string): void {
+    const fullPath = path.join(tmpDir, relativePath);
+    fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+    fs.writeFileSync(fullPath, content, 'utf-8');
+  }
+
+  it('detects apiClient.get() call sites', () => {
+    writeDartFile('lib/features/test/repo.dart', `
+class TestRepo {
+  final _apiClient = ApiClient();
+
+  Future<void> getItems() async {
+    final response = await _apiClient.get('/items');
+  }
+}
+`);
+
+    const sites = scanCallSites(tmpDir);
+    expect(sites.length).toBeGreaterThanOrEqual(1);
+    const match = sites.find(s => s.requestPath === '/items');
+    expect(match).toBeDefined();
+    expect(match!.httpMethod).toBe('GET');
+    expect(match!.normalizedPath).toBe('/items');
+  });
+
+  it('detects apiClient.post() with path parameters and normalizes them', () => {
+    writeDartFile('lib/features/orders/order_repo.dart', `
+class OrderRepo {
+  Future<void> createOrder(String id) async {
+    final response = await _apiClient.post('/orders/\$id/items');
+  }
+}
+`);
+
+    const sites = scanCallSites(tmpDir);
+    const match = sites.find(s => s.requestPath === '/orders/{id}/items');
+    expect(match).toBeDefined();
+    expect(match!.httpMethod).toBe('POST');
+    expect(match!.normalizedPath).toBe('/orders/{*}/items');
+  });
+
+  it('detects http.get(Uri.parse(...)) pattern', () => {
+    writeDartFile('lib/services/config_service.dart', `
+class ConfigService {
+  Future<void> loadConfig() async {
+    final response = await http.get(Uri.parse('\$baseUrl/tenant/config'));
+  }
+}
+`);
+
+    const sites = scanCallSites(tmpDir);
+    const match = sites.find(s => s.requestPath === '/tenant/config');
+    expect(match).toBeDefined();
+    expect(match!.httpMethod).toBe('GET');
+  });
+
+  it('detects dio.get() call sites', () => {
+    writeDartFile('lib/services/payment_service.dart', `
+class PaymentService {
+  Future<void> getStatus(String billId) async {
+    final response = await _dio.get('/billing/payment/status/\$billId');
+  }
+}
+`);
+
+    const sites = scanCallSites(tmpDir);
+    const match = sites.find(s => s.requestPath === '/billing/payment/status/{billId}');
+    expect(match).toBeDefined();
+    expect(match!.httpMethod).toBe('GET');
+    expect(match!.normalizedPath).toBe('/billing/payment/status/{*}');
+  });
+
+  it('detects http.post(Uri.parse(...)) pattern', () => {
+    writeDartFile('lib/services/device_service.dart', `
+class DeviceService {
+  Future<void> register() async {
+    final response = await http.post(Uri.parse('\$_baseUrl/devices/register'));
+  }
+}
+`);
+
+    const sites = scanCallSites(tmpDir);
+    const match = sites.find(s => s.requestPath === '/devices/register');
+    expect(match).toBeDefined();
+    expect(match!.httpMethod).toBe('POST');
+  });
+
+  it('records correct line numbers', () => {
+    writeDartFile('lib/features/simple/simple_repo.dart', `line1
+line2
+line3
+class Repo {
+  Future<void> fetch() async {
+    final r = await _apiClient.get('/simple/path');
+  }
+}
+`);
+
+    const sites = scanCallSites(tmpDir);
+    const match = sites.find(s => s.requestPath === '/simple/path');
+    expect(match).toBeDefined();
+    expect(match!.lineNumber).toBe(6);
+  });
+
+  it('records correct source file path', () => {
+    writeDartFile('lib/features/billing/billing_repo.dart', `
+class BillingRepo {
+  Future<void> get() async {
+    await _apiClient.get('/billing/invoices');
+  }
+}
+`);
+
+    const sites = scanCallSites(tmpDir);
+    const match = sites.find(s => s.requestPath === '/billing/invoices');
+    expect(match).toBeDefined();
+    expect(match!.screenFile).toBe('lib/features/billing/billing_repo.dart');
+  });
+
+  it('handles multi-line apiClient calls', () => {
+    writeDartFile('lib/features/multi/multi_repo.dart', `
+class MultiRepo {
+  Future<void> list() async {
+    final response = await _apiClient.get(
+      '/multi/items',
+      queryParameters: {},
+    );
+  }
+}
+`);
+
+    const sites = scanCallSites(tmpDir);
+    const match = sites.find(s => s.requestPath === '/multi/items');
+    expect(match).toBeDefined();
+    expect(match!.httpMethod).toBe('GET');
+  });
+
+  it('detects multiple call sites in a single file', () => {
+    writeDartFile('lib/features/crud/crud_repo.dart', `
+class CrudRepo {
+  Future<void> list() async {
+    await _apiClient.get('/crud/items');
+  }
+  Future<void> create(Map data) async {
+    await _apiClient.post('/crud/items');
+  }
+  Future<void> update(String id, Map data) async {
+    await _apiClient.put('/crud/items/\$id');
+  }
+  Future<void> remove(String id) async {
+    await _apiClient.delete('/crud/items/\$id');
+  }
+}
+`);
+
+    const sites = scanCallSites(tmpDir);
+    const crudSites = sites.filter(s => s.requestPath.startsWith('/crud/'));
+    expect(crudSites.length).toBe(4);
+    expect(crudSites.map(s => s.httpMethod).sort()).toEqual(['DELETE', 'GET', 'POST', 'PUT']);
+  });
+
+  it('returns empty array for non-existent flutter root', () => {
+    const sites = scanCallSites('/nonexistent/path');
+    expect(sites).toEqual([]);
+  });
+
+  it('skips non-API URIs (tel:, upi:, etc.)', () => {
+    writeDartFile('lib/screens/contact_screen.dart', `
+class ContactScreen {
+  void call() {
+    final uri = Uri.parse('tel:\${customer.phone}');
+  }
+}
+`);
+
+    const sites = scanCallSites(tmpDir);
+    const telSites = sites.filter(s => s.requestPath.includes('tel'));
+    expect(telSites).toHaveLength(0);
+  });
+
+  it('detects patch HTTP method', () => {
+    writeDartFile('lib/features/patch_test/patch_repo.dart', `
+class PatchRepo {
+  Future<void> update(String id) async {
+    await _apiClient.patch('/resources/\$id/status');
+  }
+}
+`);
+
+    const sites = scanCallSites(tmpDir);
+    const match = sites.find(s => s.requestPath === '/resources/{id}/status');
+    expect(match).toBeDefined();
+    expect(match!.httpMethod).toBe('PATCH');
+  });
+
+  it('handles ${expression} style interpolation', () => {
+    writeDartFile('lib/features/expr/expr_repo.dart', `
+class ExprRepo {
+  Future<void> get(String userId) async {
+    await _apiClient.get('/users/\${widget.userId}/profile');
+  }
+}
+`);
+
+    const sites = scanCallSites(tmpDir);
+    const match = sites.find(s => s.requestPath.includes('/users/'));
+    expect(match).toBeDefined();
+    expect(match!.requestPath).toBe('/users/{widget.userId}/profile');
+    expect(match!.normalizedPath).toBe('/users/{*}/profile');
+  });
+});

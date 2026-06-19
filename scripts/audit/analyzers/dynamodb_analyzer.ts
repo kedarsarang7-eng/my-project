@@ -5,8 +5,10 @@
  * - Operation type (get, put, query, scan, update, delete)
  * - Table name, key conditions, filter expressions
  * - Dynamically constructed table names or keys (P1 audit-incomplete)
+ * - Missing tenant isolation (P0 security issue)
+ * - Inefficient scan operations that could be queries (P2 performance)
  *
- * Requirements: 4.1, 4.5
+ * Requirements: 4.1, 4.2, 4.3, 4.4, 4.5
  */
 
 import * as fs from 'fs';
@@ -459,6 +461,109 @@ function hasDynamicPattern(value: string): boolean {
 
   return false;
 }
+
+// ─── Tenant Isolation & Efficiency Checks (Req 4.2, 4.3, 4.4) ──────────────
+
+/**
+ * Default pattern matching tenant identifier references.
+ * Matches `tenantId` or `tenant_id` (case-insensitive) in key conditions,
+ * filter expressions, or table key attribute names.
+ */
+const DEFAULT_TENANT_PATTERN = /tenant[_]?id/i;
+
+/**
+ * Checks whether a DynamoDB operation has tenant isolation by verifying
+ * that the partition key condition or filter expression references a tenant
+ * identifier matching the configurable pattern.
+ *
+ * Returns true if tenant isolation IS present (operation is safe).
+ * Returns false if no tenant reference is found (flag as P0 security issue).
+ */
+export function hasTenantIsolation(
+  op: DynamoDbOperation,
+  tenantIdPattern: RegExp = DEFAULT_TENANT_PATTERN
+): boolean {
+  // Check key condition for tenant reference
+  if (op.keyCondition && tenantIdPattern.test(op.keyCondition)) {
+    return true;
+  }
+
+  // Check filter expression for tenant reference
+  if (op.filterExpression && tenantIdPattern.test(op.filterExpression)) {
+    return true;
+  }
+
+  // Check table name for tenant-scoped patterns (e.g., partition key embedded in table design)
+  // Operations using key values like `TENANT#${tenantId}` will appear in the keyCondition,
+  // so we also check for common tenant key value patterns
+  if (op.keyCondition) {
+    // Match patterns like TENANT# prefix in key values which imply tenant scoping
+    if (/TENANT#/i.test(op.keyCondition)) {
+      return true;
+    }
+  }
+
+  if (op.filterExpression) {
+    if (/TENANT#/i.test(op.filterExpression)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Detects inefficient scan operations where a query would be more appropriate.
+ *
+ * A scan is flagged as inefficient (returns true) when:
+ * - The operation is a 'scan' AND
+ * - The key condition or filter expression contains partition key patterns that
+ *   suggest the partition key value is determinable (i.e., a query could be used instead)
+ *
+ * Returns true if the scan is inefficient (flag as P2 performance issue).
+ * Returns false if the scan cannot be optimized to a query.
+ */
+export function detectInefficientScans(op: DynamoDbOperation): boolean {
+  // Only applies to scan operations
+  if (op.type !== 'scan') {
+    return false;
+  }
+
+  // If the operation has a key condition expression, it means the partition key
+  // is already known — this should be a query, not a scan
+  if (op.keyCondition && op.keyCondition.trim().length > 0) {
+    return true;
+  }
+
+  // If the filter expression contains partition key equality patterns,
+  // the PK value is determinable and a query would be more efficient
+  if (op.filterExpression) {
+    // Pattern: PK = :value or pk = :value — indicates partition key is known
+    if (/\bPK\s*=\s*:/i.test(op.filterExpression)) {
+      return true;
+    }
+
+    // Pattern: partition_key = :value or partitionKey = :value
+    if (/\bpartition[_]?key\s*=\s*:/i.test(op.filterExpression)) {
+      return true;
+    }
+
+    // Pattern: begins_with(PK, :prefix) — partition key prefix is known
+    if (/begins_with\s*\(\s*PK\s*,/i.test(op.filterExpression)) {
+      return true;
+    }
+
+    // Pattern: tenant-scoped filter that could be a key condition instead
+    // If filtering by tenantId equality, this could be a query with tenant as PK
+    if (/\btenant[_]?id\s*=\s*:/i.test(op.filterExpression)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// ─── Internal Helpers (continued) ───────────────────────────────────────────
 
 /**
  * Checks if a line is an import statement or function declaration

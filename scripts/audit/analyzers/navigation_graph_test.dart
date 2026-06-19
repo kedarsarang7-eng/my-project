@@ -6,6 +6,7 @@ library;
 import 'dart:io';
 
 import 'navigation_graph.dart';
+import '../models/navigation_models.dart';
 
 void main() {
   print('=== NavigationGraphBuilder.buildGraph() Unit Tests ===\n');
@@ -16,6 +17,9 @@ void main() {
   _testCycleDetection();
   _testVerticalDerivation();
   _testEmptyProject();
+  _testFindUnreachable();
+  _testFindBrokenLinks();
+  _testToAdjacencyList();
 
   print('\n✓ All tests passed.');
 }
@@ -294,4 +298,157 @@ void _testEmptyProject() {
   } finally {
     tmpDir.deleteSync(recursive: true);
   }
+}
+
+void _testFindUnreachable() {
+  print('Test: findUnreachable() identifies unreachable screens...');
+
+  final builder = NavigationGraphBuilder();
+
+  // Graph: root → A → B, but C is disconnected (unreachable)
+  final graph = NavigationGraph(
+    edges: {
+      'restaurant/dashboard': {'restaurant/menu_screen'},
+      'restaurant/menu_screen': {'restaurant/order_screen'},
+      'restaurant/order_screen': <String>{},
+      'billing/invoice_screen': <String>{}, // No inbound path from root
+    },
+    rootRoute: 'restaurant/dashboard',
+  );
+
+  final unreachable = builder.findUnreachable(graph);
+
+  assert(unreachable.isNotEmpty, 'Should detect unreachable screens');
+  assert(
+    unreachable.any((u) => u.screenId == 'billing/invoice_screen'),
+    'billing/invoice_screen should be unreachable',
+  );
+  assert(
+    unreachable.every((u) => u.screenId != 'restaurant/dashboard'),
+    'Root should not be unreachable',
+  );
+  assert(
+    unreachable.every((u) => u.screenId != 'restaurant/menu_screen'),
+    'menu_screen should be reachable',
+  );
+  assert(
+    unreachable.every((u) => u.screenId != 'restaurant/order_screen'),
+    'order_screen should be reachable',
+  );
+
+  print('  ✓ Unreachable screens correctly identified');
+  print('  Unreachable: ${unreachable.map((u) => u.screenId).toList()}');
+}
+
+void _testFindBrokenLinks() {
+  print('Test: findBrokenLinks() detects unresolved route references...');
+
+  final builder = NavigationGraphBuilder();
+
+  // Graph: root has edges to valid screens AND unresolved route references
+  final graph = NavigationGraph(
+    edges: {
+      'restaurant/dashboard': {
+        'restaurant/menu_screen',
+        'route:/restaurant/settings', // unresolved route
+        'route:/nonexistent/page', // unresolved route
+      },
+      'restaurant/menu_screen': {
+        'route:/restaurant/categories', // resolves to registered route
+      },
+    },
+    rootRoute: 'restaurant/dashboard',
+  );
+
+  // Registered routes: only /restaurant/categories is registered
+  final registeredRoutes = {'/restaurant/categories'};
+
+  final brokenLinks = builder.findBrokenLinks(graph, registeredRoutes);
+
+  assert(
+    brokenLinks.length == 2,
+    'Should detect 2 broken links, got ${brokenLinks.length}',
+  );
+  assert(
+    brokenLinks.any((b) => b.unresolvedRoute == '/restaurant/settings'),
+    'Should detect /restaurant/settings as broken',
+  );
+  assert(
+    brokenLinks.any((b) => b.unresolvedRoute == '/nonexistent/page'),
+    'Should detect /nonexistent/page as broken',
+  );
+  assert(
+    brokenLinks.every((b) => b.unresolvedRoute != '/restaurant/categories'),
+    '/restaurant/categories is registered and should NOT be broken',
+  );
+
+  print('  ✓ Broken links correctly detected');
+  print('  Broken: ${brokenLinks.map((b) => b.unresolvedRoute).toList()}');
+}
+
+void _testToAdjacencyList() {
+  print('Test: toAdjacencyList() groups by vertical...');
+
+  final builder = NavigationGraphBuilder();
+
+  final graph = NavigationGraph(
+    edges: {
+      'restaurant/dashboard': {
+        'restaurant/menu_screen',
+        'restaurant/order_screen',
+      },
+      'restaurant/menu_screen': {'restaurant/order_screen'},
+      'billing/invoice_screen': {'billing/payment_screen'},
+      'billing/payment_screen': <String>{},
+      'core/settings': <String>{},
+    },
+    rootRoute: 'restaurant/dashboard',
+  );
+
+  final adjacencyList = builder.toAdjacencyList(graph);
+
+  // Should have 3 verticals: restaurant, billing, core/general
+  assert(
+    adjacencyList.containsKey('restaurant'),
+    'Should have restaurant vertical',
+  );
+  assert(adjacencyList.containsKey('billing'), 'Should have billing vertical');
+  assert(
+    adjacencyList.containsKey('core/general'),
+    'Should have core/general vertical',
+  );
+
+  // Verify restaurant screens are grouped correctly
+  assert(
+    adjacencyList['restaurant']!.containsKey('restaurant/dashboard'),
+    'Restaurant should contain dashboard',
+  );
+  assert(
+    adjacencyList['restaurant']!['restaurant/dashboard']!.contains(
+      'restaurant/menu_screen',
+    ),
+    'Dashboard should link to menu_screen',
+  );
+
+  // Verify billing screens
+  assert(
+    adjacencyList['billing']!.containsKey('billing/invoice_screen'),
+    'Billing should contain invoice_screen',
+  );
+
+  // Verify core screens
+  assert(
+    adjacencyList['core/general']!.containsKey('core/settings'),
+    'Core should contain settings',
+  );
+
+  // Verify route: prefixed entries are excluded
+  final allKeys = adjacencyList.values.expand((m) => m.keys).toList();
+  assert(
+    allKeys.every((k) => !k.startsWith('route:')),
+    'Route references should be excluded from adjacency list',
+  );
+
+  print('  ✓ Adjacency list correctly grouped by vertical');
+  print('  Verticals: ${adjacencyList.keys.toList()}');
 }

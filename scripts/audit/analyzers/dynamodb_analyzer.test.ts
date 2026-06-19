@@ -7,7 +7,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { scanOperations, isDynamicConstruction } from './dynamodb_analyzer';
+import { scanOperations, isDynamicConstruction, hasTenantIsolation, detectInefficientScans } from './dynamodb_analyzer';
 import { DynamoDbOperation } from '../types';
 
 // ─── Test Fixtures ──────────────────────────────────────────────────────────
@@ -455,5 +455,238 @@ describe('isDynamicConstruction', () => {
       isDynamic: false,
     };
     expect(isDynamicConstruction(op)).toBe(false);
+  });
+});
+
+
+// ─── hasTenantIsolation() Tests ─────────────────────────────────────────────
+
+describe('hasTenantIsolation', () => {
+  it('should return true when keyCondition contains tenantId', () => {
+    const op: DynamoDbOperation = {
+      type: 'query',
+      tableName: 'main-table',
+      keyCondition: 'PK = :tenantId AND begins_with(SK, :sk)',
+      filterExpression: '',
+      handlerFile: 'handler.ts',
+      lineNumber: 10,
+      isDynamic: false,
+    };
+    expect(hasTenantIsolation(op)).toBe(true);
+  });
+
+  it('should return true when keyCondition contains tenant_id', () => {
+    const op: DynamoDbOperation = {
+      type: 'query',
+      tableName: 'main-table',
+      keyCondition: 'PK = :tenant_id AND SK = :sk',
+      filterExpression: '',
+      handlerFile: 'handler.ts',
+      lineNumber: 10,
+      isDynamic: false,
+    };
+    expect(hasTenantIsolation(op)).toBe(true);
+  });
+
+  it('should return true when filterExpression contains tenantId', () => {
+    const op: DynamoDbOperation = {
+      type: 'scan',
+      tableName: 'products-table',
+      keyCondition: '',
+      filterExpression: 'tenantId = :tid AND status = :active',
+      handlerFile: 'handler.ts',
+      lineNumber: 15,
+      isDynamic: false,
+    };
+    expect(hasTenantIsolation(op)).toBe(true);
+  });
+
+  it('should return true when keyCondition contains TENANT# prefix pattern', () => {
+    const op: DynamoDbOperation = {
+      type: 'query',
+      tableName: 'main-table',
+      keyCondition: 'PK = TENANT#abc123 AND begins_with(SK, ORDER#)',
+      filterExpression: '',
+      handlerFile: 'handler.ts',
+      lineNumber: 20,
+      isDynamic: false,
+    };
+    expect(hasTenantIsolation(op)).toBe(true);
+  });
+
+  it('should return false when no tenant reference exists', () => {
+    const op: DynamoDbOperation = {
+      type: 'query',
+      tableName: 'main-table',
+      keyCondition: 'PK = :pk AND begins_with(SK, :sk)',
+      filterExpression: 'status = :active',
+      handlerFile: 'handler.ts',
+      lineNumber: 25,
+      isDynamic: false,
+    };
+    expect(hasTenantIsolation(op)).toBe(false);
+  });
+
+  it('should return false when both keyCondition and filterExpression are empty', () => {
+    const op: DynamoDbOperation = {
+      type: 'put',
+      tableName: 'main-table',
+      keyCondition: '',
+      filterExpression: '',
+      handlerFile: 'handler.ts',
+      lineNumber: 30,
+      isDynamic: false,
+    };
+    expect(hasTenantIsolation(op)).toBe(false);
+  });
+
+  it('should support custom tenant ID pattern', () => {
+    const op: DynamoDbOperation = {
+      type: 'query',
+      tableName: 'main-table',
+      keyCondition: 'PK = :orgId AND SK = :sk',
+      filterExpression: '',
+      handlerFile: 'handler.ts',
+      lineNumber: 35,
+      isDynamic: false,
+    };
+    // Default pattern should not match orgId
+    expect(hasTenantIsolation(op)).toBe(false);
+    // Custom pattern should match
+    expect(hasTenantIsolation(op, /org[_]?id/i)).toBe(true);
+  });
+
+  it('should be case-insensitive for default pattern', () => {
+    const op: DynamoDbOperation = {
+      type: 'query',
+      tableName: 'main-table',
+      keyCondition: 'PK = :TenantId AND SK = :sk',
+      filterExpression: '',
+      handlerFile: 'handler.ts',
+      lineNumber: 40,
+      isDynamic: false,
+    };
+    expect(hasTenantIsolation(op)).toBe(true);
+  });
+
+  it('should return true when filterExpression has TENANT# prefix', () => {
+    const op: DynamoDbOperation = {
+      type: 'scan',
+      tableName: 'main-table',
+      keyCondition: '',
+      filterExpression: 'begins_with(PK, TENANT#)',
+      handlerFile: 'handler.ts',
+      lineNumber: 45,
+      isDynamic: false,
+    };
+    expect(hasTenantIsolation(op)).toBe(true);
+  });
+});
+
+// ─── detectInefficientScans() Tests ─────────────────────────────────────────
+
+describe('detectInefficientScans', () => {
+  it('should return false for non-scan operations', () => {
+    const op: DynamoDbOperation = {
+      type: 'query',
+      tableName: 'main-table',
+      keyCondition: 'PK = :pk',
+      filterExpression: '',
+      handlerFile: 'handler.ts',
+      lineNumber: 10,
+      isDynamic: false,
+    };
+    expect(detectInefficientScans(op)).toBe(false);
+  });
+
+  it('should return true for scan with a key condition expression', () => {
+    const op: DynamoDbOperation = {
+      type: 'scan',
+      tableName: 'main-table',
+      keyCondition: 'PK = :pk AND begins_with(SK, :sk)',
+      filterExpression: '',
+      handlerFile: 'handler.ts',
+      lineNumber: 15,
+      isDynamic: false,
+    };
+    expect(detectInefficientScans(op)).toBe(true);
+  });
+
+  it('should return true for scan with PK equality in filter expression', () => {
+    const op: DynamoDbOperation = {
+      type: 'scan',
+      tableName: 'products-table',
+      keyCondition: '',
+      filterExpression: 'PK = :pk AND status = :active',
+      handlerFile: 'handler.ts',
+      lineNumber: 20,
+      isDynamic: false,
+    };
+    expect(detectInefficientScans(op)).toBe(true);
+  });
+
+  it('should return true for scan with begins_with(PK, ...) in filter', () => {
+    const op: DynamoDbOperation = {
+      type: 'scan',
+      tableName: 'products-table',
+      keyCondition: '',
+      filterExpression: 'begins_with(PK, :prefix) AND category = :cat',
+      handlerFile: 'handler.ts',
+      lineNumber: 25,
+      isDynamic: false,
+    };
+    expect(detectInefficientScans(op)).toBe(true);
+  });
+
+  it('should return true for scan filtering by tenantId equality', () => {
+    const op: DynamoDbOperation = {
+      type: 'scan',
+      tableName: 'orders-table',
+      keyCondition: '',
+      filterExpression: 'tenantId = :tid AND orderDate > :since',
+      handlerFile: 'handler.ts',
+      lineNumber: 30,
+      isDynamic: false,
+    };
+    expect(detectInefficientScans(op)).toBe(true);
+  });
+
+  it('should return false for scan with only non-key filter attributes', () => {
+    const op: DynamoDbOperation = {
+      type: 'scan',
+      tableName: 'products-table',
+      keyCondition: '',
+      filterExpression: 'status = :active AND category = :cat',
+      handlerFile: 'handler.ts',
+      lineNumber: 35,
+      isDynamic: false,
+    };
+    expect(detectInefficientScans(op)).toBe(false);
+  });
+
+  it('should return false for scan with no key condition or filter', () => {
+    const op: DynamoDbOperation = {
+      type: 'scan',
+      tableName: 'products-table',
+      keyCondition: '',
+      filterExpression: '',
+      handlerFile: 'handler.ts',
+      lineNumber: 40,
+      isDynamic: false,
+    };
+    expect(detectInefficientScans(op)).toBe(false);
+  });
+
+  it('should return true for scan with partition_key in filter', () => {
+    const op: DynamoDbOperation = {
+      type: 'scan',
+      tableName: 'events-table',
+      keyCondition: '',
+      filterExpression: 'partition_key = :val AND eventType = :type',
+      handlerFile: 'handler.ts',
+      lineNumber: 45,
+      isDynamic: false,
+    };
+    expect(detectInefficientScans(op)).toBe(true);
   });
 });
