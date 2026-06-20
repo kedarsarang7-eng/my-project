@@ -47,7 +47,7 @@ Fix the disconnected RBAC-Login integration in DukanX where the fully-implemente
   - Mark task complete when tests are written, run, and passing on unfixed code
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
 
-- [ ] 3. Fix for RBAC-Login Integration
+- [x] 3. Fix for RBAC-Login Integration
 
   - [x] 3.1 Unify UserRole enum across the application
     - Merge the 4-value enum in session_manager.dart (owner, customer, patient, unknown) with the 6-value enum in role_management_service.dart (owner, accountant, manager, cashier, staff, viewer) into a single canonical UserRole enum
@@ -69,7 +69,7 @@ Fix the disconnected RBAC-Login integration in DukanX where the fully-implemente
     - _Preservation: Owner accounts with no business_users record or role=owner continue to get full UserRole.owner access_
     - _Requirements: 2.1, 2.3, 3.1, 3.6_
 
-  - [-] 3.3 Add role/business picker for multi-role users
+  - [x] 3.3 Add role/business picker for multi-role users
     - Add getBusinessUsersForUser(userId) method to RoleManagementService querying all business_users where userId == uid
     - When multiple business_users records exist, store list in session state and expose selection method
     - Create RolePickerScreen widget shown after authentication when multiple roles/businesses available
@@ -80,7 +80,7 @@ Fix the disconnected RBAC-Login integration in DukanX where the fully-implemente
     - _Preservation: Users with single role (including owners) bypass picker automatically_
     - _Requirements: 2.2, 3.1_
 
-  - [ ] 3.4 Update AuthGate to accept staff roles in vendor flow
+  - [x] 3.4 Update AuthGate to accept staff roles in vendor flow
     - Expand switch(role) in AuthGate.build() to route manager, accountant, cashier, staff, viewer through _buildVendorFlow()
     - Maintain existing routing for owner (full access), customer (customer flow), patient (patient flow), unknown (error)
     - Insert role-selection step before vendor flow when user has multiple assignments
@@ -89,7 +89,7 @@ Fix the disconnected RBAC-Login integration in DukanX where the fully-implemente
     - _Preservation: Owner routing → LicenseGuard → ProfessionalOwnerDashboard unchanged; customer/patient flows unchanged_
     - _Requirements: 2.1, 2.3, 3.1, 3.2_
 
-  - [ ] 3.5 Replace sidebar permission check with RolePermissions.hasPermission()
+  - [x] 3.5 Replace sidebar permission check with RolePermissions.hasPermission()
     - In sidebarSectionsProvider, replace stub `if (item.permission == 'owner' && !session.isOwner) return false` with proper permission evaluation
     - Map item.permission string field to the Permission enum
     - Evaluate RolePermissions.hasPermission(session.staffRole, permission) for each menu item
@@ -100,7 +100,7 @@ Fix the disconnected RBAC-Login integration in DukanX where the fully-implemente
     - _Preservation: Owner sees all menu items; FeatureResolver capability gate still applied before RBAC_
     - _Requirements: 2.4, 3.1, 3.5_
 
-  - [ ] 3.6 Connect PermissionGuard to session role provider
+  - [x] 3.6 Connect PermissionGuard to session role provider
     - Create PermissionGuardConnected widget that auto-reads current user role from currentUserRoleProvider
     - Maintain backward compatibility with existing PermissionGuard usage that passes userRole explicitly
     - Ensure guard evaluates RolePermissions.hasPermission(role, requiredPermission) and shows access-denied when not granted
@@ -109,7 +109,7 @@ Fix the disconnected RBAC-Login integration in DukanX where the fully-implemente
     - _Preservation: Existing explicit-userRole usages continue to work_
     - _Requirements: 2.5, 2.6_
 
-  - [ ] 3.7 Add action-level RBAC enforcement for CRUD operations
+  - [x] 3.7 Add action-level RBAC enforcement for CRUD operations
     - Before allowing create, read, update, delete on entities (bills, customers, inventory, reports), consult RbacManager.hasPermission()
     - Show access-denied response when permission not granted for the attempted action
     - Integrate with existing service layer to intercept operations before Firestore writes
@@ -118,7 +118,7 @@ Fix the disconnected RBAC-Login integration in DukanX where the fully-implemente
     - _Preservation: Owner retains all CRUD permissions; existing Firestore write patterns unchanged_
     - _Requirements: 2.6, 3.1, 3.7_
 
-  - [ ] 3.8 Add real-time role change listener
+  - [x] 3.8 Add real-time role change listener
     - Add watchBusinessUser(businessId, userId) stream to RoleManagementService returning Firestore snapshots()
     - Subscribe in SessionManager after role is loaded
     - On role change detected, refresh session permissions and notify listeners (ChangeNotifier)
@@ -128,7 +128,7 @@ Fix the disconnected RBAC-Login integration in DukanX where the fully-implemente
     - _Preservation: Offline cached role still used when offline; listener reconnects when back online_
     - _Requirements: 2.7, 3.6_
 
-  - [ ] 3.9 Verify bug condition exploration test now passes
+  - [x] 3.9 Verify bug condition exploration test now passes
     - **Property 1: Expected Behavior** - Staff Role Loaded and Permissions Enforced
     - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
     - The test from task 1 encodes expected behavior: staff roles loaded into session, AuthGate routes staff to vendor flow, sidebar filters by granular permissions, PermissionGuard connected to session
@@ -136,14 +136,14 @@ Fix the disconnected RBAC-Login integration in DukanX where the fully-implemente
     - **EXPECTED OUTCOME**: Test PASSES (confirms bug is fixed — staff roles are loaded, permissions enforced)
     - _Requirements: 2.1, 2.3, 2.4, 2.5_
 
-  - [ ] 3.10 Verify preservation tests still pass
+  - [x] 3.10 Verify preservation tests still pass
     - **Property 2: Preservation** - Owner and Non-Staff Behavior Unchanged
     - **IMPORTANT**: Re-run the SAME tests from task 2 - do NOT write new tests
     - Run preservation property tests from step 2
     - **EXPECTED OUTCOME**: Tests PASS (confirms no regressions — owner auth, customer-only mode, business-type gates, offline recovery, dev bypass all unchanged)
     - Confirm all tests still pass after fix (no regressions)
 
-- [ ] 4. Checkpoint - Ensure all tests pass
+- [x] 4. Checkpoint - Ensure all tests pass
   - Run full test suite: `flutter test`
   - Verify all property-based tests (bug condition + preservation) pass
   - Verify no regressions in existing test suites
