@@ -286,7 +286,7 @@ centralized business-rule helpers introduced under D3.
       - _Preservation: 3.1, 3.5_
       - _Requirements: 2.16, 2.19, 2.20_
 
-  - [~] 3.3 Verify bug condition exploration test now passes
+  - [ ] 3.3 Verify bug condition exploration test now passes
     - **Property 1: Expected Behavior** — End-to-End Audit Surfaces No Defects
     - **IMPORTANT**: Re-run the SAME audit walk from Task 1 — do NOT write a new test
     - The audit from Task 1 encodes the expected behavior (clauses 2.1..2.16); when every reproduction sub-test passes, every inventory entry is resolved
@@ -294,7 +294,7 @@ centralized business-rule helpers introduced under D3.
     - **EXPECTED OUTCOME**: Test PASSES (confirms every inventory entry is fixed and `isBugCondition(X)` no longer holds for any cataloged X)
     - _Requirements: Expected Behavior Properties from design (2.1..2.16, 2.17, 2.18, 2.19, 2.21)_
 
-  - [~] 3.4 Verify preservation tests still pass
+  - [ ] 3.4 Verify preservation tests still pass
     - **Property 2: Preservation** — Already-Correct Workflows Untouched
     - **IMPORTANT**: Re-run the SAME tests from Task 2 — do NOT write new tests
     - Run the preservation property tests from step 2 plus the unchanged existing test suites across `Dukan_x`, `school_admin_app`, `school_teacher_app`, `school_student_app`
@@ -302,7 +302,7 @@ centralized business-rule helpers introduced under D3.
     - Confirm all tests still pass after fixes (no regressions)
     - _Requirements: 2.20, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
 
-- [~] 4. Checkpoint — Ensure all tests pass
+- [ ] 4. Checkpoint — Ensure all tests pass
   - Run the full test suite across all four apps plus the new audit and preservation suites
   - Confirm the coverage matrix is fully populated (every row Audited / Not-Applicable) and every inventory entry is closed with its reproduction test green
   - Ensure all tests pass; ask the user if questions arise.

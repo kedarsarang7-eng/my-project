@@ -49,7 +49,7 @@ Fix the disconnected RBAC-Login integration in DukanX where the fully-implemente
 
 - [ ] 3. Fix for RBAC-Login Integration
 
-  - [ ] 3.1 Unify UserRole enum across the application
+  - [x] 3.1 Unify UserRole enum across the application
     - Merge the 4-value enum in session_manager.dart (owner, customer, patient, unknown) with the 6-value enum in role_management_service.dart (owner, accountant, manager, cashier, staff, viewer) into a single canonical UserRole enum
     - Create unified enum at a shared location (e.g., lib/core/models/user_role.dart) with all values: owner, manager, accountant, cashier, staff, viewer, customer, patient, unknown
     - Update all imports across session_manager.dart, role_management_service.dart, auth_gate.dart, and related files
@@ -58,7 +58,7 @@ Fix the disconnected RBAC-Login integration in DukanX where the fully-implemente
     - _Preservation: Owner, customer, patient, unknown values remain valid and behave identically_
     - _Requirements: 2.1, 2.3, 3.1_
 
-  - [ ] 3.2 Add staff role resolution to SessionManager._loadUserSession()
+  - [x] 3.2 Add staff role resolution to SessionManager._loadUserSession()
     - After determining user is vendor/owner type, query RoleManagementService.getBusinessUser(businessId, uid) for staff role assignment in business_users collection
     - If business_users record exists with role != owner, set session.staffRole to the granular staff role
     - If business_users record has role = owner OR no record exists, maintain existing owner behavior unchanged
@@ -69,7 +69,7 @@ Fix the disconnected RBAC-Login integration in DukanX where the fully-implemente
     - _Preservation: Owner accounts with no business_users record or role=owner continue to get full UserRole.owner access_
     - _Requirements: 2.1, 2.3, 3.1, 3.6_
 
-  - [ ] 3.3 Add role/business picker for multi-role users
+  - [-] 3.3 Add role/business picker for multi-role users
     - Add getBusinessUsersForUser(userId) method to RoleManagementService querying all business_users where userId == uid
     - When multiple business_users records exist, store list in session state and expose selection method
     - Create RolePickerScreen widget shown after authentication when multiple roles/businesses available
