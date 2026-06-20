@@ -161,7 +161,7 @@ class ComprehensiveResponsiveFixer {
       fixedScreens++;
       print('FIXED: ${filePath.split('/').last}');
 
-    } catch (e, stackTrace) {
+    } catch (e) {
       errorScreens++;
       errors.add('$filePath: $e');
       print('ERROR: ${filePath.split('/').last} - $e');
@@ -258,7 +258,7 @@ class ComprehensiveResponsiveFixer {
         final originalSize = match.group(1);
         return '''style: TextStyle(
                   fontSize: responsiveValue<double>(context,
-                    mobile: ${int.parse(originalSize!) - 2},
+                    mobile: ${int.parse(originalSize) - 2},
                     tablet: ${int.parse(originalSize) - 1},
                     desktop: ${int.parse(originalSize)}.0,  // PRESERVED
                   ),

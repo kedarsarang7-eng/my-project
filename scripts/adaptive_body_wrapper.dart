@@ -72,7 +72,7 @@ class AdaptiveBodyWrapper {
       wrappedScreens++;
       print('WRAPPED: ${filePath.split(Platform.pathSeparator).last}');
 
-    } catch (e, stackTrace) {
+    } catch (e) {
       errorScreens++;
       errors.add('$filePath: $e');
       print('ERROR: ${filePath.split(Platform.pathSeparator).last} - $e');

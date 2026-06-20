@@ -17,16 +17,15 @@ class InStoreApiService {
   final Ref _ref;
   final String _baseUrl;
 
-  InStoreApiService(this._ref)
-      : _baseUrl = AppConfig.apiBaseUrlStatic;
+  InStoreApiService(this._ref) : _baseUrl = AppConfig.apiBaseUrlStatic;
 
   String get _token =>
       _ref.read(customerSessionProvider).valueOrNull?.accessToken ?? '';
 
   Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $_token',
-      };
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $_token',
+  };
 
   String _url(String path) => '$_baseUrl/v1$path';
 
@@ -97,8 +96,9 @@ class InStoreApiService {
     String barcode,
     String storeId,
   ) async {
-    final uri = Uri.parse(_url('/in-store/products/barcode/$barcode'))
-        .replace(queryParameters: {'storeId': storeId});
+    final uri = Uri.parse(
+      _url('/in-store/products/barcode/$barcode'),
+    ).replace(queryParameters: {'storeId': storeId});
     final res = await http.get(uri, headers: _headers);
     _assertSuccess(res);
     return ScannedProduct.fromJson(_data(res));
@@ -126,6 +126,21 @@ class InStoreApiService {
     return _data(res)['exitQR'] as String;
   }
 
+  // ── Staff Call ──────────────────────────────────────────────────────────────
+
+  /// Sends a staff assistance request for the given store.
+  /// POST /stores/{storeId}/staff-call with body {"reason": "..."}
+  Future<void> callStaff(String storeId, String reason) async {
+    final res = await http
+        .post(
+          Uri.parse(_url('/stores/$storeId/staff-call')),
+          headers: _headers,
+          body: jsonEncode({'reason': reason}),
+        )
+        .timeout(const Duration(seconds: 10));
+    _assertSuccess(res);
+  }
+
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   Map<String, dynamic> _data(http.Response res) {
@@ -142,7 +157,8 @@ class InStoreApiService {
       final err = body?['error'] as Map<String, dynamic>?;
       throw InStoreApiException(
         code: err?['code'] as String? ?? 'HTTP_${res.statusCode}',
-        message: err?['message'] as String? ??
+        message:
+            err?['message'] as String? ??
             'Request failed with status ${res.statusCode}',
         statusCode: res.statusCode,
         details: err?['details'],
@@ -165,8 +181,8 @@ class InStoreApiException implements Exception {
   });
 
   bool get isNotFound => statusCode == 404;
-  bool get isOutOfStock => code == 'BAD_REQUEST' &&
-      message.toLowerCase().contains('stock');
+  bool get isOutOfStock =>
+      code == 'BAD_REQUEST' && message.toLowerCase().contains('stock');
 
   @override
   String toString() => 'InStoreApiException[$code]: $message';

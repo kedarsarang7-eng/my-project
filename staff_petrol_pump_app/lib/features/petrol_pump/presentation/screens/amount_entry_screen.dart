@@ -10,7 +10,7 @@ import '../../theme/fuelpos_theme.dart';
 import '../../widgets/sidebar_nav_widget.dart';
 
 /// Amount Entry Screen
-/// 
+///
 /// Staff enters the payment amount here before generating QR code.
 /// Features:
 /// - Numeric keypad input
@@ -35,6 +35,18 @@ class _AmountEntryScreenState extends ConsumerState<AmountEntryScreen> {
   final List<double> _quickAmounts = [100, 200, 500, 1000];
 
   @override
+  void initState() {
+    super.initState();
+    // Pre-fill amount from query parameter (e.g., on retry from payment failed)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final amount = GoRouterState.of(context).uri.queryParameters['amount'];
+      if (amount != null && amount.isNotEmpty) {
+        _amountController.text = amount;
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _amountController.dispose();
     super.dispose();
@@ -49,7 +61,7 @@ class _AmountEntryScreenState extends ConsumerState<AmountEntryScreen> {
 
   void _validateAndGenerate() async {
     final amountText = _amountController.text.trim();
-    
+
     // Validation
     if (amountText.isEmpty) {
       setState(() => _errorText = 'Please enter an amount');
@@ -79,13 +91,14 @@ class _AmountEntryScreenState extends ConsumerState<AmountEntryScreen> {
 
     // Generate QR
     final description = _selectedFuelType != null
-        ? 'Fuel: $_selectedFuelType' + (_vehicleNumber != null ? ' | Vehicle: $_vehicleNumber' : '')
+        ? 'Fuel: $_selectedFuelType' +
+            (_vehicleNumber != null ? ' | Vehicle: $_vehicleNumber' : '')
         : (_vehicleNumber != null ? 'Vehicle: $_vehicleNumber' : null);
 
     await ref.read(qrPaymentProvider.notifier).generateQR(
-      amountRupees: amount,
-      description: description,
-    );
+          amountRupees: amount,
+          description: description,
+        );
 
     if (!mounted) return;
 
@@ -113,7 +126,7 @@ class _AmountEntryScreenState extends ConsumerState<AmountEntryScreen> {
   String get _formattedAmount {
     final text = _amountController.text.trim();
     if (text.isEmpty) return '₹0.00';
-    
+
     final amount = double.tryParse(text);
     if (amount == null) return '₹0.00';
 
@@ -265,10 +278,12 @@ class _AmountEntryScreenState extends ConsumerState<AmountEntryScreen> {
                                       color: FuelPOSTheme.errorRed,
                                     ),
                                   ),
-                                  onChanged: (_) => setState(() => _errorText = null),
+                                  onChanged: (_) =>
+                                      setState(() => _errorText = null),
                                   onSubmitted: (_) => _validateAndGenerate(),
                                   inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'^\d*\.?\d{0,2}')),
                                   ],
                                 ),
                                 const SizedBox(height: 16),
@@ -287,7 +302,8 @@ class _AmountEntryScreenState extends ConsumerState<AmountEntryScreen> {
                                         ),
                                       ),
                                       backgroundColor: FuelPOSTheme.cardDark,
-                                      side: BorderSide(color: FuelPOSTheme.borderDark),
+                                      side: BorderSide(
+                                          color: FuelPOSTheme.borderDark),
                                       onPressed: () => _onQuickAmount(amount),
                                     );
                                   }).toList(),
@@ -300,7 +316,8 @@ class _AmountEntryScreenState extends ConsumerState<AmountEntryScreen> {
 
                                 // Optional vehicle number
                                 TextField(
-                                  onChanged: (value) => _vehicleNumber = value.isEmpty ? null : value,
+                                  onChanged: (value) => _vehicleNumber =
+                                      value.isEmpty ? null : value,
                                   style: const TextStyle(
                                     color: FuelPOSTheme.textPrimary,
                                   ),
@@ -333,7 +350,9 @@ class _AmountEntryScreenState extends ConsumerState<AmountEntryScreen> {
                                 SizedBox(
                                   height: 56,
                                   child: ElevatedButton.icon(
-                                    onPressed: _isGenerating ? null : _validateAndGenerate,
+                                    onPressed: _isGenerating
+                                        ? null
+                                        : _validateAndGenerate,
                                     icon: _isGenerating
                                         ? const SizedBox(
                                             width: 20,
@@ -345,11 +364,14 @@ class _AmountEntryScreenState extends ConsumerState<AmountEntryScreen> {
                                           )
                                         : const Icon(Icons.qr_code),
                                     label: Text(
-                                      _isGenerating ? 'Generating...' : 'Generate QR Code',
+                                      _isGenerating
+                                          ? 'Generating...'
+                                          : 'Generate QR Code',
                                       style: const TextStyle(fontSize: 18),
                                     ),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: FuelPOSTheme.primaryGreen,
+                                      backgroundColor:
+                                          FuelPOSTheme.primaryGreen,
                                       foregroundColor: Colors.white,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),

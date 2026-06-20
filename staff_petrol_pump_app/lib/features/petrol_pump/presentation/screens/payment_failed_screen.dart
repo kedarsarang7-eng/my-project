@@ -7,7 +7,7 @@ import '../../providers/qr_payment_provider.dart';
 import '../../theme/fuelpos_theme.dart';
 
 /// Payment Failed Screen
-/// 
+///
 /// Shows when payment fails or is cancelled with:
 /// - Error indication
 /// - Reason for failure
@@ -193,14 +193,13 @@ class PaymentFailedScreen extends ConsumerWidget {
   void _onRetry(BuildContext context, WidgetRef ref) {
     // Keep the same amount but generate new QR
     final previousAmount = ref.read(qrPaymentProvider).qrResponse?.amountRupees;
-    
+
     // Reset state
     ref.read(qrPaymentProvider.notifier).reset();
-    
+
     // Navigate back to amount entry with previous amount
     if (previousAmount != null) {
-      // TODO: Pass amount back to pre-fill
-      context.go('/qr/entry');
+      context.go('/qr/entry?amount=$previousAmount');
     } else {
       context.go('/qr/entry');
     }

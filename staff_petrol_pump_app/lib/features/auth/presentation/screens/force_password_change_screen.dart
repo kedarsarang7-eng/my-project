@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../providers/auth_provider.dart';
 
 /// Force Password Change Screen
-/// 
+///
 /// This screen is shown when a staff member logs in for the first time
 /// with a temporary password. They must set a new password before
 /// accessing the app.
@@ -19,14 +20,16 @@ class ForcePasswordChangeScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ForcePasswordChangeScreen> createState() => _ForcePasswordChangeScreenState();
+  ConsumerState<ForcePasswordChangeScreen> createState() =>
+      _ForcePasswordChangeScreenState();
 }
 
-class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeScreen> {
+class _ForcePasswordChangeScreenState
+    extends ConsumerState<ForcePasswordChangeScreen> {
   final _formKey = GlobalKey<FormState>();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
@@ -64,8 +67,11 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
   }
 
   bool get _isPasswordValid {
-    return _hasMinLength && _hasUppercase && _hasLowercase && 
-           _hasNumber && _hasSpecialChar;
+    return _hasMinLength &&
+        _hasUppercase &&
+        _hasLowercase &&
+        _hasNumber &&
+        _hasSpecialChar;
   }
 
   @override
@@ -78,7 +84,7 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
           child: Column(
             children: [
               const SizedBox(height: 40),
-              
+
               // Logo/Icon
               Container(
                 padding: const EdgeInsets.all(20),
@@ -93,7 +99,7 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
                 ),
               ),
               const SizedBox(height: 24),
-              
+
               // Title
               Text(
                 'Set New Password',
@@ -104,7 +110,7 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
                 ),
               ),
               const SizedBox(height: 8),
-              
+
               // Subtitle
               Text(
                 'This is your first login. Please set a secure password to continue.',
@@ -116,7 +122,7 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
                 ),
               ),
               const SizedBox(height: 32),
-              
+
               // Form Card
               Container(
                 decoration: BoxDecoration(
@@ -144,7 +150,8 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
                           hint: 'Enter new password',
                           obscureText: _obscureNewPassword,
                           onToggleVisibility: () {
-                            setState(() => _obscureNewPassword = !_obscureNewPassword);
+                            setState(() =>
+                                _obscureNewPassword = !_obscureNewPassword);
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
@@ -157,7 +164,7 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
                           },
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // Confirm Password Field
                         _buildPasswordField(
                           controller: _confirmPasswordController,
@@ -165,7 +172,8 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
                           hint: 'Re-enter new password',
                           obscureText: _obscureConfirmPassword,
                           onToggleVisibility: () {
-                            setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
+                            setState(() => _obscureConfirmPassword =
+                                !_obscureConfirmPassword);
                           },
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
@@ -178,11 +186,11 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
                           },
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // Password Strength Indicator
                         _buildPasswordStrengthIndicator(),
                         const SizedBox(height: 24),
-                        
+
                         // Error Message
                         if (_errorMessage != null) ...[
                           Container(
@@ -193,10 +201,8 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
                             ),
                             child: Row(
                               children: [
-                                Icon(Icons.error_outline, 
-                                  color: AppColors.errorRed, 
-                                  size: 20
-                                ),
+                                Icon(Icons.error_outline,
+                                    color: AppColors.errorRed, size: 20),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
@@ -212,14 +218,14 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
                           ),
                           const SizedBox(height: 16),
                         ],
-                        
+
                         // Submit Button
                         SizedBox(
                           width: double.infinity,
                           height: 50,
                           child: ElevatedButton(
-                            onPressed: _isLoading || !_isPasswordValid 
-                                ? null 
+                            onPressed: _isLoading || !_isPasswordValid
+                                ? null
                                 : _changePassword,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primaryNavy,
@@ -253,9 +259,9 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Help Text
               GestureDetector(
                 onTap: () => _showContactAdminDialog(),
@@ -329,7 +335,8 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: AppColors.errorRed),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           ),
         ),
       ],
@@ -359,7 +366,8 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
           _buildRequirementItem('One uppercase letter (A-Z)', _hasUppercase),
           _buildRequirementItem('One lowercase letter (a-z)', _hasLowercase),
           _buildRequirementItem('One number (0-9)', _hasNumber),
-          _buildRequirementItem('One special character (!@#\$%^&*)', _hasSpecialChar),
+          _buildRequirementItem(
+              'One special character (!@#\$%^&*)', _hasSpecialChar),
         ],
       ),
     );
@@ -423,14 +431,21 @@ class _ForcePasswordChangeScreenState extends ConsumerState<ForcePasswordChangeS
     });
 
     try {
-      // TODO: Implement completeNewPassword method in AuthNotifier
-      // For now, just simulate success
-      await Future.delayed(const Duration(seconds: 1));
-      final success = true;
+      final success =
+          await ref.read(authNotifierProvider.notifier).completeNewPassword(
+                staffId: widget.staffId,
+                temporaryPassword: widget.temporaryPassword,
+                newPassword: _newPasswordController.text,
+              );
 
       if (success && mounted) {
-        // Navigate to home screen
         Navigator.of(context).pushReplacementNamed('/home');
+      } else if (mounted) {
+        final authState = ref.read(authNotifierProvider);
+        setState(() {
+          _errorMessage = authState.errorMessage ??
+              'Password change failed. Please try again.';
+        });
       }
     } catch (e) {
       setState(() {

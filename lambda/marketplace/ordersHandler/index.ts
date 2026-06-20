@@ -31,7 +31,8 @@ import {
 import { 
   authorizeCustomerForBusiness, 
   authorizeBusiness,
-  validateBusinessCategory 
+  validateBusinessCategory,
+  validateCustomerToken
 } from '../../shared/auth';
 import { Errors } from '../../shared/errors';
 import { success, error, getPaginationParams, createMeta } from '../../shared/response';
@@ -113,7 +114,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
 // ---------- PLACE ORDER ----------
 
 async function handlePlaceOrder(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const { customerClaims, businessId } = authorizeCustomerForBusiness(event);
+  const { customerClaims, businessId } = await authorizeCustomerForBusiness(event);
   const customerId = customerClaims.sub;
 
   // Validate customer is connected
@@ -276,7 +277,7 @@ async function handlePlaceOrder(event: APIGatewayProxyEventV2): Promise<APIGatew
 // ---------- LIST BUSINESS ORDERS ----------
 
 async function handleListBusinessOrders(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const claims = authorizeBusiness(event);
+  const claims = await authorizeBusiness(event);
   const businessId = claims.businessId;
 
   const pagination = getPaginationParams(event);
@@ -340,12 +341,12 @@ async function handleGetOrder(event: APIGatewayProxyEventV2): Promise<APIGateway
   // Try customer auth first
   let customerId: string | undefined;
   try {
-    const { customerClaims } = authorizeCustomerForBusiness(event);
+    const { customerClaims } = await authorizeCustomerForBusiness(event);
     customerId = customerClaims.sub;
   } catch {
     // Try business auth
     try {
-      const claims = authorizeBusiness(event);
+      const claims = await authorizeBusiness(event);
       if (claims.businessId !== businessId) {
         throw Errors.businessMismatch(claims.businessId, businessId);
       }
@@ -388,7 +389,7 @@ async function handleGetOrder(event: APIGatewayProxyEventV2): Promise<APIGateway
 // ---------- UPDATE ORDER STATUS ----------
 
 async function handleUpdateStatus(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const claims = authorizeBusiness(event);
+  const claims = await authorizeBusiness(event);
   const businessId = claims.businessId;
   const orderId = event.pathParameters?.orderId;
 
@@ -490,7 +491,7 @@ async function handleUpdateStatus(event: APIGatewayProxyEventV2): Promise<APIGat
 // ---------- CANCEL ORDER ----------
 
 async function handleCancelOrder(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const { customerClaims, businessId } = authorizeCustomerForBusiness(event);
+  const { customerClaims, businessId } = await authorizeCustomerForBusiness(event);
   const customerId = customerClaims.sub;
   const orderId = event.pathParameters?.orderId;
 
@@ -554,15 +555,8 @@ async function handleCancelOrder(event: APIGatewayProxyEventV2): Promise<APIGate
 // ---------- CUSTOMER ORDER HISTORY ----------
 
 async function handleCustomerOrderHistory(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  // Extract customer token from Authorization header
-  const authHeader = event.headers?.authorization || event.headers?.Authorization;
-  if (!authHeader) {
-    throw Errors.unauthorized();
-  }
-
-  const token = authHeader.split(' ')[1];
-  const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-  const customerId = payload.sub;
+  const customerClaims = await validateCustomerToken(event);
+  const customerId = customerClaims.sub;
 
   const pagination = getPaginationParams(event);
   const status = event.queryStringParameters?.status as OrderStatus | undefined;

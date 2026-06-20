@@ -79,7 +79,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
 
 async function handleConnect(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
   // Authorize customer and extract businessId from path
-  const { customerClaims, businessId } = authorizeCustomerForBusiness(event);
+  const { customerClaims, businessId } = await authorizeCustomerForBusiness(event);
   const customerId = customerClaims.sub;
 
   // Parse and validate body
@@ -197,7 +197,7 @@ async function handleGetCategories(event: APIGatewayProxyEventV2): Promise<APIGa
 // ---------- GET CONNECTION STATUS ----------
 
 async function handleGetConnectionStatus(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const { customerClaims, businessId } = authorizeCustomerForBusiness(event);
+  const { customerClaims, businessId } = await authorizeCustomerForBusiness(event);
   const customerId = customerClaims.sub;
 
   const connection = await getItem<CustomerConnection>(

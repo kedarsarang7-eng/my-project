@@ -32,7 +32,7 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
 
 ## Tasks
 
-- [ ] 1. Write bug condition exploration test (establish fresh categorized baseline)
+- [x] 1. Write bug condition exploration test (establish fresh categorized baseline)
   - **Property 1: Bug Condition** - In-Scope Diagnostics Are Eliminated With Behavior Preserved
   - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bug exists (the fresh baseline IS the counterexample set)
   - **DO NOT attempt to fix the test or the code when it fails** - the failure is the expected, correct outcome at this stage
@@ -49,7 +49,7 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
   - Mark task complete when the test/harness is written, run, the failure is documented, and the categorized baseline + prioritized worklist (errors → warnings → info) are recorded
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-- [ ] 2. Write preservation property tests (BEFORE implementing fix)
+- [x] 2. Write preservation property tests (BEFORE implementing fix)
   - **Property 2: Preservation** - Already-Clean Files And Non-Analyze Behavior Are Untouched
   - **IMPORTANT**: Follow observation-first methodology - observe behavior on UNFIXED code for non-buggy inputs, then assert it
   - Observe behavior on UNFIXED code for non-bug-condition cases (files where `isBugCondition(F)` is false, plus all observable behavior not tied to clearing a diagnostic)
@@ -63,9 +63,9 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
   - Mark task complete when tests are written/confirmed, run, and passing on unfixed code, and the build (`flutter build` desktop target) and `flutter test` reference outcomes are recorded for later comparison
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12_
 
-- [ ] 3. Fix the flutter analyze in-scope diagnostics in Dukan_x (drive in-scope count to zero, behavior preserved)
+- [x] 3. Fix the flutter analyze in-scope diagnostics in Dukan_x (drive in-scope count to zero, behavior preserved)
 
-  - [ ] 3.1 Fix Category 1 - error-severity diagnostics (highest priority, highest risk)
+  - [x] 3.1 Fix Category 1 - error-severity diagnostics (highest priority, highest risk)
     - For each file the baseline lists with `error` severity, apply the minimum change required to satisfy the analyzer while preserving runtime behavior
     - Undefined identifiers → restore/import the correct symbol; type mismatches → narrowest correct typing; missing required args → supply the value the code already intended; invalid overrides → correct the signature to match
     - Migrate deprecated-API removals that surface as errors (symbol removed in an upgraded dependency) to the documented replacement API with equivalent semantics
@@ -76,7 +76,7 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
     - _Preservation: Preservation Requirements from design (clauses 3.1-3.12), validated against goldens + existing tests after each batch_
     - _Requirements: 2.1, 2.2, 2.5, 2.6_
 
-  - [ ] 3.2 Fix Category 2 - `empty_catches` warnings
+  - [x] 3.2 Fix Category 2 - `empty_catches` warnings
     - Resolve by adding an explicit handling comment or a logged handler that preserves the original control flow
     - Do NOT add a rethrow or otherwise change which exceptions propagate (clause 2.3)
     - Re-run `flutter analyze`, build, and preservation + existing tests after the batch (guard against `d7_io_try_catch` golden mismatch)
@@ -85,7 +85,7 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
     - _Preservation: Preservation Requirements from design (clauses 3.3, 3.5)_
     - _Requirements: 2.1, 2.3, 2.6_
 
-  - [ ] 3.3 Fix Category 3 - `close_sinks` / `cancel_subscriptions` warnings
+  - [x] 3.3 Fix Category 3 - `close_sinks` / `cancel_subscriptions` warnings
     - Add correctly-scoped `close()` / `cancel()` calls in the owning `dispose()` (or equivalent lifecycle hook) so the sink/subscription is released without changing emission order, timing, or who-receives-what (clause 2.3)
     - Validate against the stream/provider preservation fingerprints (D5/D6) after the batch
     - _Bug_Condition: isBugCondition(F) from design - F has >= 1 in-scope `close_sinks`/`cancel_subscriptions` warning_
@@ -93,7 +93,7 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
     - _Preservation: Preservation Requirements from design (clause 3.3) - state-transition sequences and listener order preserved_
     - _Requirements: 2.1, 2.3, 2.6_
 
-  - [ ] 3.4 Fix Category 4 - dead code / unused elements (warning)
+  - [x] 3.4 Fix Category 4 - dead code / unused elements (warning)
     - Remove only when the element is provably unreferenced across the entire project, including reflective and string-based lookups and conditional compilation (clause 2.3)
     - When in doubt, prefer leaving the element and suppressing with a documented justification over risking a behavior change
     - _Bug_Condition: isBugCondition(F) from design - F has >= 1 in-scope dead-code/unused-element warning_
@@ -101,7 +101,7 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
     - _Preservation: Preservation Requirements from design (clauses 3.3, 3.4, 3.10)_
     - _Requirements: 2.1, 2.3, 2.6_
 
-  - [ ] 3.5 Fix Category 5 - unused imports (info)
+  - [x] 3.5 Fix Category 5 - unused imports (info)
     - Remove imports only when the project compiles and behaves identically without them (clause 2.4)
     - Watch for imports used only for side effects or re-export; leave those in place
     - _Bug_Condition: isBugCondition(F) from design - F has >= 1 in-scope unused-import diagnostic_
@@ -109,7 +109,7 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
     - _Preservation: Preservation Requirements from design (clause 3.7)_
     - _Requirements: 2.1, 2.4, 2.6_
 
-  - [ ] 3.6 Fix Category 6 - `avoid_unnecessary_containers` (info)
+  - [x] 3.6 Fix Category 6 - `avoid_unnecessary_containers` (info)
     - Replace `Container(child: X)` with `X` (or `SizedBox`) only where the `Container` carried no decoration, color, padding, margin, constraints, alignment, or transform - i.e., it produced no visual effect (clause 2.4)
     - Validate UI is pixel-stable via golden/widget tests after the batch (clause 3.2)
     - _Bug_Condition: isBugCondition(F) from design - F has >= 1 in-scope `avoid_unnecessary_containers` diagnostic_
@@ -117,7 +117,7 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
     - _Preservation: Preservation Requirements from design (clause 3.2)_
     - _Requirements: 2.1, 2.4, 2.6_
 
-  - [ ] 3.7 Fix Category 7 - `sized_box_for_whitespace` (info)
+  - [x] 3.7 Fix Category 7 - `sized_box_for_whitespace` (info)
     - Replace whitespace-only `Container(width/height: ...)` with the visually-identical `SizedBox` (clause 2.4)
     - Validate UI is pixel-stable via golden/widget tests after the batch (clause 3.2)
     - _Bug_Condition: isBugCondition(F) from design - F has >= 1 in-scope `sized_box_for_whitespace` diagnostic_
@@ -125,14 +125,14 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
     - _Preservation: Preservation Requirements from design (clause 3.2)_
     - _Requirements: 2.1, 2.4, 2.6_
 
-  - [ ] 3.8 Fix Category 8 - `use_key_in_widget_constructors` (info)
+  - [x] 3.8 Fix Category 8 - `use_key_in_widget_constructors` (info)
     - Add `Key? key` / `super.key` to public widget constructors without changing the default (key stays null by default), so existing call sites and rebuild behavior are unaffected (clause 2.4)
     - _Bug_Condition: isBugCondition(F) from design - F has >= 1 in-scope `use_key_in_widget_constructors` diagnostic_
     - _Expected_Behavior: expectedBehavior(F') from design - zero in-scope diagnostics, default key behavior unchanged_
     - _Preservation: Preservation Requirements from design (clauses 3.1, 3.2)_
     - _Requirements: 2.1, 2.4, 2.6_
 
-  - [ ] 3.9 Resolve residual diagnostics via documented, justified suppression (Category 9, last resort)
+  - [x] 3.9 Resolve residual diagnostics via documented, justified suppression (Category 9, last resort)
     - For any residual diagnostic that cannot be safely fixed without risking behavior, add a documented, justified suppression (file-level `// ignore_for_file:` with rationale, or a justified `analysis_options.yaml` entry)
     - Each suppression MUST carry a rationale; the goal remains zero in-scope issues, so suppressions are the explicitly-justified exception, not the default (clause 2.1)
     - Keep all edits scoped exclusively to `Dukan_x/`; never touch sibling projects or generated/build/tool-output files (clauses 3.11, 3.12)
@@ -141,7 +141,7 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
     - _Preservation: Preservation Requirements from design (clauses 3.7, 3.11, 3.12)_
     - _Requirements: 2.1_
 
-  - [ ] 3.10 Verify bug condition exploration test now passes
+  - [x] 3.10 Verify bug condition exploration test now passes
     - **Property 1: Expected Behavior** - In-Scope Diagnostics Are Eliminated With Behavior Preserved
     - **IMPORTANT**: Re-run the SAME test/harness from task 1 - do NOT write a new test
     - The test from task 1 encodes the expected behavior (zero in-scope diagnostics for every file)
@@ -150,7 +150,7 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
     - **EXPECTED OUTCOME**: Test PASSES (in-scope count is zero, or only documented/justified suppressions remain - confirms the bug is fixed)
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-  - [ ] 3.11 Verify preservation tests still pass
+  - [x] 3.11 Verify preservation tests still pass
     - **Property 2: Preservation** - Already-Clean Files And Non-Analyze Behavior Are Untouched
     - **IMPORTANT**: Re-run the SAME tests from task 2 - do NOT write new tests
     - Run the preservation property tests from step 2 (`test/preservation/preservation_property_test.dart`, golden fingerprints, `test/core/api/api_client_idempotency_test.dart`, and the clean-file content-digest assertion)
@@ -158,7 +158,7 @@ Every command and edit is scoped exclusively to `Dukan_x/`. Sibling projects
     - Confirm all tests still pass after the fix (no regressions); treat any golden mismatch as a preservation regression to investigate before proceeding
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12_
 
-- [ ] 4. Checkpoint - Ensure all tests pass
+- [x] 4. Checkpoint - Ensure all tests pass
   - Run `flutter analyze` scoped to `Dukan_x` one final time and confirm the in-scope count is zero (or only documented, justified suppressions) (clauses 2.1, 2.6)
   - Run `flutter build` for the configured desktop target and confirm a clean compile (clause 2.6)
   - Run the full `flutter test` suite (unit, widget, golden, integration, and property-based suites) and confirm identical pass/fail outcomes with no test removed or weakened (clauses 2.6, 3.8)

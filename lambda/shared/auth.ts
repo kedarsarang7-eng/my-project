@@ -4,8 +4,16 @@
 // ============================================================
 
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { CognitoJwtVerifier } from 'aws-jwt-verify/cognito-verifier';
 import { Errors } from './errors';
 import { BusinessTokenClaims, CustomerTokenClaims, TokenClaims } from './types';
+
+// Initialize the Cognito JWT Verifier
+const verifier = CognitoJwtVerifier.create({
+  userPoolId: process.env.COGNITO_USER_POOL_ID || 'ap-south-1_mockpool',
+  tokenUse: 'access',
+  clientId: null, // Allow any client ID
+});
 
 // ---------- TOKEN EXTRACTION ----------
 
@@ -24,15 +32,20 @@ export function extractToken(event: APIGatewayProxyEventV2): string {
   return parts[1];
 }
 
-// ---------- TOKEN VALIDATION (Simplified - real implementation uses Cognito JWKS) ----------
+// ---------- TOKEN VALIDATION (Cognito JWKS verified) ----------
 
-export function validateBusinessToken(event: APIGatewayProxyEventV2): BusinessTokenClaims {
+export async function validateBusinessToken(event: APIGatewayProxyEventV2): Promise<BusinessTokenClaims> {
   const token = extractToken(event);
   
-  // In production, verify JWT signature against Cognito JWKS
-  // For now, decode and validate structure
   try {
-    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    let payload: any;
+    if (process.env.NODE_ENV === 'test' || !process.env.COGNITO_USER_POOL_ID || process.env.COGNITO_USER_POOL_ID.startsWith('mock')) {
+      // Decode only in testing/mock environments
+      payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    } else {
+      // Production: verify signature using JWKS
+      payload = await verifier.verify(token);
+    }
     
     // Validate required fields
     if (!payload.sub || !payload.businessId) {
@@ -53,15 +66,22 @@ export function validateBusinessToken(event: APIGatewayProxyEventV2): BusinessTo
     };
   } catch (err) {
     if (err instanceof Error && err.name === 'AppError') throw err;
-    throw Errors.unauthorized('Invalid token format');
+    throw Errors.unauthorized(err instanceof Error ? err.message : 'Invalid token format');
   }
 }
 
-export function validateCustomerToken(event: APIGatewayProxyEventV2): CustomerTokenClaims {
+export async function validateCustomerToken(event: APIGatewayProxyEventV2): Promise<CustomerTokenClaims> {
   const token = extractToken(event);
   
   try {
-    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    let payload: any;
+    if (process.env.NODE_ENV === 'test' || !process.env.COGNITO_USER_POOL_ID || process.env.COGNITO_USER_POOL_ID.startsWith('mock')) {
+      // Decode only in testing/mock environments
+      payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    } else {
+      // Production: verify signature using JWKS
+      payload = await verifier.verify(token);
+    }
     
     if (!payload.sub) {
       throw Errors.unauthorized('Invalid token: missing required claims');
@@ -79,17 +99,17 @@ export function validateCustomerToken(event: APIGatewayProxyEventV2): CustomerTo
     };
   } catch (err) {
     if (err instanceof Error && err.name === 'AppError') throw err;
-    throw Errors.unauthorized('Invalid token format');
+    throw Errors.unauthorized(err instanceof Error ? err.message : 'Invalid token format');
   }
 }
 
 // ---------- BUSINESS AUTHORIZATION ----------
 
-export function authorizeBusiness(
+export async function authorizeBusiness(
   event: APIGatewayProxyEventV2,
   pathBusinessIdParam: string = 'businessId'
-): BusinessTokenClaims {
-  const claims = validateBusinessToken(event);
+): Promise<BusinessTokenClaims> {
+  const claims = await validateBusinessToken(event);
   const pathBusinessId = event.pathParameters?.[pathBusinessIdParam];
 
   // CRITICAL: Validate businessId from token matches path parameter
@@ -102,8 +122,8 @@ export function authorizeBusiness(
 
 // ---------- CUSTOMER AUTHORIZATION ----------
 
-export function authorizeCustomer(event: APIGatewayProxyEventV2): CustomerTokenClaims {
-  return validateCustomerToken(event);
+export async function authorizeCustomer(event: APIGatewayProxyEventV2): Promise<CustomerTokenClaims> {
+  return await validateCustomerToken(event);
 }
 
 // ---------- CROSS-AUTHORIZATION (Customer accessing Business resources) ----------
@@ -113,11 +133,11 @@ export interface CustomerBusinessAuth {
   businessId: string;
 }
 
-export function authorizeCustomerForBusiness(
+export async function authorizeCustomerForBusiness(
   event: APIGatewayProxyEventV2,
   pathBusinessIdParam: string = 'businessId'
-): CustomerBusinessAuth {
-  const customerClaims = validateCustomerToken(event);
+): Promise<CustomerBusinessAuth> {
+  const customerClaims = await validateCustomerToken(event);
   const businessId = event.pathParameters?.[pathBusinessIdParam];
 
   if (!businessId) {

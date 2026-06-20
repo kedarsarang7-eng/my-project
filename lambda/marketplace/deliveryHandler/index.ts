@@ -77,7 +77,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
 // ---------- LIST DELIVERY PARTNERS ----------
 
 async function handleListPartners(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const claims = authorizeBusiness(event);
+  const claims = await authorizeBusiness(event);
   const businessId = claims.businessId;
 
   const pagination = getPaginationParams(event);
@@ -118,7 +118,7 @@ async function handleListPartners(event: APIGatewayProxyEventV2): Promise<APIGat
 // ---------- CREATE DELIVERY PARTNER ----------
 
 async function handleCreatePartner(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const claims = authorizeBusiness(event);
+  const claims = await authorizeBusiness(event);
   const businessId = claims.businessId;
 
   const body = JSON.parse(event.body || '{}');

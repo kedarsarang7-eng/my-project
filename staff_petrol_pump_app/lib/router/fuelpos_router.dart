@@ -57,7 +57,10 @@ class FuelPOSRouter {
     final normalizedType = businessType.toLowerCase().trim();
 
     return switch (normalizedType) {
-      'petrol_pump' || 'fuel_station' || 'gas_station' => '/dashboard/petrol-pump',
+      'petrol_pump' ||
+      'fuel_station' ||
+      'gas_station' =>
+        '/dashboard/petrol-pump',
       'retail' || 'shop' || 'store' => '/dashboard/retail',
       'restaurant' || 'food' => '/dashboard/restaurant',
       'pharmacy' || 'medical' || 'drugstore' => '/dashboard/pharmacy',
@@ -69,7 +72,7 @@ class FuelPOSRouter {
   static GoRouter buildRouter(WidgetRef ref) {
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
-      initialLocation: '/splash',  // Start with splash for auto-login check
+      initialLocation: '/splash', // Start with splash for auto-login check
       routes: [
         // Splash screen (auto-login check)
         GoRoute(
@@ -151,6 +154,36 @@ class FuelPOSRouter {
           builder: (context, state) => const RevenueDashboardScreen(),
         ),
 
+        // Sales, Inventory, Customers, Settings (placeholder screens)
+        GoRoute(
+          path: '/sales',
+          builder: (context, state) => const _ComingSoonPlaceholder(
+            title: 'Sales',
+            icon: Icons.receipt_long_outlined,
+          ),
+        ),
+        GoRoute(
+          path: '/inventory',
+          builder: (context, state) => const _ComingSoonPlaceholder(
+            title: 'Inventory',
+            icon: Icons.inventory_2_outlined,
+          ),
+        ),
+        GoRoute(
+          path: '/customers',
+          builder: (context, state) => const _ComingSoonPlaceholder(
+            title: 'Customers',
+            icon: Icons.people_outline,
+          ),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (context, state) => const _ComingSoonPlaceholder(
+            title: 'Settings',
+            icon: Icons.settings_outlined,
+          ),
+        ),
+
         // Staff Mobile App (NEW - for staff on mobile/iOS)
         GoRoute(
           path: '/staff-mobile',
@@ -210,7 +243,7 @@ class FuelPOSRouter {
 
         // Not authenticated and trying to access protected route
         if (token == null && !isAuthRoute) {
-          return '/splash';  // Go to splash first for auto-login check
+          return '/splash'; // Go to splash first for auto-login check
         }
 
         // Authenticated but on auth route (except splash) - redirect to appropriate dashboard
@@ -240,7 +273,6 @@ class FuelPOSRouter {
 
 /// Router refresh notifier that listens to auth state changes
 class _RouterRefreshNotifier extends ChangeNotifier {
-
   _RouterRefreshNotifier(WidgetRef ref) {
     ref.listen<LicenseState>(
       licenseProvider,
@@ -338,6 +370,57 @@ class _BusinessTypePlaceholder extends StatelessWidget {
             ElevatedButton(
               onPressed: () => context.go('/dashboard/petrol-pump'),
               child: const Text('Go to Petrol Pump Dashboard'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Placeholder screen for sections under development
+class _ComingSoonPlaceholder extends StatelessWidget {
+  final String title;
+  final IconData icon;
+
+  const _ComingSoonPlaceholder({
+    required this.title,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: FuelPOSTheme.backgroundDark,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 64,
+              color: FuelPOSTheme.textMuted,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: const TextStyle(
+                color: FuelPOSTheme.textPrimary,
+                fontSize: 24,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Coming Soon',
+              style: TextStyle(
+                color: FuelPOSTheme.textSecondary,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => context.go('/dashboard/petrol-pump'),
+              child: const Text('Back to Dashboard'),
             ),
           ],
         ),

@@ -432,6 +432,20 @@ export function createPaginationResponse(items, limit, lastEvaluatedKey) {
 // TENANT ISOLATION HELPERS (P0 FIX)
 // ============================================================================
 
+function findNestedTenantId(obj, depth = 0) {
+  if (depth > 3 || !obj || typeof obj !== 'object') return null;
+  for (const key of Object.keys(obj)) {
+    if ((key === 'tenantId' || key === 'tenant_id') && typeof obj[key] === 'string') {
+      return obj[key];
+    }
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      const found = findNestedTenantId(obj[key], depth + 1);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 /**
  * Enforces tenant isolation on any data operation
  * Must be called before every DynamoDB query/write
@@ -451,6 +465,15 @@ export function enforceTenantScope(data, userContext) {
     console.error(`TENANT_ISOLATION_VIOLATION: User ${userContext.userId} attempted cross-tenant access`);
     console.error(`  User tenant: ${userContext.tenantId}`);
     console.error(`  Data tenant: ${data.tenantId}`);
+    throw new Error('TENANT_ISOLATION_VIOLATION: Cross-tenant access denied');
+  }
+
+  // SECURITY: Recursively check nested tenantId in data (depth 3)
+  const nestedTenantId = findNestedTenantId(data);
+  if (nestedTenantId && nestedTenantId !== userContext.tenantId) {
+    console.error(`TENANT_ISOLATION_VIOLATION: User ${userContext.userId} attempted cross-tenant access via nested property`);
+    console.error(`  User tenant: ${userContext.tenantId}`);
+    console.error(`  Nested tenant: ${nestedTenantId}`);
     throw new Error('TENANT_ISOLATION_VIOLATION: Cross-tenant access denied');
   }
   

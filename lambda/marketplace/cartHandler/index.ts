@@ -102,7 +102,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
 // ---------- GET CART ----------
 
 async function handleGetCart(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const { customerClaims, businessId } = authorizeCustomerForBusiness(event);
+  const { customerClaims, businessId } = await authorizeCustomerForBusiness(event);
   const customerId = customerClaims.sub;
 
   // Validate customer is connected to this business
@@ -149,7 +149,7 @@ async function handleGetCart(event: APIGatewayProxyEventV2): Promise<APIGatewayP
 // ---------- ADD ITEM TO CART ----------
 
 async function handleAddItem(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const { customerClaims, businessId } = authorizeCustomerForBusiness(event);
+  const { customerClaims, businessId } = await authorizeCustomerForBusiness(event);
   const customerId = customerClaims.sub;
 
   // Validate connection
@@ -262,7 +262,7 @@ async function handleAddItem(event: APIGatewayProxyEventV2): Promise<APIGatewayP
 // ---------- UPDATE ITEM QUANTITY ----------
 
 async function handleUpdateItem(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const { customerClaims, businessId } = authorizeCustomerForBusiness(event);
+  const { customerClaims, businessId } = await authorizeCustomerForBusiness(event);
   const customerId = customerClaims.sub;
   const productId = event.pathParameters?.itemId;
 
@@ -325,7 +325,7 @@ async function handleUpdateItem(event: APIGatewayProxyEventV2): Promise<APIGatew
 // ---------- REMOVE ITEM ----------
 
 async function handleRemoveItem(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const { customerClaims, businessId } = authorizeCustomerForBusiness(event);
+  const { customerClaims, businessId } = await authorizeCustomerForBusiness(event);
   const customerId = customerClaims.sub;
   const productId = event.pathParameters?.itemId;
 
@@ -361,7 +361,7 @@ async function handleRemoveItem(event: APIGatewayProxyEventV2): Promise<APIGatew
 // ---------- APPLY COUPON ----------
 
 async function handleApplyCoupon(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const { customerClaims, businessId } = authorizeCustomerForBusiness(event);
+  const { customerClaims, businessId } = await authorizeCustomerForBusiness(event);
   const customerId = customerClaims.sub;
 
   const body = JSON.parse(event.body || '{}');
@@ -424,7 +424,7 @@ async function handleApplyCoupon(event: APIGatewayProxyEventV2): Promise<APIGate
 // ---------- REMOVE COUPON ----------
 
 async function handleRemoveCoupon(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const { customerClaims, businessId } = authorizeCustomerForBusiness(event);
+  const { customerClaims, businessId } = await authorizeCustomerForBusiness(event);
   const customerId = customerClaims.sub;
 
   const cart = await getItem<CustomerCart>(
@@ -449,7 +449,7 @@ async function handleRemoveCoupon(event: APIGatewayProxyEventV2): Promise<APIGat
 // ---------- CLEAR CART ----------
 
 async function handleClearCart(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-  const { customerClaims, businessId } = authorizeCustomerForBusiness(event);
+  const { customerClaims, businessId } = await authorizeCustomerForBusiness(event);
   const customerId = customerClaims.sub;
 
   await deleteItem(

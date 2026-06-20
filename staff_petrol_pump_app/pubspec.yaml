@@ -40,6 +40,13 @@ dependencies:
   google_mlkit_text_recognition: ^0.14.0
   vibration: ^3.0.0
 
+  # Biometric authentication
+  local_auth: ^2.3.0
+
+  # PDF generation & printing
+  pdf: ^3.11.1
+  printing: ^5.13.3
+
   # Functional programming (Either/Option used in domain layer)
   dartz: ^0.10.1
 

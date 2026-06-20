@@ -27,7 +27,7 @@ to `dev_dependencies`; each property test runs at least 100 iterations.
   - [x] 1.2 Add a property-based testing library to dev_dependencies
     - Add `glados` (or equivalent Dart PBT library) under `dev_dependencies` in `Dukan_x/pubspec.yaml`
     - Run package resolution so the library is available to tests
-  - [~]* 1.3 Write unit test for tier enum shape
+  - [ ]* 1.3 Write unit test for tier enum shape
     - Assert four tiers exist in ascending order basic < pro < premium < enterprise
     - _Requirements: 1.1_
 
@@ -40,10 +40,10 @@ to `dev_dependencies`; each property test runs at least 100 iterations.
     - Create `lib/core/subscription/registry_integrity.dart`
     - Validate that every identifier in a proposed (string-keyed) registry entry resolves to an existing `BusinessCapability`; reject and report any undefined identifier
     - _Requirements: 4.2, 4.9_
-  - [~]* 2.3 Write unit tests for registry completeness and new-type membership
+  - [ ]* 2.3 Write unit tests for registry completeness and new-type membership
     - Assert all 19 types are present and each new type contains its required identifiers
     - _Requirements: 4.1, 4.3, 4.4, 4.5, 4.6, 4.7_
-  - [~]* 2.4 Write unit test for undefined-identifier rejection
+  - [ ]* 2.4 Write unit test for undefined-identifier rejection
     - Assert a proposed entry naming an unknown identifier is rejected and the identifier reported
     - _Requirements: 4.9_
 
@@ -53,7 +53,7 @@ to `dev_dependencies`; each property test runs at least 100 iterations.
     - Map each capability to a category with `floorFor`/`ceilingFor` (billingCore→basic/basic, analyticsExport→premium/enterprise, enterpriseOnly→enterprise/enterprise, complianceSeasonal→premium/enterprise, standard→basic/enterprise)
     - Define the five Workflow_Pairs and the `useStockEntry ≤ usePurchaseOrder` ordering rule
     - _Requirements: 5.1, 5.2, 5.6, 7.1, 7.2, 8.1, 8.2, 8.3, 8.4, 9.1, 9.2, 9.3, 9.4, 10.1, 10.2, 10.3, 10.4, 10.5, 11.1, 11.2, 11.3, 11.4, 12.1, 12.2_
-  - [~]* 3.2 Write unit tests for classifier floor/ceiling/category
+  - [ ]* 3.2 Write unit tests for classifier floor/ceiling/category
     - Verify category membership and floor/ceiling for each gated capability set
     - _Requirements: 5.1, 9.1, 10.1, 11.1_
 
@@ -62,10 +62,10 @@ to `dev_dependencies`; each property test runs at least 100 iterations.
     - Create `lib/core/subscription/coverage_calculator.dart`
     - Compute `availableCount` from the registry only, per-tier `coverageOf`, feasible integer band sizes, and deviation records; skip band evaluation for zero-capability types
     - _Requirements: 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 3.5_
-  - [~]* 4.2 Write property test for Available_Capability_Count source
+  - [ ]* 4.2 Write property test for Available_Capability_Count source
     - **Property 5: Available_Capability_Count is sourced only from the registry**
     - **Validates: Requirements 3.5**
-  - [~]* 4.3 Write unit tests for feasible band sizes and deviation records
+  - [ ]* 4.3 Write unit tests for feasible band sizes and deviation records
     - Cover the closest-ordering-preserving size selection and zero-capability skip path
     - _Requirements: 1.6, 1.7_
 

@@ -70,12 +70,12 @@ Property-based tests use the project's established library `dartproptest ^0.2.1`
     - Repoint every consumer of the legacy 1280/1440/1920 API to the consolidated `Responsive_System` barrel; reduce the theme file so it no longer defines breakpoints or Form_Factor classification, keeping only desktop window-comfort helpers that defer to `ResponsiveBreakpoints`
     - _Requirements: 2.1, 2.4, 2.5, 2.6_
 
-  - [-]* 4.2 Write static/compile guard test for single breakpoint authority
+  - [ ]* 4.2 Write static/compile guard test for single breakpoint authority
     - Assert `flutter analyze` has no missing/removed-symbol references and that no breakpoint thresholds or classifier are defined outside `Responsive_System`
     - File: `test/core/responsive/no_duplicate_breakpoints_test.dart`
     - _Requirements: 2.5, 2.6_
 
-- [~] 5. Checkpoint - Ensure all tests pass
+- [ ] 5. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 6. Build the Responsive_Audit
@@ -87,7 +87,7 @@ Property-based tests use the project's established library `dartproptest ^0.2.1`
     - Classify every `Business_Screen` under `lib/features/`, every shared layout component, and every `Responsive_Component` as `compliant` or `non-compliant`, recording per item the failing conditions (Form_Factor, orientation, font scale)
     - _Requirements: 12.1, 12.5, 12.6_
 
-  - [-]* 6.3 Write property test for audit classification totality
+  - [ ]* 6.3 Write property test for audit classification totality
     - **Property 11: Audit classification is total and disjoint**
     - Over the enumerated scanned universe, assert each item receives exactly one classification (none unclassified, none classified twice)
     - File: `test/tool/responsive_audit_totality_property_test.dart`
@@ -124,7 +124,7 @@ Property-based tests use the project's established library `dartproptest ^0.2.1`
     - Replace the broken `MobileDrawer` reference with the real implementation, host `DesktopContentHost` in the Mobile/Tablet shell bodies, select shells via a pure selection function (Desktop delegate unchanged, Tablet by orientation, Mobile bottom nav + drawer), re-rendering on rotation
     - _Requirements: 5.1, 9.1, 9.2, 9.3, 9.8_
 
-  - [-]* 8.2 Write property test for shell selection
+  - [ ]* 8.2 Write property test for shell selection
     - **Property 4: Shell selection is a total function of Form_Factor**
     - Generate widths and orientations; assert Desktop iff `w >= 1100`, Tablet iff `600 <= w < 1100` (orientation variant), Mobile iff `w < 600`, and Tablet never on Mobile/Desktop
     - File: `test/core/responsive/shell_selection_property_test.dart`
@@ -134,7 +134,7 @@ Property-based tests use the project's established library `dartproptest ^0.2.1`
     - Map `currentScreen` to the drawer highlight and `MobileBottomNav` selected index (and confirm desktop sidebar selection), updating each surface when `currentScreen` changes
     - _Requirements: 9.7, 5.4_
 
-  - [-]* 8.4 Write property test for active destination reflecting the current screen
+  - [ ]* 8.4 Write property test for active destination reflecting the current screen
     - **Property 7: Active destination reflects the current screen**
     - For any `currentScreen`, assert each surface's reported active selection corresponds under its id/index mapping and updates on change
     - File: `test/core/responsive/active_destination_property_test.dart`
@@ -145,12 +145,12 @@ Property-based tests use the project's established library `dartproptest ^0.2.1`
     - Introduce the bool provider in a new file and have the desktop layout hide/show the sidebar and `EnterpriseTopBar` while keeping `DesktopContentHost` mounted so the selected destination survives the toggle; do not add/remove destinations or alter `desktop_root_shell.dart` structure
     - _Requirements: 5.6, 5.7_
 
-  - [-]* 9.2 Write widget tests for desktop preservation
+  - [ ]* 9.2 Write widget tests for desktop preservation
     - Assert sidebar + top bar + content render together, the active marker is set on selection, the destination set equals the frozen baseline snapshot, and the full-screen hide/restore round-trip retains the prior destination
     - File: `test/widgets/desktop/desktop_preservation_test.dart`
     - _Requirements: 5.2, 5.4, 5.5, 5.6, 5.7_
 
-- [~] 10. Checkpoint - Ensure all tests pass
+- [ ] 10. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 11. Add stability scaffolding for crash-free, freeze-free operation
@@ -158,17 +158,17 @@ Property-based tests use the project's established library `dartproptest ^0.2.1`
     - Ensure every screen in `DesktopContentHost` is wrapped by `FeatureErrorBoundary` (recoverable error UI + Retry, others stay navigable), route operation failures through a consistent dismissible error channel, show a progress indicator for operations over ~1s, and show `AppLoadingIndicator` when a target screen is not ready within the latency budget
     - _Requirements: 10.3, 10.4, 10.5, 11.7_
 
-  - [-]* 11.2 Write widget tests for stability behaviors
+  - [ ]* 11.2 Write widget tests for stability behaviors
     - Inject a throwing screen and assert recovery UI shows while other destinations stay navigable; assert an operation failure shows a message and the app stays usable; assert a long operation shows progress and a delayed screen shows a loading indicator
     - File: `test/widgets/stability_test.dart`
     - _Requirements: 10.3, 10.4, 10.5, 11.7_
 
 - [ ] 12. Migrate Business_Screens onto single-implementation adaptive bodies
-  - [~] 12.1 Migrate representative high-traffic Business_Screens through the Responsive_System
+  - [ ] 12.1 Migrate representative high-traffic Business_Screens through the Responsive_System
     - Wrap bodies in `AdaptiveScroll`/`AdaptiveScaffold`, replace fixed-width layouts with `responsiveValue`/adaptive primitives, and apply the default layout when a screen defines no specific Form_Factor layout — single implementation reflowing across Mobile/Tablet/Desktop
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-  - [~] 12.2 Migrate the remaining Business_Screens flagged non-compliant by the audit
+  - [ ] 12.2 Migrate the remaining Business_Screens flagged non-compliant by the audit
     - Apply the same adaptive-body pattern to the screens listed in `docs/responsive-audit.md`, keeping one implementation per screen
     - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
@@ -178,7 +178,7 @@ Property-based tests use the project's established library `dartproptest ^0.2.1`
     - _Requirements: 4.2, 4.5_
 
 - [ ] 13. Build the responsive and stability test harness
-  - [~] 13.1 Implement the harness scaffolding
+  - [ ] 13.1 Implement the harness scaffolding
     - Add `OverflowProbe` model and a pump helper that renders a target under a generated `MediaQuery` (width, orientation, text scale, keyboard inset) inside the test binding and captures `tester.takeException()` and render geometry; build the representative screen/component registry covering each `lib/features/` module
     - File: `test/responsive/responsive_harness.dart`
     - _Requirements: 13.1, 13.5, 13.6, 13.7_
@@ -200,7 +200,7 @@ Property-based tests use the project's established library `dartproptest ^0.2.1`
     - File: `test/responsive/responsive_conditions_test.dart`
     - _Requirements: 13.2, 13.3, 13.5, 13.6, 13.7_
 
-- [~] 14. Final checkpoint - Ensure all tests pass
+- [ ] 14. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

@@ -10,6 +10,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2, Handler } from 'aws-la
 import { 
   APIGatewayProxyWebsocketEventV2,
 } from 'aws-lambda/trigger/api-gateway-proxy';
+import { CognitoJwtVerifier } from 'aws-jwt-verify/cognito-verifier';
 import { 
   WebSocketConnection, 
   WebSocketMessage,
@@ -17,6 +18,12 @@ import {
   SK,
 } from '../../shared/types';
 import { putItem, deleteItem, getItem, queryByGSI1 } from '../../shared/dynamodb';
+
+const verifier = CognitoJwtVerifier.create({
+  userPoolId: process.env.COGNITO_USER_POOL_ID || 'ap-south-1_mockpool',
+  tokenUse: 'access',
+  clientId: null,
+});
 
 const TABLE_NAME = process.env.TABLE_NAME || 'DukanMarketplace';
 const WS_API_ENDPOINT = process.env.WS_API_ENDPOINT || '';
@@ -70,8 +77,13 @@ async function handleConnect(
   }
 
   try {
-    // Decode token (simplified - in production verify with Cognito)
-    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    // Verify JWT signature using CognitoJwtVerifier
+    let payload: any;
+    if (process.env.NODE_ENV === 'test' || !process.env.COGNITO_USER_POOL_ID || process.env.COGNITO_USER_POOL_ID.startsWith('mock')) {
+      payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    } else {
+      payload = await verifier.verify(token);
+    }
     const now = new Date().toISOString();
 
     const isBusiness = payload.businessId !== undefined;

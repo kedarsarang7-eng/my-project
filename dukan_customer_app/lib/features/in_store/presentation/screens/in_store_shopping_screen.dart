@@ -20,8 +20,7 @@ class InStoreShoppingScreen extends ConsumerStatefulWidget {
       _InStoreShoppingScreenState();
 }
 
-class _InStoreShoppingScreenState
-    extends ConsumerState<InStoreShoppingScreen> {
+class _InStoreShoppingScreenState extends ConsumerState<InStoreShoppingScreen> {
   bool _scannerOpen = false;
   bool _scanProcessing = false;
   final MobileScannerController _scanController = MobileScannerController();
@@ -62,7 +61,9 @@ class _InStoreShoppingScreenState
         return;
       }
 
-      await ref.read(activeSessionProvider.notifier).addOrIncrementItem(product);
+      await ref
+          .read(activeSessionProvider.notifier)
+          .addOrIncrementItem(product);
       ref.read(scanStateProvider.notifier).state = ScanState.success;
       ref.read(lastScannedProductProvider.notifier).state = product;
       _showScanResult(product: product);
@@ -95,28 +96,32 @@ class _InStoreShoppingScreenState
     if (!mounted) return;
     ScaffoldMessenger.of(context).clearSnackBars();
     if (outOfStock) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${productName ?? 'Item'} is out of stock'),
-        backgroundColor: Colors.orange.shade700,
-        duration: const Duration(seconds: 2),
-      ));
-    } else if (product != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle, color: Colors.white),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                '${product.name} added',
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${productName ?? 'Item'} is out of stock'),
+          backgroundColor: Colors.orange.shade700,
+          duration: const Duration(seconds: 2),
         ),
-        backgroundColor: Colors.green.shade700,
-        duration: const Duration(seconds: 2),
-      ));
+      );
+    } else if (product != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '${product.name} added',
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.green.shade700,
+          duration: const Duration(seconds: 2),
+        ),
+      );
     }
   }
 
@@ -131,24 +136,55 @@ class _InStoreShoppingScreenState
           children: [
             const Icon(Icons.search_off, size: 48, color: Colors.grey),
             const SizedBox(height: 12),
-            const Text('Product Not Found',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(
+              'Product Not Found',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             const Text(
-                'This item is not in the store catalog. Ask a staff member for help.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey)),
+              'This item is not in the store catalog. Ask a staff member for help.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
+            ),
             const SizedBox(height: 20),
             FilledButton.icon(
-              onPressed: () {
-                Navigator.pop(context);
-                // TODO: Trigger staff call notification
+              onPressed: () async {
+                final session = ref.read(activeSessionProvider).valueOrNull;
+                if (session == null) {
+                  Navigator.pop(context);
+                  return;
+                }
+                try {
+                  await ref
+                      .read(inStoreApiServiceProvider)
+                      .callStaff(session.storeId, 'product_not_found');
+                  if (!mounted) return;
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Staff has been notified'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } catch (_) {
+                  if (!mounted) return;
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        'Could not reach staff, please try again',
+                      ),
+                      backgroundColor: Colors.red.shade700,
+                    ),
+                  );
+                }
               },
               icon: const Icon(Icons.support_agent),
               label: const Text('Call Staff'),
               style: FilledButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  minimumSize: const Size.fromHeight(48)),
+                backgroundColor: Colors.orange,
+                minimumSize: const Size.fromHeight(48),
+              ),
             ),
             const SizedBox(height: 8),
             TextButton(
@@ -163,10 +199,9 @@ class _InStoreShoppingScreenState
 
   void _showError(String msg) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(msg),
-      backgroundColor: Colors.red.shade700,
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.red.shade700),
+    );
   }
 
   @override
@@ -180,7 +215,8 @@ class _InStoreShoppingScreenState
       data: (session) {
         if (session == null) {
           WidgetsBinding.instance.addPostFrameCallback(
-              (_) => context.go(AppRoutes.inStoreLanding));
+            (_) => context.go(AppRoutes.inStoreLanding),
+          );
           return const SizedBox.shrink();
         }
 
@@ -192,12 +228,16 @@ class _InStoreShoppingScreenState
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(session.storeName.isNotEmpty
-                    ? session.storeName
-                    : 'In-Store Shopping'),
+                Text(
+                  session.storeName.isNotEmpty
+                      ? session.storeName
+                      : 'In-Store Shopping',
+                ),
                 if (itemCount > 0)
-                  Text('$itemCount item${itemCount == 1 ? '' : 's'}',
-                      style: const TextStyle(fontSize: 12)),
+                  Text(
+                    '$itemCount item${itemCount == 1 ? '' : 's'}',
+                    style: const TextStyle(fontSize: 12),
+                  ),
               ],
             ),
             actions: [
@@ -206,7 +246,9 @@ class _InStoreShoppingScreenState
                 child: Center(
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
@@ -228,10 +270,12 @@ class _InStoreShoppingScreenState
             children: [
               // Cart list
               cartItems.isEmpty
-                  ? _EmptyCartView(onScan: () => setState(() {
+                  ? _EmptyCartView(
+                      onScan: () => setState(() {
                         _scannerOpen = true;
                         _scanController.start();
-                      }))
+                      }),
+                    )
                   : _CartList(
                       cartItems: cartItems,
                       onQuantityChanged: (item, qty) => ref
@@ -266,8 +310,10 @@ class _InStoreShoppingScreenState
                   },
                   backgroundColor: const Color(0xFF2E7D32),
                   icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
-                  label: const Text('Scan',
-                      style: TextStyle(color: Colors.white)),
+                  label: const Text(
+                    'Scan',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
           bottomNavigationBar: cartItems.isNotEmpty && !_scannerOpen
               ? _ReviewPayBar(
@@ -277,8 +323,8 @@ class _InStoreShoppingScreenState
               : null,
         );
       },
-      loading: () => const Scaffold(
-          body: Center(child: CircularProgressIndicator())),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) => Scaffold(
         body: Center(
           child: Column(
@@ -288,8 +334,9 @@ class _InStoreShoppingScreenState
               const SizedBox(height: 12),
               Text('Session error: $e'),
               TextButton(
-                  onPressed: () => context.go(AppRoutes.inStoreLanding),
-                  child: const Text('Start Over')),
+                onPressed: () => context.go(AppRoutes.inStoreLanding),
+                child: const Text('Start Over'),
+              ),
             ],
           ),
         ),
@@ -310,22 +357,29 @@ class _EmptyCartView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.shopping_cart_outlined,
-              size: 80, color: Colors.grey.shade400),
+          Icon(
+            Icons.shopping_cart_outlined,
+            size: 80,
+            color: Colors.grey.shade400,
+          ),
           const SizedBox(height: 16),
-          const Text('Your cart is empty',
-              style:
-                  TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+          const Text(
+            'Your cart is empty',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 8),
-          const Text('Tap the scan button to add items',
-              style: TextStyle(color: Colors.grey)),
+          const Text(
+            'Tap the scan button to add items',
+            style: TextStyle(color: Colors.grey),
+          ),
           const SizedBox(height: 24),
           FilledButton.icon(
             onPressed: onScan,
             icon: const Icon(Icons.qr_code_scanner),
             label: const Text('Scan First Item'),
             style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF2E7D32)),
+              backgroundColor: const Color(0xFF2E7D32),
+            ),
           ),
         ],
       ),
@@ -409,36 +463,43 @@ class _CartItemCard extends StatelessWidget {
                   Text(
                     item.name,
                     style: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 14),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   if (item.brand != null)
-                    Text(item.brand!,
-                        style: const TextStyle(
-                            color: Colors.grey, fontSize: 12)),
+                    Text(
+                      item.brand!,
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
                       Text(
                         '₹${(item.sellingPrice / 100).toStringAsFixed(2)}',
                         style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2E7D32)),
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2E7D32),
+                        ),
                       ),
                       if (hasDiscount) ...[
                         const SizedBox(width: 6),
                         Text(
                           '₹${(item.mrp / 100).toStringAsFixed(2)}',
                           style: const TextStyle(
-                              decoration: TextDecoration.lineThrough,
-                              color: Colors.grey,
-                              fontSize: 12),
+                            decoration: TextDecoration.lineThrough,
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
                         ),
                         const SizedBox(width: 4),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 4, vertical: 1),
+                            horizontal: 4,
+                            vertical: 1,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.green.shade100,
                             borderRadius: BorderRadius.circular(4),
@@ -446,9 +507,10 @@ class _CartItemCard extends StatelessWidget {
                           child: Text(
                             '${item.discountPercent.toInt()}% off',
                             style: TextStyle(
-                                color: Colors.green.shade700,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600),
+                              color: Colors.green.shade700,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],
@@ -465,7 +527,9 @@ class _CartItemCard extends StatelessWidget {
                 Text(
                   '₹${total.toStringAsFixed(2)}',
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 15),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 _QuantityStepper(
@@ -489,8 +553,7 @@ class _PlaceholderImage extends StatelessWidget {
       width: 60,
       height: 60,
       color: Colors.grey.shade200,
-      child: Icon(Icons.inventory_2_outlined,
-          color: Colors.grey.shade400),
+      child: Icon(Icons.inventory_2_outlined, color: Colors.grey.shade400),
     );
   }
 }
@@ -523,14 +586,13 @@ class _QuantityStepper extends StatelessWidget {
             width: 28,
             height: 28,
             decoration: BoxDecoration(
-              color: quantity == 1
-                  ? Colors.red.shade50
-                  : Colors.grey.shade100,
+              color: quantity == 1 ? Colors.red.shade50 : Colors.grey.shade100,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                  color: quantity == 1
-                      ? Colors.red.shade300
-                      : Colors.grey.shade300),
+                color: quantity == 1
+                    ? Colors.red.shade300
+                    : Colors.grey.shade300,
+              ),
             ),
             child: Icon(
               quantity == 1 ? Icons.delete_outline : Icons.remove,
@@ -580,9 +642,10 @@ class _ReviewPayBar extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 12,
-              offset: const Offset(0, -4)),
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, -4),
+          ),
         ],
       ),
       child: FilledButton(
@@ -591,7 +654,8 @@ class _ReviewPayBar extends StatelessWidget {
           backgroundColor: const Color(0xFF2E7D32),
           minimumSize: const Size.fromHeight(54),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14)),
+            borderRadius: BorderRadius.circular(14),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -600,11 +664,14 @@ class _ReviewPayBar extends StatelessWidget {
               '${summary?.itemCount ?? 0} item${(summary?.itemCount ?? 0) == 1 ? '' : 's'}',
               style: const TextStyle(fontSize: 15),
             ),
-            const Text('Review & Pay',
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            Text(summary?.totalDisplay ?? '₹0.00',
-                style: const TextStyle(fontSize: 15)),
+            const Text(
+              'Review & Pay',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            Text(
+              summary?.totalDisplay ?? '₹0.00',
+              style: const TextStyle(fontSize: 15),
+            ),
           ],
         ),
       ),
@@ -640,8 +707,7 @@ class _ScannerOverlay extends StatelessWidget {
               width: 240,
               height: 160,
               decoration: BoxDecoration(
-                border: Border.all(
-                    color: const Color(0xFF4CAF50), width: 2),
+                border: Border.all(color: const Color(0xFF4CAF50), width: 2),
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
@@ -651,8 +717,7 @@ class _ScannerOverlay extends StatelessWidget {
             right: 16,
             child: IconButton(
               onPressed: onClose,
-              icon: const Icon(Icons.close,
-                  color: Colors.white, size: 28),
+              icon: const Icon(Icons.close, color: Colors.white, size: 28),
               style: IconButton.styleFrom(
                 backgroundColor: Colors.black45,
                 shape: const CircleBorder(),
@@ -663,7 +728,8 @@ class _ScannerOverlay extends StatelessWidget {
             Container(
               color: Colors.black54,
               child: const Center(
-                  child: CircularProgressIndicator(color: Colors.white)),
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
             ),
           Positioned(
             bottom: 24,

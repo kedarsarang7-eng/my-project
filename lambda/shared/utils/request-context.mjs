@@ -44,14 +44,13 @@ export function extractRequestContext(event) {
 }
 
 /**
- * Extract tenantId from JWT or event
+ * Extract tenantId from JWT claims (NEVER from client headers alone).
+ *
+ * SECURITY FIX (Finding #1): JWT claims are the ONLY authoritative source.
+ * The x-tenant-id header is cross-validated but never used as a fallback.
  */
 function extractTenantId(event) {
-  // Try header first
-  const tenantHeader = event.headers?.['x-tenant-id'] || event.headers?.['X-Tenant-ID'];
-  if (tenantHeader) return tenantHeader;
-  
-  // Try JWT
+  // 1. Try JWT FIRST — this is the authoritative source
   const authHeader = event.headers?.authorization || event.headers?.Authorization;
   if (authHeader) {
     try {
@@ -59,12 +58,25 @@ function extractTenantId(event) {
       const payload = JSON.parse(
         Buffer.from(token.split('.')[1], 'base64').toString()
       );
-      return payload['custom:tenantId'] || payload['custom:tenant_id'] || payload.tenantId || null;
+      const jwtTenantId = payload['custom:tenantId'] || payload['custom:tenant_id'] || payload.tenantId || null;
+      
+      if (jwtTenantId) {
+        // Cross-validate: if header also present and mismatches, log warning
+        const tenantHeader = event.headers?.['x-tenant-id'] || event.headers?.['X-Tenant-ID'];
+        if (tenantHeader && tenantHeader !== jwtTenantId) {
+          console.warn('[SECURITY] x-tenant-id header mismatch with JWT', {
+            headerTenantId: tenantHeader,
+            jwtTenantId,
+          });
+        }
+        return jwtTenantId;
+      }
     } catch {
-      return null;
+      // JWT decode failed — fall through
     }
   }
   
+  // 2. NO FALLBACK to x-tenant-id header — that's a client-controlled value
   return null;
 }
 

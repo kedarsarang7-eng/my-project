@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../auth/data/datasources/auth_remote_datasource_provider.dart';
+import '../../auth/presentation/providers/auth_provider.dart';
 import '../providers/license_provider.dart';
 import '../theme/fuelpos_theme.dart';
 
@@ -67,21 +69,21 @@ class SidebarNavWidget extends ConsumerWidget {
             label: 'Sales',
             route: '/sales',
             isActive: currentRoute.startsWith('/sales'),
-            onTap: () {}, // TODO: Implement
+            onTap: () => context.go('/sales'),
           ),
           _buildNavItem(
             icon: Icons.inventory_2_outlined,
             label: 'Inventory',
             route: '/inventory',
             isActive: currentRoute.startsWith('/inventory'),
-            onTap: () {}, // TODO: Implement
+            onTap: () => context.go('/inventory'),
           ),
           _buildNavItem(
             icon: Icons.people_outline,
             label: 'Customers',
             route: '/customers',
             isActive: currentRoute.startsWith('/customers'),
-            onTap: () {}, // TODO: Implement
+            onTap: () => context.go('/customers'),
           ),
           _buildNavItem(
             icon: Icons.groups_outlined,
@@ -102,7 +104,7 @@ class SidebarNavWidget extends ConsumerWidget {
             label: 'Settings',
             route: '/settings',
             isActive: currentRoute.startsWith('/settings'),
-            onTap: () {}, // TODO: Implement
+            onTap: () => context.go('/settings'),
           ),
 
           const Spacer(),
@@ -110,7 +112,7 @@ class SidebarNavWidget extends ConsumerWidget {
           const Divider(color: FuelPOSTheme.borderDark, height: 1),
 
           // Admin profile section
-          _buildAdminSection(ref),
+          _buildAdminSection(context, ref),
         ],
       ),
     );
@@ -220,7 +222,7 @@ class SidebarNavWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildAdminSection(WidgetRef ref) {
+  Widget _buildAdminSection(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -287,8 +289,7 @@ class SidebarNavWidget extends ConsumerWidget {
                 value: 'logout',
                 child: Row(
                   children: [
-                    Icon(Icons.logout,
-                        size: 18, color: FuelPOSTheme.errorRed),
+                    Icon(Icons.logout, size: 18, color: FuelPOSTheme.errorRed),
                     const SizedBox(width: 8),
                     Text('Logout',
                         style: TextStyle(color: FuelPOSTheme.errorRed)),
@@ -298,7 +299,23 @@ class SidebarNavWidget extends ConsumerWidget {
             ],
             onSelected: (value) async {
               if (value == 'logout') {
-                // TODO: Implement logout
+                try {
+                  await ref.read(authRemoteDataSourceProvider).logout();
+                  ref.read(authNotifierProvider.notifier).signOut();
+                  if (context.mounted) {
+                    context.go('/login');
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            'Logout failed: ${e.toString().replaceAll('Exception: ', '')}'),
+                        backgroundColor: FuelPOSTheme.errorRed,
+                      ),
+                    );
+                  }
+                }
               }
             },
           ),

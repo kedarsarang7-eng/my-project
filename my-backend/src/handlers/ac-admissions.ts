@@ -76,6 +76,12 @@ export const submitApplication = async (
       return response.badRequest('x-tenant-id header is required');
     }
 
+    // SECURITY: Validate tenant exists to prevent arbitrary write injections
+    const tenantProfile = await getItem(Keys.tenantPK(tenantId), Keys.tenantProfileSK());
+    if (!tenantProfile) {
+      return response.notFound('Tenant not found');
+    }
+
     const id = uid();
     const applicationId = `APP-${tenantId.substring(0, 6)}-${Date.now().toString(36).toUpperCase()}`;
     const pk = Keys.tenantPK(tenantId);
@@ -168,6 +174,12 @@ export const checkApplicationStatus = async (
     const tenantId = event.headers?.['x-tenant-id'] || event.headers?.['X-Tenant-Id'];
     if (!tenantId) {
       return response.badRequest('x-tenant-id header is required');
+    }
+
+    // SECURITY: Validate tenant exists
+    const tenantProfile = await getItem(Keys.tenantPK(tenantId), Keys.tenantProfileSK());
+    if (!tenantProfile) {
+      return response.notFound('Tenant not found');
     }
 
     const pk = Keys.tenantPK(tenantId);

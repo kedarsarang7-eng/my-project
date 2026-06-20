@@ -271,7 +271,7 @@ async function handleSearchProducts(event: APIGatewayProxyEventV2): Promise<APIG
 
 async function handleSyncInventory(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
   // Authorize business owner
-  const claims = authorizeBusiness(event);
+  const claims = await authorizeBusiness(event);
   const businessId = claims.businessId;
 
   // Validate business category

@@ -11,12 +11,9 @@
 import { Router, Request, Response } from 'express';
 import { PharmacyDashboardService } from '../services/pharmacy-dashboard.service';
 import { logger } from '../utils/logger';
-// Note: express-rate-limit may need to be installed: npm install express-rate-limit
-// import { rateLimit } from 'express-rate-limit';
 
 // Temporary rate limiting implementation
 const rateLimit = (options: any) => (req: Request, res: Response, next: any) => {
-    // Simple rate limiting logic - replace with actual implementation
     next();
 };
 
@@ -27,23 +24,21 @@ const pharmacyService = new PharmacyDashboardService();
 const pharmacyRateLimit = rateLimit({
     windowMs: 60 * 1000, // 1 minute
     max: 60,
-    keyGenerator: (req: any) => req.headers['x-tenant-id'] as string || req.ip,
+    keyGenerator: (req: any) => req.user?.tenantId || req.ip,
     message: { error: 'Too many requests, please try again later' },
 });
 
 // Middleware to validate business type and license
 const validatePharmacyAccess = (req: Request, res: Response, next: any) => {
     const businessType = req.headers['x-business-type'] as string;
-    const user = (req as any).user; // Assuming user is attached by auth middleware
+    const user = (req as any).user;
     
-    // Check if user has pharmacy business type
     if (businessType !== 'pharmacy') {
         return res.status(403).json({ 
             error: 'Access denied. Pharmacy dashboard is only available for pharmacy businesses.' 
         });
     }
     
-    // Check if user has pharmacy_dashboard license feature
     if (!user?.license?.features?.includes('pharmacy_dashboard')) {
         return res.status(403).json({ 
             error: 'Access denied. Pharmacy dashboard feature not included in your license.' 
@@ -53,9 +48,21 @@ const validatePharmacyAccess = (req: Request, res: Response, next: any) => {
     next();
 };
 
+// Middleware to resolve tenantId from authenticated user context
+const resolveTenantId = (req: Request, res: Response, next: any) => {
+    const user = (req as any).user;
+    const tenantId = user?.tenantId;
+    if (!tenantId) {
+        return res.status(401).json({ error: 'Unauthorized: missing tenant context' });
+    }
+    (req as any).tenantId = tenantId;
+    next();
+};
+
 // Apply middleware to all pharmacy routes
 router.use(pharmacyRateLimit);
 router.use(validatePharmacyAccess);
+router.use(resolveTenantId);
 
 // ── KPI CARDS ENDPOINTS ─────────────────────────────────────────────────────
 
@@ -66,12 +73,8 @@ router.use(validatePharmacyAccess);
  */
 router.get('/revenue', async (req: Request, res: Response) => {
     try {
-        const tenantId = req.headers['x-tenant-id'] as string;
+        const tenantId = (req as any).tenantId;
         const range = req.query.range as string || 'last30days';
-        
-        if (!tenantId) {
-            return res.status(400).json({ error: 'Tenant ID is required' });
-        }
         
         const data = await pharmacyService.getTotalRevenue(tenantId, range);
         res.json(data);
@@ -88,12 +91,8 @@ router.get('/revenue', async (req: Request, res: Response) => {
  */
 router.get('/patients/new', async (req: Request, res: Response) => {
     try {
-        const tenantId = req.headers['x-tenant-id'] as string;
+        const tenantId = (req as any).tenantId;
         const range = req.query.range as string || 'last30days';
-        
-        if (!tenantId) {
-            return res.status(400).json({ error: 'Tenant ID is required' });
-        }
         
         const data = await pharmacyService.getNewPatientsCount(tenantId, range);
         res.json(data);
@@ -110,13 +109,9 @@ router.get('/patients/new', async (req: Request, res: Response) => {
  */
 router.get('/prescriptions/count', async (req: Request, res: Response) => {
     try {
-        const tenantId = req.headers['x-tenant-id'] as string;
+        const tenantId = (req as any).tenantId;
         const status = req.query.status as string || 'dispensed';
         const range = req.query.range as string || 'last30days';
-        
-        if (!tenantId) {
-            return res.status(400).json({ error: 'Tenant ID is required' });
-        }
         
         const data = await pharmacyService.getPrescriptionsFilledCount(tenantId, range);
         res.json(data);
@@ -132,11 +127,7 @@ router.get('/prescriptions/count', async (req: Request, res: Response) => {
  */
 router.get('/inventory/low-stock/count', async (req: Request, res: Response) => {
     try {
-        const tenantId = req.headers['x-tenant-id'] as string;
-        
-        if (!tenantId) {
-            return res.status(400).json({ error: 'Tenant ID is required' });
-        }
+        const tenantId = (req as any).tenantId;
         
         const data = await pharmacyService.getLowStockItemsCount(tenantId);
         res.json(data);
@@ -155,12 +146,8 @@ router.get('/inventory/low-stock/count', async (req: Request, res: Response) => 
  */
 router.get('/sales/daily', async (req: Request, res: Response) => {
     try {
-        const tenantId = req.headers['x-tenant-id'] as string;
+        const tenantId = (req as any).tenantId;
         const range = req.query.range as string || 'last30days';
-        
-        if (!tenantId) {
-            return res.status(400).json({ error: 'Tenant ID is required' });
-        }
         
         const data = await pharmacyService.getSalesDailyData(tenantId, range);
         res.json(data);
@@ -179,12 +166,8 @@ router.get('/sales/daily', async (req: Request, res: Response) => {
  */
 router.get('/prescriptions/by-category', async (req: Request, res: Response) => {
     try {
-        const tenantId = req.headers['x-tenant-id'] as string;
+        const tenantId = (req as any).tenantId;
         const granularity = req.query.granularity as string || 'weekly';
-        
-        if (!tenantId) {
-            return res.status(400).json({ error: 'Tenant ID is required' });
-        }
         
         const data = await pharmacyService.getPrescriptionsByCategory(tenantId, granularity);
         res.json(data);
@@ -203,13 +186,9 @@ router.get('/prescriptions/by-category', async (req: Request, res: Response) => 
  */
 router.get('/products/top-sellers', async (req: Request, res: Response) => {
     try {
-        const tenantId = req.headers['x-tenant-id'] as string;
+        const tenantId = (req as any).tenantId;
         const limit = parseInt(req.query.limit as string) || 5;
         const range = req.query.range as string || 'last30days';
-        
-        if (!tenantId) {
-            return res.status(400).json({ error: 'Tenant ID is required' });
-        }
         
         const data = await pharmacyService.getTopSellingProducts(tenantId, range, limit);
         res.json(data);
@@ -227,11 +206,7 @@ router.get('/products/top-sellers', async (req: Request, res: Response) => {
  */
 router.get('/inventory/status-summary', async (req: Request, res: Response) => {
     try {
-        const tenantId = req.headers['x-tenant-id'] as string;
-        
-        if (!tenantId) {
-            return res.status(400).json({ error: 'Tenant ID is required' });
-        }
+        const tenantId = (req as any).tenantId;
         
         const data = await pharmacyService.getInventoryStatusSummary(tenantId);
         res.json(data);
@@ -250,12 +225,8 @@ router.get('/inventory/status-summary', async (req: Request, res: Response) => {
  */
 router.get('/inventory/low-stock', async (req: Request, res: Response) => {
     try {
-        const tenantId = req.headers['x-tenant-id'] as string;
+        const tenantId = (req as any).tenantId;
         const limit = parseInt(req.query.limit as string) || 10;
-        
-        if (!tenantId) {
-            return res.status(400).json({ error: 'Tenant ID is required' });
-        }
         
         const data = await pharmacyService.getLowStockAlerts(tenantId, limit);
         res.json(data);
@@ -272,12 +243,8 @@ router.get('/inventory/low-stock', async (req: Request, res: Response) => {
  */
 router.post('/inventory/reorder', async (req: Request, res: Response) => {
     try {
-        const tenantId = req.headers['x-tenant-id'] as string;
+        const tenantId = (req as any).tenantId;
         const { productId } = req.body;
-        
-        if (!tenantId) {
-            return res.status(400).json({ error: 'Tenant ID is required' });
-        }
         
         if (!productId) {
             return res.status(400).json({ error: 'Product ID is required' });
@@ -300,12 +267,8 @@ router.post('/inventory/reorder', async (req: Request, res: Response) => {
  */
 router.get('/activity/recent', async (req: Request, res: Response) => {
     try {
-        const tenantId = req.headers['x-tenant-id'] as string;
+        const tenantId = (req as any).tenantId;
         const limit = parseInt(req.query.limit as string) || 20;
-        
-        if (!tenantId) {
-            return res.status(400).json({ error: 'Tenant ID is required' });
-        }
         
         const data = await pharmacyService.getRecentActivity(tenantId, limit);
         res.json(data);
@@ -324,12 +287,8 @@ router.get('/activity/recent', async (req: Request, res: Response) => {
  */
 router.get('/feedback/summary', async (req: Request, res: Response) => {
     try {
-        const tenantId = req.headers['x-tenant-id'] as string;
+        const tenantId = (req as any).tenantId;
         const range = req.query.range as string || 'last30days';
-        
-        if (!tenantId) {
-            return res.status(400).json({ error: 'Tenant ID is required' });
-        }
         
         const data = await pharmacyService.getPatientFeedbackSummary(tenantId, range);
         res.json(data);

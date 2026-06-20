@@ -199,10 +199,14 @@ export async function handler(event) {
 
     const token = authHeader.substring(7);
     const decoded = await verifyToken(token);
-    const tenantId = decoded.tenantId || event.headers['x-tenant-id'];
+    // SECURITY FIX (Finding #1): tenantId MUST come from verified JWT only.
+    // NEVER fall back to client-supplied x-tenant-id header — that allows
+    // any attacker to impersonate any tenant by setting a header.
+    const tenantId = decoded.tenantId;
 
     if (!tenantId) {
-      return error('Tenant context required', 400);
+      console.error('[SECURITY] JWT token missing tenantId claim', { sub: decoded.sub });
+      return error('Token missing tenant context — access denied', 403);
     }
 
     // Parse body
