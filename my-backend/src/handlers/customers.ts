@@ -16,11 +16,33 @@ import * as response from '../utils/response';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
 import { recordRevision } from '../services/revision-history.service';
+import { recomputeCustomerBalance } from './customer-rollup-stream';
+import { logger } from '../utils/logger';
 
 const reminderCandidatesQuerySchema = z.object({
     minAgeDays: z.coerce.number().int().min(1).max(730).optional(),
     minBalanceCents: z.coerce.number().int().min(0).optional(),
 });
+
+/**
+ * Defense-in-depth: assert a fetched customer actually belongs to the calling
+ * tenant. Tenant isolation is primarily enforced by the partition key
+ * (PK=TENANT#{tenantId}), so a cross-tenant request already yields 404.
+ * This guard catches any future regression where a handler might construct a
+ * PK from non-auth input, and it normalizes the failure to a 404 (never leaks
+ * that the record exists in another tenant).
+ *
+ * Part 3 (Strict Customer Data Isolation).
+ */
+function assertTenantOwnership(customer: Record<string, any> | null, authTenantId: string): boolean {
+    if (!customer) return false;
+    // The item's own tenantId attribute must match the caller's. Legacy rows
+    // without the attribute default to the auth tenant (they predate the field
+    // but live in the correct partition by construction).
+    const itemTenantId = customer.tenantId;
+    if (itemTenantId === undefined) return true;
+    return itemTenantId === authTenantId;
+}
 
 /**
  * POST /customers
@@ -137,7 +159,7 @@ export const updateCustomer = authorizedHandler(
 
         // Verify customer exists
         const existing = await getItem<Record<string, any>>(pk, sk);
-        if (!existing || existing.isDeleted) {
+        if (!existing || existing.isDeleted || !assertTenantOwnership(existing, auth.tenantId)) {
             return response.notFound('Customer');
         }
 
@@ -197,7 +219,7 @@ export const getCustomer = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, Us
         Keys.tenantPK(auth.tenantId),
         Keys.customerSK(customerId)
     );
-    if (!customer || customer.isDeleted) {
+    if (!customer || customer.isDeleted || !assertTenantOwnership(customer, auth.tenantId)) {
         return response.notFound('Customer');
     }
 
@@ -221,6 +243,90 @@ export const getCustomer = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, Us
     });
 });
 
+/** Max age (ms) of a BALANCE rollup item before we recompute on read. */
+const BALANCE_STALE_MS = 24 * 60 * 60 * 1000; // 24h
+
+/**
+ * GET /customers/{id}/profile
+ * Single source of truth read: identity + rolled-up balance summary.
+ *
+ * Reads the cached BALANCE item (O(1)) and falls back to an on-demand recompute
+ * if the cache is missing or older than BALANCE_STALE_MS, so the screen never
+ * shows stale totals even if the Streams consumer lagged.
+ *
+ * Note: credit enforcement still recomputes from UDHARTXN# at billing time
+ * (credit-check.util.ts) — this endpoint is for display/summary only.
+ */
+export const getCustomerProfile = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.ACCOUNTANT, UserRole.CASHIER, UserRole.STAFF], async (event, _context, auth) => {
+    const customerId = event.pathParameters?.id;
+    if (!customerId) return response.badRequest('Missing customer id');
+
+    const pk = Keys.tenantPK(auth.tenantId);
+    const customer = await getItem<Record<string, any>>(pk, Keys.customerSK(customerId));
+    if (!customer || customer.isDeleted || !assertTenantOwnership(customer, auth.tenantId)) {
+        return response.notFound('Customer');
+    }
+
+    // 1. Try the cached rollup.
+    let balance = await getItem<Record<string, any>>(pk, Keys.customerBalanceSK(customerId));
+
+    // 2. Self-heal: recompute if missing or stale.
+    const updatedMs = balance?.updatedAt ? new Date(balance.updatedAt).getTime() : 0;
+    const isStale = !balance || Number.isNaN(updatedMs) || (Date.now() - updatedMs) > BALANCE_STALE_MS;
+    if (isStale) {
+        try {
+            balance = (await recomputeCustomerBalance(auth.tenantId, customerId)) as unknown as Record<string, any>;
+            logger.info('getCustomerProfile: recompute-on-read', {
+                tenantId: auth.tenantId,
+                customerId,
+                reason: !balance ? 'missing' : 'stale',
+            });
+        } catch (err) {
+            // Fall through with whatever (possibly empty) balance we have rather
+            // than failing the whole profile read.
+            logger.warn('getCustomerProfile: recompute failed, serving cache/zero', {
+                tenantId: auth.tenantId,
+                customerId,
+                error: (err as Error).message,
+            });
+        }
+    }
+
+    const outstandingCents = Number(balance?.outstandingCents ?? customer.outstandingCents ?? 0);
+    const creditLimitCents = Number(customer.creditLimitCents || 0);
+
+    return response.success({
+        // Identity (source: CUSTOMER#{id})
+        id: customer.id,
+        name: customer.name,
+        phone: customer.phone,
+        email: customer.email,
+        gstin: customer.gstin,
+        address: customer.address,
+        city: customer.city,
+        state: customer.state,
+        pincode: customer.pincode,
+        creditLimitCents,
+        notes: customer.notes,
+        customerType: customer.customerType ?? 'regular',
+        isBlocked: customer.isBlocked ?? false,
+        createdAt: customer.createdAt,
+        updatedAt: customer.updatedAt,
+        // Balance summary (source: CUSTOMER#{id}#BALANCE rollup)
+        balance: {
+            totalBilledCents: Number(balance?.totalBilledCents ?? customer.totalBilledCents ?? 0),
+            totalPaidCents: Number(balance?.totalPaidCents ?? customer.totalPaidCents ?? 0),
+            outstandingCents,
+            invoiceCount: Number(balance?.invoiceCount ?? 0),
+            paymentCount: Number(balance?.paymentCount ?? 0),
+            lastInvoiceAt: balance?.lastInvoiceAt ?? null,
+            lastPaymentAt: balance?.lastPaymentAt ?? null,
+            computedAt: balance?.updatedAt ?? null,
+        },
+        availableCreditCents: Math.max(creditLimitCents - outstandingCents, 0),
+    });
+});
+
 /**
  * DELETE /customers/{id}
  * Soft-delete a customer.
@@ -237,7 +343,7 @@ export const deleteCustomer = authorizedHandler(
 
         // CRITICAL FIX: 404 for non-existent or already-deleted customer (idempotent)
         const before = await getItem<Record<string, any>>(pk, sk);
-        if (!before || before.isDeleted) {
+        if (!before || before.isDeleted || !assertTenantOwnership(before, auth.tenantId)) {
             return response.notFound('Customer');
         }
 

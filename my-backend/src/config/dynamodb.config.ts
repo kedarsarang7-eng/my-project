@@ -95,6 +95,10 @@ export const Keys = {
 
     // Customer
     customerSK: (customerId: string) => `CUSTOMER#${customerId}`,
+    // Rolled-up balance summary for a customer (Part 2 — single source of truth).
+    // Read-optimization cache maintained by customer-rollup-stream.ts; credit
+    // enforcement still recomputes from UDHARTXN# (see credit-check.util.ts).
+    customerBalanceSK: (customerId: string) => `CUSTOMER#${customerId}#BALANCE`,
     phoneGSI1SK: (phone: string) => `PHONE#${phone}`,
 
     // Payment

@@ -1773,6 +1773,13 @@ functions:
           path: /customers/{id}/ledger
           method: GET
 
+  getCustomerProfile:
+    handler: dist/handlers/customers.getCustomerProfile
+    events:
+      - httpApi:
+          path: /customers/{id}/profile
+          method: GET
+
   getMonthlyCreditConsolidated:
     handler: dist/handlers/customers.getMonthlyCreditConsolidated
     events:
@@ -4013,6 +4020,22 @@ functions:
           method: GET
     description: Linked customer pump fill history (volume) for mobile app
 
+  customerGetInvoices:
+    handler: dist/handlers/customer-app.getMyInvoices
+    events:
+      - httpApi:
+          path: /customer/invoices
+          method: GET
+    description: Customer-app — list the calling customer's own invoices + dues (Part 4)
+
+  customerGetInvoicePdf:
+    handler: dist/handlers/customer-app.getMyInvoicePdf
+    events:
+      - httpApi:
+          path: /customer/invoices/{id}/pdf
+          method: GET
+    description: Customer-app — short-lived pre-signed URL for own invoice PDF (ownership-checked, Part 4)
+
   # ── In-Store Self Scan & Checkout ─────────────────────────────────────────
 
   inStoreStartSession:
@@ -4110,6 +4133,26 @@ functions:
     environment:
       INVOICE_GEN_QUEUE_URL: !Ref InvoiceGenQueue
       FCM_SNS_TOPIC_ARN: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:app/GCM/DukanX-Customer-App'
+
+  # ── Customer balance rollup (Part 2) ───────────────────────────────────────
+  # Maintains CUSTOMER#{id}#BALANCE for instant profile reads. Only fires on
+  # INVOICE#/PAYMENT# writes (filtered at the stream source to cut cost).
+  # Read-cache only — credit enforcement recomputes from UDHARTXN# (authoritative).
+  customerRollupStream:
+    handler: dist/handlers/customer-rollup-stream.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn: !GetAtt DukanXTable.StreamArn
+          startingPosition: LATEST
+          batchSize: 25
+          filterPatterns:
+            - eventName: [INSERT, MODIFY]
+              dynamodb:
+                NewImage:
+                  entityType:
+                    S: [INVOICE, PAYMENT]
+    description: Maintains rolled-up customer BALANCE items from INVOICE/PAYMENT writes
 
   # ── Restaurant PWA v1 compat (same Dynamo tenant as main app) ─────────────
   # P0-02: Issues a 60-min, table-scoped JWT to the customer PWA after QR scan.

@@ -88,6 +88,14 @@ export enum UserRole {
     PUMPBOY = 'pumpboy',
     VIEWER = 'viewer',                 // (Read only access)
     CHARTERED_ACCOUNTANT = 'ca',       // (Financial access)
+    /**
+     * Customer-app end-user (Part 4). A consumer who connects to a tenant's
+     * shop via the companion app to view their own invoices/payments/dues.
+     * Dedicated Cognito group separate from business-owner roles; customer-app
+     * endpoints are restricted to this role so business staff can't impersonate
+     * the customer-app surface (and vice-versa).
+     */
+    CUSTOMER = 'customer',
 }
 
 export interface Tenant {

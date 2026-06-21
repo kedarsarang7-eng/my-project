@@ -1,6 +1,15 @@
 // ============================================================================
 // Lambda Handler — Customer Companion App (DynamoDB)
 // ============================================================================
+// Part 4 — Customer Mobile App Integration.
+//
+// SECURITY: every handler here is restricted to UserRole.CUSTOMER — a dedicated
+// Cognito group separate from business-owner/staff roles. The calling customer
+// is identified SOLELY from the verified JWT (auth.sub → linked customer via
+// phone). No client-supplied customerId is ever trusted for authorization.
+// All queries are scoped to the customer's tenant partition AND filtered to
+// records belonging to that customer only.
+// ============================================================================
 import { authorizedHandler } from '../middleware/handler-wrapper';
 import { Keys, queryItems, queryAllItems, putItem, getItem, updateItem } from '../config/dynamodb.config';
 import { parseBody } from '../middleware/validation';
@@ -12,11 +21,36 @@ import { logger } from '../utils/logger';
 import crypto from 'crypto';
 import * as wsService from '../services/websocket.service';
 import { WSEventName } from '../types/websocket.types';
+import { StorageService } from '../services/storage.service';
+
+/**
+ * Resolve the linked CUSTOMER# entity (if any) for the authenticated app user.
+ *
+ * The link is by phone number (the user's Cognito account phone ↔ the shop's
+ * customer record phone). Returns the customer record or null. The returned
+ * customerId is the ONLY trusted identity for downstream queries — it is never
+ * read from client input.
+ */
+async function resolveLinkedCustomer(
+    pk: string,
+    auth: AuthContext,
+): Promise<Record<string, any> | null> {
+    const user = await getItem<Record<string, any>>(pk, Keys.userSK(auth.sub));
+    const phone = user?.phone;
+    if (!phone) return null;
+
+    const customers = await queryItems<Record<string, any>>(pk, 'CUSTOMER#', {
+        filterExpression: 'phone = :phone AND (attribute_not_exists(isDeleted) OR isDeleted = :false)',
+        expressionAttributeValues: { ':phone': phone, ':false': false },
+        limit: 1,
+    });
+    return customers.items.length > 0 ? customers.items[0] : null;
+}
 
 /**
  * GET /customer/ledger — Udhar balance
  */
-export const getMyLedger = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.CASHIER, UserRole.STAFF], async (event: APIGatewayProxyEventV2, context: Context, auth: AuthContext) => {
+export const getMyLedger = authorizedHandler([UserRole.CUSTOMER], async (event: APIGatewayProxyEventV2, context: Context, auth: AuthContext) => {
     const pk = Keys.tenantPK(auth.tenantId);
 
     // Find linked udhar account by user sub
@@ -57,7 +91,7 @@ export const getMyLedger = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, Us
 /**
  * POST /customer/orders — Place order
  */
-export const placeOrder = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.CASHIER, UserRole.STAFF], async (event: APIGatewayProxyEventV2, context: Context, auth: AuthContext) => {
+export const placeOrder = authorizedHandler([UserRole.CUSTOMER], async (event: APIGatewayProxyEventV2, context: Context, auth: AuthContext) => {
     const valid = parseBody(schemas.customerOrderSchema, event);
     if (!valid.success) return valid.error;
 
@@ -125,7 +159,7 @@ export const placeOrder = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, Use
 /**
  * GET /customer/prescriptions
  */
-export const getMyPrescriptions = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.CASHIER, UserRole.STAFF], async (event: APIGatewayProxyEventV2, context: Context, auth: AuthContext) => {
+export const getMyPrescriptions = authorizedHandler([UserRole.CUSTOMER], async (event: APIGatewayProxyEventV2, context: Context, auth: AuthContext) => {
     const pk = Keys.tenantPK(auth.tenantId);
 
     try {
@@ -174,7 +208,7 @@ export const getMyPrescriptions = authorizedHandler([UserRole.OWNER, UserRole.AD
 /**
  * GET /customer/fuel-fills — pump fill history for mobile (linked CUSTOMER by phone)
  */
-export const getMyFillHistory = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.CASHIER, UserRole.STAFF], async (event: APIGatewayProxyEventV2, _context: Context, auth: AuthContext) => {
+export const getMyFillHistory = authorizedHandler([UserRole.CUSTOMER], async (event: APIGatewayProxyEventV2, _context: Context, auth: AuthContext) => {
     const pk = Keys.tenantPK(auth.tenantId);
     const user = await getItem<Record<string, unknown>>(pk, Keys.userSK(auth.sub));
     const phoneRaw = user && typeof user === 'object' && 'phone' in user ? (user as { phone?: string }).phone : undefined;
@@ -225,4 +259,100 @@ export const getMyFillHistory = authorizedHandler([UserRole.OWNER, UserRole.ADMI
     });
 
     return response.success({ items: fills, total: sorted.length });
+});
+
+// ============================================================================
+// Part 4 — Customer invoice & statement access (mobile app integration)
+// ============================================================================
+
+/**
+ * GET /customer/invoices — list the calling customer's OWN invoices + dues.
+ *
+ * The customer identity is resolved from the JWT (auth.sub → linked customer).
+ * Invoices are filtered to that customerId only — a customer can never see
+ * another customer's invoices even within the same tenant.
+ */
+export const getMyInvoices = authorizedHandler([UserRole.CUSTOMER], async (event: APIGatewayProxyEventV2, _context: Context, auth: AuthContext) => {
+    const pk = Keys.tenantPK(auth.tenantId);
+    const customer = await resolveLinkedCustomer(pk, auth);
+    if (!customer) return response.success({ items: [], summary: { outstandingCents: 0, totalBilledCents: 0, totalPaidCents: 0 } });
+
+    const limit = Math.min(100, Math.max(1, parseInt(event.queryStringParameters?.limit || '50', 10) || 50));
+    const customerId = String(customer.id);
+    const phone = String(customer.phone || '');
+
+    const invoices = await queryAllItems<Record<string, any>>(pk, 'INVOICE#', {
+        filterExpression: '(customerId = :cid OR customerPhone = :phone) AND (attribute_not_exists(isDeleted) OR isDeleted = :false)',
+        expressionAttributeValues: { ':cid': customerId, ':phone': phone, ':false': false },
+        maxPages: 10,
+    });
+
+    const sorted = invoices
+        .filter((inv) => String(inv.status || '').toLowerCase() !== 'voided')
+        .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+
+    let totalBilled = 0, totalPaid = 0, outstanding = 0;
+    for (const inv of invoices) {
+        totalBilled += Number(inv.totalCents || 0);
+        totalPaid += Number(inv.paidCents || 0);
+        outstanding += Number(inv.balanceCents || 0);
+    }
+    if (outstanding < 0) outstanding = 0;
+
+    const items = sorted.slice(0, limit).map((inv) => ({
+        id: inv.id,
+        invoiceNumber: inv.invoiceNumber ?? null,
+        createdAt: inv.createdAt ?? null,
+        status: inv.status ?? 'pending',
+        totalCents: Number(inv.totalCents || 0),
+        paidCents: Number(inv.paidCents || 0),
+        balanceCents: Number(inv.balanceCents || 0),
+        paymentMode: inv.paymentMode ?? null,
+        hasPdf: Boolean(inv.pdfKey),
+    }));
+
+    return response.success({
+        items,
+        summary: { outstandingCents: outstanding, totalBilledCents: totalBilled, totalPaidCents: totalPaid },
+    });
+});
+
+/**
+ * GET /customer/invoices/{id}/pdf — short-lived pre-signed S3 URL for the
+ * calling customer's OWN invoice PDF.
+ *
+ * CRITICAL: ownership is verified before signing. The invoice must belong to
+ * the resolved customer (customerId match). A customer requesting another
+ * customer's invoice id gets 404, never a URL. S3 access is only ever via
+ * these time-limited (5-min) pre-signed URLs scoped to the owned object.
+ */
+export const getMyInvoicePdf = authorizedHandler([UserRole.CUSTOMER], async (event: APIGatewayProxyEventV2, _context: Context, auth: AuthContext) => {
+    const invoiceId = event.pathParameters?.id;
+    if (!invoiceId) return response.badRequest('Missing invoice id');
+
+    const pk = Keys.tenantPK(auth.tenantId);
+    const customer = await resolveLinkedCustomer(pk, auth);
+    if (!customer) return response.notFound('Invoice');
+
+    const customerId = String(customer.id);
+    const phone = String(customer.phone || '');
+
+    const invoice = await getItem<Record<string, any>>(pk, Keys.invoiceSK(invoiceId));
+    // Ownership gate: the invoice must belong to THIS customer.
+    const owned =
+        invoice &&
+        !invoice.isDeleted &&
+        (String(invoice.customerId || '') === customerId ||
+            (phone && String(invoice.customerPhone || '') === phone));
+    if (!owned) return response.notFound('Invoice');
+
+    // No PDF generated yet → tell the client (it can request generation).
+    const pdfKey = invoice.pdfKey;
+    if (!pdfKey) {
+        return response.success({ url: null, reason: 'PDF_NOT_GENERATED', expiresIn: 0 });
+    }
+
+    const storage = new StorageService();
+    const url = await storage.getDownloadUrl(String(pdfKey));
+    return response.success({ url, expiresIn: 300 }); // 5 minutes
 });

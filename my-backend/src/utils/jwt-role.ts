@@ -19,6 +19,10 @@ const ROLE_ALIASES: Record<string, UserRole> = {
     fuel_attendant: UserRole.PUMPBOY,
     fuelattendant: UserRole.PUMPBOY,
     attendant: UserRole.PUMPBOY,
+    // Part 4: customer-app end-user role aliases.
+    client: UserRole.CUSTOMER,
+    consumer: UserRole.CUSTOMER,
+    end_user: UserRole.CUSTOMER,
 };
 
 /**
