@@ -1644,6 +1644,31 @@ functions:
           method: POST
     timeout: 29
 
+  # ── Mandi (Vegetable Broker) Sync ───────────────────────────────────
+  mandiSyncPush:
+    handler: dist/handlers/mandi-sync.mandiSyncPush
+    events:
+      - httpApi:
+          path: /veg-broker/sync/push
+          method: POST
+    timeout: 29
+
+  mandiSyncPull:
+    handler: dist/handlers/mandi-sync.mandiSyncPull
+    events:
+      - httpApi:
+          path: /veg-broker/sync/pull
+          method: POST
+    timeout: 29
+
+  mandiSyncQuery:
+    handler: dist/handlers/mandi-sync.mandiSyncQuery
+    events:
+      - httpApi:
+          path: /veg-broker/sync/query
+          method: GET
+    timeout: 10
+
   # ── AI Insights ──────────────────────────────────────────────────────
   aiInsight:
     handler: dist/handlers/insights.aiInsight

@@ -1,0 +1,1420 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ApiLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/sls-licensing-backend-dev-api"
+      }
+    },
+    "SyncPermissionsLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/sls-licensing-backend-dev-syncPermissions"
+      }
+    },
+    "GenerateKeyLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/sls-licensing-backend-dev-generateKey"
+      }
+    },
+    "ValidateLicenseLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/sls-licensing-backend-dev-validateLicense"
+      }
+    },
+    "AdminStatsLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/sls-licensing-backend-dev-adminStats"
+      }
+    },
+    "CognitoPreTokenLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/sls-licensing-backend-dev-cognitoPreToken"
+      }
+    },
+    "RevokeLicenseLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/sls-licensing-backend-dev-revokeLicense"
+      }
+    },
+    "IamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "sls-licensing-backend",
+                  "dev",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup",
+                    "logs:TagResource"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/sls-licensing-backend-dev*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/sls-licensing-backend-dev*:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:PutItem",
+                    "dynamodb:UpdateItem",
+                    "dynamodb:DeleteItem",
+                    "dynamodb:Query",
+                    "dynamodb:Scan",
+                    "dynamodb:BatchGetItem",
+                    "dynamodb:BatchWriteItem"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "LicenseKeysTable",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "/",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "LicenseKeysTable",
+                              "Arn"
+                            ]
+                          },
+                          "index",
+                          "*"
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:PutItem",
+                    "dynamodb:UpdateItem",
+                    "dynamodb:DeleteItem",
+                    "dynamodb:Query",
+                    "dynamodb:Scan"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "RbacTable",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "/",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "RbacTable",
+                              "Arn"
+                            ]
+                          },
+                          "index",
+                          "*"
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ssm:GetParameter",
+                    "ssm:GetParameters"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/sls/dev/*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "sls-licensing-backend",
+              "dev",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        }
+      }
+    },
+    "ApiLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-3ec19ca0-0fd1",
+          "S3Key": "serverless/sls-licensing-backend/dev/1771160166536-2026-02-15T12:56:06.536Z/sls-licensing-backend.zip"
+        },
+        "Handler": "dist/lambda.handler",
+        "Runtime": "nodejs24.x",
+        "FunctionName": "sls-licensing-backend-dev-api",
+        "MemorySize": 512,
+        "Timeout": 29,
+        "Architectures": [
+          "arm64"
+        ],
+        "Description": "SLS Backend — Express API (all routes)",
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "sls-licensing"
+          },
+          {
+            "Key": "environment",
+            "Value": "dev"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "NODE_ENV": "development",
+            "DATABASE_URL": "postgresql://SarangDukanX1309:GBp6%21BQ%5DMR.%24%5BQ%3EMi%7CVkvoomSPS%5B@dukanx-db.c94uaqmeyouv.ap-south-1.rds.amazonaws.com:5432/dukanx-db",
+            "DB_SSL": "true",
+            "REDIS_URL": "redis://localhost:6379",
+            "REDIS_PREFIX": "sls:",
+            "JWT_ACCESS_SECRET": "77ae01117f30f25a84d61b6aa9a79972ce24106feeb8f08b29970b71cde9ea91",
+            "JWT_REFRESH_SECRET": "40909eca175ee8d1c68c674ae4f2e544b9017c7daa29bf6689f47d1e0d215966",
+            "JWT_ACCESS_EXPIRY": "15m",
+            "JWT_REFRESH_EXPIRY": "7d",
+            "AES_ENCRYPTION_KEY": "65957bc5362f84afc437d7804cbbe5cfb13388a79acb7ba9d0b6d716c44723ba",
+            "CORS_ORIGIN": "http://localhost:3000",
+            "LICENSE_TABLE": "sls-licensing-backend-licenses-dev",
+            "DYNAMODB_LICENSE_TABLE": "sls-licensing-backend-license-keys-dev",
+            "DYNAMODB_RBAC_TABLE": "sls-licensing-backend-rbac-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "ApiLogGroup"
+      ]
+    },
+    "SyncPermissionsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-3ec19ca0-0fd1",
+          "S3Key": "serverless/sls-licensing-backend/dev/1771160166536-2026-02-15T12:56:06.536Z/sls-licensing-backend.zip"
+        },
+        "Handler": "dist/lambdas/syncPermissions.handler",
+        "Runtime": "nodejs24.x",
+        "FunctionName": "sls-licensing-backend-dev-syncPermissions",
+        "MemorySize": 256,
+        "Timeout": 10,
+        "Architectures": [
+          "arm64"
+        ],
+        "Description": "Sync effective permissions for authenticated user",
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "sls-licensing"
+          },
+          {
+            "Key": "environment",
+            "Value": "dev"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "NODE_ENV": "development",
+            "DATABASE_URL": "postgresql://SarangDukanX1309:GBp6%21BQ%5DMR.%24%5BQ%3EMi%7CVkvoomSPS%5B@dukanx-db.c94uaqmeyouv.ap-south-1.rds.amazonaws.com:5432/dukanx-db",
+            "DB_SSL": "true",
+            "REDIS_URL": "redis://localhost:6379",
+            "REDIS_PREFIX": "sls:",
+            "JWT_ACCESS_SECRET": "77ae01117f30f25a84d61b6aa9a79972ce24106feeb8f08b29970b71cde9ea91",
+            "JWT_REFRESH_SECRET": "40909eca175ee8d1c68c674ae4f2e544b9017c7daa29bf6689f47d1e0d215966",
+            "JWT_ACCESS_EXPIRY": "15m",
+            "JWT_REFRESH_EXPIRY": "7d",
+            "AES_ENCRYPTION_KEY": "65957bc5362f84afc437d7804cbbe5cfb13388a79acb7ba9d0b6d716c44723ba",
+            "CORS_ORIGIN": "http://localhost:3000",
+            "LICENSE_TABLE": "sls-licensing-backend-licenses-dev",
+            "DYNAMODB_LICENSE_TABLE": "sls-licensing-backend-license-keys-dev",
+            "DYNAMODB_RBAC_TABLE": "sls-licensing-backend-rbac-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "SyncPermissionsLogGroup"
+      ]
+    },
+    "GenerateKeyLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-3ec19ca0-0fd1",
+          "S3Key": "serverless/sls-licensing-backend/dev/1771160166536-2026-02-15T12:56:06.536Z/sls-licensing-backend.zip"
+        },
+        "Handler": "dist/lambdas/generateKey.handler",
+        "Runtime": "nodejs24.x",
+        "FunctionName": "sls-licensing-backend-dev-generateKey",
+        "MemorySize": 256,
+        "Timeout": 10,
+        "Architectures": [
+          "arm64"
+        ],
+        "Description": "Generate a new cryptographically secure license key",
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "sls-licensing"
+          },
+          {
+            "Key": "environment",
+            "Value": "dev"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "NODE_ENV": "development",
+            "DATABASE_URL": "postgresql://SarangDukanX1309:GBp6%21BQ%5DMR.%24%5BQ%3EMi%7CVkvoomSPS%5B@dukanx-db.c94uaqmeyouv.ap-south-1.rds.amazonaws.com:5432/dukanx-db",
+            "DB_SSL": "true",
+            "REDIS_URL": "redis://localhost:6379",
+            "REDIS_PREFIX": "sls:",
+            "JWT_ACCESS_SECRET": "77ae01117f30f25a84d61b6aa9a79972ce24106feeb8f08b29970b71cde9ea91",
+            "JWT_REFRESH_SECRET": "40909eca175ee8d1c68c674ae4f2e544b9017c7daa29bf6689f47d1e0d215966",
+            "JWT_ACCESS_EXPIRY": "15m",
+            "JWT_REFRESH_EXPIRY": "7d",
+            "AES_ENCRYPTION_KEY": "65957bc5362f84afc437d7804cbbe5cfb13388a79acb7ba9d0b6d716c44723ba",
+            "CORS_ORIGIN": "http://localhost:3000",
+            "LICENSE_TABLE": "sls-licensing-backend-licenses-dev",
+            "DYNAMODB_LICENSE_TABLE": "sls-licensing-backend-license-keys-dev",
+            "DYNAMODB_RBAC_TABLE": "sls-licensing-backend-rbac-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "GenerateKeyLogGroup"
+      ]
+    },
+    "ValidateLicenseLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-3ec19ca0-0fd1",
+          "S3Key": "serverless/sls-licensing-backend/dev/1771160166536-2026-02-15T12:56:06.536Z/sls-licensing-backend.zip"
+        },
+        "Handler": "dist/lambdas/validateLicense.handler",
+        "Runtime": "nodejs24.x",
+        "FunctionName": "sls-licensing-backend-dev-validateLicense",
+        "MemorySize": 256,
+        "Timeout": 10,
+        "Architectures": [
+          "arm64"
+        ],
+        "Description": "Validate license key + HWID binding (client-facing)",
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "sls-licensing"
+          },
+          {
+            "Key": "environment",
+            "Value": "dev"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "NODE_ENV": "development",
+            "DATABASE_URL": "postgresql://SarangDukanX1309:GBp6%21BQ%5DMR.%24%5BQ%3EMi%7CVkvoomSPS%5B@dukanx-db.c94uaqmeyouv.ap-south-1.rds.amazonaws.com:5432/dukanx-db",
+            "DB_SSL": "true",
+            "REDIS_URL": "redis://localhost:6379",
+            "REDIS_PREFIX": "sls:",
+            "JWT_ACCESS_SECRET": "77ae01117f30f25a84d61b6aa9a79972ce24106feeb8f08b29970b71cde9ea91",
+            "JWT_REFRESH_SECRET": "40909eca175ee8d1c68c674ae4f2e544b9017c7daa29bf6689f47d1e0d215966",
+            "JWT_ACCESS_EXPIRY": "15m",
+            "JWT_REFRESH_EXPIRY": "7d",
+            "AES_ENCRYPTION_KEY": "65957bc5362f84afc437d7804cbbe5cfb13388a79acb7ba9d0b6d716c44723ba",
+            "CORS_ORIGIN": "http://localhost:3000",
+            "LICENSE_TABLE": "sls-licensing-backend-licenses-dev",
+            "DYNAMODB_LICENSE_TABLE": "sls-licensing-backend-license-keys-dev",
+            "DYNAMODB_RBAC_TABLE": "sls-licensing-backend-rbac-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "ValidateLicenseLogGroup"
+      ]
+    },
+    "AdminStatsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-3ec19ca0-0fd1",
+          "S3Key": "serverless/sls-licensing-backend/dev/1771160166536-2026-02-15T12:56:06.536Z/sls-licensing-backend.zip"
+        },
+        "Handler": "dist/lambdas/adminStats.handler",
+        "Runtime": "nodejs24.x",
+        "FunctionName": "sls-licensing-backend-dev-adminStats",
+        "MemorySize": 256,
+        "Timeout": 10,
+        "Architectures": [
+          "arm64"
+        ],
+        "Description": "Dashboard statistics — license counts and analytics",
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "sls-licensing"
+          },
+          {
+            "Key": "environment",
+            "Value": "dev"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "NODE_ENV": "development",
+            "DATABASE_URL": "postgresql://SarangDukanX1309:GBp6%21BQ%5DMR.%24%5BQ%3EMi%7CVkvoomSPS%5B@dukanx-db.c94uaqmeyouv.ap-south-1.rds.amazonaws.com:5432/dukanx-db",
+            "DB_SSL": "true",
+            "REDIS_URL": "redis://localhost:6379",
+            "REDIS_PREFIX": "sls:",
+            "JWT_ACCESS_SECRET": "77ae01117f30f25a84d61b6aa9a79972ce24106feeb8f08b29970b71cde9ea91",
+            "JWT_REFRESH_SECRET": "40909eca175ee8d1c68c674ae4f2e544b9017c7daa29bf6689f47d1e0d215966",
+            "JWT_ACCESS_EXPIRY": "15m",
+            "JWT_REFRESH_EXPIRY": "7d",
+            "AES_ENCRYPTION_KEY": "65957bc5362f84afc437d7804cbbe5cfb13388a79acb7ba9d0b6d716c44723ba",
+            "CORS_ORIGIN": "http://localhost:3000",
+            "LICENSE_TABLE": "sls-licensing-backend-licenses-dev",
+            "DYNAMODB_LICENSE_TABLE": "sls-licensing-backend-license-keys-dev",
+            "DYNAMODB_RBAC_TABLE": "sls-licensing-backend-rbac-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "AdminStatsLogGroup"
+      ]
+    },
+    "CognitoPreTokenLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-3ec19ca0-0fd1",
+          "S3Key": "serverless/sls-licensing-backend/dev/1771160166536-2026-02-15T12:56:06.536Z/sls-licensing-backend.zip"
+        },
+        "Handler": "dist/lambdas/cognitoPreTokenTrigger.handler",
+        "Runtime": "nodejs24.x",
+        "FunctionName": "sls-licensing-backend-dev-cognitoPreToken",
+        "MemorySize": 256,
+        "Timeout": 10,
+        "Architectures": [
+          "arm64"
+        ],
+        "Description": "Inject role & permissions into Cognito JWT on login",
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "sls-licensing"
+          },
+          {
+            "Key": "environment",
+            "Value": "dev"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "NODE_ENV": "development",
+            "DATABASE_URL": "postgresql://SarangDukanX1309:GBp6%21BQ%5DMR.%24%5BQ%3EMi%7CVkvoomSPS%5B@dukanx-db.c94uaqmeyouv.ap-south-1.rds.amazonaws.com:5432/dukanx-db",
+            "DB_SSL": "true",
+            "REDIS_URL": "redis://localhost:6379",
+            "REDIS_PREFIX": "sls:",
+            "JWT_ACCESS_SECRET": "77ae01117f30f25a84d61b6aa9a79972ce24106feeb8f08b29970b71cde9ea91",
+            "JWT_REFRESH_SECRET": "40909eca175ee8d1c68c674ae4f2e544b9017c7daa29bf6689f47d1e0d215966",
+            "JWT_ACCESS_EXPIRY": "15m",
+            "JWT_REFRESH_EXPIRY": "7d",
+            "AES_ENCRYPTION_KEY": "65957bc5362f84afc437d7804cbbe5cfb13388a79acb7ba9d0b6d716c44723ba",
+            "CORS_ORIGIN": "http://localhost:3000",
+            "LICENSE_TABLE": "sls-licensing-backend-licenses-dev",
+            "DYNAMODB_LICENSE_TABLE": "sls-licensing-backend-license-keys-dev",
+            "DYNAMODB_RBAC_TABLE": "sls-licensing-backend-rbac-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "CognitoPreTokenLogGroup"
+      ]
+    },
+    "RevokeLicenseLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-ap-south-1-3ec19ca0-0fd1",
+          "S3Key": "serverless/sls-licensing-backend/dev/1771160166536-2026-02-15T12:56:06.536Z/sls-licensing-backend.zip"
+        },
+        "Handler": "dist/lambdas/revokeLicense.handler",
+        "Runtime": "nodejs24.x",
+        "FunctionName": "sls-licensing-backend-dev-revokeLicense",
+        "MemorySize": 256,
+        "Timeout": 10,
+        "Architectures": [
+          "arm64"
+        ],
+        "Description": "Revoke or ban a license key (Admin action)",
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "sls-licensing"
+          },
+          {
+            "Key": "environment",
+            "Value": "dev"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "NODE_ENV": "development",
+            "DATABASE_URL": "postgresql://SarangDukanX1309:GBp6%21BQ%5DMR.%24%5BQ%3EMi%7CVkvoomSPS%5B@dukanx-db.c94uaqmeyouv.ap-south-1.rds.amazonaws.com:5432/dukanx-db",
+            "DB_SSL": "true",
+            "REDIS_URL": "redis://localhost:6379",
+            "REDIS_PREFIX": "sls:",
+            "JWT_ACCESS_SECRET": "77ae01117f30f25a84d61b6aa9a79972ce24106feeb8f08b29970b71cde9ea91",
+            "JWT_REFRESH_SECRET": "40909eca175ee8d1c68c674ae4f2e544b9017c7daa29bf6689f47d1e0d215966",
+            "JWT_ACCESS_EXPIRY": "15m",
+            "JWT_REFRESH_EXPIRY": "7d",
+            "AES_ENCRYPTION_KEY": "65957bc5362f84afc437d7804cbbe5cfb13388a79acb7ba9d0b6d716c44723ba",
+            "CORS_ORIGIN": "http://localhost:3000",
+            "LICENSE_TABLE": "sls-licensing-backend-licenses-dev",
+            "DYNAMODB_LICENSE_TABLE": "sls-licensing-backend-license-keys-dev",
+            "DYNAMODB_RBAC_TABLE": "sls-licensing-backend-rbac-dev"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "RevokeLicenseLogGroup"
+      ]
+    },
+    "ApiLambdaVersiong8LM37OfdgoxSGhPVakEtszPBHSult4nUmhpswtl4": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ApiLambdaFunction"
+        },
+        "CodeSha256": "zL2MDadAmKDmDfmThEESJp6RRhIh7uC4dHEa0rdvRQI=",
+        "Description": "SLS Backend — Express API (all routes)"
+      }
+    },
+    "SyncPermissionsLambdaVersioneS7cjW5EKbrnwO0Um4KBxUK59cIOdYhmDqbGuLAY3Qk": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SyncPermissionsLambdaFunction"
+        },
+        "CodeSha256": "zL2MDadAmKDmDfmThEESJp6RRhIh7uC4dHEa0rdvRQI=",
+        "Description": "Sync effective permissions for authenticated user"
+      }
+    },
+    "GenerateKeyLambdaVersionDPMTrfh6tCdmAweghhOdynUv8a8IZDiCeKs7clzDQ": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "GenerateKeyLambdaFunction"
+        },
+        "CodeSha256": "zL2MDadAmKDmDfmThEESJp6RRhIh7uC4dHEa0rdvRQI=",
+        "Description": "Generate a new cryptographically secure license key"
+      }
+    },
+    "ValidateLicenseLambdaVersionUQfhKMw37JwxirWO5etRhPom6POM9eaJLHByAPsKEE": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ValidateLicenseLambdaFunction"
+        },
+        "CodeSha256": "zL2MDadAmKDmDfmThEESJp6RRhIh7uC4dHEa0rdvRQI=",
+        "Description": "Validate license key + HWID binding (client-facing)"
+      }
+    },
+    "AdminStatsLambdaVersionmCCPT3AiHxtchqEO2Fi2LNGoCayrUm2uTVUo3NZPe5I": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "AdminStatsLambdaFunction"
+        },
+        "CodeSha256": "zL2MDadAmKDmDfmThEESJp6RRhIh7uC4dHEa0rdvRQI=",
+        "Description": "Dashboard statistics — license counts and analytics"
+      }
+    },
+    "CognitoPreTokenLambdaVersionXh6NlmKxsacJd6CFFYH5N1upHVyGtwfC8KcurlUBc": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CognitoPreTokenLambdaFunction"
+        },
+        "CodeSha256": "zL2MDadAmKDmDfmThEESJp6RRhIh7uC4dHEa0rdvRQI=",
+        "Description": "Inject role & permissions into Cognito JWT on login"
+      }
+    },
+    "RevokeLicenseLambdaVersioniHRF0GCgslZBLFhtXXXCCuzDEyDZc9I30HgrwAuzVqM": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "RevokeLicenseLambdaFunction"
+        },
+        "CodeSha256": "zL2MDadAmKDmDfmThEESJp6RRhIh7uC4dHEa0rdvRQI=",
+        "Description": "Revoke or ban a license key (Admin action)"
+      }
+    },
+    "HttpApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "Name": "dev-sls-licensing-backend",
+        "ProtocolType": "HTTP",
+        "Tags": {
+          "project": "sls-licensing",
+          "environment": "dev"
+        }
+      }
+    },
+    "HttpApiStage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "StageName": "$default",
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "DetailedMetricsEnabled": false
+        },
+        "Tags": {
+          "project": "sls-licensing",
+          "environment": "dev"
+        }
+      }
+    },
+    "ApiLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ApiLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationApi": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "ApiLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRouteAnyApiProxyVar": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "ANY /api/{proxy+}",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationApi"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationApi"
+    },
+    "HttpApiRouteGetApiHealth": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /api/health",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationApi"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationApi"
+    },
+    "SyncPermissionsLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SyncPermissionsLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationSyncPermissions": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "SyncPermissionsLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRouteGetApiRbacSync": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /api/rbac/sync",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationSyncPermissions"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationSyncPermissions"
+    },
+    "GenerateKeyLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "GenerateKeyLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationGenerateKey": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "GenerateKeyLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRoutePostApiAdminGenerateDashkey": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /api/admin/generate-key",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationGenerateKey"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationGenerateKey"
+    },
+    "ValidateLicenseLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ValidateLicenseLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationValidateLicense": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "ValidateLicenseLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRoutePostApiClientValidate": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /api/client/validate",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationValidateLicense"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationValidateLicense"
+    },
+    "AdminStatsLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "AdminStatsLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationAdminStats": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "AdminStatsLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRouteGetApiAdminStats": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /api/admin/stats",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationAdminStats"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationAdminStats"
+    },
+    "RevokeLicenseLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "RevokeLicenseLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationRevokeLicense": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "RevokeLicenseLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRoutePostApiAdminRevokeLicensekeyVar": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /api/admin/revoke/{license_key}",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationRevokeLicense"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationRevokeLicense"
+    },
+    "LicenseKeysTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "TableName": "sls-licensing-backend-license-keys-dev",
+        "BillingMode": "PAY_PER_REQUEST",
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": true
+        },
+        "SSESpecification": {
+          "SSEEnabled": true
+        },
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "license_key",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "status",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "hwid",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "created_at",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "license_key",
+            "KeyType": "HASH"
+          }
+        ],
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "status-created_at-index",
+            "KeySchema": [
+              {
+                "AttributeName": "status",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "created_at",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            }
+          },
+          {
+            "IndexName": "hwid-index",
+            "KeySchema": [
+              {
+                "AttributeName": "hwid",
+                "KeyType": "HASH"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "sls-licensing"
+          },
+          {
+            "Key": "environment",
+            "Value": "dev"
+          }
+        ]
+      }
+    },
+    "RbacTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "TableName": "sls-licensing-backend-rbac-dev",
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "PK",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "SK",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "PK",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "SK",
+            "KeyType": "RANGE"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "project",
+            "Value": "sls-licensing"
+          },
+          {
+            "Key": "environment",
+            "Value": "dev"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": "serverless-framework-deployments-ap-south-1-3ec19ca0-0fd1",
+      "Export": {
+        "Name": "sls-sls-licensing-backend-dev-ServerlessDeploymentBucketName"
+      }
+    },
+    "ApiLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "ApiLambdaVersiong8LM37OfdgoxSGhPVakEtszPBHSult4nUmhpswtl4"
+      },
+      "Export": {
+        "Name": "sls-sls-licensing-backend-dev-ApiLambdaFunctionQualifiedArn"
+      }
+    },
+    "SyncPermissionsLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "SyncPermissionsLambdaVersioneS7cjW5EKbrnwO0Um4KBxUK59cIOdYhmDqbGuLAY3Qk"
+      },
+      "Export": {
+        "Name": "sls-sls-licensing-backend-dev-SyncPermissionsLambdaFunctionQualifiedArn"
+      }
+    },
+    "GenerateKeyLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "GenerateKeyLambdaVersionDPMTrfh6tCdmAweghhOdynUv8a8IZDiCeKs7clzDQ"
+      },
+      "Export": {
+        "Name": "sls-sls-licensing-backend-dev-GenerateKeyLambdaFunctionQualifiedArn"
+      }
+    },
+    "ValidateLicenseLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "ValidateLicenseLambdaVersionUQfhKMw37JwxirWO5etRhPom6POM9eaJLHByAPsKEE"
+      },
+      "Export": {
+        "Name": "sls-sls-licensing-backend-dev-ValidateLicenseLambdaFunctionQualifiedArn"
+      }
+    },
+    "AdminStatsLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "AdminStatsLambdaVersionmCCPT3AiHxtchqEO2Fi2LNGoCayrUm2uTVUo3NZPe5I"
+      },
+      "Export": {
+        "Name": "sls-sls-licensing-backend-dev-AdminStatsLambdaFunctionQualifiedArn"
+      }
+    },
+    "CognitoPreTokenLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "CognitoPreTokenLambdaVersionXh6NlmKxsacJd6CFFYH5N1upHVyGtwfC8KcurlUBc"
+      },
+      "Export": {
+        "Name": "sls-sls-licensing-backend-dev-CognitoPreTokenLambdaFunctionQualifiedArn"
+      }
+    },
+    "RevokeLicenseLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "RevokeLicenseLambdaVersioniHRF0GCgslZBLFhtXXXCCuzDEyDZc9I30HgrwAuzVqM"
+      },
+      "Export": {
+        "Name": "sls-sls-licensing-backend-dev-RevokeLicenseLambdaFunctionQualifiedArn"
+      }
+    },
+    "HttpApiId": {
+      "Description": "Id of the HTTP API",
+      "Value": {
+        "Ref": "HttpApi"
+      },
+      "Export": {
+        "Name": "sls-sls-licensing-backend-dev-HttpApiId"
+      }
+    },
+    "HttpApiUrl": {
+      "Description": "URL of the HTTP API",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "HttpApi"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "sls-sls-licensing-backend-dev-HttpApiUrl"
+      }
+    },
+    "ApiEndpoint": {
+      "Description": "API Gateway endpoint URL",
+      "Value": {
+        "Fn::Sub": "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+      }
+    },
+    "LicenseKeysTableName": {
+      "Description": "DynamoDB LicenseKeys table name",
+      "Value": {
+        "Ref": "LicenseKeysTable"
+      }
+    },
+    "LicenseKeysTableArn": {
+      "Description": "DynamoDB LicenseKeys table ARN",
+      "Value": {
+        "Fn::GetAtt": [
+          "LicenseKeysTable",
+          "Arn"
+        ]
+      }
+    }
+  }
+}

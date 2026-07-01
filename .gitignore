@@ -40,3 +40,13 @@ fix_*.py
 # Audit/scratch outputs
 _audit.txt
 _audit_errors.txt
+
+# Flutter/Dart build artifacts
+**/build/
+**/.dart_tool/
+
+# Windows reserved filename artifact
+nul
+
+# Backed up inner git repos
+**/.git_backup/

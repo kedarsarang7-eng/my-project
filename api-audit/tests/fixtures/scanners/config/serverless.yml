@@ -1,0 +1,29 @@
+# Fixture: Serverless Framework template.
+# Exercises the config scanner's serverless functions[].events[] handling for
+# `http`/`httpApi` (REST) and `websocket` (WebSocket) events
+# (Requirements 1.2, 1.5).
+service: dukanx-invoices
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+
+functions:
+  listInvoices:
+    handler: handler.list
+    events:
+      - http:
+          path: /invoices
+          method: get
+      - http: GET /invoices/{id}
+
+  websocketConnect:
+    handler: ws.connect
+    events:
+      - websocket:
+          route: $connect
+
+  websocketDisconnect:
+    handler: ws.disconnect
+    events:
+      - websocket: $disconnect

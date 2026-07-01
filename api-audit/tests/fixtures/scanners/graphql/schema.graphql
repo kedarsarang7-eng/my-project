@@ -1,0 +1,24 @@
+# Fixture: GraphQL SDL schema.
+# Exercises the GraphQL scanner's root-type field extraction for queries,
+# mutations, and subscriptions (Requirement 1.4).
+type Customer {
+  id: ID!
+  name: String!
+}
+
+input CustomerInput {
+  name: String!
+}
+
+type Query {
+  customers: [Customer!]!
+  customer(id: ID!): Customer
+}
+
+type Mutation {
+  createCustomer(input: CustomerInput!): Customer
+}
+
+type Subscription {
+  customerUpdated: Customer
+}

@@ -1,0 +1,3807 @@
+[
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/isolation/widgets/feature_gate.dart",
+    "digest": 222203009
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_academic_year_screen.dart",
+    "digest": 1339010000
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_admissions_screen.dart",
+    "digest": 902154177
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_attendance_screen.dart",
+    "digest": 1952978557
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_batches_screen.dart",
+    "digest": 1715582217
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_bulk_operations_screen.dart",
+    "digest": 648020076
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_certificate_generator_screen.dart",
+    "digest": 791698396
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_class_sections_screen.dart",
+    "digest": 1194006838
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_classwise_fee_screen.dart",
+    "digest": 1839955188
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_courses_screen.dart",
+    "digest": 1224558337
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_dashboard_screen.dart",
+    "digest": 1027279162
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_documents_screen.dart",
+    "digest": 1340781977
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_exams_screen.dart",
+    "digest": 2066581280
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_faculty_screen.dart",
+    "digest": 1736985220
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_fee_collection_screen.dart",
+    "digest": 754069320
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_financial_reports_screen.dart",
+    "digest": 969092609
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_homework_screen.dart",
+    "digest": 1175765524
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_hostel_screen.dart",
+    "digest": 113611556
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_id_cards_screen.dart",
+    "digest": 692146963
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_inventory_screen.dart",
+    "digest": 1407017757
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_leave_screen.dart",
+    "digest": 801951595
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_lesson_plans_screen.dart",
+    "digest": 1109356689
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_library_screen.dart",
+    "digest": 1769260430
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_materials_screen.dart",
+    "digest": 1985643970
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_notifications_screen.dart",
+    "digest": 733550530
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_payments_screen.dart",
+    "digest": 731304370
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_report_cards_screen.dart",
+    "digest": 909529478
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_reports_screen.dart",
+    "digest": 1820808953
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_risk_detection_screen.dart",
+    "digest": 1560228166
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_sibling_screen.dart",
+    "digest": 1026309010
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_student_registration_screen.dart",
+    "digest": 1797997771
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_students_screen.dart",
+    "digest": 2055329263
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_timetable_screen.dart",
+    "digest": 693598287
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/screens/ac_transport_screen.dart",
+    "digest": 27410661
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/widgets/ac_birthday_reminders.dart",
+    "digest": 636954213
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/widgets/ac_debounce_search.dart",
+    "digest": 1304242965
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/widgets/ac_id_card_generator.dart",
+    "digest": 295325444
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/widgets/ac_keyboard_shortcuts.dart",
+    "digest": 1954620023
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/widgets/ac_screen_wrapper.dart",
+    "digest": 69779907
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/presentation/widgets/ac_skeleton_widgets.dart",
+    "digest": 559172303
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/accounting/screens/accounting_reports_screen.dart",
+    "digest": 658988831
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/accounting/screens/screens.dart",
+    "digest": 789582470
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/presentation/screens/desktop_ai_assistant_screen.dart",
+    "digest": 199183696
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/presentation/widgets/ai_assistant_sheet.dart",
+    "digest": 2132959865
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/presentation/widgets/ai_star_ball.dart",
+    "digest": 1470822463
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/presentation/widgets/chat_bubble.dart",
+    "digest": 2114639168
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/presentation/widgets/chat_input_bar.dart",
+    "digest": 816804087
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/presentation/widgets/mic_button_animated.dart",
+    "digest": 191288701
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/alerts/presentation/providers/alert_providers.dart",
+    "digest": 604369865
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/alerts/presentation/screens/alerts_notifications_screen.dart",
+    "digest": 2042268931
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/alerts/presentation/screens/alerts_screen.dart",
+    "digest": 1059961864
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/presentation/controllers/auth_controller.dart",
+    "digest": 1674997504
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/presentation/screens/auth_wrapper.dart",
+    "digest": 1482961083
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/presentation/screens/customer_auth_screen.dart",
+    "digest": 227608426
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/presentation/screens/forgot_password_screen.dart",
+    "digest": 1876480657
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/presentation/screens/license_screen.dart",
+    "digest": 102090571
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/presentation/screens/otp_screen.dart",
+    "digest": 256862618
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/presentation/screens/pin_login_screen.dart",
+    "digest": 1420830053
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/presentation/screens/pin_setup_screen.dart",
+    "digest": 814561093
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/presentation/widgets/fast_login_options.dart",
+    "digest": 1083651605
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/presentation/widgets/security_upgrade_prompt.dart",
+    "digest": 1931825320
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auto_parts/presentation/screens/job_card_management_screen.dart",
+    "digest": 1625856325
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/avatar/presentation/screens/avatar_editor_screen.dart",
+    "digest": 1505233194
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/avatar/presentation/state/avatar_editor_provider.dart",
+    "digest": 1675552131
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/avatar/presentation/widgets/avatar_preview_widget.dart",
+    "digest": 1952105432
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/backup/screens/backup_screen.dart",
+    "digest": 1329358555
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/bank/presentation/screens/bank_detail_screen.dart",
+    "digest": 393907893
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/bank/presentation/screens/bank_screen.dart",
+    "digest": 177563877
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/barcode/presentation/screens/barcode_label_printing_screen.dart",
+    "digest": 115595475
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/barcode/presentation/screens/quick_bill_with_barcode_screen.dart",
+    "digest": 454835986
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/barcode/widgets/auto_parts_scanner_widget.dart",
+    "digest": 1957427272
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/barcode/widgets/barcode_label_printer.dart",
+    "digest": 1090367748
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/barcode/widgets/clothing_variant_scanner_widget.dart",
+    "digest": 1527859377
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/barcode/widgets/desktop_usb_scanner.dart",
+    "digest": 115390275
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/barcode/widgets/imei_scanner_widget.dart",
+    "digest": 263542022
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/barcode/widgets/isbn_scanner_widget.dart",
+    "digest": 1960843258
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/barcode/widgets/serial_scanner_widget.dart",
+    "digest": 1362463883
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/barcode/widgets/wholesale_bulk_scanner_widget.dart",
+    "digest": 16353179
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/providers/billing_providers.dart",
+    "digest": 1439648075
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/advanced_bill_creation_screen.dart",
+    "digest": 1455658276
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/advanced_billing_screen.dart",
+    "digest": 1118679780
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/bill_creation_screen_v2.dart",
+    "digest": 1638553006
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/bill_detail.dart",
+    "digest": 441440740
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/bill_scan_screen.dart",
+    "digest": 1118753135
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/bill_search_screen.dart",
+    "digest": 1296491950
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/billing_flow.dart",
+    "digest": 495404768
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/billing_reports_screen.dart",
+    "digest": 1780210404
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/create_invoice_screen.dart",
+    "digest": 1677567524
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/credit_note_screen.dart",
+    "digest": 2072102060
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/desktop_invoices_screen.dart",
+    "digest": 229828053
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/edit_bill_screen.dart",
+    "digest": 1152886758
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/editable_invoice_screen.dart",
+    "digest": 180870500
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/invoice_preview_screen.dart",
+    "digest": 1524771034
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/owner_bill_list_screen.dart",
+    "digest": 1878903810
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/screens/total_bills_screen.dart",
+    "digest": 569781008
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/adaptive_bill_header.dart",
+    "digest": 616120261
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/adaptive_item_card.dart",
+    "digest": 199836154
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/bill_creation_tokens.dart",
+    "digest": 875565497
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/bill_line_item_row.dart",
+    "digest": 1418041081
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/bill_right_panel.dart",
+    "digest": 1160610347
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/cash_change_field.dart",
+    "digest": 2049075998
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/customer_search_sheet.dart",
+    "digest": 566345898
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/held_bills_sheet.dart",
+    "digest": 217937605
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/manual_item_entry_sheet.dart",
+    "digest": 614020479
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/payment_qr_dialog.dart",
+    "digest": 1144085617
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/product_avatar.dart",
+    "digest": 1534930289
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/product_search_sheet.dart",
+    "digest": 1365511204
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/smart_voice_bill_sheet.dart",
+    "digest": 610704467
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/split_payment_sheet.dart",
+    "digest": 1105458751
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/widgets/voice_input_widget.dart",
+    "digest": 1788508113
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/screens/bills_list_screen.dart",
+    "digest": 1647426928
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/screens/dunning_config_screen.dart",
+    "digest": 177787083
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/screens/manage_subscriptions_screen.dart",
+    "digest": 282613024
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/book_store/presentation/screens/book_inventory_screen.dart",
+    "digest": 1184092638
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/book_store/presentation/screens/book_pos_screen.dart",
+    "digest": 1491824325
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/book_store/presentation/screens/book_supplier_returns_screen.dart",
+    "digest": 1894695691
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/book_store/presentation/screens/consignment_settlement_screen.dart",
+    "digest": 130915522
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/book_store/presentation/screens/school_order_screen.dart",
+    "digest": 2037335868
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/book_store/presentation/widgets/customer_loyalty_widget.dart",
+    "digest": 176327916
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/book_store/presentation/widgets/isbn_scanner_widget.dart",
+    "digest": 113198536
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/buy_flow/screens/buy_flow_dashboard.dart",
+    "digest": 1157087156
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/buy_flow/screens/buy_orders_screen.dart",
+    "digest": 526858358
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/buy_flow/screens/procurement_log_screen.dart",
+    "digest": 2097040467
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/buy_flow/screens/stock_entry_screen.dart",
+    "digest": 1047803537
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/buy_flow/screens/stock_reversal_screen.dart",
+    "digest": 1872665719
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/buy_flow/screens/supplier_bills_screen.dart",
+    "digest": 35004774
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/buy_flow/screens/vendor_payouts_screen.dart",
+    "digest": 664414201
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/cash_closing/presentation/screens/day_end_close_screen.dart",
+    "digest": 775115087
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/catalogue/presentation/screens/catalogue_screen.dart",
+    "digest": 689076727
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/presentation/screens/clinic_calendar_screen.dart",
+    "digest": 2070820598
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/presentation/screens/consultation_screen.dart",
+    "digest": 1795904348
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/presentation/screens/lab_order_screen.dart",
+    "digest": 1709452541
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/presentation/screens/patient_history_screen.dart",
+    "digest": 1209838371
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/presentation/screens/patient_management_screen.dart",
+    "digest": 1326425973
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/presentation/screens/patient_queue_screen.dart",
+    "digest": 81434280
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/presentation/widgets/clinic_breadcrumbs.dart",
+    "digest": 630239881
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/screens/clinic_dashboard_screen.dart",
+    "digest": 2106748020
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/widgets/appointment_activity_panel.dart",
+    "digest": 309446660
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/widgets/clinic_performance_panel.dart",
+    "digest": 806146395
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/widgets/dashboard_app_bar.dart",
+    "digest": 241132692
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/widgets/overview_panel.dart",
+    "digest": 996473462
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/widgets/patient_insights_panel.dart",
+    "digest": 1223222357
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/widgets/role_guard.dart",
+    "digest": 1216334920
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/widgets/side_navigation.dart",
+    "digest": 707210732
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/widgets/staff_rooms_panel.dart",
+    "digest": 368593612
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clothing/presentation/screens/clothing_inventory_screen.dart",
+    "digest": 1783426546
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clothing/presentation/screens/tailoring_measurements_screen.dart",
+    "digest": 111430423
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clothing/presentation/screens/variant_management_screen.dart",
+    "digest": 1912614884
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clothing/widgets/clothing_sync_indicator.dart",
+    "digest": 716786626
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clothing/widgets/variant_grid/size_curve_chip.dart",
+    "digest": 978483938
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clothing/widgets/variant_grid/variant_cell.dart",
+    "digest": 135970220
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clothing/widgets/variant_grid/variant_cell_key.dart",
+    "digest": 465238073
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clothing/widgets/variant_grid/variant_grid_widget.dart",
+    "digest": 1923131498
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/presentation/screens/create_job_card_screen.dart",
+    "digest": 395718446
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/presentation/screens/job_card_detail_screen.dart",
+    "digest": 1265431958
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/presentation/screens/job_card_list_screen.dart",
+    "digest": 800610692
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/presentation/screens/multi_unit_screen.dart",
+    "digest": 371122314
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/presentation/screens/serial_history_screen.dart",
+    "digest": 911115111
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/presentation/screens/warranty_screen.dart",
+    "digest": 687679696
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/presentation/widgets/computer_barcode_scanner.dart",
+    "digest": 332238505
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/presentation/widgets/computer_shop_sidebar.dart",
+    "digest": 1427533767
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/presentation/widgets/job_card_dialogs.dart",
+    "digest": 557986664
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/presentation/widgets/product_search_bottom_sheet.dart",
+    "digest": 1925200574
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/credit_network/presentation/widgets/credit_score_widget.dart",
+    "digest": 697862240
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/credit_notes/presentation/screens/credit_note_screen.dart",
+    "digest": 1339132240
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/controllers/customer_profile_controller.dart",
+    "digest": 2044206206
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/add_customer_screen.dart",
+    "digest": 7416825
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/customer_dashboard_screen.dart",
+    "digest": 319323775
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/customer_detail_screen.dart",
+    "digest": 1517936031
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/customer_home_screen.dart",
+    "digest": 583119168
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/customer_invoice_list_screen.dart",
+    "digest": 337655886
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/customer_ledger_screen.dart",
+    "digest": 1085553696
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/customer_management_screen.dart",
+    "digest": 1933087883
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/customer_notifications_screen.dart",
+    "digest": 908707467
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/customer_payment_screen.dart",
+    "digest": 154795061
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/customer_profile_screen.dart",
+    "digest": 1887236967
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/customers_list_screen.dart",
+    "digest": 1097499112
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/edit_profile_screen.dart",
+    "digest": 83054948
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/my_linked_shops_screen.dart",
+    "digest": 1680268688
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/my_shops_screen.dart",
+    "digest": 1708404811
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/notification_settings_screen.dart",
+    "digest": 1028032459
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/security_settings_screen.dart",
+    "digest": 1269795240
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/screens/support_screens.dart",
+    "digest": 1051740090
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/widgets/credit_limit_dialog.dart",
+    "digest": 54525058
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/widgets/customer_action_buttons.dart",
+    "digest": 1565624638
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/widgets/customer_aging_widget.dart",
+    "digest": 878234574
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/presentation/widgets/customer_qr_dialog.dart",
+    "digest": 2014813041
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/screens/business_profile_screen.dart",
+    "digest": 1910230594
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/screens/daily_snapshot_screen.dart",
+    "digest": 971487572
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/screens/dashboard_controller.dart",
+    "digest": 267077644
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/screens/dashboard_selection_screen.dart",
+    "digest": 1238252047
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/screens/desktop_dashboard_content.dart",
+    "digest": 1050686530
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/screens/home_screen.dart",
+    "digest": 288390935
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/screens/live_business_health_screen.dart",
+    "digest": 724313459
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/screens/manage_business_screen.dart",
+    "digest": 1818218768
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/screens/owner_dashboard_screen.dart",
+    "digest": 333100239
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/widgets/alerts_panel.dart",
+    "digest": 1234051449
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/widgets/expense_overview_chart.dart",
+    "digest": 204083195
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/widgets/recent_transactions_panel.dart",
+    "digest": 818154263
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/widgets/revenue_analytics_graph.dart",
+    "digest": 907514031
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/presentation/widgets/upcoming_payments_panel.dart",
+    "digest": 904175785
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/screens/dashboard_v2_screen.dart",
+    "digest": 1093940722
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/screens/pharmacy_dashboard_screen.dart",
+    "digest": 384605416
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/business_alerts_widget.dart",
+    "digest": 1095977340
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/business_quick_actions.dart",
+    "digest": 1333802132
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/cashflow_forecast_section.dart",
+    "digest": 311021087
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/dashboard_top_bar.dart",
+    "digest": 473407722
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/invoice_distribution_chart.dart",
+    "digest": 105354124
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/performance_cards.dart",
+    "digest": 233566113
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/pharmacy/pharmacy_date_range_filter.dart",
+    "digest": 1942438638
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/pharmacy/pharmacy_inventory_status_chart.dart",
+    "digest": 11964625
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/pharmacy/pharmacy_kpi_cards.dart",
+    "digest": 1409099243
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/pharmacy/pharmacy_low_stock_alerts.dart",
+    "digest": 850971349
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/pharmacy/pharmacy_patient_feedback.dart",
+    "digest": 1026283659
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/pharmacy/pharmacy_prescriptions_category_chart.dart",
+    "digest": 227553391
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/pharmacy/pharmacy_recent_activity_feed.dart",
+    "digest": 80151903
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/pharmacy/pharmacy_sales_performance_chart.dart",
+    "digest": 415112070
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/pharmacy/pharmacy_top_products_table.dart",
+    "digest": 1472021698
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/recent_invoices_table.dart",
+    "digest": 1111471337
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/widgets/revenue_chart_section.dart",
+    "digest": 826266506
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/daybook/presentation/screens/day_book_screen.dart",
+    "digest": 1353408791
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_billing_screen.dart",
+    "digest": 693263790
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_bookings_screen.dart",
+    "digest": 1183885265
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_calendar_screen.dart",
+    "digest": 1365889229
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_catering_screen.dart",
+    "digest": 314303818
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_dashboard_screen.dart",
+    "digest": 1456463485
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_decoration_screen.dart",
+    "digest": 2001017341
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_event_detail_screen.dart",
+    "digest": 2146476231
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_inventory_screen.dart",
+    "digest": 1167300435
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_profitability_screen.dart",
+    "digest": 787599290
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_quote_conversion_screen.dart",
+    "digest": 2027350120
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_quotes_screen.dart",
+    "digest": 1230548590
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_reports_screen.dart",
+    "digest": 2138864381
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_shopping_list_screen.dart",
+    "digest": 644727327
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_staff_attendance_screen.dart",
+    "digest": 1559634351
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_staff_screen.dart",
+    "digest": 178183642
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/screens/dc_vendor_payments_screen.dart",
+    "digest": 1548013782
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/widgets/dc_booking_form.dart",
+    "digest": 805129464
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/widgets/dc_status_badge.dart",
+    "digest": 938661726
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/widgets/dc_ui_kit.dart",
+    "digest": 673152291
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/presentation/widgets/dc_vendor_rating_dialog.dart",
+    "digest": 253825740
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/delivery_challan/presentation/screens/create_delivery_challan_screen.dart",
+    "digest": 867135408
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/delivery_challan/presentation/screens/delivery_challan_list_screen.dart",
+    "digest": 1127077062
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/providers/clinic_dashboard_data_provider.dart",
+    "digest": 1844110836
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/screens/add_patient_screen.dart",
+    "digest": 1461362426
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/screens/add_prescription_screen.dart",
+    "digest": 1939368463
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/screens/doctor_dashboard_screen.dart",
+    "digest": 628237263
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/screens/doctor_revenue_screen.dart",
+    "digest": 1000798831
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/screens/medicine_master_screen.dart",
+    "digest": 1189981028
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/screens/patient_history_picker_screen.dart",
+    "digest": 1852007747
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/screens/patient_history_screen.dart",
+    "digest": 113532026
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/screens/patient_list_screen.dart",
+    "digest": 434935449
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/screens/prescriptions_list_screen.dart",
+    "digest": 637036323
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/screens/refill_data_repair_screen.dart",
+    "digest": 218691446
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/screens/refill_queue_screen.dart",
+    "digest": 2042812514
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/screens/visit_screen.dart",
+    "digest": 130037266
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/widgets/alerts_panel.dart",
+    "digest": 2143958268
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/widgets/daily_patient_view.dart",
+    "digest": 1475933440
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/widgets/lab_test_selector.dart",
+    "digest": 409982920
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/widgets/monthly_analytics_chart.dart",
+    "digest": 1628248617
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/widgets/patient_overview_card.dart",
+    "digest": 2000850340
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/widgets/smart_insights_card.dart",
+    "digest": 239391706
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/widgets/weekly_analytics_chart.dart",
+    "digest": 1118999289
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/document_scanner/presentation/widgets/camera_view.dart",
+    "digest": 1679045354
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/document_scanner/presentation/widgets/crop_view.dart",
+    "digest": 1350124318
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/document_scanner/presentation/widgets/filter_selector.dart",
+    "digest": 698341167
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/document_scanner/presentation/widgets/scanner_controls.dart",
+    "digest": 94541708
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/document_scanner/screens/document_scanner_screen.dart",
+    "digest": 536058241
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/document_scanner/screens/editor_view.dart",
+    "digest": 1206008201
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/document_scanner/screens/gallery_import_view.dart",
+    "digest": 74276701
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/document_scanner/screens/image_capture_view.dart",
+    "digest": 1351589047
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/e_invoice/presentation/presentation.dart",
+    "digest": 542039436
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/e_invoice/presentation/screens/e_invoices_list_screen.dart",
+    "digest": 541459413
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/expenses/presentation/screens/expenses_screen.dart",
+    "digest": 954107523
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/screens/gst_reports_screen.dart",
+    "digest": 641665838
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/screens/gst_settings_screen.dart",
+    "digest": 957783202
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/screens/screens.dart",
+    "digest": 135482244
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/hardware/presentation/screens/eway_bill_screen.dart",
+    "digest": 867493871
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/hardware/presentation/screens/hardware_command_center_screen.dart",
+    "digest": 553239818
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/hardware/presentation/screens/hardware_credit_control_screen.dart",
+    "digest": 840740401
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/hardware/presentation/screens/hardware_invoice_profile_screen.dart",
+    "digest": 413582420
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/hardware/presentation/screens/hardware_operations_screen.dart",
+    "digest": 1780281926
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/hardware/presentation/screens/hardware_phase12_workspace_screen.dart",
+    "digest": 225995647
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/hardware/presentation/screens/hardware_supplier_management_screen.dart",
+    "digest": 1793249904
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/hardware/widgets/dimension_calculator.dart",
+    "digest": 667866755
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/in_store/presentation/screens/active_sessions_screen.dart",
+    "digest": 1442054234
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/in_store/presentation/screens/exit_verification_screen.dart",
+    "digest": 292906814
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/in_store/presentation/screens/in_store_orders_screen.dart",
+    "digest": 1922406742
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/insights/presentation/screens/health_score_detail_screen.dart",
+    "digest": 1047532251
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/insights/presentation/screens/insights_screen.dart",
+    "digest": 843679622
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/insights/presentation/widgets/health_score_card.dart",
+    "digest": 1349368796
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/screens/barcode_scanner_screen.dart",
+    "digest": 296917787
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/screens/batch_tracking_screen.dart",
+    "digest": 627337004
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/screens/categories_screen.dart",
+    "digest": 1668583632
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/screens/category_products_screen.dart",
+    "digest": 570377981
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/screens/damage_logs_screen.dart",
+    "digest": 1601179039
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/screens/import_inventory_screen.dart",
+    "digest": 1666235458
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/screens/inventory_dashboard_screen.dart",
+    "digest": 495643977
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/screens/low_stock_alerts_screen.dart",
+    "digest": 643990904
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/screens/product_management_screen.dart",
+    "digest": 1182184768
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/screens/stock_adjustment_screen.dart",
+    "digest": 1029312813
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/screens/stock_summary_screen.dart",
+    "digest": 49494281
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/screens/stock_valuation_screen.dart",
+    "digest": 273237930
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/widgets/add_edit_product_sheet.dart",
+    "digest": 423777484
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/widgets/dead_stock_tab.dart",
+    "digest": 347647567
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/widgets/forms/product_form_factory.dart",
+    "digest": 2070451516
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/presentation/widgets/reorder_tab.dart",
+    "digest": 507639977
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/widgets/batch_expiry_indicator.dart",
+    "digest": 793259098
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/widgets/fefo_override_dialog.dart",
+    "digest": 863408229
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/widgets/variant_matrix_selection.dart",
+    "digest": 815828904
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/invoice/screens/invoice_preview_screen.dart",
+    "digest": 1236578799
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/invoice/screens/invoice_settings_screen.dart",
+    "digest": 914188433
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/presentation/screens/certificate_tracking_screen.dart",
+    "digest": 1513336001
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/presentation/screens/custom_order_management_screen.dart",
+    "digest": 696291368
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/presentation/screens/gold_rate_alert_screen.dart",
+    "digest": 893313524
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/presentation/screens/gold_scheme_screen.dart",
+    "digest": 706915310
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/presentation/screens/hallmark_inventory_screen.dart",
+    "digest": 988980073
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/presentation/screens/jewellery_dashboard_screen.dart",
+    "digest": 899560783
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/presentation/screens/jewellery_repair_screen.dart",
+    "digest": 1164455776
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/presentation/screens/jewellery_weight_stock_screen.dart",
+    "digest": 1476766841
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/presentation/screens/making_charges_calculator_screen.dart",
+    "digest": 1179523611
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/presentation/screens/old_gold_exchange_screen.dart",
+    "digest": 1000610473
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/localization/presentation/screens/language_selection_screen.dart",
+    "digest": 2045096465
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/localization/presentation/screens/language_setup_screen.dart",
+    "digest": 1058453095
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/marketing/presentation/presentation.dart",
+    "digest": 1076168562
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/marketing/presentation/screens/campaigns_list_screen.dart",
+    "digest": 1108968188
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/marketing/presentation/screens/create_campaign_screen.dart",
+    "digest": 1576931713
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/marketplace/presentation/screens/order_management_screen.dart",
+    "digest": 472211215
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/marketplace/presentation/widgets/order_detail_panel.dart",
+    "digest": 819705704
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/marketplace/presentation/widgets/order_stats_cards.dart",
+    "digest": 546189276
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/marketplace/presentation/widgets/order_status_badge.dart",
+    "digest": 629864082
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/party_ledger/screens/add_vendor_screen.dart",
+    "digest": 1827420839
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/party_ledger/screens/collect_payment_screen.dart",
+    "digest": 1777144193
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/party_ledger/screens/party_ledger_list_screen.dart",
+    "digest": 822995813
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/party_ledger/screens/party_statement_screen.dart",
+    "digest": 1088420800
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/party_ledger/screens/screens.dart",
+    "digest": 1086969117
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/patient/presentation/screens/medical_records_screen.dart",
+    "digest": 1260075034
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/patient/presentation/screens/patient_appointments_screen.dart",
+    "digest": 654422100
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/patient/presentation/screens/patient_home_screen.dart",
+    "digest": 34169337
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/patients/screens/patient_detail_screen.dart",
+    "digest": 1194835702
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/patients/screens/patient_list_screen.dart",
+    "digest": 741912316
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/patients/screens/patient_registration_screen.dart",
+    "digest": 137834735
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/payment/presentation/screens/payment_analytics_screen.dart",
+    "digest": 2119307257
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/payment/presentation/screens/payment_gateway_settings_screen.dart",
+    "digest": 944434355
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/payment/presentation/screens/payments_history_screen.dart",
+    "digest": 1166336703
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/dialogs/add_stock_dialog.dart",
+    "digest": 1213695872
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/dialogs/add_tank_dialog.dart",
+    "digest": 701342581
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/dialogs/dip_reading_dialog.dart",
+    "digest": 555025469
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/add_staff_screen.dart",
+    "digest": 357602618
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/dispenser_list_screen.dart",
+    "digest": 1947579020
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/fuel_rates_screen.dart",
+    "digest": 1281609264
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/petrol_pump_management_screen.dart",
+    "digest": 2140088015
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/reports/ca_report_screen.dart",
+    "digest": 111292364
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/reports/cash_deposit_report_screen.dart",
+    "digest": 1879464402
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/reports/density_report_screen.dart",
+    "digest": 1812994206
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/reports/dsr_report_screen.dart",
+    "digest": 2088942058
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/reports/fuel_profit_report_screen.dart",
+    "digest": 1421815800
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/reports/nozzle_sales_report_screen.dart",
+    "digest": 1641751409
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/reports/outstanding_analysis_screen.dart",
+    "digest": 1251233036
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/reports/shift_report_screen.dart",
+    "digest": 227562497
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/reports/tank_stock_report_screen.dart",
+    "digest": 77566311
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/revenue_dashboard_screen.dart",
+    "digest": 1396539833
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/shift_history_screen.dart",
+    "digest": 1743583985
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/staff_detail_screen.dart",
+    "digest": 781208110
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/staff_list_screen.dart",
+    "digest": 1958878031
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/screens/tank_list_screen.dart",
+    "digest": 2094407522
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/presentation/widgets/petrol_pump_dashboard_widgets.dart",
+    "digest": 652753807
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pharmacy/screens/narcotic_register_screen.dart",
+    "digest": 411996505
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pharmacy/screens/patient_registry_screen.dart",
+    "digest": 405744273
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pharmacy/screens/product_catalog_screen.dart",
+    "digest": 620276995
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pharmacy/screens/salt_search_screen.dart",
+    "digest": 1460820254
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pharmacy/widgets/add_product_sheet.dart",
+    "digest": 168076052
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pharmacy/widgets/drug_license_field.dart",
+    "digest": 699317523
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/physical_to_digital/ui/screens/p2d_camera_screen.dart",
+    "digest": 646900870
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/physical_to_digital/ui/screens/p2d_crop_screen.dart",
+    "digest": 855113535
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/physical_to_digital/ui/screens/p2d_export_screen.dart",
+    "digest": 1522951360
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/physical_to_digital/ui/screens/p2d_filter_screen.dart",
+    "digest": 1957368013
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/physical_to_digital/ui/screens/p2d_ocr_screen.dart",
+    "digest": 951742671
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/physical_to_digital/ui/screens/screens.dart",
+    "digest": 831716266
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/physical_to_digital/ui/widgets/corner_handle.dart",
+    "digest": 1124275001
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/physical_to_digital/ui/widgets/filter_carousel.dart",
+    "digest": 574553721
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/physical_to_digital/ui/widgets/glass_panel.dart",
+    "digest": 1452156213
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/physical_to_digital/ui/widgets/neon_button.dart",
+    "digest": 380556327
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/physical_to_digital/ui/widgets/scan_overlay.dart",
+    "digest": 1643312850
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/physical_to_digital/ui/widgets/widgets.dart",
+    "digest": 826678476
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pre_order/presentation/customer/customer_pre_order_screen.dart",
+    "digest": 1642656498
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pre_order/presentation/customer/vendor_catalog_screen.dart",
+    "digest": 796144475
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pre_order/presentation/vendor/vendor_request_detail_screen.dart",
+    "digest": 1574529414
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pre_order/presentation/vendor/vendor_requests_screen.dart",
+    "digest": 748670767
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/prescriptions/presentation/screens/h1_register_screen.dart",
+    "digest": 561914920
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/prescriptions/presentation/widgets/prescription_gate_dialog.dart",
+    "digest": 907169789
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/profile/screens/vendor_profile_screen.dart",
+    "digest": 1675959844
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/profile/widgets/avatar_display_widget.dart",
+    "digest": 1489730506
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/profile/widgets/avatar_selector_widget.dart",
+    "digest": 187624728
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/presentation/screens/purchase_entries_list_screen.dart",
+    "digest": 1346114451
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/presentation/screens/scan_bill_image_picker_screen.dart",
+    "digest": 11975477
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/presentation/screens/scan_bill_processing_screen.dart",
+    "digest": 215250667
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/presentation/screens/scan_bill_review_screen.dart",
+    "digest": 2076629794
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/presentation/screens/scan_bill_supplier_screen.dart",
+    "digest": 2049343346
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/screens/add_purchase_screen.dart",
+    "digest": 1129654889
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/screens/purchase_dashboard_screen.dart",
+    "digest": 2100211433
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/screens/purchase_detail_screen.dart",
+    "digest": 1546651110
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/screens/purchase_history_screen.dart",
+    "digest": 898841592
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/all_transactions_screen.dart",
+    "digest": 511239325
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/balance_screen.dart",
+    "digest": 2052567015
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/bill_wise_profit_screen.dart",
+    "digest": 822384051
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/cashflow_screen.dart",
+    "digest": 1482310711
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/commission_ledger_screen.dart",
+    "digest": 7716728
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/discount_report_screen.dart",
+    "digest": 1117480362
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/expense_register_screen.dart",
+    "digest": 2087645628
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/hallmark_register_screen.dart",
+    "digest": 467475123
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/job_card_report_screen.dart",
+    "digest": 332659504
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/low_stock_report_screen.dart",
+    "digest": 1645005832
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/old_gold_register_screen.dart",
+    "digest": 1261998611
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/party_wise_pnl_screen.dart",
+    "digest": 366928043
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/petty_cash_report_screen.dart",
+    "digest": 2128005519
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/pnl_screen.dart",
+    "digest": 1147891107
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/print_menu_screen.dart",
+    "digest": 1330451014
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/product_performance_screen.dart",
+    "digest": 116995174
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/product_sales_breakdown_screen.dart",
+    "digest": 1953492916
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/purchase_report_screen.dart",
+    "digest": 733316719
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/reports_hub_screen.dart",
+    "digest": 1529120695
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/rma_report_screen.dart",
+    "digest": 771400070
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/salesman_report_screen.dart",
+    "digest": 1403638589
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/stock_summary_report_screen.dart",
+    "digest": 433148437
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/tally_export_screen.dart",
+    "digest": 2120164435
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/tax_report_screen.dart",
+    "digest": 1383212649
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/presentation/screens/trial_balance_screen.dart",
+    "digest": 1620095826
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/customer/customer_menu_screen.dart",
+    "digest": 218612298
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/customer/order_tracking_screen.dart",
+    "digest": 313054821
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/customer/rate_review_screen.dart",
+    "digest": 1720063526
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/floor_management_screen.dart",
+    "digest": 445580373
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/food_menu_management_screen.dart",
+    "digest": 2118547401
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/kot_report_screen.dart",
+    "digest": 1077723502
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/menu_item_management_screen.dart",
+    "digest": 1395940287
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/recipe_management_screen.dart",
+    "digest": 1948297677
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/restaurant_aggregator_receipt_screen.dart",
+    "digest": 1512977364
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/restaurant_daily_summary_screen.dart",
+    "digest": 1749639291
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/restaurant_delivery_ops_screen.dart",
+    "digest": 1566391842
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/restaurant_inventory_screen.dart",
+    "digest": 1432793225
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/restaurant_owner_command_screen.dart",
+    "digest": 363157705
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/restaurant_pricing_admin_screen.dart",
+    "digest": 266197116
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/restaurant_table_ops_screen.dart",
+    "digest": 1915436331
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/screens/table_management_screen.dart",
+    "digest": 878885116
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/presentation/widgets/table_qr_code_widget.dart",
+    "digest": 1918531898
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/revenue/screens/booking_order_screen.dart",
+    "digest": 1568889568
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/revenue/screens/commission_ledger_screen.dart",
+    "digest": 157698178
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/revenue/screens/dispatch_note_screen.dart",
+    "digest": 379722836
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/revenue/screens/proforma_screen.dart",
+    "digest": 702862223
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/revenue/screens/receipt_entry_screen.dart",
+    "digest": 1117851631
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/revenue/screens/refund_screen.dart",
+    "digest": 1135742026
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/revenue/screens/return_inwards_screen.dart",
+    "digest": 220026917
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/revenue/screens/revenue_overview_screen.dart",
+    "digest": 1009000442
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/revenue/screens/sales_register_screen.dart",
+    "digest": 1847563901
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/presentation/screens/create_exchange_screen.dart",
+    "digest": 1655439836
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/presentation/screens/create_service_job_screen.dart",
+    "digest": 1604962711
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/presentation/screens/exchange_detail_screen.dart",
+    "digest": 1794350891
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/presentation/screens/exchange_list_screen.dart",
+    "digest": 480913061
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/presentation/screens/second_hand_intake_screen.dart",
+    "digest": 1506704314
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/presentation/screens/service_job_detail_screen.dart",
+    "digest": 197568975
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/presentation/screens/service_job_list_screen.dart",
+    "digest": 620645742
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/providers/settings_providers.dart",
+    "digest": 1931765325
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/audit_log_screen.dart",
+    "digest": 115276003
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/customer_app_entry_qr_screen.dart",
+    "digest": 339169442
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/data_import_export_screen.dart",
+    "digest": 845270444
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/database_management_screen.dart",
+    "digest": 209481945
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/device_management_screen.dart",
+    "digest": 1788709255
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/device_settings_screen.dart",
+    "digest": 1565400573
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/error_logs_screen.dart",
+    "digest": 430290193
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/main_settings_screen.dart",
+    "digest": 852800677
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/payment_reminders_screen.dart",
+    "digest": 1961396385
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/printer_settings_screen.dart",
+    "digest": 1724318088
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/server_settings_screen.dart",
+    "digest": 1388932661
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/storage_management_screen.dart",
+    "digest": 1863805471
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/template_designer_screen.dart",
+    "digest": 1117419252
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/screens/user_management_screen.dart",
+    "digest": 1098048218
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/screens/currency_settings_screen.dart",
+    "digest": 407499205
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/screens/tax_config_screen.dart",
+    "digest": 340204733
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/presentation/screens/no_internet_screen.dart",
+    "digest": 1575482627
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/widgets/context_menu.dart",
+    "digest": 2114909799
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/widgets/entity_action_panel.dart",
+    "digest": 683565469
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/widgets/error_retry_widget.dart",
+    "digest": 1352317684
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/widgets/illustrated_empty_state.dart",
+    "digest": 308504468
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/widgets/kpi_card.dart",
+    "digest": 1433460148
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/widgets/shimmer_loading.dart",
+    "digest": 1140755348
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shop_linking/presentation/screens/manual_shop_add_screen.dart",
+    "digest": 1739144547
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shop_linking/presentation/screens/qr_display_screen.dart",
+    "digest": 137644638
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shop_linking/presentation/screens/qr_scanner_screen.dart",
+    "digest": 176733202
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shop_linking/presentation/screens/shop_confirmation_screen.dart",
+    "digest": 192986551
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shortcuts/presentation/providers/shortcut_providers.dart",
+    "digest": 1071389862
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shortcuts/presentation/widgets/shortcut_context_menu.dart",
+    "digest": 33721155
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shortcuts/presentation/widgets/shortcut_item.dart",
+    "digest": 1779196289
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shortcuts/presentation/widgets/shortcut_panel.dart",
+    "digest": 1225399704
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/splash/widgets/flash_painter.dart",
+    "digest": 793071238
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/splash/widgets/grain_painter.dart",
+    "digest": 954711603
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/splash/widgets/logo_widget.dart",
+    "digest": 469850063
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/splash/widgets/particle_painter.dart",
+    "digest": 1747794881
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/splash/widgets/progress_bar_widget.dart",
+    "digest": 521255933
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/splash/widgets/tagline_widget.dart",
+    "digest": 689083342
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/splash/widgets/wordmark_widget.dart",
+    "digest": 1923646550
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/bloc/id_card_designer_bloc.dart",
+    "digest": 448016875
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/bloc/id_card_designer_event.dart",
+    "digest": 371844200
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/bloc/id_card_designer_state.dart",
+    "digest": 1634255344
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/bloc/id_card_models.dart",
+    "digest": 1384441080
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/bloc/staff_detail_bloc.dart",
+    "digest": 1822390408
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/bloc/staff_detail_event.dart",
+    "digest": 325853025
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/bloc/staff_detail_state.dart",
+    "digest": 1160676303
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/presentation.dart",
+    "digest": 1111832853
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/providers/selected_staff_provider.dart",
+    "digest": 2109435123
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/providers/staff_management_provider.dart",
+    "digest": 1243471434
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/screens/add_staff_screen.dart",
+    "digest": 110590522
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/screens/id_card_designer_screen.dart",
+    "digest": 1590784985
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/screens/staff_attendance_screen.dart",
+    "digest": 545494433
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/screens/staff_list_screen.dart",
+    "digest": 2107002848
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/screens/staff_management_screen.dart",
+    "digest": 627346807
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/screens/staff_payroll_screen.dart",
+    "digest": 1332896461
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/screens/staff_sale_entry_screen.dart",
+    "digest": 877281261
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/screens/staff_transaction_history_screen.dart",
+    "digest": 1314798854
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/screens/unified_staff_detail_screen.dart",
+    "digest": 1479635191
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/widgets/create_staff_dialog.dart",
+    "digest": 1392962918
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/widgets/deactivate_staff_dialog.dart",
+    "digest": 800697624
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/widgets/edit_staff_dialog.dart",
+    "digest": 974117837
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/widgets/reset_password_dialog.dart",
+    "digest": 1030088322
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/statements/presentation/screens/batch_expiry_statement_screen.dart",
+    "digest": 1604931588
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/statements/presentation/screens/commission_statement_screen.dart",
+    "digest": 1266637727
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/statements/presentation/screens/customer_invoice_statement_screen.dart",
+    "digest": 33118777
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/statements/presentation/screens/event_booking_statement_screen.dart",
+    "digest": 1820235299
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/statements/presentation/screens/fee_statement_screen.dart",
+    "digest": 1271109227
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/statements/presentation/screens/fuel_sales_statement_screen.dart",
+    "digest": 1221621366
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/statements/presentation/screens/imei_tracking_statement_screen.dart",
+    "digest": 1140750837
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/statements/presentation/screens/patient_visit_statement_screen.dart",
+    "digest": 1755811696
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/statements/presentation/screens/screens.dart",
+    "digest": 1781388482
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/statements/presentation/screens/service_job_statement_screen.dart",
+    "digest": 992128910
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/statements/presentation/screens/stock_valuation_statement_screen.dart",
+    "digest": 1013862251
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/stock/presentation/screens/add_stock_screen.dart",
+    "digest": 780484544
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/subscription/presentation/widgets/trial_banner_widget.dart",
+    "digest": 1250842512
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/subscription/presentation/widgets/trial_expired_gate_widget.dart",
+    "digest": 1860191810
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/super_admin/presentation/screens/admin_dashboard_screen.dart",
+    "digest": 1133295795
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/super_admin/presentation/screens/alert_management_screen.dart",
+    "digest": 761203798
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/super_admin/presentation/screens/audit_viewer_screen.dart",
+    "digest": 768656284
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/super_admin/presentation/screens/generate_license_screen.dart",
+    "digest": 806588241
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/super_admin/presentation/screens/license_detail_screen.dart",
+    "digest": 71157642
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/super_admin/presentation/screens/license_feature_override_screen.dart",
+    "digest": 2131356276
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/super_admin/presentation/screens/license_list_screen.dart",
+    "digest": 504252833
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/super_admin/presentation/screens/plan_override_screen.dart",
+    "digest": 1591888186
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/super_admin/presentation/screens/super_admin_screen.dart",
+    "digest": 1814024962
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/super_admin/presentation/screens/tenant_management_screen.dart",
+    "digest": 1833987561
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/super_admin/presentation/screens/usage_dashboard_screen.dart",
+    "digest": 1764212855
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/sync/presentation/controllers/sync_controller.dart",
+    "digest": 251766442
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/vegetable_broker/presentation/screens/farmer_ledger_entry_screen.dart",
+    "digest": 1513573397
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/vegetable_broker/presentation/screens/farmer_ledger_screen.dart",
+    "digest": 208976827
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/vegetable_broker/presentation/screens/lot_register_screen.dart",
+    "digest": 332647288
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/vegetable_broker/presentation/screens/mandi_commission_report_screen.dart",
+    "digest": 412670930
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/vegetable_broker/presentation/screens/rate_board_screen.dart",
+    "digest": 386141131
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/vegetable_broker/presentation/screens/settlement_screen.dart",
+    "digest": 202289372
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/visits/screens/clinic_invoice_preview_screen.dart",
+    "digest": 343473330
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/visits/screens/consultation_screen.dart",
+    "digest": 1540353328
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/visits/screens/visit_queue_screen.dart",
+    "digest": 1308587979
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/admin_migrations_screen.dart",
+    "digest": 1299683983
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/advanced_bill_creation_screen.dart",
+    "digest": 1141210631
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/advanced_billing_screen.dart",
+    "digest": 85107872
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/app_management_screen.dart",
+    "digest": 101937790
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/bill_detail.dart",
+    "digest": 1816002412
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/bill_search_screen.dart",
+    "digest": 844129364
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/billing_flow.dart",
+    "digest": 335234314
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/billing_reports_screen.dart",
+    "digest": 1371358597
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/blacklist_management_screen.dart",
+    "digest": 714288158
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/business_type_selection_screen.dart",
+    "digest": 785300212
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/cloud_sync_settings_screen.dart",
+    "digest": 748489132
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/comprehensive_owner_dashboard_modern.dart",
+    "digest": 1775200630
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/create_invoice_screen.dart",
+    "digest": 655925169
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/customer_app_view.dart",
+    "digest": 524198231
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/customer_app_view_modern.dart",
+    "digest": 422077202
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/customer_bills.dart",
+    "digest": 480439000
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/customer_edit_screen.dart",
+    "digest": 1814941752
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/customer_home_screen.dart",
+    "digest": 1365681990
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/customer_link_accept_screen.dart",
+    "digest": 133840909
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/customer_link_shop_screen.dart",
+    "digest": 4007006
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/customer_profile_management.dart",
+    "digest": 1393513031
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/customer_report_screen.dart",
+    "digest": 1715687158
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/dashboard_metrics_row.dart",
+    "digest": 956917164
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/dev_business_type_switcher_screen.dart",
+    "digest": 1739701912
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/developer_health_screen.dart",
+    "digest": 1667040377
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/dukanx_splash_screen.dart",
+    "digest": 691634713
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/edit_bill_screen.dart",
+    "digest": 1901161409
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/edit_customer_screen.dart",
+    "digest": 1699996479
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/editable_invoice_screen.dart",
+    "digest": 1355548302
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/home_screen_modern.dart",
+    "digest": 656024918
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/invoice_preview_screen.dart",
+    "digest": 1300356174
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/medical_dashboard.dart",
+    "digest": 80102610
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/owner_bill_list_screen.dart",
+    "digest": 1480948259
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/owner_link_screen.dart",
+    "digest": 952168615
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/payment_dialog_screen.dart",
+    "digest": 360140014
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/payment_history_screen.dart",
+    "digest": 25126669
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/payment_management_screen.dart",
+    "digest": 1743830837
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/pending_dues_screen.dart",
+    "digest": 2079012495
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/pending_screen.dart",
+    "digest": 151279037
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/professional_customer_portal.dart",
+    "digest": 1145250507
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/professional_startup_screen.dart",
+    "digest": 2049254902
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/real_sync_screen.dart",
+    "digest": 2065364597
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/sale/payment_in_list.dart",
+    "digest": 10635171
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/sale/sale_challan_list.dart",
+    "digest": 646501047
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/sale/sale_home_screen.dart",
+    "digest": 296591189
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/sale/sale_invoice_list.dart",
+    "digest": 656451176
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/sale/sale_order_list.dart",
+    "digest": 1821999436
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/sale/sale_return_list.dart",
+    "digest": 1804397285
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/sale/widgets/record_payment_sheet.dart",
+    "digest": 424867610
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/sale/widgets/transaction_list_widget.dart",
+    "digest": 1538783460
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/shop_management_screen.dart",
+    "digest": 129302686
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/shop_selection_screen.dart",
+    "digest": 288792918
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/total_bills_screen.dart",
+    "digest": 1697257033
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/total_paid_screen.dart",
+    "digest": 829785070
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/udhar_tab.dart",
+    "digest": 279533000
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/vendor_qr_code_screen.dart",
+    "digest": 1002652897
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/widgets/stock_product_picker.dart",
+    "digest": 115955842
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/screens/widgets/sync_status_indicator.dart",
+    "digest": 1965379040
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/animated_buttons.dart",
+    "digest": 1218462669
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/animated_widgets.dart",
+    "digest": 1869775400
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/api_error_state_widget.dart",
+    "digest": 192551240
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/app_scaffold.dart",
+    "digest": 1043321742
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/async_value_widget.dart",
+    "digest": 35752512
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/auth/role_picker_screen.dart",
+    "digest": 1497248769
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/bill_display_table.dart",
+    "digest": 1526732471
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/bill_payment_toggle.dart",
+    "digest": 1632350962
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/confirmation_dialog.dart",
+    "digest": 214936911
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/daily_summary_card.dart",
+    "digest": 1224947262
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/action_toolbar.dart",
+    "digest": 1512872360
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/business_switcher_widget.dart",
+    "digest": 998783765
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/content_host.dart",
+    "digest": 2091665458
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/dashboard_stat_card.dart",
+    "digest": 1528613965
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/desktop_content_container.dart",
+    "digest": 1371161006
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/desktop_quick_section.dart",
+    "digest": 1847892279
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/desktop_root_shell.dart",
+    "digest": 1998144928
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/desktop_shell.dart",
+    "digest": 784684916
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/empty_state.dart",
+    "digest": 165996231
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/enterprise_button.dart",
+    "digest": 436680598
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/enterprise_desktop_shell.dart",
+    "digest": 1354752795
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/enterprise_dialog.dart",
+    "digest": 654727239
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/enterprise_sidebar.dart",
+    "digest": 1345873643
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/enterprise_table.dart",
+    "digest": 431603468
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/expense_breakdown_chart.dart",
+    "digest": 2085150457
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/fuel_sales_chart.dart",
+    "digest": 307928915
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/futuristic_kpi_card.dart",
+    "digest": 1439943473
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/keyboard_help_overlay.dart",
+    "digest": 2144795722
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/low_stock_chart.dart",
+    "digest": 1942535058
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/modern_tab_bar.dart",
+    "digest": 159541585
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/neon_card.dart",
+    "digest": 816052017
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/nozzle_performance_chart.dart",
+    "digest": 846330295
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/payment_method_chart.dart",
+    "digest": 15572147
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/permission_wrapper.dart",
+    "digest": 156298917
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/premium_content_wrapper.dart",
+    "digest": 1913406587
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/premium_form_section.dart",
+    "digest": 314647235
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/premium_hover.dart",
+    "digest": 1678379457
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/recent_transactions_table.dart",
+    "digest": 328021752
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/restaurant_order_trend_chart.dart",
+    "digest": 484092845
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/revenue_analytics_chart.dart",
+    "digest": 2135590242
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/sidebar_configuration.dart",
+    "digest": 112044796
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/sidebar_menu_item_widget.dart",
+    "digest": 2025785491
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/sidebar_navigation_handler.dart",
+    "digest": 770269161
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/smart_form.dart",
+    "digest": 986579751
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/star_field_background.dart",
+    "digest": 23572215
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/status_badge.dart",
+    "digest": 1344773890
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/stock_value_category_chart.dart",
+    "digest": 134759682
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/desktop/tax_summary_panel.dart",
+    "digest": 1408055939
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/enhanced_customer_panel.dart",
+    "digest": 2138520771
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/error_boundary.dart",
+    "digest": 1897762826
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/expiry_badge.dart",
+    "digest": 1643209797
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/feature_error_boundary.dart",
+    "digest": 2050965351
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/feature_locked_dialog.dart",
+    "digest": 2008619833
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/glass_bottom_sheet.dart",
+    "digest": 920920657
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/glass_container.dart",
+    "digest": 806549241
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/glass_morphism.dart",
+    "digest": 142046635
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/licensing/plan_feature_gate.dart",
+    "digest": 1993127914
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/loading/loading_states.dart",
+    "digest": 1584434527
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/modern_ui_components.dart",
+    "digest": 548140310
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/neo_gradient_card.dart",
+    "digest": 1865952210
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/neo_text_field.dart",
+    "digest": 491748145
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/neon_button.dart",
+    "digest": 1662246816
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/owner_bill_paid_toggle.dart",
+    "digest": 1942048786
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/owner_summary_cards.dart",
+    "digest": 922404379
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/payment_mode_selector.dart",
+    "digest": 983199076
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/plan_status_banner.dart",
+    "digest": 806440886
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/premium_tabs.dart",
+    "digest": 560299737
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/product_image_widget.dart",
+    "digest": 1740570656
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/product_thumbnail_widget.dart",
+    "digest": 1369087272
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/responsive/overflow_safe.dart",
+    "digest": 1894787038
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/responsive_app_bar_title.dart",
+    "digest": 246028186
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/sakura_background.dart",
+    "digest": 1521330311
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/search_widget.dart",
+    "digest": 1258570090
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/security/permission_guard.dart",
+    "digest": 746678158
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/security/pin_verification_dialog.dart",
+    "digest": 1589614516
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/security/security_dashboard_widget.dart",
+    "digest": 219136688
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/security/security_setup_widget.dart",
+    "digest": 1017882174
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/trial_banner.dart",
+    "digest": 1577005218
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/button_hierarchy.dart",
+    "digest": 992286680
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/empty_state.dart",
+    "digest": 1303711653
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/futuristic_button.dart",
+    "digest": 1303141484
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/glass_card.dart",
+    "digest": 459223644
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/micro_animations.dart",
+    "digest": 1084592071
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/page_transitions.dart",
+    "digest": 2058845914
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/premium_chip.dart",
+    "digest": 1659369029
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/premium_floating_button.dart",
+    "digest": 310154485
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/premium_toggle.dart",
+    "digest": 1213284219
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/primary_button.dart",
+    "digest": 671689489
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/quick_action_toolbar.dart",
+    "digest": 1888247211
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/shortcut_pill.dart",
+    "digest": 2059114325
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/skeleton_loader.dart",
+    "digest": 1031656425
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/ui/smart_table.dart",
+    "digest": 1838016919
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/virtualized_list/virtualized_list.dart",
+    "digest": 36247150
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/widgets/weighing_scale_widget.dart",
+    "digest": 91387954
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/core/widgets/widgets.dart",
+    "digest": 1732329132
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/core/widgets/ws_notification_listener.dart",
+    "digest": 478709958
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/admissions/screens/admissions_screen.dart",
+    "digest": 1676255869
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/announcements/screens/announcements_screen.dart",
+    "digest": 611496100
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/attendance/screens/attendance_screen.dart",
+    "digest": 1218933313
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/auth/screens/login_screen.dart",
+    "digest": 1487624295
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/classes/screens/classes_screen.dart",
+    "digest": 1214846738
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/dashboard/screens/dashboard_screen.dart",
+    "digest": 1870618403
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/dashboard/widgets/analytics_charts.dart",
+    "digest": 991306942
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/faculty/screens/faculty_screen.dart",
+    "digest": 1649143082
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/fees/screens/fees_screen.dart",
+    "digest": 789275688
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/hostel/screens/hostel_screen.dart",
+    "digest": 575927154
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/leave/screens/leave_screen.dart",
+    "digest": 137658736
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/library/screens/library_screen.dart",
+    "digest": 1456691143
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/payroll/screens/payroll_screen.dart",
+    "digest": 1496983325
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/reports/screens/reports_screen.dart",
+    "digest": 2055638375
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/settings/screens/settings_screen.dart",
+    "digest": 232284699
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/students/screens/students_screen.dart",
+    "digest": 181549882
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/features/transport/screens/transport_screen.dart",
+    "digest": 1513916871
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/core/widgets/widgets.dart",
+    "digest": 1360945341
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/core/widgets/ws_notification_listener.dart",
+    "digest": 250952979
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/attendance/screens/attendance_screen.dart",
+    "digest": 1768387989
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/auth/screens/login_screen.dart",
+    "digest": 1901286052
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/dashboard/screens/dashboard_screen.dart",
+    "digest": 910680117
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/exams/screens/exams_screen.dart",
+    "digest": 1507980285
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/fees/screens/fee_payment_screen.dart",
+    "digest": 1247866864
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/fees/screens/fees_screen.dart",
+    "digest": 1244659075
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/homework/screens/homework_screen.dart",
+    "digest": 1590552656
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/leave/screens/leave_screen.dart",
+    "digest": 893795785
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/library/screens/library_screen.dart",
+    "digest": 1272592989
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/materials/screens/materials_screen.dart",
+    "digest": 766920235
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/notifications/screens/notifications_screen.dart",
+    "digest": 908842105
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/profile/screens/profile_screen.dart",
+    "digest": 1552837041
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/results/screens/results_screen.dart",
+    "digest": 372894246
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/timetable/screens/timetable_screen.dart",
+    "digest": 1863330000
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/transport/screens/transport_screen.dart",
+    "digest": 427828425
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/core/widgets/widgets.dart",
+    "digest": 1243371336
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/core/widgets/ws_notification_listener.dart",
+    "digest": 2033162632
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/announcements/screens/announcements_screen.dart",
+    "digest": 105352205
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/attendance/screens/attendance_screen.dart",
+    "digest": 1351763750
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/auth/screens/login_screen.dart",
+    "digest": 527138457
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/dashboard/screens/dashboard_screen.dart",
+    "digest": 405822863
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/exams/screens/exams_screen.dart",
+    "digest": 1797600532
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/homework/screens/homework_screen.dart",
+    "digest": 1179844725
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/leave/screens/leave_screen.dart",
+    "digest": 1812016833
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/lesson_plans/screens/lesson_plans_screen.dart",
+    "digest": 230873514
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/materials/screens/materials_screen.dart",
+    "digest": 541170680
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/payslip/screens/payslip_screen.dart",
+    "digest": 1647729821
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/profile/screens/profile_screen.dart",
+    "digest": 899096674
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/students/screens/students_screen.dart",
+    "digest": 478000473
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/features/timetable/screens/timetable_screen.dart",
+    "digest": 71910021
+  }
+]

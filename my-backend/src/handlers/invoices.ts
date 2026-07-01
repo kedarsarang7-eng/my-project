@@ -298,7 +298,8 @@ export const updateInvoice = authorizedHandler(
                     isInterState: parsed.data.isInterState,
                     invoiceType: parsed.data.invoiceType as any,
                     invoiceProfileId: parsed.data.invoiceProfileId,
-                }
+                },
+                auth.businessType,
             );
 
             // Broadcast update event

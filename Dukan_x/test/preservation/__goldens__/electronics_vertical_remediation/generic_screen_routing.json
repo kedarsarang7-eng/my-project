@@ -1,0 +1,11 @@
+{
+  "stock_summary": "StockSummaryScreen",
+  "item_stock": "InventoryDashboardScreen",
+  "low_stock": "LowStockAlertsScreen",
+  "return_inwards": "ReturnInwardsScreen",
+  "backup": "BackupScreen",
+  "sync_status": "BackupScreen",
+  "print_settings": "PrintMenuScreen",
+  "analytics_hub": "ReportsHubScreen",
+  "gstr1": "GstReportsScreen"
+}

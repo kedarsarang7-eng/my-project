@@ -1,0 +1,262 @@
+[
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/data/repositories/ac_repository.dart",
+    "digest": 73295546
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/accounting/repositories/accounting_repository.dart",
+    "digest": 1976422552
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/accounting/repositories/repositories.dart",
+    "digest": 1675028712
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auto_parts/data/repositories/auto_parts_repository.dart",
+    "digest": 536269387
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/data/repositories/billing_repository_impl.dart",
+    "digest": 1298722810
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/domain/repositories/billing_repository.dart",
+    "digest": 501549073
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/domain/repositories/product_repository.dart",
+    "digest": 1286391027
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/data/repositories/clinic_repository.dart",
+    "digest": 1511890216
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clothing/data/repositories/clothing_repository_offline.dart",
+    "digest": 1990873045
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/data/repositories/computer_repository.dart",
+    "digest": 401419930
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/credit_notes/data/repositories/credit_note_repository.dart",
+    "digest": 1287028637
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/data/repositories/customer_repository.dart",
+    "digest": 1084208540
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/data/repositories/dc_repository.dart",
+    "digest": 964760435
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/delivery_challan/data/repositories/delivery_challan_repository.dart",
+    "digest": 558751945
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/appointment_repository.dart",
+    "digest": 1694705705
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/doctor_dashboard_repository.dart",
+    "digest": 1424605820
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/doctor_repository.dart",
+    "digest": 889314233
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/followup_repository.dart",
+    "digest": 1182973411
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/lab_report_repository.dart",
+    "digest": 1365875052
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/medical_template_repository.dart",
+    "digest": 1224965909
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/patient_repository.dart",
+    "digest": 1649913134
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/prescription_repository.dart",
+    "digest": 1281512039
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/e_invoice/data/repositories/e_invoice_repository.dart",
+    "digest": 1625542208
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/repositories/gst_repository.dart",
+    "digest": 669059578
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/repositories/repositories.dart",
+    "digest": 1335186565
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/data/repositories/product_repository.dart",
+    "digest": 325427505
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/repositories/gold_rate_alert_repository.dart",
+    "digest": 85242583
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/repositories/gold_scheme_repository.dart",
+    "digest": 28677584
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/repositories/jewellery_repair_repository.dart",
+    "digest": 300695811
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/repositories/jewellery_repository.dart",
+    "digest": 1767165011
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/repositories/jewellery_repository_offline.dart",
+    "digest": 464143881
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/repositories/making_charges_repository.dart",
+    "digest": 1761890589
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/marketing/data/repositories/marketing_repository.dart",
+    "digest": 1754653723
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/payment/data/repositories/payment_repository.dart",
+    "digest": 1090853391
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pre_order/data/repositories/customer_item_request_repository.dart",
+    "digest": 809886450
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pre_order/data/repositories/stock_transaction_repository.dart",
+    "digest": 1711934748
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pre_order/data/repositories/vendor_item_snapshot_repository.dart",
+    "digest": 964329832
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/food_menu_repository.dart",
+    "digest": 810536340
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/food_order_repository.dart",
+    "digest": 90237630
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/restaurant_bill_repository.dart",
+    "digest": 600528663
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/restaurant_floor_repository.dart",
+    "digest": 2142452472
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/restaurant_inventory_repository.dart",
+    "digest": 131332506
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/restaurant_kot_repository.dart",
+    "digest": 46081085
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/restaurant_ops_repository.dart",
+    "digest": 1697180596
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/restaurant_table_repository.dart",
+    "digest": 596166831
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/data/repositories/exchange_repository.dart",
+    "digest": 710467274
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/data/repositories/imei_serial_repository.dart",
+    "digest": 842874879
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/data/repositories/service_job_repository.dart",
+    "digest": 1851884442
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/data/repositories/warranty_claim_repository.dart",
+    "digest": 1807025229
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/data/repositories/bill_template_repository_impl.dart",
+    "digest": 682272589
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/domain/repositories/bill_template_repository.dart",
+    "digest": 958738304
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/data/repositories/staff_repository.dart",
+    "digest": 1322979290
+  }
+]

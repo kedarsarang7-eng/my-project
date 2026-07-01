@@ -1,0 +1,44 @@
+{
+    "name": "api-audit",
+    "version": "1.0.0",
+    "description": "Automated API audit & testing automation CLI for the DukanX backend platform",
+    "main": "dist/cli/index.js",
+    "bin": {
+        "audit": "dist/cli/index.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "test": "jest --runInBand",
+        "typecheck": "tsc --noEmit",
+        "lint": "eslint \"src/**/*.ts\""
+    },
+    "dependencies": {
+        "@apidevtools/swagger-parser": "^10.1.0",
+        "@aws-sdk/client-api-gateway": "^3.500.0",
+        "@aws-sdk/client-apigatewaymanagementapi": "^3.1003.0",
+        "@aws-sdk/client-cloudwatch-logs": "^3.500.0",
+        "@aws-sdk/client-cognito-identity-provider": "^3.500.0",
+        "@aws-sdk/client-dynamodb": "^3.1024.0",
+        "@aws-sdk/client-lambda": "^3.500.0",
+        "@aws-sdk/client-s3": "^3.500.0",
+        "graphql": "^16.9.0",
+        "newman": "^6.2.1",
+        "typescript": "^5.3.3",
+        "yaml": "^2.5.0"
+    },
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "@types/newman": "^5.3.6",
+        "@types/node": "^24.0.0",
+        "@typescript-eslint/eslint-plugin": "^8.0.0",
+        "@typescript-eslint/parser": "^8.0.0",
+        "eslint": "^8.57.0",
+        "fast-check": "3.23.2",
+        "jest": "^30.2.0",
+        "ts-jest": "^29.4.6",
+        "ts-node": "^10.9.2"
+    },
+    "engines": {
+        "node": ">=20.0.0"
+    }
+}

@@ -1,0 +1,212 @@
+[
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/notifications/uns_providers.dart",
+    "digest": 1055674327
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/service_registry/providers/offline/drift_database_provider.dart",
+    "digest": 1644554904
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/service_registry/providers/offline/event_bus_realtime_provider.dart",
+    "digest": 812240170
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/service_registry/providers/offline/local_fs_storage_provider.dart",
+    "digest": 919892286
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/service_registry/providers/offline/local_vault_auth_provider.dart",
+    "digest": 1644195542
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/service_registry/providers/offline/outbox_email_provider.dart",
+    "digest": 1146943556
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/service_registry/providers/offline/workmanager_job_provider.dart",
+    "digest": 1282648389
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/service_registry/providers/online/apigw_realtime_provider.dart",
+    "digest": 1015671467
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/service_registry/providers/online/cognito_auth_provider.dart",
+    "digest": 81620357
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/service_registry/providers/online/lambda_database_provider.dart",
+    "digest": 1855838735
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/service_registry/providers/online/s3_storage_provider.dart",
+    "digest": 419498513
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/service_registry/providers/online/ses_email_provider.dart",
+    "digest": 874699854
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/service_registry/providers/online/sqs_job_provider.dart",
+    "digest": 2027609580
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/data/providers/ac_providers.dart",
+    "digest": 1441015938
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/alerts/presentation/providers/alert_providers.dart",
+    "digest": 604369865
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/backup/providers/offline_backup_provider.dart",
+    "digest": 1543030631
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/presentation/providers/billing_providers.dart",
+    "digest": 1439648075
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/providers/clinic_dashboard_providers.dart",
+    "digest": 919694250
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/providers/computer_job_providers.dart",
+    "digest": 1707640492
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/providers/dashboard_v2_providers.dart",
+    "digest": 944602580
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/providers/pharmacy_dashboard_providers.dart",
+    "digest": 891299618
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/presentation/providers/clinic_dashboard_data_provider.dart",
+    "digest": 1844110836
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/marketplace/providers/business_marketplace_providers.dart",
+    "digest": 1215475438
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ml/ml_providers.dart",
+    "digest": 2041869011
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/providers/scan_bill_session_provider.dart",
+    "digest": 2031292547
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/providers/restaurant_alert_counts_provider.dart",
+    "digest": 971489596
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/presentation/providers/settings_providers.dart",
+    "digest": 1931765325
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shortcuts/presentation/providers/shortcut_providers.dart",
+    "digest": 1071389862
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/providers/selected_staff_provider.dart",
+    "digest": 2109435123
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/presentation/providers/staff_management_provider.dart",
+    "digest": 1243471434
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/providers/staff_provider.dart",
+    "digest": 856934220
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/providers/app_state_providers.dart",
+    "digest": 1146023697
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/providers/license_snapshot_provider.dart",
+    "digest": 1168069619
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/providers/subscription_provider.dart",
+    "digest": 1395858092
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/providers/tenant_config_provider.dart",
+    "digest": 865553460
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/providers/trial_subscription_provider.dart",
+    "digest": 874310757
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/core/notifications/uns_providers.dart",
+    "digest": 1390487065
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/core/providers/providers.dart",
+    "digest": 602203994
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/core/notifications/uns_providers.dart",
+    "digest": 1757211753
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/core/providers/providers.dart",
+    "digest": 121557753
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/core/notifications/uns_providers.dart",
+    "digest": 690266114
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/core/providers/providers.dart",
+    "digest": 1877985939
+  }
+]

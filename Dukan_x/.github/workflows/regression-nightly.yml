@@ -1,0 +1,60 @@
+# ============================================================================
+# Regression Suite — Triggered on commit (within 10 min) + Nightly schedule
+# Requirements: 8.1, 8.4, 8.5
+# ============================================================================
+
+name: Regression Suite
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Nightly at 02:00 UTC — 24-hour cycle (Req 8.5)
+    - cron: '0 2 * * *'
+
+env:
+  FLUTTER_VERSION: '3.22.0'
+
+jobs:
+  regression:
+    name: Full Regression Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: Dukan_x
+
+      - name: Run Layer 1 — Unit Tests
+        run: flutter test test/unit/ --reporter expanded
+        working-directory: Dukan_x
+
+      - name: Run Layer 2 — Widget Tests
+        run: flutter test test/widget/ --reporter expanded
+        working-directory: Dukan_x
+
+      - name: Run Layer 3 — Integration Tests
+        run: flutter test integration_test/ --reporter expanded
+        working-directory: Dukan_x
+
+      - name: Run Layer 4 — E2E Tests
+        run: flutter test e2e/ --reporter expanded
+        working-directory: Dukan_x
+
+      - name: Report regression result
+        if: failure()
+        run: |
+          echo "::error::Regression suite FAILED — release blocked (Req 8.3)"
+          exit 1

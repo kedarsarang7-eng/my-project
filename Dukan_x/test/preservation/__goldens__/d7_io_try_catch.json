@@ -1,0 +1,1787 @@
+[
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/security/services/cash_closing_service.dart",
+    "digest": 1884655083
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/security/services/enhanced_pin_lockout_service.dart",
+    "digest": 1341478838
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/security/services/fraud_detection_service.dart",
+    "digest": 984643061
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/security/services/owner_pin_service.dart",
+    "digest": 1960642255
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/security/services/pin_verification_service.dart",
+    "digest": 492545564
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/access_control_service.dart",
+    "digest": 167803083
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/accounting_engine.dart",
+    "digest": 36111790
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/accounting_reports_service.dart",
+    "digest": 275288555
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/audit_logger.dart",
+    "digest": 1548443975
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/audit_service.dart",
+    "digest": 1767067244
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/auth_service.dart",
+    "digest": 1030169299
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/aws_sns_service.dart",
+    "digest": 790839337
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/background_sync_rid_service.dart",
+    "digest": 2009816990
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/backup_service.dart",
+    "digest": 1317803097
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/bank_reconciliation_service.dart",
+    "digest": 804475790
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/bill_print_service.dart",
+    "digest": 726874255
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/bill_rate_limiter.dart",
+    "digest": 1294203831
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/bill_service.dart",
+    "digest": 1902489838
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/bill_signature_service.dart",
+    "digest": 913286630
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/billing_service.dart",
+    "digest": 379483458
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/cache_manager.dart",
+    "digest": 1360136351
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/cash_closing_validation_service.dart",
+    "digest": 946925997
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/cleanup_service.dart",
+    "digest": 1858234630
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/client_transaction_service.dart",
+    "digest": 1240141788
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/cloud_storage_service.dart",
+    "digest": 1160888312
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/compute_service.dart",
+    "digest": 658230806
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/connection_service.dart",
+    "digest": 1733849026
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/currency_service.dart",
+    "digest": 1236749305
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/customer_enforcement_service.dart",
+    "digest": 1343728553
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/daily_snapshot_service.dart",
+    "digest": 1546962996
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/data_integrity_service.dart",
+    "digest": 2058737294
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/daybook_service.dart",
+    "digest": 244900432
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/deep_link_service.dart",
+    "digest": 2041328221
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/device_fingerprint_service.dart",
+    "digest": 900002949
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/device_id_service.dart",
+    "digest": 1266196886
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/device_registration_service.dart",
+    "digest": 1715700669
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/einvoice_status_service.dart",
+    "digest": 797393860
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/encryption_service.dart",
+    "digest": 1045846162
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/estimate_service.dart",
+    "digest": 1026892050
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/event_dispatcher.dart",
+    "digest": 874774169
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/feature_flag_service.dart",
+    "digest": 1626777259
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/financial_reports_service.dart",
+    "digest": 400858174
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/firestore_database.dart",
+    "digest": 1727475862
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/gst_compliance_service.dart",
+    "digest": 1366137429
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/hsn_validation_service.dart",
+    "digest": 1329851070
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/invoice_number_service.dart",
+    "digest": 1355308402
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/ledger_service.dart",
+    "digest": 1857977031
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/license_service.dart",
+    "digest": 1777789286
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/license_write_block_service.dart",
+    "digest": 273789364
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/local_storage_service.dart",
+    "digest": 1807367914
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/logger_service.dart",
+    "digest": 1101084691
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/module_loader_service.dart",
+    "digest": 853390980
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/notification_controller.dart",
+    "digest": 1871955586
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/notification_listener_service.dart",
+    "digest": 1511575870
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/offline_service.dart",
+    "digest": 2062074913
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/opening_balance_service.dart",
+    "digest": 235243102
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/payment_analytics_service.dart",
+    "digest": 1748736423
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/payment_api_service.dart",
+    "digest": 1982722811
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/payment_service.dart",
+    "digest": 1413347296
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/period_lock_reminder_service.dart",
+    "digest": 543221098
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/period_lock_service.dart",
+    "digest": 731033603
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/pharmacy_validation_service.dart",
+    "digest": 1816346029
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/printing_service.dart",
+    "digest": 1681446630
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/purchase_accounting_service.dart",
+    "digest": 1242215005
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/purchase_order_service.dart",
+    "digest": 457272956
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/rbac_enforced_mixin.dart",
+    "digest": 2092737968
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/reconciliation_service.dart",
+    "digest": 1877792627
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/recurring_invoice_service.dart",
+    "digest": 1847165797
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/report_export_service.dart",
+    "digest": 1502754074
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/rid_generator.dart",
+    "digest": 1490494232
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/role_management_service.dart",
+    "digest": 572217366
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/search_service.dart",
+    "digest": 1674048615
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/secure_license_storage.dart",
+    "digest": 555056653
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/secure_qr_service.dart",
+    "digest": 508587609
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/secure_storage_service.dart",
+    "digest": 904597820
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/security_layer.dart",
+    "digest": 1141910537
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/security_notification_service.dart",
+    "digest": 1196475682
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/session_management_service.dart",
+    "digest": 2124493752
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/session_service.dart",
+    "digest": 268842060
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/signature_manager.dart",
+    "digest": 590116221
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/smart_reminder_service.dart",
+    "digest": 2020027712
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/speech_service.dart",
+    "digest": 1370245169
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/statements_service.dart",
+    "digest": 1647335996
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/stock_security_service.dart",
+    "digest": 492398545
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/subscription_api_service.dart",
+    "digest": 1965768621
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/token_manager.dart",
+    "digest": 1862703953
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/upi_qr_service.dart",
+    "digest": 2111848231
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/web_persistence_service.dart",
+    "digest": 1678607401
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/services/websocket_service.dart",
+    "digest": 1098757447
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/data/repositories/ac_repository.dart",
+    "digest": 73295546
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/services/ac_thermal_print_service.dart",
+    "digest": 1720862080
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/services/school_erp_sync_handler.dart",
+    "digest": 2058552474
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/accounting/repositories/accounting_repository.dart",
+    "digest": 1976422552
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/accounting/repositories/repositories.dart",
+    "digest": 1675028712
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/accounting/services/accounting_service.dart",
+    "digest": 701560569
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/accounting/services/financial_reports_service.dart",
+    "digest": 653015787
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/accounting/services/journal_entry_service.dart",
+    "digest": 378137898
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/accounting/services/locking_service.dart",
+    "digest": 2086474874
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/accounting/services/services.dart",
+    "digest": 1986839104
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/services/ai_voice_service.dart",
+    "digest": 1666877133
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/services/customer_recommendation_service.dart",
+    "digest": 1801809303
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/services/dictation_service.dart",
+    "digest": 536298779
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/services/groq_service.dart",
+    "digest": 1524696768
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/services/intent_service.dart",
+    "digest": 1862241760
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/services/morning_briefing_service.dart",
+    "digest": 1833949787
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/services/on_device_ai_service.dart",
+    "digest": 1445868596
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/services/query_executor.dart",
+    "digest": 1053002965
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/services/recommendation_service.dart",
+    "digest": 627509333
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/services/tts_service.dart",
+    "digest": 1701065627
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/services/voice_intent_service.dart",
+    "digest": 430506618
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/ai_assistant/services/voice_state.dart",
+    "digest": 820950162
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/services/biometric_service.dart",
+    "digest": 1416910240
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/services/gmail_service.dart",
+    "digest": 1029905735
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/services/google_drive_service.dart",
+    "digest": 1514018814
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/services/google_signin_service.dart",
+    "digest": 250044649
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auth/services/pin_service.dart",
+    "digest": 1688042717
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/auto_parts/data/repositories/auto_parts_repository.dart",
+    "digest": 536269387
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/avatar/data/services/avatar_asset_service.dart",
+    "digest": 848603144
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/backup/services/offline_backup_service.dart",
+    "digest": 210118056
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/barcode/services/barcode_lookup_service.dart",
+    "digest": 642966372
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/barcode/services/offline_scan_queue_service.dart",
+    "digest": 1158222882
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/data/repositories/billing_repository_impl.dart",
+    "digest": 1298722810
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/domain/repositories/billing_repository.dart",
+    "digest": 501549073
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/domain/repositories/product_repository.dart",
+    "digest": 1286391027
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/domain/services/return_exchange_service.dart",
+    "digest": 360988545
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/services/barcode_scanner_service.dart",
+    "digest": 1758601196
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/services/billing_service.dart",
+    "digest": 1529020476
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/services/broker_billing_service.dart",
+    "digest": 115412939
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/services/commission_input.dart",
+    "digest": 1229272851
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/services/lot_sale_entry.dart",
+    "digest": 307067251
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/services/mandi_sale_validator.dart",
+    "digest": 792838764
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/services/payout_request.dart",
+    "digest": 1338666255
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/services/recurring_billing_service.dart",
+    "digest": 531778591
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/services/settlement_service.dart",
+    "digest": 1217149211
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/billing/services/vegetables_broker_sync_handler.dart",
+    "digest": 882305186
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/buy_flow/services/buy_flow_service.dart",
+    "digest": 1228679782
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/data/repositories/clinic_repository.dart",
+    "digest": 1511890216
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/services/clinic_dashboard_repository.dart",
+    "digest": 952681536
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/services/clinic_license_service.dart",
+    "digest": 199333390
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clinic/services/prescription_pharmacy_bridge.dart",
+    "digest": 1776023058
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clothing/data/repositories/clothing_repository_offline.dart",
+    "digest": 1990873045
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/clothing/services/clothing_tag_printer.dart",
+    "digest": 433312082
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/computer_shop/data/repositories/computer_repository.dart",
+    "digest": 401419930
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/credit_notes/data/repositories/credit_note_repository.dart",
+    "digest": 1287028637
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/credit_notes/services/credit_note_service.dart",
+    "digest": 774726989
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/credit_notes/services/supplier_expiry_return_service.dart",
+    "digest": 640885290
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/data/repositories/customer_repository.dart",
+    "digest": 1084208540
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/services/customer_ledger_pdf_service.dart",
+    "digest": 2087162513
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/services/customer_link_service.dart",
+    "digest": 514607185
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/customers/services/owner_account_service.dart",
+    "digest": 1311406819
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/services/dashboard_v2_service.dart",
+    "digest": 1277877817
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/dashboard/v2/services/pharmacy_dashboard_service.dart",
+    "digest": 1241879803
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/decoration_catering/data/repositories/dc_repository.dart",
+    "digest": 964760435
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/delivery_challan/data/repositories/delivery_challan_repository.dart",
+    "digest": 558751945
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/delivery_challan/services/delivery_challan_service.dart",
+    "digest": 1549573347
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/appointment_repository.dart",
+    "digest": 1694705705
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/doctor_dashboard_repository.dart",
+    "digest": 1424605820
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/doctor_repository.dart",
+    "digest": 889314233
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/followup_repository.dart",
+    "digest": 1182973411
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/lab_report_repository.dart",
+    "digest": 1365875052
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/medical_template_repository.dart",
+    "digest": 1224965909
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/patient_repository.dart",
+    "digest": 1649913134
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/data/repositories/prescription_repository.dart",
+    "digest": 1281512039
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/services/clinic_billing_service.dart",
+    "digest": 983717879
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/services/contraindication_service.dart",
+    "digest": 1614797083
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/services/patient_access_logger.dart",
+    "digest": 2106121839
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/doctor/services/patient_service.dart",
+    "digest": 1579368259
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/document_scanner/data/services/image_processing_service.dart",
+    "digest": 1561225818
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/document_scanner/data/services/scanning_ml_service.dart",
+    "digest": 427915251
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/e_invoice/data/repositories/e_invoice_repository.dart",
+    "digest": 1625542208
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/e_invoice/data/services/e_invoice_service.dart",
+    "digest": 377059004
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/e_invoice/data/services/e_way_bill_service.dart",
+    "digest": 855693456
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/e_invoice/data/services/nic_irp_config.dart",
+    "digest": 1906682332
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/e_invoice/data/services/nic_irp_service.dart",
+    "digest": 1716727252
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/repositories/gst_repository.dart",
+    "digest": 669059578
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/repositories/repositories.dart",
+    "digest": 1335186565
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/services/gst_service.dart",
+    "digest": 270275905
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/services/gstin_validator.dart",
+    "digest": 404865438
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/services/gstr1_export_service.dart",
+    "digest": 211038056
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/services/gstr2a_reconciliation_service.dart",
+    "digest": 1058574700
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/services/gstr3b_summary_service.dart",
+    "digest": 504896780
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/services/hsn_gst_mapper.dart",
+    "digest": 1703680494
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/services/hsn_summary_service.dart",
+    "digest": 235387168
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/gst/services/services.dart",
+    "digest": 1564263610
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/data/repositories/product_repository.dart",
+    "digest": 325427505
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/services/batch_allocation_service.dart",
+    "digest": 1182183489
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/services/drug_schedule_service.dart",
+    "digest": 1943341308
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/services/inventory_service.dart",
+    "digest": 944376754
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/services/pharmacy_migration_service.dart",
+    "digest": 1699214790
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/services/production_service.dart",
+    "digest": 1942210779
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/inventory/services/stock_reservation_service.dart",
+    "digest": 1652322855
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/invoice/services/enhanced_invoice_profile_integration.dart",
+    "digest": 902093369
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/invoice/services/invoice_profile_integration.dart",
+    "digest": 837938085
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/repositories/gold_rate_alert_repository.dart",
+    "digest": 85242583
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/repositories/gold_scheme_repository.dart",
+    "digest": 28677584
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/repositories/jewellery_repair_repository.dart",
+    "digest": 300695811
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/repositories/jewellery_repository.dart",
+    "digest": 1767165011
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/repositories/jewellery_repository_offline.dart",
+    "digest": 464143881
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/repositories/making_charges_repository.dart",
+    "digest": 1761890589
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/services/kyc_field_crypto.dart",
+    "digest": 743271315
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/jewellery/data/services/making_charges_calculator.dart",
+    "digest": 552968188
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/marketing/data/repositories/marketing_repository.dart",
+    "digest": 1754653723
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/marketing/data/services/whatsapp_service.dart",
+    "digest": 795924488
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/marketplace/services/business_marketplace_api.dart",
+    "digest": 125731450
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/party_ledger/services/party_ledger_service.dart",
+    "digest": 1676696953
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/party_ledger/services/services.dart",
+    "digest": 862371694
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/payment/data/repositories/payment_repository.dart",
+    "digest": 1090853391
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/payment/services/payment_gateway_api_service.dart",
+    "digest": 286724262
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/payment/services/payment_orchestrator.dart",
+    "digest": 2109670801
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/payment/services/upi_payment_service.dart",
+    "digest": 264343793
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/services/calibration_reminder_service.dart",
+    "digest": 224390038
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/services/dispenser_service.dart",
+    "digest": 137097034
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/services/fuel_service.dart",
+    "digest": 1825176125
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/services/period_lock_service.dart",
+    "digest": 1036522889
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/services/petrol_pump_billing_service.dart",
+    "digest": 1395867219
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/services/services.dart",
+    "digest": 1358890899
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/services/shift_service.dart",
+    "digest": 1927733861
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/petrol_pump/services/tank_service.dart",
+    "digest": 2065888559
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pharmacy/services/drug_license_service.dart",
+    "digest": 1018331972
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pharmacy/services/patient_registry_service.dart",
+    "digest": 1544866596
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pharmacy/services/supplier_expiry_return_service.dart",
+    "digest": 792396681
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pre_order/data/repositories/customer_item_request_repository.dart",
+    "digest": 809886450
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pre_order/data/repositories/stock_transaction_repository.dart",
+    "digest": 1711934748
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pre_order/data/repositories/vendor_item_snapshot_repository.dart",
+    "digest": 964329832
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pre_order/services/local_cart_service.dart",
+    "digest": 224132607
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/pre_order/services/pre_order_service.dart",
+    "digest": 1034195445
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/services/purchase_receipt_pdf.dart",
+    "digest": 1796554106
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/services/scan_bill_api_client.dart",
+    "digest": 1958495995
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/services/scan_bill_offline_queue.dart",
+    "digest": 1944695237
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/services/gstr1_service.dart",
+    "digest": 148560742
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/reports/services/tally_xml_service.dart",
+    "digest": 1410037412
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/food_menu_repository.dart",
+    "digest": 810536340
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/food_order_repository.dart",
+    "digest": 90237630
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/restaurant_bill_repository.dart",
+    "digest": 600528663
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/restaurant_floor_repository.dart",
+    "digest": 2142452472
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/restaurant_inventory_repository.dart",
+    "digest": 131332506
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/restaurant_kot_repository.dart",
+    "digest": 46081085
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/restaurant_ops_repository.dart",
+    "digest": 1697180596
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/data/repositories/restaurant_table_repository.dart",
+    "digest": 596166831
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/domain/services/qr_code_service.dart",
+    "digest": 1269244831
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/domain/services/restaurant_notification_service.dart",
+    "digest": 1960622885
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/domain/services/restaurant_notification_snapshot.dart",
+    "digest": 793564802
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/domain/services/restaurant_pdf_bill_service.dart",
+    "digest": 122382283
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/domain/services/restaurant_sync_service.dart",
+    "digest": 2069356282
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/restaurant/services/kot_service.dart",
+    "digest": 1152973778
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/revenue/services/revenue_service.dart",
+    "digest": 365593044
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/data/repositories/exchange_repository.dart",
+    "digest": 710467274
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/data/repositories/imei_serial_repository.dart",
+    "digest": 842874879
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/data/repositories/service_job_repository.dart",
+    "digest": 1851884442
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/data/repositories/warranty_claim_repository.dart",
+    "digest": 1807025229
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/services/exchange_service.dart",
+    "digest": 1899001917
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/services/imei_validation_service.dart",
+    "digest": 599595976
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/services/luhn_utils.dart",
+    "digest": 1391846323
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/services/service_job_notification_service.dart",
+    "digest": 122310155
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/services/service_job_service.dart",
+    "digest": 1520487815
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/services/warranty_claim_service.dart",
+    "digest": 457235006
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/service/services/warranty_date_utils.dart",
+    "digest": 711987337
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/data/repositories/bill_template_repository_impl.dart",
+    "digest": 682272589
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/data/services/profile_image_service.dart",
+    "digest": 778464139
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/settings/domain/repositories/bill_template_repository.dart",
+    "digest": 958738304
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/export/services/adapters/excel_export_adapter.dart",
+    "digest": 877965211
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/export/services/adapters/export_adapter.dart",
+    "digest": 62822458
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/export/services/adapters/pdf_export_adapter.dart",
+    "digest": 2020601612
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/export/services/adapters/word_export_adapter.dart",
+    "digest": 137399073
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/export/services/export_service.dart",
+    "digest": 473897582
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/services/email_repository.dart",
+    "digest": 296950222
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/services/entity_action_service.dart",
+    "digest": 604099332
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shared/services/whatsapp_service.dart",
+    "digest": 997084555
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shop/services/godown_service.dart",
+    "digest": 601276274
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shop/services/vendor_profile_service.dart",
+    "digest": 2061096598
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shop_linking/services/link_handler_service.dart",
+    "digest": 1496573758
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shortcuts/domain/services/keyboard_shortcut_manager.dart",
+    "digest": 1499622432
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shortcuts/domain/services/shortcut_data_provider.dart",
+    "digest": 1459114399
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/shortcuts/domain/services/shortcut_service.dart",
+    "digest": 102188099
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/data/repositories/staff_repository.dart",
+    "digest": 1322979290
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/data/services/payroll_service.dart",
+    "digest": 507396366
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/services/staff_api_service.dart",
+    "digest": 1738499725
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/staff/services/staff_service.dart",
+    "digest": 350458345
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/voice/services/tts_service.dart",
+    "digest": 1552053921
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/voice/services/voice_service.dart",
+    "digest": 1123887645
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/accounting_engine.dart",
+    "digest": 1999104541
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/accounting_reports_service.dart",
+    "digest": 675121265
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/audit_logger.dart",
+    "digest": 978148005
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/audit_service.dart",
+    "digest": 1845370405
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/auth_service.dart",
+    "digest": 517078670
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/background_sync_rid_service.dart",
+    "digest": 1949399097
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/backup_service.dart",
+    "digest": 480590805
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/bank_reconciliation_service.dart",
+    "digest": 98665314
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/bill_print_service.dart",
+    "digest": 1738727099
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/bill_rate_limiter.dart",
+    "digest": 1243396852
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/bill_service.dart",
+    "digest": 831508029
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/bill_signature_service.dart",
+    "digest": 480353927
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/billing_service.dart",
+    "digest": 683029749
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/bulk_import_service.dart",
+    "digest": 1197464585
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/cleanup_service.dart",
+    "digest": 1292940512
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/client_transaction_service.dart",
+    "digest": 164339462
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/cloud_storage_service.dart",
+    "digest": 1092317686
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/connection_service.dart",
+    "digest": 576153982
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/customer_panel_pdf_service.dart",
+    "digest": 140944899
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/data_integrity_service.dart",
+    "digest": 1507700270
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/daybook_service.dart",
+    "digest": 1443830704
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/device_fingerprint_service.dart",
+    "digest": 1992665301
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/einvoice_status_service.dart",
+    "digest": 1098691108
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/email_repository.dart",
+    "digest": 864716235
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/encryption_service.dart",
+    "digest": 1272773275
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/enhanced_invoice_profile_integration.dart",
+    "digest": 37553842
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/estimate_service.dart",
+    "digest": 1836020073
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/feature_flag_service.dart",
+    "digest": 332789641
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/financial_reports_service.dart",
+    "digest": 827184714
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/firestore/firestore_services.dart",
+    "digest": 844757728
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/firestore/firestore_stats_service.dart",
+    "digest": 1871737037
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/gmail_service.dart",
+    "digest": 2041731300
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/godown_service.dart",
+    "digest": 135074883
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/google_drive_service.dart",
+    "digest": 1536361647
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/google_signin_service.dart",
+    "digest": 706644900
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/gst_compliance_service.dart",
+    "digest": 1726503468
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/hsn_validation_service.dart",
+    "digest": 1329851070
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/invoice_pdf_service.dart",
+    "digest": 1303725661
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/invoice_profile_integration.dart",
+    "digest": 927582093
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/ledger_service.dart",
+    "digest": 1147525479
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/license_service.dart",
+    "digest": 1555219652
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/license_write_block_service.dart",
+    "digest": 1846848399
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/local_storage_service.dart",
+    "digest": 1512098314
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/offline_service.dart",
+    "digest": 2062074913
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/opening_balance_service.dart",
+    "digest": 1698481049
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/owner_account_service.dart",
+    "digest": 994599512
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/owner_key_service.dart",
+    "digest": 1083285722
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/payment_api_service.dart",
+    "digest": 400266283
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/payment_service.dart",
+    "digest": 358254079
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/pdf_invoice_service.dart",
+    "digest": 690468066
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/pdf_service.dart",
+    "digest": 61314280
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/period_lock_reminder_service.dart",
+    "digest": 543221098
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/printing_service.dart",
+    "digest": 243517705
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/purchase_accounting_service.dart",
+    "digest": 724252824
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/purchase_order_service.dart",
+    "digest": 144290793
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/reconciliation_service.dart",
+    "digest": 1181561049
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/recurring_invoice_service.dart",
+    "digest": 1360004119
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/role_management_service.dart",
+    "digest": 1835125988
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/search_service.dart",
+    "digest": 2046540521
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/secure_access_service.dart",
+    "digest": 2073916671
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/secure_key_service.dart",
+    "digest": 1619308847
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/secure_license_storage.dart",
+    "digest": 1720694921
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/secure_qr_service.dart",
+    "digest": 915150602
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/session_service.dart",
+    "digest": 60072878
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/signature_manager.dart",
+    "digest": 1166147076
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/subscription_api_service.dart",
+    "digest": 982742377
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/thermal_print_service.dart",
+    "digest": 342827427
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/token_manager.dart",
+    "digest": 2083504075
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/trial_subscription_service.dart",
+    "digest": 518195057
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/tts_service.dart",
+    "digest": 170069705
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/upi_qr_service.dart",
+    "digest": 94033577
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/vendor_profile_service.dart",
+    "digest": 655618300
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/voice_service.dart",
+    "digest": 98037584
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/web_persistence_service.dart",
+    "digest": 1678607401
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/websocket_service.dart",
+    "digest": 1062967960
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/services/whatsapp_service.dart",
+    "digest": 1818773077
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/features/results/services/report_card_pdf_service.dart",
+    "digest": 1387033258
+  }
+]

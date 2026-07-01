@@ -1,0 +1,695 @@
+{
+  "@@locale": "en",
+  "appTitle": "Billing App",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "helloUser": "Hello User",
+  "@helloUser": {
+    "description": "Greeting message for user"
+  },
+  "loginTitle": "Owner Login",
+  "@loginTitle": {
+    "description": "Title for owner login screen"
+  },
+  "loginSubtitle": "Sign in with your email and password.",
+  "@loginSubtitle": {
+    "description": "Subtitle for login screen"
+  },
+  "emailLabel": "Email",
+  "@emailLabel": {
+    "description": "Label for email input field"
+  },
+  "passwordLabel": "Password",
+  "@passwordLabel": {
+    "description": "Label for password input field"
+  },
+  "loginButton": "Login",
+  "@loginButton": {
+    "description": "Text for login button"
+  },
+  "dashboardTitle": "Dashboard",
+  "@dashboardTitle": {
+    "description": "Title for dashboard screen"
+  },
+  "billTab": "Bills",
+  "@billTab": {
+    "description": "Label for bills tab"
+  },
+  "stockTab": "Stock",
+  "@stockTab": {
+    "description": "Label for stock tab"
+  },
+  "reportsTab": "Reports",
+  "@reportsTab": {
+    "description": "Label for reports tab"
+  },
+  "settingsTab": "Settings",
+  "@settingsTab": {
+    "description": "Label for settings tab"
+  },
+  "shopIdLabel": "Shop ID",
+  "@shopIdLabel": {
+    "description": "Label for shop ID field"
+  },
+  "shopIdRequired": "Shop ID is required",
+  "@shopIdRequired": {
+    "description": "Error message when shop ID is not provided"
+  },
+  "emailRequired": "Email is required",
+  "@emailRequired": {
+    "description": "Error message when email is not provided"
+  },
+  "passwordRequired": "Password is required",
+  "@passwordRequired": {
+    "description": "Error message when password is not provided"
+  },
+  "forgotPassword": "Forgot password?",
+  "@forgotPassword": {
+    "description": "Text for forgot password link"
+  },
+  "backToStart": "Back to start",
+  "@backToStart": {
+    "description": "Text for back to start button"
+  },
+  "total_bills": "Total Bills",
+  "@total_bills": {
+    "description": "Label for total bills count"
+  },
+  "pending_dues": "Pending Dues",
+  "@pending_dues": {
+    "description": "Label for pending dues amount"
+  },
+  "total_paid": "Total Paid",
+  "@total_paid": {
+    "description": "Label for total paid amount"
+  },
+  "customers": "Customers",
+  "@customers": {
+    "description": "Label for customers section"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Label for settings section"
+  },
+  "welcome_back": "Welcome Back",
+  "@welcome_back": {
+    "description": "Welcome back message"
+  },
+  "no_bills": "No Bills",
+  "@no_bills": {
+    "description": "Message when there are no bills"
+  },
+  "bills_assigned_message": "Bills assigned message",
+  "@bills_assigned_message": {
+    "description": "Message shown when bills are assigned"
+  },
+  "bill_label": "Bill",
+  "@bill_label": {
+    "description": "Label for a single bill"
+  },
+  "amount_label": "Amount",
+  "@amount_label": {
+    "description": "Label for amount field"
+  },
+  "remaining_label": "Remaining",
+  "@remaining_label": {
+    "description": "Label for remaining amount"
+  },
+  "pay": "Pay",
+  "@pay": {
+    "description": "Pay button text"
+  },
+  "paid_text": "Paid",
+  "@paid_text": {
+    "description": "Text indicating payment is complete"
+  },
+  "bill_details": "Bill Details",
+  "@bill_details": {
+    "description": "Title for bill details screen"
+  },
+  "paid": "Paid",
+  "@paid": {
+    "description": "Status text for paid bills"
+  },
+  "payment_status": "Payment Status",
+  "@payment_status": {
+    "description": "Label for payment status"
+  },
+  "itemsHeader": "Items",
+  "@itemsHeader": {
+    "description": "Label for items in a bill"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button text"
+  },
+  "owner_dashboard": "Owner Dashboard",
+  "@owner_dashboard": {
+    "description": "Title for owner dashboard"
+  },
+  "owner_signin_required": "Owner Sign-in Required",
+  "@owner_signin_required": {
+    "description": "Message when owner sign-in is required"
+  },
+  "owner_login": "Owner Login",
+  "@owner_login": {
+    "description": "Title for owner login"
+  },
+  "todays_summary": "Today's Summary",
+  "@todays_summary": {
+    "description": "Title for today's summary section"
+  },
+  "total_customers": "Total Customers",
+  "@total_customers": {
+    "description": "Label for total customers count"
+  },
+  "total_dues": "Total Dues",
+  "@total_dues": {
+    "description": "Label for total dues amount"
+  },
+  "daily_sales": "Daily Sales",
+  "@daily_sales": {
+    "description": "Label for daily sales amount"
+  },
+  "top_customer": "Top Customer",
+  "@top_customer": {
+    "description": "Label for top customer"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "Label for home tab"
+  },
+  "add_customer": "Add Customer",
+  "@add_customer": {
+    "description": "Button text to add customer"
+  },
+  "bills": "Bills",
+  "@bills": {
+    "description": "Label for bills section"
+  },
+  "add_vegetable": "Add Vegetable",
+  "@add_vegetable": {
+    "description": "Button text to add vegetable"
+  },
+  "khatabook": "Khatabook",
+  "@khatabook": {
+    "description": "Label for khatabook feature"
+  },
+  "finance": "Finance",
+  "@finance": {
+    "description": "Label for finance section"
+  },
+  "edit_customer": "Edit Customer",
+  "@edit_customer": {
+    "description": "Button text to edit customer"
+  },
+  "manage_profiles": "Manage Profiles",
+  "@manage_profiles": {
+    "description": "Button text to manage profiles"
+  },
+  "quick_actions": "Quick Actions",
+  "@quick_actions": {
+    "description": "Title for quick actions section"
+  },
+  "register_new_customer": "Register New Customer",
+  "@register_new_customer": {
+    "description": "Button text to register new customer"
+  },
+  "make_bill": "Make Bill",
+  "@make_bill": {
+    "description": "Button text to make a bill"
+  },
+  "create_bill_subtitle": "Create Bill",
+  "@create_bill_subtitle": {
+    "description": "Subtitle for create bill action"
+  },
+  "view_customers_subtitle": "View Customers",
+  "@view_customers_subtitle": {
+    "description": "Subtitle for view customers action"
+  },
+  "create_bill_advanced_subtitle": "Create Advanced Bill",
+  "@create_bill_advanced_subtitle": {
+    "description": "Subtitle for create advanced bill action"
+  },
+  "view_bills_subtitle": "View Bills",
+  "@view_bills_subtitle": {
+    "description": "Subtitle for view bills action"
+  },
+  "manage_vegetables": "Manage Vegetables",
+  "@manage_vegetables": {
+    "description": "Button text to manage vegetables"
+  },
+  "manage_vegetables_subtitle": "Manage Vegetables",
+  "@manage_vegetables_subtitle": {
+    "description": "Subtitle for manage vegetables action"
+  },
+  "owner_info": "Owner Info",
+  "@owner_info": {
+    "description": "Title for owner information section"
+  },
+  "phone_number": "Phone Number",
+  "@phone_number": {
+    "description": "Label for phone number field"
+  },
+  "search_customers": "Search Customers",
+  "@search_customers": {
+    "description": "Placeholder for customer search"
+  },
+  "no_customers": "No Customers",
+  "@no_customers": {
+    "description": "Message when there are no customers"
+  },
+  "pending": "Pending",
+  "@pending": {
+    "description": "Status text for pending items"
+  },
+  "add_customer_form_title": "Add Customer Form",
+  "@add_customer_form_title": {
+    "description": "Title for add customer form"
+  },
+  "add_customer_form_steps": "Fill in the details below",
+  "@add_customer_form_steps": {
+    "description": "Instructions for add customer form"
+  },
+  "no_customers_found": "No customers found",
+  "@no_customers_found": {
+    "description": "Message when search finds no customers"
+  },
+  "vegetables_brought": "Vegetables Brought",
+  "@vegetables_brought": {
+    "description": "Title for vegetables brought section"
+  },
+  "no_vegetables": "No vegetables",
+  "@no_vegetables": {
+    "description": "Message when there are no vegetables"
+  },
+  "edit_profile": "Edit Profile",
+  "@edit_profile": {
+    "description": "Button text to edit profile"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button text"
+  },
+  "customer_account": "Customer Account",
+  "@customer_account": {
+    "description": "Title for customer account section"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Label for profile section"
+  },
+  "accountSecurity": "Account & Security",
+  "@accountSecurity": {
+    "description": "Title for account security section"
+  },
+  "languageAppearance": "Language & Appearance",
+  "@languageAppearance": {
+    "description": "Title for language and appearance settings"
+  },
+  "dashboardSwitch": "Dashboard Switch",
+  "@dashboardSwitch": {
+    "description": "Title for dashboard switch option"
+  },
+  "backupSync": "Backup & Sync",
+  "@backupSync": {
+    "description": "Title for backup and sync section"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  "editName": "Edit Name",
+  "@editName": {
+    "description": "Button text to edit name"
+  },
+  "changePhoto": "Change Profile Photo",
+  "@changePhoto": {
+    "description": "Button text to change profile photo"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  "resetPassword": "Reset Password",
+  "@resetPassword": {
+    "description": "Button text to reset password"
+  },
+  "confirmLogout": "Are you sure you want to log out?",
+  "@confirmLogout": {
+    "description": "Confirmation message for logout"
+  },
+  "ownerDashboard": "Owner Dashboard",
+  "@ownerDashboard": {
+    "description": "Label for owner dashboard option"
+  },
+  "customerDashboard": "Customer Dashboard",
+  "@customerDashboard": {
+    "description": "Label for customer dashboard option"
+  },
+  "permissionError": "Permission Error",
+  "@permissionError": {
+    "description": "Title for permission error"
+  },
+  "customerAccessError": "Customer users cannot access Owner Dashboard.",
+  "@customerAccessError": {
+    "description": "Error message for customer access restriction"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Label for language setting"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Label for theme setting"
+  },
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Label for dark mode toggle"
+  },
+  "scan_bill": "Scan Bill",
+  "@scan_bill": {
+    "description": "Button text to scan bill"
+  },
+  "auto_create_bill": "Auto-create bill",
+  "@auto_create_bill": {
+    "description": "Subtitle for scan bill feature"
+  },
+  "voice_bill": "Voice Bill",
+  "@voice_bill": {
+    "description": "Button text for voice billing"
+  },
+  "speak_to_add": "Speak to add",
+  "@speak_to_add": {
+    "description": "Subtitle for voice bill feature"
+  },
+  "recent_transactions": "Recent Transactions",
+  "@recent_transactions": {
+    "description": "Title for recent transactions section"
+  },
+  "add_txn": "Add Txn",
+  "@add_txn": {
+    "description": "Button text to add transaction"
+  },
+  "vendor_invoice": "Vendor Invoice",
+  "@vendor_invoice": {
+    "description": "Button text for vendor invoice"
+  },
+  "more": "More",
+  "@more": {
+    "description": "Button text for more options"
+  },
+  "see_all": "See All",
+  "@see_all": {
+    "description": "Button text to see all items"
+  },
+  "no_recent_transactions": "No recent transactions",
+  "@no_recent_transactions": {
+    "description": "Message when there are no recent transactions"
+  },
+  "add_new_sale": "Add New Sale",
+  "@add_new_sale": {
+    "description": "Button text to add new sale"
+  },
+  "insights": "Insights",
+  "@insights": {
+    "description": "Label for insights tab"
+  },
+  "items": "Items",
+  "@items": {
+    "description": "Label for items tab"
+  },
+  "ai_assistant": "AI Assistant",
+  "@ai_assistant": {
+    "description": "Label for AI assistant feature"
+  },
+  "menu": "Menu",
+  "@menu": {
+    "description": "Label for menu tab"
+  },
+  "low_stock": "Low Stock",
+  "@low_stock": {
+    "description": "Label for low stock indicator"
+  },
+  "good_morning": "Good Morning",
+  "@good_morning": {
+    "description": "Morning greeting message"
+  },
+  "good_afternoon": "Good Afternoon",
+  "@good_afternoon": {
+    "description": "Afternoon greeting message"
+  },
+  "good_evening": "Good Evening",
+  "@good_evening": {
+    "description": "Evening greeting message"
+  },
+  "items_label": "items",
+  "@items_label": {
+    "description": "Label for items count suffix"
+  },
+  "onboarding_skip": "Skip",
+  "@onboarding_skip": {
+    "description": "Skip button text"
+  },
+  "onboarding_business_title": "Choose Your Business Type",
+  "@onboarding_business_title": {
+    "description": "Title for business type selection screen"
+  },
+  "onboarding_business_subtitle": "This helps us customize your experience",
+  "@onboarding_business_subtitle": {
+    "description": "Subtitle for business type selection screen"
+  },
+  "onboarding_selected": "Selected",
+  "@onboarding_selected": {
+    "description": "Label indicating an item is selected"
+  },
+  "onboarding_continue": "Continue",
+  "@onboarding_continue": {
+    "description": "Continue button text"
+  },
+  "onboarding_language_title": "Select Your Preferred Language",
+  "@onboarding_language_title": {
+    "description": "Title for language selection screen"
+  },
+  "onboarding_language_subtitle": "You can change this anytime later",
+  "@onboarding_language_subtitle": {
+    "description": "Subtitle for language selection screen"
+  },
+  "onboarding_next": "Next",
+  "@onboarding_next": {
+    "description": "Next button text"
+  },
+  "onboarding_congratulations_title": "All Set!",
+  "@onboarding_congratulations_title": {
+    "description": "Title for congratulations screen"
+  },
+  "onboarding_congratulations_subtitle": "Your shop is ready",
+  "@onboarding_congratulations_subtitle": {
+    "description": "Subtitle for congratulations screen"
+  },
+  "onboarding_lets_go": "Let's Go!",
+  "@onboarding_lets_go": {
+    "description": "Button text to enter dashboard"
+  },
+  "language_setup_loading": "Setting up your language...",
+  "@language_setup_loading": {
+    "description": "Status message while loading translations"
+  },
+  "language_setup_applying": "Applying preferences...",
+  "@language_setup_applying": {
+    "description": "Status message while applying language"
+  },
+  "language_setup_preparing": "Preparing your experience...",
+  "@language_setup_preparing": {
+    "description": "Status message while preparing app"
+  },
+  "language_setup_complete": "Ready!",
+  "@language_setup_complete": {
+    "description": "Status message when setup is complete"
+  },
+  "language_setup_error": "Failed to setup language",
+  "@language_setup_error": {
+    "description": "Error message when setup fails"
+  },
+  "language_setup_retry": "Retry",
+  "@language_setup_retry": {
+    "description": "Retry button text"
+  },
+  "language_confirm_message": "You can change this later in Settings",
+  "@language_confirm_message": {
+    "description": "Helper text on language selection screen"
+  },
+  "validationRequired": "{fieldName} is required",
+  "@validationRequired": {
+    "description": "Validation error when a required field is empty",
+    "placeholders": {
+      "fieldName": {
+        "type": "String"
+      }
+    }
+  },
+  "validationMinLength": "{fieldName} must be at least {min} characters",
+  "@validationMinLength": {
+    "description": "Validation error when field is too short",
+    "placeholders": {
+      "fieldName": {
+        "type": "String"
+      },
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "validationMaxLength": "{fieldName} must be at most {max} characters",
+  "@validationMaxLength": {
+    "description": "Validation error when field is too long",
+    "placeholders": {
+      "fieldName": {
+        "type": "String"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "validationInvalidEmail": "Please enter a valid email address",
+  "@validationInvalidEmail": {
+    "description": "Validation error for invalid email"
+  },
+  "validationInvalidPhone": "Please enter a valid phone number",
+  "@validationInvalidPhone": {
+    "description": "Validation error for invalid phone number"
+  },
+  "validationInvalidGstin": "Please enter a valid GSTIN",
+  "@validationInvalidGstin": {
+    "description": "Validation error for invalid GSTIN"
+  },
+  "validationInvalidPan": "Please enter a valid PAN",
+  "@validationInvalidPan": {
+    "description": "Validation error for invalid PAN number"
+  },
+  "validationPositiveNumber": "{fieldName} must be a positive number",
+  "@validationPositiveNumber": {
+    "description": "Validation error when number is not positive",
+    "placeholders": {
+      "fieldName": {
+        "type": "String"
+      }
+    }
+  },
+  "validationAmountZero": "Amount must be greater than zero",
+  "@validationAmountZero": {
+    "description": "Validation error when amount is zero or negative"
+  },
+  "validationFutureDate": "{fieldName} must be a future date",
+  "@validationFutureDate": {
+    "description": "Validation error when date is not in the future",
+    "placeholders": {
+      "fieldName": {
+        "type": "String"
+      }
+    }
+  },
+  "validationPastDate": "{fieldName} must be a past date",
+  "@validationPastDate": {
+    "description": "Validation error when date is not in the past",
+    "placeholders": {
+      "fieldName": {
+        "type": "String"
+      }
+    }
+  },
+  "validationPasswordWeak": "Password must be at least 8 characters with an uppercase letter and a number",
+  "@validationPasswordWeak": {
+    "description": "Validation error for weak password"
+  },
+  "validationMismatch": "{field1} and {field2} do not match",
+  "@validationMismatch": {
+    "description": "Validation error when two fields do not match",
+    "placeholders": {
+      "field1": {
+        "type": "String"
+      },
+      "field2": {
+        "type": "String"
+      }
+    }
+  },
+  "businessTypeGrocery": "Grocery",
+  "@businessTypeGrocery": {
+    "description": "Display name for grocery business type"
+  },
+  "businessTypePharmacy": "Pharmacy",
+  "@businessTypePharmacy": {
+    "description": "Display name for pharmacy business type"
+  },
+  "businessTypeRestaurant": "Restaurant",
+  "@businessTypeRestaurant": {
+    "description": "Display name for restaurant business type"
+  },
+  "businessTypeClothing": "Clothing",
+  "@businessTypeClothing": {
+    "description": "Display name for clothing business type"
+  },
+  "businessTypeElectronics": "Electronics",
+  "@businessTypeElectronics": {
+    "description": "Display name for electronics business type"
+  },
+  "businessTypeMobileShop": "Mobile Shop",
+  "@businessTypeMobileShop": {
+    "description": "Display name for mobile shop business type"
+  },
+  "businessTypeComputerShop": "Computer Shop",
+  "@businessTypeComputerShop": {
+    "description": "Display name for computer shop business type"
+  },
+  "businessTypeHardware": "Hardware",
+  "@businessTypeHardware": {
+    "description": "Display name for hardware business type"
+  },
+  "businessTypeService": "Service",
+  "@businessTypeService": {
+    "description": "Display name for service business type"
+  },
+  "businessTypeWholesale": "Wholesale",
+  "@businessTypeWholesale": {
+    "description": "Display name for wholesale business type"
+  },
+  "businessTypePetrolPump": "Petrol Pump",
+  "@businessTypePetrolPump": {
+    "description": "Display name for petrol pump business type"
+  },
+  "businessTypeVegetablesBroker": "Vegetables Broker",
+  "@businessTypeVegetablesBroker": {
+    "description": "Display name for vegetables broker business type"
+  },
+  "businessTypeClinic": "Clinic",
+  "@businessTypeClinic": {
+    "description": "Display name for clinic business type"
+  },
+  "businessTypeBookStore": "Book Store",
+  "@businessTypeBookStore": {
+    "description": "Display name for book store business type"
+  },
+  "businessTypeJewellery": "Jewellery",
+  "@businessTypeJewellery": {
+    "description": "Display name for jewellery business type"
+  },
+  "businessTypeAutoParts": "Auto Parts",
+  "@businessTypeAutoParts": {
+    "description": "Display name for auto parts business type"
+  },
+  "businessTypeDecorationCatering": "Decoration & Catering",
+  "@businessTypeDecorationCatering": {
+    "description": "Display name for decoration and catering business type"
+  },
+  "businessTypeSchoolErp": "School ERP",
+  "@businessTypeSchoolErp": {
+    "description": "Display name for school ERP business type"
+  },
+  "businessTypeOther": "Other",
+  "@businessTypeOther": {
+    "description": "Display name for other business type"
+  }
+}

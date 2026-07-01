@@ -1,0 +1,60 @@
+
+  List<SidebarSection> _getServiceSections() {
+    return [
+      // 1️⃣ Dashboard
+      SidebarSection(
+        index: 0,
+        icon: Icons.space_dashboard_rounded,
+        title: 'Service Dashboard',
+        accentColor: FuturisticColors.accent1,
+        shortcutHint: 'Ctrl+1',
+        items: [
+          SidebarMenuItem(
+              id: 'executive_dashboard',
+              icon: Icons.dashboard_customize_outlined,
+              label: 'Overview'),
+          SidebarMenuItem(
+              id: 'daily_activity',
+              icon: Icons.calendar_today_outlined,
+              label: 'Daily Activity',
+              badge: true),
+          SidebarMenuItem(
+              id: 'daily_snapshot',
+              icon: Icons.today_outlined,
+              label: 'Daily Snapshot'),
+        ],
+      ),
+      // 2️⃣ Revenue & Billing
+      SidebarSection(
+        index: 1,
+        icon: Icons.point_of_sale_rounded,
+        title: 'Billing Desk',
+        accentColor: FuturisticColors.success,
+        shortcutHint: 'Ctrl+2',
+        items: [
+          SidebarMenuItem(
+              id: 'new_sale',
+              icon: Icons.receipt_long_outlined,
+              label: 'Create Invoice'),
+          SidebarMenuItem(
+              id: 'revenue_overview',
+              icon: Icons.analytics_outlined,
+              label: 'Revenue Overview'),
+          SidebarMenuItem(
+              id: 'receipt_entry',
+              icon: Icons.payment_outlined,
+              label: 'Receipt Entry'),
+          SidebarMenuItem(
+              id: 'sales_register',
+              icon: Icons.menu_book_outlined,
+              label: 'Invoice History'),
+          SidebarMenuItem(
+              id: 'proforma_bids',
+              icon: Icons.description_outlined,
+              label: 'Quotes / Estimates'),
+        ],
+      ),
+      // Common Sections (Skipping BuyFlow & Inventory)
+      ..._getCommonSections(startingIndex: 2),
+    ];
+  }

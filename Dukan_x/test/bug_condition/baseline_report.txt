@@ -1,0 +1,23 @@
+================================================================================
+FLUTTER ANALYZE BUG CONDITION EXPLORATION — CATEGORIZED BASELINE
+================================================================================
+
+TOTAL IN-SCOPE DIAGNOSTICS: 0
+
+SEVERITY DISTRIBUTION:
+  error: 0
+  warning: 0
+  info: 0
+
+TOP DIAGNOSTIC CODES (sorted by count):
+
+PER-VERTICAL HOT-SPOTS (sorted by count):
+
+TOP 20 FILES BY DIAGNOSTIC COUNT:
+
+PRIORITIZED WORKLIST (errors → warnings → info):
+  1. ERRORS (0 issues):
+  2. WARNINGS (0 issues):
+  3. INFO (0 issues):
+
+================================================================================

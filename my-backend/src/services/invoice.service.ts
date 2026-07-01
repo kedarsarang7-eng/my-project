@@ -862,7 +862,16 @@ export async function createInvoice(
         let lineSgstCents = 0;
         let lineIgstCents = 0;
 
-        if (isInterState) {
+        // ── Fuel GST Compliance (petrolPump) ──────────────────────────────
+        // Petrol/diesel sit outside India's GST regime, so a petrolPump (fuel)
+        // bill must carry zero tax. The server is authoritative here: force the
+        // per-line GST basis points to 0 so that a stored non-zero
+        // cgstRateBp/sgstRateBp on a fuel product cannot re-introduce tax even if
+        // the client sent 0. Gated STRICTLY on PETROL_PUMP — every other vertical
+        // continues to derive tax from stored basis points exactly as before.
+        if (businessType === BusinessType.PETROL_PUMP) {
+            // Fuel GST forced to 0: lineCgstCents/lineSgstCents/lineIgstCents stay 0.
+        } else if (isInterState) {
             // Inter-state: use IGST (CGST rate + SGST rate combined)
             const igstBp = Number(product.igstRateBp) || (Number(product.cgstRateBp || 0) + Number(product.sgstRateBp || 0));
             lineIgstCents = roundTaxComponent(taxableValueCents * igstBp / 10000);
@@ -2252,7 +2261,8 @@ export async function createReturn(
 export async function updateInvoice(
     tenantId: string,
     invoiceId: string,
-    input: CreateInvoiceInput
+    input: CreateInvoiceInput,
+    businessType?: BusinessType,
 ): Promise<InvoiceResult> {
     const pk = Keys.tenantPK(tenantId);
     const sk = Keys.invoiceSK(invoiceId);
@@ -2312,7 +2322,14 @@ export async function updateInvoice(
 
         // GST calculation
         let lineCgst = 0, lineSgst = 0, lineIgst = 0;
-        if (input.isInterState) {
+        // ── Fuel GST Compliance (petrolPump) ──────────────────────────────
+        // Mirror the createInvoice gate on the recompute/update path: petrol/diesel
+        // are outside GST, so a petrolPump bill recomputes to zero tax regardless of
+        // any stored basis points. Gated STRICTLY on PETROL_PUMP — all other
+        // verticals recompute tax from stored basis points exactly as before.
+        if (businessType === BusinessType.PETROL_PUMP) {
+            // Fuel GST forced to 0: lineCgst/lineSgst/lineIgst stay 0.
+        } else if (input.isInterState) {
             const igstBp = Number(product.igstRateBp) || 0;
             lineIgst = roundTaxComponent(taxableValueCents * igstBp / 10000);
         } else {

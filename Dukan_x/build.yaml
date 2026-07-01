@@ -1,0 +1,49 @@
+# ============================================================================
+# build.yaml — code-generation scoping for Dukan_x
+# ----------------------------------------------------------------------------
+# WHY THIS FILE EXISTS
+# The resolved toolchain (build_runner 2.15.0 + analyzer 10.0.1) has a known
+# regression in its fine-grained `library_cycle_graph_loader`:
+#
+#     Bad state: Cannot recurse at later or equal phase 6, already running at: [1]
+#
+# It is triggered while the `freezed` builder analyzes certain TEST files
+# (e.g. test/services/license_service_test.dart, which still references the
+# `cloud_functions` API that was removed during the Firebase->AWS migration).
+# That crash aborts the entire build, so the generated *.g.dart / *.freezed.dart
+# outputs for `lib/` are produced into the build cache but never written to the
+# source tree — which is what produced the large wave of "missing generated
+# file" analyzer errors across the project.
+#
+# WHAT THIS DOES
+# Restricts the source-generating builders to `lib/**` only. The application
+# code (the single source of generated Drift/freezed output the app depends on
+# to compile) is generated normally; the builders simply do not walk the test
+# files that crash the resolver. This changes NO dependency versions and NO
+# application source — deleting this file fully reverts the behavior.
+#
+# NOTE
+# Mock generation for a handful of pre-existing unit tests
+# (mockito @GenerateMocks) is not run under this scope. Those tests were
+# already broken independently (they import the removed `cloud_functions`
+# package) and are unrelated to application compilation.
+# ============================================================================
+targets:
+  $default:
+    sources:
+      - lib/**
+      - pubspec.yaml
+      - $package$
+    builders:
+      # Drift database/table code generation (app_database.g.dart, etc.)
+      drift_dev:
+        generate_for:
+          - lib/**
+      # Freezed data-class generation (*.freezed.dart)
+      freezed:
+        generate_for:
+          - lib/**
+      # json_serializable (*.g.dart for @JsonSerializable models)
+      json_serializable:
+        generate_for:
+          - lib/**

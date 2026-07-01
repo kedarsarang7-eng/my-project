@@ -1,0 +1,48 @@
+{
+    "name": "bizmate-serverless-backend",
+    "version": "1.0.0",
+    "description": "BizMate Multi-Tenant SaaS Backend — AWS Lambda + API Gateway",
+    "main": "dist/handlers/dashboard.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/server.js",
+        "start:ec2": "node dist/server.js",
+        "deploy": "serverless deploy",
+        "deploy:dev": "serverless deploy --stage dev",
+        "deploy:prod": "serverless deploy --stage prod",
+        "offline": "serverless offline",
+        "lint": "eslint src/**/*.ts",
+        "typecheck": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@aws-sdk/client-cognito-identity-provider": "^3.500.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "@aws-sdk/client-rekognition": "^3.990.0",
+        "@aws-sdk/client-s3": "^3.500.0",
+        "@aws-sdk/client-sns": "^3.989.0",
+        "@aws-sdk/s3-request-presigner": "^3.500.0",
+        "aws-jwt-verify": "^4.0.1",
+        "firebase-admin": "^13.6.1",
+        "pg": "^8.11.3",
+        "uuid": "^9.0.0"
+    },
+    "devDependencies": {
+        "@types/aws-lambda": "^8.10.131",
+        "@types/cors": "^2.8.17",
+        "@types/express": "^4.17.21",
+        "@types/dotenv": "^6.1.1",
+        "@types/node": "^24.0.0",
+        "@types/pg": "^8.10.9",
+        "@types/uuid": "^9.0.7",
+        "dotenv": "^17.2.4",
+        "serverless": "^4.31.2",
+        "serverless-offline": "^14.4.0",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.3.3"
+    },
+    "engines": {
+        "node": ">=20.0.0"
+    }
+}

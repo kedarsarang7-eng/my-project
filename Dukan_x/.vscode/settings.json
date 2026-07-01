@@ -1,0 +1,31 @@
+{
+  // VS Code Java runtime configuration for this workspace.
+  // Replace the `path` values with the absolute paths to your installed JDKs on Windows.
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-17",
+      "path": "C:\\Program Files\\Java\\jdk-17",
+      "default": true
+    },
+    {
+      "name": "JavaSE-1.8",
+      "path": "E:\\java-1.8.0-openjdk-1.8.0.392-1.b08.redhat.windows.x86_64\\java-1.8.0-openjdk-1.8.0.392-1.b08.redhat.windows.x86_64"
+    }
+  ],
+  // If you prefer to point VS Code to a single JDK, uncomment and set java.home
+  // "java.home": "C:\\Program Files\\Microsoft\\jdk-17.0.17.10-hotspot",
+  // Disable auto-downloads of JDKs (optional)
+  "java.installations.autoDownload": false,
+  "java.configuration.checkProjectSettingsExclusions": false,
+  "java.import.generatesMetadataFilesAtProjectRoot": false,
+  "files.exclude": {
+    "**/.project": true,
+    "**/.classpath": true,
+    "**/.factorypath": true,
+    "**/.settings": true
+  },
+  // Flutter SDK path for this workspace (points to the Flutter installation)
+  "dart.flutterSdkPath": "C:\\src\\flutter",
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "cmake.sourceDirectory": "C:/desktop app/Dukan_x/linux"
+}

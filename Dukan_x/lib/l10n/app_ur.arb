@@ -1,0 +1,555 @@
+{
+  "@@locale": "ur",
+  "appTitle": "بلنگ ایپ",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "helloUser": "ہیلو یوزر",
+  "@helloUser": {
+    "description": "Greeting message for user"
+  },
+  "loginTitle": "مالک لاگ ان",
+  "@loginTitle": {
+    "description": "Title for owner login screen"
+  },
+  "loginSubtitle": "اپنے ای میل اور پاس ورڈ کے ساتھ لاگ ان کریں۔",
+  "@loginSubtitle": {
+    "description": "Subtitle for login screen"
+  },
+  "emailLabel": "ای میل",
+  "@emailLabel": {
+    "description": "Label for email input field"
+  },
+  "passwordLabel": "پاس ورڈ",
+  "@passwordLabel": {
+    "description": "Label for password input field"
+  },
+  "loginButton": "لاگ ان کریں",
+  "@loginButton": {
+    "description": "Text for login button"
+  },
+  "dashboardTitle": "ڈیش بورڈ",
+  "@dashboardTitle": {
+    "description": "Title for dashboard screen"
+  },
+  "billTab": "بلز",
+  "@billTab": {
+    "description": "Label for bills tab"
+  },
+  "stockTab": "لیجر",
+  "@stockTab": {
+    "description": "Label for stock tab"
+  },
+  "reportsTab": "رپورٹس",
+  "@reportsTab": {
+    "description": "Label for reports tab"
+  },
+  "settingsTab": "سیٹنگز",
+  "@settingsTab": {
+    "description": "Label for settings tab"
+  },
+  "shopIdLabel": "دکان کی آئی ڈی",
+  "@shopIdLabel": {
+    "description": "Label for shop ID field"
+  },
+  "shopIdRequired": "دکان کی آئی ڈی ضروری ہے",
+  "@shopIdRequired": {
+    "description": "Error message when shop ID is not provided"
+  },
+  "emailRequired": "ای میل ضروری ہے",
+  "@emailRequired": {
+    "description": "Error message when email is not provided"
+  },
+  "passwordRequired": "پاس ورڈ ضروری ہے",
+  "@passwordRequired": {
+    "description": "Error message when password is not provided"
+  },
+  "forgotPassword": "پاس ورڈ بھول گئے؟",
+  "@forgotPassword": {
+    "description": "Text for forgot password link"
+  },
+  "backToStart": "شروع میں واپس جائیں",
+  "@backToStart": {
+    "description": "Text for back to start button"
+  },
+  "total_bills": "کل بلز",
+  "@total_bills": {
+    "description": "Label for total bills count"
+  },
+  "pending_dues": "بقایا جات",
+  "@pending_dues": {
+    "description": "Label for pending dues amount"
+  },
+  "total_paid": "کل ادا شدہ",
+  "@total_paid": {
+    "description": "Label for total paid amount"
+  },
+  "customers": "گاہک",
+  "@customers": {
+    "description": "Label for customers section"
+  },
+  "settings": "سیٹنگز",
+  "@settings": {
+    "description": "Label for settings section"
+  },
+  "welcome_back": "خوش آمدید",
+  "@welcome_back": {
+    "description": "Welcome back message"
+  },
+  "no_bills": "کوئی بل نہیں",
+  "@no_bills": {
+    "description": "Message when there are no bills"
+  },
+  "bills_assigned_message": "بل تفویض کا پیغام",
+  "@bills_assigned_message": {
+    "description": "Message shown when bills are assigned"
+  },
+  "bill_label": "بل",
+  "@bill_label": {
+    "description": "Label for a single bill"
+  },
+  "amount_label": "رقم",
+  "@amount_label": {
+    "description": "Label for amount field"
+  },
+  "remaining_label": "باقی",
+  "@remaining_label": {
+    "description": "Label for remaining amount"
+  },
+  "pay": "ادائیگی",
+  "@pay": {
+    "description": "Pay button text"
+  },
+  "paid_text": "ادا شدہ",
+  "@paid_text": {
+    "description": "Text indicating payment is complete"
+  },
+  "bill_details": "بل کی تفصیلات",
+  "@bill_details": {
+    "description": "Title for bill details screen"
+  },
+  "paid": "ادا شدہ",
+  "@paid": {
+    "description": "Status text for paid bills"
+  },
+  "payment_status": "ادائیگی کی حیثیت",
+  "@payment_status": {
+    "description": "Label for payment status"
+  },
+  "itemsHeader": "آئٹم",
+  "@itemsHeader": {
+    "description": "Label for items in a bill"
+  },
+  "close": "بند کریں",
+  "@close": {
+    "description": "Close button text"
+  },
+  "owner_dashboard": "مالک ڈیش بورڈ",
+  "@owner_dashboard": {
+    "description": "Title for owner dashboard"
+  },
+  "owner_signin_required": "مالک کا سائن ان ضروری ہے",
+  "@owner_signin_required": {
+    "description": "Message when owner sign-in is required"
+  },
+  "owner_login": "مالک لاگ ان",
+  "@owner_login": {
+    "description": "Title for owner login"
+  },
+  "todays_summary": "آج کا خلاصہ",
+  "@todays_summary": {
+    "description": "Title for today's summary section"
+  },
+  "total_customers": "کل گاہک",
+  "@total_customers": {
+    "description": "Label for total customers count"
+  },
+  "total_dues": "کل بقایا جات",
+  "@total_dues": {
+    "description": "Label for total dues amount"
+  },
+  "daily_sales": "روزانہ کی فروخت",
+  "@daily_sales": {
+    "description": "Label for daily sales amount"
+  },
+  "top_customer": "بہترین گاہک",
+  "@top_customer": {
+    "description": "Label for top customer"
+  },
+  "home": "ہوم",
+  "@home": {
+    "description": "Label for home tab"
+  },
+  "add_customer": "گاہک شامل کریں",
+  "@add_customer": {
+    "description": "Button text to add customer"
+  },
+  "bills": "بلز",
+  "@bills": {
+    "description": "Label for bills section"
+  },
+  "add_vegetable": "سبزی شامل کریں",
+  "@add_vegetable": {
+    "description": "Button text to add vegetable"
+  },
+  "khatabook": "کھاتہ بک",
+  "@khatabook": {
+    "description": "Label for khatabook feature"
+  },
+  "finance": "فنانس",
+  "@finance": {
+    "description": "Label for finance section"
+  },
+  "edit_customer": "گاہک میں ترمیم کریں",
+  "@edit_customer": {
+    "description": "Button text to edit customer"
+  },
+  "manage_profiles": "پروفائلز کا نظم کریں",
+  "@manage_profiles": {
+    "description": "Button text to manage profiles"
+  },
+  "quick_actions": "فوری اقدامات",
+  "@quick_actions": {
+    "description": "Title for quick actions section"
+  },
+  "register_new_customer": "نئے گاہک کو رجسٹر کریں",
+  "@register_new_customer": {
+    "description": "Button text to register new customer"
+  },
+  "make_bill": "بل بنائیں",
+  "@make_bill": {
+    "description": "Button text to make a bill"
+  },
+  "create_bill_subtitle": "بل بنائیں",
+  "@create_bill_subtitle": {
+    "description": "Subtitle for create bill action"
+  },
+  "view_customers_subtitle": "گاہکوں کو دیکھیں",
+  "@view_customers_subtitle": {
+    "description": "Subtitle for view customers action"
+  },
+  "create_bill_advanced_subtitle": "ایڈوانس بل بنائیں",
+  "@create_bill_advanced_subtitle": {
+    "description": "Subtitle for create advanced bill action"
+  },
+  "view_bills_subtitle": "بلز دیکھیں",
+  "@view_bills_subtitle": {
+    "description": "Subtitle for view bills action"
+  },
+  "manage_vegetables": "سبزیوں کا نظم کریں",
+  "@manage_vegetables": {
+    "description": "Button text to manage vegetables"
+  },
+  "manage_vegetables_subtitle": "سبزیوں کا انتظام",
+  "@manage_vegetables_subtitle": {
+    "description": "Subtitle for manage vegetables action"
+  },
+  "owner_info": "مالک کی معلومات",
+  "@owner_info": {
+    "description": "Title for owner information section"
+  },
+  "phone_number": "فون نمبر",
+  "@phone_number": {
+    "description": "Label for phone number field"
+  },
+  "search_customers": "گاہک تلاش کریں",
+  "@search_customers": {
+    "description": "Placeholder for customer search"
+  },
+  "no_customers": "کوئی گاہک نہیں",
+  "@no_customers": {
+    "description": "Message when there are no customers"
+  },
+  "pending": "زیر التواء",
+  "@pending": {
+    "description": "Status text for pending items"
+  },
+  "add_customer_form_title": "گاہک فارم شامل کریں",
+  "@add_customer_form_title": {
+    "description": "Title for add customer form"
+  },
+  "add_customer_form_steps": "نیچے تفصیلات پُر کریں",
+  "@add_customer_form_steps": {
+    "description": "Instructions for add customer form"
+  },
+  "no_customers_found": "کوئی گاہک نہیں ملا",
+  "@no_customers_found": {
+    "description": "Message when search finds no customers"
+  },
+  "vegetables_brought": "لائی گئی سبزیاں",
+  "@vegetables_brought": {
+    "description": "Title for vegetables brought section"
+  },
+  "no_vegetables": "کوئی سبزی نہیں",
+  "@no_vegetables": {
+    "description": "Message when there are no vegetables"
+  },
+  "edit_profile": "پروفائل میں ترمیم کریں",
+  "@edit_profile": {
+    "description": "Button text to edit profile"
+  },
+  "edit": "ترمیم",
+  "@edit": {
+    "description": "Edit button text"
+  },
+  "customer_account": "گاہک کا کھاتہ",
+  "@customer_account": {
+    "description": "Title for customer account section"
+  },
+  "profile": "پروفائل",
+  "@profile": {
+    "description": "Label for profile section"
+  },
+  "accountSecurity": "اکاؤنٹ اور سیکیورٹی",
+  "@accountSecurity": {
+    "description": "Title for account security section"
+  },
+  "languageAppearance": "زبان اور ظاہری شکل",
+  "@languageAppearance": {
+    "description": "Title for language and appearance settings"
+  },
+  "dashboardSwitch": "ڈیش بورڈ سوئچ",
+  "@dashboardSwitch": {
+    "description": "Title for dashboard switch option"
+  },
+  "backupSync": "بیک اپ اور سنک",
+  "@backupSync": {
+    "description": "Title for backup and sync section"
+  },
+  "logout": "لاگ آؤٹ",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  "editName": "نام میں ترمیم کریں",
+  "@editName": {
+    "description": "Button text to edit name"
+  },
+  "changePhoto": "پروفائل تصویر تبدیل کریں",
+  "@changePhoto": {
+    "description": "Button text to change profile photo"
+  },
+  "save": "محفوظ کریں",
+  "@save": {
+    "description": "Save button text"
+  },
+  "resetPassword": "پاس ورڈ دوبارہ ترتیب دیں",
+  "@resetPassword": {
+    "description": "Button text to reset password"
+  },
+  "confirmLogout": "کیا آپ واقعی لاگ آؤٹ کرنا چاہتے ہیں؟",
+  "@confirmLogout": {
+    "description": "Confirmation message for logout"
+  },
+  "ownerDashboard": "مالک ڈیش بورڈ",
+  "@ownerDashboard": {
+    "description": "Label for owner dashboard option"
+  },
+  "customerDashboard": "گاہک ڈیش بورڈ",
+  "@customerDashboard": {
+    "description": "Label for customer dashboard option"
+  },
+  "permissionError": "اجازت کی خرابی",
+  "@permissionError": {
+    "description": "Title for permission error"
+  },
+  "customerAccessError": "گاہک صارفین مالک ڈیش بورڈ تک رسائی حاصل نہیں کر سکتے۔",
+  "@customerAccessError": {
+    "description": "Error message for customer access restriction"
+  },
+  "language": "زبان",
+  "@language": {
+    "description": "Label for language setting"
+  },
+  "theme": "تھیم",
+  "@theme": {
+    "description": "Label for theme setting"
+  },
+  "darkMode": "ڈارک موڈ",
+  "@darkMode": {
+    "description": "Label for dark mode toggle"
+  },
+  "scan_bill": "بل اسکین",
+  "@scan_bill": {
+    "description": "Button text to scan bill"
+  },
+  "auto_create_bill": "خودکار بل بنائیں",
+  "@auto_create_bill": {
+    "description": "Subtitle for scan bill feature"
+  },
+  "voice_bill": "وائس بل",
+  "@voice_bill": {
+    "description": "Button text for voice billing"
+  },
+  "speak_to_add": "شامل کرنے کے لیے بولیں",
+  "@speak_to_add": {
+    "description": "Subtitle for voice bill feature"
+  },
+  "recent_transactions": "حالیہ لین دین",
+  "@recent_transactions": {
+    "description": "Title for recent transactions section"
+  },
+  "add_txn": "لین دین شامل کریں",
+  "@add_txn": {
+    "description": "Button text to add transaction"
+  },
+  "vendor_invoice": "وینڈر انوائس",
+  "@vendor_invoice": {
+    "description": "Button text for vendor invoice"
+  },
+  "more": "مزید",
+  "@more": {
+    "description": "Button text for more options"
+  },
+  "see_all": "سب دیکھیں",
+  "@see_all": {
+    "description": "Button text to see all items"
+  },
+  "no_recent_transactions": "کوئی حالیہ لین دین نہیں",
+  "@no_recent_transactions": {
+    "description": "Message when there are no recent transactions"
+  },
+  "add_new_sale": "نئی فروخت شامل کریں",
+  "@add_new_sale": {
+    "description": "Button text to add new sale"
+  },
+  "insights": "بصیرت",
+  "@insights": {
+    "description": "Label for insights tab"
+  },
+  "items": "آئٹم",
+  "@items": {
+    "description": "Label for items tab"
+  },
+  "ai_assistant": "AI اسسٹنٹ",
+  "@ai_assistant": {
+    "description": "Label for AI assistant feature"
+  },
+  "menu": "مینیو",
+  "@menu": {
+    "description": "Label for menu tab"
+  },
+  "low_stock": "کم اسٹاک",
+  "@low_stock": {
+    "description": "Label for low stock indicator"
+  },
+  "good_morning": "صبح بخیر",
+  "@good_morning": {
+    "description": "Morning greeting message"
+  },
+  "good_afternoon": "دوپہر بخیر",
+  "@good_afternoon": {
+    "description": "Afternoon greeting message"
+  },
+  "good_evening": "شام بخیر",
+  "@good_evening": {
+    "description": "Evening greeting message"
+  },
+  "items_label": "آئٹم",
+  "@items_label": {
+    "description": "Label for items count suffix"
+  },
+  "onboarding_skip": "چھوڑ دیں",
+  "@onboarding_skip": {
+    "description": "Skip button text"
+  },
+  "onboarding_business_title": "اپنے کاروبار کی قسم منتخب کریں",
+  "@onboarding_business_title": {
+    "description": "Title for business type selection screen"
+  },
+  "onboarding_business_subtitle": "یہ ہمیں آپ کے تجربے کو حسب ضرورت بنانے میں مدد کرتا ہے",
+  "@onboarding_business_subtitle": {
+    "description": "Subtitle for business type selection screen"
+  },
+  "onboarding_selected": "منتخب شدہ",
+  "@onboarding_selected": {
+    "description": "Label indicating an item is selected"
+  },
+  "onboarding_continue": "جاری رکھیں",
+  "@onboarding_continue": {
+    "description": "Continue button text"
+  },
+  "onboarding_language_title": "اپنی ترجیحی زبان منتخب کریں",
+  "@onboarding_language_title": {
+    "description": "Title for language selection screen"
+  },
+  "onboarding_language_subtitle": "آپ اسے بعد میں کسی بھی وقت تبدیل کر سکتے ہیں",
+  "@onboarding_language_subtitle": {
+    "description": "Subtitle for language selection screen"
+  },
+  "onboarding_next": "اگلا",
+  "@onboarding_next": {
+    "description": "Next button text"
+  },
+  "onboarding_congratulations_title": "سب تیار ہے!",
+  "@onboarding_congratulations_title": {
+    "description": "Title for congratulations screen"
+  },
+  "onboarding_congratulations_subtitle": "آپ کی دکان تیار ہے",
+  "@onboarding_congratulations_subtitle": {
+    "description": "Subtitle for congratulations screen"
+  },
+  "onboarding_lets_go": "چلو چلتے ہیں!",
+  "@onboarding_lets_go": {
+    "description": "Button text to enter dashboard"
+  },
+  "language_setup_loading": "آپ کی زبان ترتیب دی جا رہی ہے...",
+  "@language_setup_loading": {
+    "description": "Status message while loading translations"
+  },
+  "language_setup_applying": "ترجیحات لاگو کی جا رہی ہیں...",
+  "@language_setup_applying": {
+    "description": "Status message while applying language"
+  },
+  "language_setup_preparing": "آپ کا تجربہ تیار کیا جا رہا ہے...",
+  "@language_setup_preparing": {
+    "description": "Status message while preparing app"
+  },
+  "language_setup_complete": "تیار!",
+  "@language_setup_complete": {
+    "description": "Status message when setup is complete"
+  },
+  "language_setup_error": "زبان ترتیب دینے میں ناکام",
+  "@language_setup_error": {
+    "description": "Error message when setup fails"
+  },
+  "language_setup_retry": "دوبارہ کوشش کریں",
+  "@language_setup_retry": {
+    "description": "Retry button text"
+  },
+  "language_confirm_message": "آپ اسے بعد میں سیٹنگز میں تبدیل کر سکتے ہیں",
+  "@language_confirm_message": {
+    "description": "Helper text on language selection screen"
+  },
+  "validationRequired": "{fieldName} ضروری ہے",
+  "validationMinLength": "{fieldName} کم از کم {min} حروف کا ہونا چاہیے",
+  "validationMaxLength": "{fieldName} زیادہ سے زیادہ {max} حروف کا ہونا چاہیے",
+  "validationInvalidEmail": "براہ کرم ایک درست ای میل ایڈریس درج کریں",
+  "validationInvalidPhone": "براہ کرم ایک درست فون نمبر درج کریں",
+  "validationInvalidGstin": "براہ کرم ایک درست GSTIN درج کریں",
+  "validationInvalidPan": "براہ کرم ایک درست PAN درج کریں",
+  "validationPositiveNumber": "{fieldName} ایک مثبت نمبر ہونا چاہیے",
+  "validationAmountZero": "رقم صفر سے زیادہ ہونی چاہیے",
+  "validationFutureDate": "{fieldName} مستقبل کی تاریخ ہونی چاہیے",
+  "validationPastDate": "{fieldName} ماضی کی تاریخ ہونی چاہیے",
+  "validationPasswordWeak": "پاس ورڈ کم از کم 8 حروف کا ہونا چاہیے جس میں ایک بڑا حرف اور ایک نمبر ہو",
+  "validationMismatch": "{field1} اور {field2} مماثل نہیں ہیں",
+  "businessTypeGrocery": "کریانہ",
+  "businessTypePharmacy": "فارمیسی",
+  "businessTypeRestaurant": "ریسٹورنٹ",
+  "businessTypeClothing": "کپڑے",
+  "businessTypeElectronics": "الیکٹرونکس",
+  "businessTypeMobileShop": "موبائل شاپ",
+  "businessTypeComputerShop": "کمپیوٹر شاپ",
+  "businessTypeHardware": "ہارڈویئر",
+  "businessTypeService": "سروس",
+  "businessTypeWholesale": "تھوک",
+  "businessTypePetrolPump": "پیٹرول پمپ",
+  "businessTypeVegetablesBroker": "سبزی بروکر",
+  "businessTypeClinic": "کلینک",
+  "businessTypeBookStore": "کتابوں کی دکان",
+  "businessTypeJewellery": "جیولری",
+  "businessTypeAutoParts": "آٹو پارٹس",
+  "businessTypeDecorationCatering": "ڈیکوریشن اور کیٹرنگ",
+  "businessTypeSchoolErp": "اسکول ERP",
+  "businessTypeOther": "دیگر"
+}

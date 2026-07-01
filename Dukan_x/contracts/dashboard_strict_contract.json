@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0",
+  "description": "Shared strict dashboard contract for frontend/backend parity.",
+  "stalenessThresholdSec": {
+    "dedicated": 120,
+    "shared": 300
+  },
+  "criticalMetricPolicy": {
+    "dedicated": "all_required",
+    "shared": "top_3_required"
+  },
+  "dedicatedBusinessTypes": [
+    "restaurant",
+    "clinic",
+    "petrolPump",
+    "pharmacy",
+    "autoParts",
+    "service"
+  ]
+}

@@ -1,0 +1,27 @@
+[
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/config/permissions.dart",
+    "digest": 786663777
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/academic_coaching/utils/school_permissions.dart",
+    "digest": 953849161
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/core/permissions/permissions.dart",
+    "digest": 1168028826
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/core/permissions/permissions.dart",
+    "digest": 1610288374
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/core/permissions/permissions.dart",
+    "digest": 803953267
+  }
+]

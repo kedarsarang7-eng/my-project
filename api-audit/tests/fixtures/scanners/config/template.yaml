@@ -1,0 +1,23 @@
+# Fixture: AWS SAM template.
+# Exercises the config scanner's SAM function event handling for HttpApi/Api
+# event types (Requirement 1.2).
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  UserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Events:
+        GetUser:
+          Type: HttpApi
+          Properties:
+            Path: /users/{id}
+            Method: get
+        CreateUser:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: post

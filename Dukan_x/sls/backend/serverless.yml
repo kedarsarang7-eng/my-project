@@ -1,0 +1,301 @@
+# ============================================
+# SLS Backend — Serverless Framework Configuration
+# ============================================
+# Deploys the Express app as AWS Lambda + API Gateway
+# with DynamoDB, and all required IAM permissions.
+
+service: sls-licensing-backend
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs24.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-south-1'}
+  memorySize: 512
+  timeout: 29  # API Gateway max is 30s
+  architecture: arm64  # Graviton2 — cheaper & faster
+
+  # Environment variables injected into all Lambda functions
+  environment:
+    NODE_ENV: ${self:custom.stages.${self:provider.stage}.NODE_ENV}
+    DATABASE_URL: ${ssm:/sls/${self:provider.stage}/DATABASE_URL}
+    DB_SSL: 'true'
+    REDIS_URL: ${ssm:/sls/${self:provider.stage}/REDIS_URL}
+    REDIS_PREFIX: 'sls:'
+    JWT_ACCESS_SECRET: ${ssm:/sls/${self:provider.stage}/JWT_ACCESS_SECRET}
+    JWT_REFRESH_SECRET: ${ssm:/sls/${self:provider.stage}/JWT_REFRESH_SECRET}
+    JWT_ACCESS_EXPIRY: '15m'
+    JWT_REFRESH_EXPIRY: '7d'
+    AES_ENCRYPTION_KEY: ${ssm:/sls/${self:provider.stage}/AES_ENCRYPTION_KEY}
+    CORS_ORIGIN: ${self:custom.stages.${self:provider.stage}.CORS_ORIGIN}
+    LICENSE_TABLE: ${self:service}-licenses-${self:provider.stage}
+    DYNAMODB_LICENSE_TABLE: ${self:service}-license-keys-${self:provider.stage}
+    DYNAMODB_RBAC_TABLE: ${self:service}-rbac-${self:provider.stage}
+
+  # IAM permissions for Lambda functions
+  iam:
+    role:
+      statements:
+        # DynamoDB permissions for the LicenseKeys table
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:BatchGetItem
+            - dynamodb:BatchWriteItem
+          Resource:
+            - !GetAtt LicenseKeysTable.Arn
+            - !Join ['/', [!GetAtt LicenseKeysTable.Arn, 'index', '*']]
+        # DynamoDB permissions for RBAC Table
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource:
+            - !GetAtt RbacTable.Arn
+            - !Join ['/', [!GetAtt RbacTable.Arn, 'index', '*']]
+        # SSM Parameter Store (read secrets)
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+            - ssm:GetParameters
+          Resource:
+            - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/sls/${self:provider.stage}/*'
+        # CloudWatch Logs
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: '*'
+
+  # API Gateway configuration
+  apiGateway:
+    shouldStartNameWithService: true
+    minimumCompressionSize: 1024  # Compress responses > 1KB
+
+  # Tags for cost tracking
+  tags:
+    project: sls-licensing
+    environment: ${self:provider.stage}
+
+# ============================================
+# Custom Variables
+# ============================================
+custom:
+  stages:
+    dev:
+      NODE_ENV: development
+      CORS_ORIGIN: 'http://localhost:3000'
+    staging:
+      NODE_ENV: staging
+      CORS_ORIGIN: 'https://staging-admin.yourdomain.com'
+    prod:
+      NODE_ENV: production
+      CORS_ORIGIN: 'https://admin.yourdomain.com'
+
+  # Serverless Offline plugin config (local dev)
+  serverless-offline:
+    httpPort: 4000
+    noPrependStageInUrl: true
+
+  # Prune old Lambda versions
+  prune:
+    automatic: true
+    number: 3
+
+# ============================================
+# Plugins
+# ============================================
+plugins:
+  - serverless-offline
+  - serverless-prune-plugin
+
+# ============================================
+# Package Configuration
+# ============================================
+package:
+  individually: false
+  patterns:
+    - 'dist/**'
+    - 'node_modules/**'
+    - 'keys/**'
+    - '!src/**'
+    - '!tests/**'
+    - '!.env*'
+    - '!tsconfig.json'
+    - '!*.md'
+
+# ============================================
+# Lambda Functions
+# ============================================
+functions:
+  # Main Express API — handles ALL routes via API Gateway proxy
+  api:
+    handler: dist/lambda.handler
+    description: 'SLS Backend — Express API (all routes)'
+    events:
+      - httpApi:
+          method: '*'
+          path: '/api/{proxy+}'
+      - httpApi:
+          method: GET
+          path: '/api/health'
+
+  # RBAC Sync
+  syncPermissions:
+    handler: dist/lambdas/syncPermissions.handler
+    description: 'Sync effective permissions for authenticated user'
+    memorySize: 256
+    timeout: 10
+    events:
+      - httpApi:
+          method: GET
+          path: /api/rbac/sync
+
+  # Dedicated Lambda for license key generation (Admin)
+  generateKey:
+    handler: dist/lambdas/generateKey.handler
+    description: 'Generate a new cryptographically secure license key'
+    memorySize: 256
+    timeout: 10
+    events:
+      - httpApi:
+          method: POST
+          path: /api/admin/generate-key
+
+  # Dedicated Lambda for client-side license validation
+  validateLicense:
+    handler: dist/lambdas/validateLicense.handler
+    description: 'Validate license key + HWID binding (client-facing)'
+    memorySize: 256
+    timeout: 10
+    events:
+      - httpApi:
+          method: POST
+          path: /api/client/validate
+
+  # Dedicated Lambda for admin stats/analytics
+  adminStats:
+    handler: dist/lambdas/adminStats.handler
+    description: 'Dashboard statistics — license counts and analytics'
+    memorySize: 256
+    timeout: 10
+    events:
+      - httpApi:
+          method: GET
+          path: /api/admin/stats
+
+  # Cognito Pre-Token Generation Trigger
+  cognitoPreToken:
+    handler: dist/lambdas/cognitoPreTokenTrigger.handler
+    description: 'Inject role & permissions into Cognito JWT on login'
+    memorySize: 256
+    timeout: 10
+
+  # Dedicated Lambda for revoking/banning a license key
+  revokeLicense:
+    handler: dist/lambdas/revokeLicense.handler
+    description: 'Revoke or ban a license key (Admin action)'
+    memorySize: 256
+    timeout: 10
+    events:
+      - httpApi:
+          method: POST
+          path: /api/admin/revoke/{license_key}
+
+# ============================================
+# AWS Resources — DynamoDB + GSIs
+# ============================================
+resources:
+  Resources:
+    # ---- DynamoDB: LicenseKeys Table ----
+    LicenseKeysTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain  # NEVER delete production data
+      Properties:
+        TableName: ${self:service}-license-keys-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST  # On-demand — scales automatically
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true  # Enable PITR backups
+        SSESpecification:
+          SSEEnabled: true  # Encryption at rest (AWS managed key)
+        AttributeDefinitions:
+          - AttributeName: license_key
+            AttributeType: S
+          - AttributeName: status
+            AttributeType: S
+          - AttributeName: hwid
+            AttributeType: S
+          - AttributeName: created_at
+            AttributeType: S
+        KeySchema:
+          - AttributeName: license_key
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          # GSI: Query licenses by status (for admin dashboard)
+          - IndexName: status-created_at-index
+            KeySchema:
+              - AttributeName: status
+                KeyType: HASH
+              - AttributeName: created_at
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          # GSI: Query by HWID (check if machine is already linked)
+          - IndexName: hwid-index
+            KeySchema:
+              - AttributeName: hwid
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        Tags:
+          - Key: project
+            Value: sls-licensing
+          - Key: environment
+            Value: ${self:provider.stage}
+
+    # ---- DynamoDB: RBAC Table ----
+    RbacTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:service}-rbac-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        Tags:
+          - Key: project
+            Value: sls-licensing
+          - Key: environment
+            Value: ${self:provider.stage}
+
+  # ---- Outputs ----
+  Outputs:
+    ApiEndpoint:
+      Description: 'API Gateway endpoint URL'
+      Value: !Sub 'https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com'
+    LicenseKeysTableName:
+      Description: 'DynamoDB LicenseKeys table name'
+      Value: !Ref LicenseKeysTable
+    LicenseKeysTableArn:
+      Description: 'DynamoDB LicenseKeys table ARN'
+      Value: !GetAtt LicenseKeysTable.Arn

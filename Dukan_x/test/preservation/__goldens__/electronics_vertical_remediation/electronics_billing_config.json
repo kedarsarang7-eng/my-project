@@ -1,0 +1,32 @@
+{
+  "type": "electronics",
+  "priceLabel": "MRP",
+  "defaultGstRate": 18.0,
+  "gstEditable": false,
+  "itemLabel": "Product",
+  "addItemLabel": "Add Product",
+  "requiredFields": [
+    "itemName",
+    "quantity",
+    "price",
+    "brand",
+    "hsnCode"
+  ],
+  "optionalFields": [
+    "serialNo",
+    "warrantyMonths",
+    "discount"
+  ],
+  "unitOptions": [
+    "pcs",
+    "set",
+    "nos"
+  ],
+  "modules": [
+    "inventory",
+    "sales",
+    "returns",
+    "warranty",
+    "reports"
+  ]
+}

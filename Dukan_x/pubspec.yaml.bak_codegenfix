@@ -1,0 +1,231 @@
+name: dukanx
+description: DukanX - Complete billing and inventory management for all shops.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.8.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.6
+  # Firebase — Infrastructure only (data layer migrated to AWS)
+  # cloud_firestore, firebase_auth, firebase_storage, cloud_functions removed:
+  # → Data: firestore_compat.dart (API Gateway → DynamoDB)
+  # → Auth: firebase_auth_compat.dart (Cognito)
+  # → Storage: S3 via ApiClient
+  firebase_core: ^4.2.1            # Required for Crashlytics/Messaging init
+  firebase_messaging: ^16.0.4      # Push notifications
+  firebase_crashlytics: ^5.0.5     # Crash reporting
+
+  # Notifications
+  flutter_local_notifications: ^21.0.0
+
+  # Unified Notification System (UNS) — Shared SDK (path workspace package).
+  # Used by Phase 4 migrations (e.g. restaurant_notification_service) to emit
+  # canonical events through the Notification_Service. See:
+  #   .kiro/specs/unified-notification-system/tasks.md  (task 14.x)
+  #   packages/notifications-sdk/README.md
+  notifications_sdk:
+    path: ../packages/notifications-sdk
+
+  # Toasts
+  fluttertoast: ^9.1.0
+
+  # Dependency Injection
+  get_it: ^9.2.0
+
+  # Localization & formatting
+  intl: ^0.20.2
+
+  # PDF generation & printing
+  pdf: ^3.11.3
+  printing: ^5.14.2
+
+  # Offline / local storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  shared_preferences: ^2.3.4
+
+  # Database
+  drift: ^2.22.1
+  sqlite3_flutter_libs: ^0.6.0+eol
+
+  # Utilities
+  connectivity_plus: ^7.0.0
+  url_launcher: ^6.2.0
+  path: 1.9.1       # ✅ FIXED (Flutter SDK compatible)
+  path_provider: ^2.1.5
+  flutter_secure_storage: ^10.0.0
+  encrypt: ^5.0.3
+  workmanager: ^0.9.0+3
+
+  # Security
+  local_auth: ^3.0.0
+  package_info_plus: ^10.1.0
+  crypto: ^3.0.7
+  pointycastle: ^3.9.1
+  http: ^1.6.0
+  http_parser: 4.1.2
+
+  # Voice input
+  speech_to_text: ^7.3.0
+
+  # AI & ML
+  google_mlkit_text_recognition: ^0.15.0
+  google_mlkit_language_id: ^0.13.0
+  google_mlkit_translation: ^0.13.1
+  google_mlkit_object_detection: ^0.15.1
+  google_mlkit_commons: ^0.11.0
+
+  # Media & UI
+  image_picker: ^1.1.2
+  image_cropper: ^12.2.1
+  file_picker: ^12.0.0-beta.5
+  camera: ^0.12.0+1
+  fl_chart: ^1.1.1
+  flutter_svg: ^2.1.0
+  google_fonts: ^8.0.0
+  avatar_glow: ^3.0.1
+  glass_kit: ^4.0.2
+
+  # Architecture & Utils
+  flutter_riverpod: ^3.3.1
+  equatable: ^2.0.7
+  dartz: ^0.10.1
+  rxdart: ^0.28.0
+  collection: ^1.19.1
+  uuid: ^4.5.2
+  decimal: ^3.2.4
+
+  # Auth & Sharing
+  google_sign_in: ^7.2.0
+  share_plus: ^13.1.0
+
+  # QR / Scanner
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^7.1.4
+
+  # Audio / Voice
+  flutter_tts: ^4.2.3
+  record: ^6.1.2
+  audioplayers: ^6.5.1
+  mime: ^2.0.0
+
+  # OCR & Image processing
+  flutter_tesseract_ocr: ^0.4.30
+  image_editor: ^1.6.0
+  image: ^4.3.0
+  archive: ^3.6.1
+
+  # Google Drive APIs
+  googleapis: ^16.0.0
+  extension_google_sign_in_as_googleapis_auth: ^3.0.0
+
+  # Platform
+  local_auth_platform_interface: ^1.1.0
+  firebase_auth_platform_interface: ^9.0.1
+  device_info_plus: ^13.1.0
+  app_links: ^7.0.0
+
+  # Files
+  excel: ^4.0.0
+  docx_template: ^0.4.0
+  csv: ^8.0.0
+
+  # Misc
+  permission_handler: ^12.0.1
+  flutter_dotenv: ^6.0.0
+  dtd: ^4.0.0
+  json_rpc_2: ^4.0.0
+  stack_trace: ^1.11.1
+  web: ^1.1.1
+  razorpay_flutter: ^1.4.0
+
+  # Restored packages (previously removed)
+  go_router: ^17.2.3
+  data_table_2: ^2.5.15
+  shimmer: ^3.0.0
+  dio: ^5.7.0
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.8.1
+  amazon_cognito_identity_dart_2: ^4.0.0
+  flutter_bloc: ^9.1.1
+  cached_network_image: ^3.4.0
+  flutter_cache_manager: ^3.3.0
+  flutter_image_compress: ^2.3.2
+  desktop_drop: ^0.7.1
+  badges: ^3.1.0
+  table_calendar: ^3.1.2
+  barcode_widget: ^2.0.4
+  wakelock_plus: ^1.2.8
+  flutter_animate: ^4.5.0
+  web_socket_channel: ^3.0.3
+  timelines: ^0.1.0
+  barcode: ^2.2.9
+  syncfusion_flutter_xlsio: ^29.2.11
+  sqlcipher_flutter_libs: ^0.7.0+eol
+  local_auth_android: ^2.0.8
+  local_auth_darwin: ^2.0.0
+  ffi: ^2.1.3
+
+  # Unified Notification System — Shared UI widgets (UNS task 14.5)
+  # Bell, drawer, toast, preferences page consumed by every Sub_App.
+  notifications_ui:
+    path: ../packages/notifications-ui
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+  flutter_launcher_icons: ^0.14.4
+  build_runner: ^2.4.15
+  freezed: ^3.2.5
+  drift_dev: ^2.22.1
+  mockito: ^5.4.6
+  flutter_lints: ^6.0.0
+
+  # Property-based testing (subscription-plan-tiers spec, task 1.2).
+  # `glados` was the design's first suggestion but is unresolvable here: every
+  # glados version depends on the standalone `test` package, which conflicts
+  # with this project's Flutter-SDK-pinned `test_api`/`matcher` and existing
+  # `mockito 5.4.6` (analyzer ^7.4.1) constraints. `dartproptest` is an
+  # equivalent QuickCheck/Hypothesis-inspired PBT library with zero runtime
+  # dependencies, so it composes cleanly with `flutter_test`.
+  dartproptest: ^0.2.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/images/
+    - assets/images/onboarding/
+    - assets/images/google_logo.svg
+    - assets/logo.png
+    - assets/avatar/skin/
+    - assets/avatar/face/
+    - assets/avatar/eyes/
+    - assets/avatar/eyebrows/
+    - assets/avatar/nose/
+    - assets/avatar/mouth/
+    - assets/avatar/facial_hair/
+    - assets/avatar/clothes/top/
+    - assets/avatar/clothes/bottom/
+    - assets/avatar/clothes/shoes/
+    - assets/avatar/hair/
+    - assets/avatar/accessories/glasses/
+    - assets/avatar/accessories/misc/
+    - assets/templates/

@@ -1,0 +1,57 @@
+[
+  {
+    "module": "auto_parts",
+    "path": "Dukan_x/lib/features/auto_parts/utils/auto_parts_business_rules.dart",
+    "digest": 1811779537
+  },
+  {
+    "module": "book_store",
+    "path": "Dukan_x/lib/features/book_store/utils/book_store_business_rules.dart",
+    "digest": 1454023995
+  },
+  {
+    "module": "clinic",
+    "path": "Dukan_x/lib/features/clinic/utils/clinic_business_rules.dart",
+    "digest": 763600390
+  },
+  {
+    "module": "clothing",
+    "path": "Dukan_x/lib/features/clothing/utils/clothing_business_rules.dart",
+    "digest": 1047320115
+  },
+  {
+    "module": "computer_shop",
+    "path": "Dukan_x/lib/features/computer_shop/utils/computer_shop_business_rules.dart",
+    "digest": 818211537
+  },
+  {
+    "module": "decoration_catering",
+    "path": "Dukan_x/lib/features/decoration_catering/utils/decoration_catering_business_rules.dart",
+    "digest": 541182761
+  },
+  {
+    "module": "hardware",
+    "path": "Dukan_x/lib/features/hardware/utils/hardware_business_rules.dart",
+    "digest": 818433233
+  },
+  {
+    "module": "jewellery",
+    "path": "Dukan_x/lib/features/jewellery/utils/jewellery_business_rules.dart",
+    "digest": 1130059726
+  },
+  {
+    "module": "petrol_pump",
+    "path": "Dukan_x/lib/features/petrol_pump/utils/petrol_pump_business_rules.dart",
+    "digest": 1395256302
+  },
+  {
+    "module": "pharmacy",
+    "path": "Dukan_x/lib/features/pharmacy/utils/pharmacy_business_rules.dart",
+    "digest": 1155846491
+  },
+  {
+    "module": "restaurant",
+    "path": "Dukan_x/lib/features/restaurant/utils/restaurant_business_rules.dart",
+    "digest": 1592302661
+  }
+]

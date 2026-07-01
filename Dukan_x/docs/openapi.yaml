@@ -1,0 +1,1698 @@
+openapi: 3.0.3
+info:
+  title: DukanX Backend API
+  version: 1.0.0
+  description: Auto-generated from serverless.yml. Do not hand-edit.
+paths:
+  /admin/hsn-seed:
+    post:
+      operationId: hsnMasterSeed
+      summary: One-time seed of HSN master table with standard Indian GST codes
+      responses:
+        '200':
+          description: Success
+  /ai/chat:
+    post:
+      operationId: aiChat
+      summary: Natural language hybrid AI chat endpoint (Ollama + Cloud)
+      responses:
+        '200':
+          description: Success
+  /ai/settings:
+    get:
+      operationId: aiGetSettings
+      summary: Fetch Tenant AI execution mode and configs
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: aiUpdateSettings
+      summary: Update Tenant AI config (store API key via KMS in DB)
+      responses:
+        '200':
+          description: Success
+  /api/v1/bills:
+    get:
+      operationId: v1BillsList
+      summary: List bills for active business
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: v1BillsCreate
+      summary: Create a new bill
+      responses:
+        '200':
+          description: Success
+  /api/v1/bills/count:
+    get:
+      operationId: v1BillsCount
+      summary: Get bill count for date range
+      responses:
+        '200':
+          description: Success
+  /api/v1/bills/cross-business:
+    get:
+      operationId: v1BillsCrossBusiness
+      summary: List bills across all businesses (owner only)
+      responses:
+        '200':
+          description: Success
+  /api/v1/bills/{id}:
+    delete:
+      operationId: v1BillsDelete
+      summary: Soft-delete a bill
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: v1BillsGet
+      summary: Get a single bill by ID
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: v1BillsUpdate
+      summary: Update an existing bill (optimistic locking)
+      responses:
+        '200':
+          description: Success
+  /api/v1/connections:
+    get:
+      operationId: v1EntityList
+      summary: List entities by type (generic CRUD)
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: v1EntityCreate
+      summary: Create entity by type
+      responses:
+        '200':
+          description: Success
+  /api/v1/connections/{id}:
+    delete:
+      operationId: v1EntityDelete
+      summary: Soft-delete entity by type + ID
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: v1EntityGet
+      summary: Get single entity by type + ID
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: v1EntityUpdate
+      summary: Update entity by type + ID
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/dsr:
+    get:
+      operationId: v1PetrolDsr
+      summary: Generate Daily Sales Report
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/fuel-receipt:
+    post:
+      operationId: v1PetrolFuelReceipt
+      summary: Record fuel receipt (oil company delivery)
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/fuel-types:
+    get:
+      operationId: v1PetrolFuelTypes
+      summary: List fuel types
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/fuel-types/rate:
+    post:
+      operationId: v1PetrolUpdateRate
+      summary: Update fuel rate with audit trail
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/nozzles:
+    get:
+      operationId: v1PetrolNozzles
+      summary: List nozzles
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/shifts:
+    get:
+      operationId: v1PetrolShiftsList
+      summary: List petrol pump shifts
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: v1PetrolShiftOpen
+      summary: Open a new shift
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/shifts/close:
+    post:
+      operationId: v1PetrolShiftClose
+      summary: Close a shift with reconciliation
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/shifts/{id}:
+    get:
+      operationId: v1PetrolShiftGet
+      summary: Get a single shift by ID
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/tanks:
+    get:
+      operationId: v1PetrolTanks
+      summary: List fuel tanks
+      responses:
+        '200':
+          description: Success
+  /auth/change-password:
+    post:
+      operationId: authChangePassword
+      summary: Change password and revoke all sessions
+      responses:
+        '200':
+          description: Success
+  /auth/login:
+    post:
+      operationId: authLogin
+      summary: Authenticate user, return Cognito tokens
+      responses:
+        '200':
+          description: Success
+  /auth/logout:
+    post:
+      operationId: authLogout
+      summary: Logout and revoke all refresh tokens (globalSignOut)
+      responses:
+        '200':
+          description: Success
+  /auth/me:
+    get:
+      operationId: authMe
+      summary: Validate token and return user with permissions
+      responses:
+        '200':
+          description: Success
+  /auth/mfa/confirm-setup:
+    post:
+      operationId: authMfaSetupConfirm
+      summary: Verify first-time MFA setup code
+      responses:
+        '200':
+          description: Success
+  /auth/mfa/setup:
+    post:
+      operationId: authMfaSetup
+      summary: Get setup code for Authenticator App
+      responses:
+        '200':
+          description: Success
+  /auth/mfa/verify:
+    post:
+      operationId: authMfaVerify
+      summary: Respond to MFA challenge with TOTP code
+      responses:
+        '200':
+          description: Success
+  /auth/refresh:
+    post:
+      operationId: authRefresh
+      summary: Refresh expired access tokens
+      responses:
+        '200':
+          description: Success
+  /auth/signup:
+    post:
+      operationId: authSignup
+      summary: Register new tenant + owner account
+      responses:
+        '200':
+          description: Success
+  /book-store/books:
+    get:
+      operationId: bookStoreGetBooks
+      summary: List book inventory with ISBN/title/author search
+      responses:
+        '200':
+          description: Success
+  /book-store/customer-loyalty:
+    get:
+      operationId: bookStoreCustomerLoyalty
+      summary: Lookup customer loyalty points by phone
+      responses:
+        '200':
+          description: Success
+  /book-store/isbn/{isbn}:
+    get:
+      operationId: bookStoreLookupIsbn
+      summary: Auto-fill book metadata from ISBN barcode scan
+      responses:
+        '200':
+          description: Success
+  /book-store/low-stock:
+    get:
+      operationId: bookStoreGetLowStock
+      summary: Books below reorder threshold
+      responses:
+        '200':
+          description: Success
+  /book-store/returns:
+    get:
+      operationId: bookStoreListReturns
+      summary: List publisher returns with status filter
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: bookStoreCreateReturn
+      summary: Create publisher return for unsold/dead stock
+      responses:
+        '200':
+          description: Success
+  /books/consignments:
+    get:
+      operationId: bookStoreGetConsignments
+      summary: Get list of consignments
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: bookStoreCreateConsignment
+      summary: Create consignment intake record
+      responses:
+        '200':
+          description: Success
+  /books/consignments/{id}/settle:
+    post:
+      operationId: bookStoreSettleConsignment
+      summary: Settle a consignment cycle
+      responses:
+        '200':
+          description: Success
+  /books/school-orders:
+    get:
+      operationId: bookStoreGetSchoolOrders
+      summary: Get list of school orders
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: bookStoreInstitutionalOrder
+      summary: Create institutional bulk order cycle
+      responses:
+        '200':
+          description: Success
+  /books/school-orders/{id}/fulfill:
+    post:
+      operationId: bookStoreFulfillSchoolOrder
+      summary: Fulfill a school order
+      responses:
+        '200':
+          description: Success
+  /businesses/my-access:
+    get:
+      operationId: getMyBusinesses
+      summary: Retrieves the list of businesses the accessible to the user
+      responses:
+        '200':
+          description: Success
+  /category-sales:
+    get:
+      operationId: getCategorySales
+      summary: Category-wise sales for donut chart
+      responses:
+        '200':
+          description: Success
+  /challans:
+    get:
+      operationId: challanList
+      summary: List delivery challans
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: challanCreate
+      summary: Create delivery challan for material dispatch
+      responses:
+        '200':
+          description: Success
+  /challans/{id}:
+    get:
+      operationId: challanGet
+      summary: Get a single delivery challan
+      responses:
+        '200':
+          description: Success
+  /challans/{id}/delivered:
+    post:
+      operationId: challanDelivered
+      summary: Mark challan as delivered (goods received at site)
+      responses:
+        '200':
+          description: Success
+  /clinic/consultation:
+    post:
+      operationId: clinicCreateSoapNote
+      summary: Save a SOAP EMR note and close the appointment
+      responses:
+        '200':
+          description: Success
+  /clinic/follow-ups:
+    post:
+      operationId: clinicCreateFollowUp
+      summary: Schedule a follow-up visit and add EMR note
+      responses:
+        '200':
+          description: Success
+  /clinic/labs/orders:
+    post:
+      operationId: clinicCreateLabOrder
+      summary: Create a lab order from consultation
+      responses:
+        '200':
+          description: Success
+  /clinic/labs/orders/{id}/results:
+    post:
+      operationId: clinicAttachLabResult
+      summary: Attach lab results and complete the order
+      responses:
+        '200':
+          description: Success
+  /clinic/patients/{id}/history:
+    get:
+      operationId: clinicGetPatientHistory
+      summary: Fetch chronological visit history
+      responses:
+        '200':
+          description: Success
+  /clinic/queue/{id}/status:
+    put:
+      operationId: clinicUpdateQueueStatus
+      summary: Update appointment status
+      responses:
+        '200':
+          description: Success
+  /clothing/variants/bulk:
+    put:
+      operationId: clothingBulkUpdateVariants
+      summary: Bulk update clothing variants
+      responses:
+        '200':
+          description: Success
+  /clothing/variants/{productId}:
+    get:
+      operationId: clothingGetVariants
+      summary: Get variants for a clothing product
+      responses:
+        '200':
+          description: Success
+  /computer/checkout:
+    post:
+      operationId: computerCheckout
+      summary: Atomic PC build checkout with serial tracking (TransactWrite)
+      responses:
+        '200':
+          description: Success
+  /computer/job-cards:
+    get:
+      operationId: computerGetJobCards
+      summary: List computer job cards
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: computerCreateJobCard
+      summary: Create a computer service job card
+      responses:
+        '200':
+          description: Success
+  /computer/job-cards/{id}/status:
+    patch:
+      operationId: computerUpdateJobCardStatus
+      summary: Update computer job card status
+      responses:
+        '200':
+          description: Success
+  /computer/rma:
+    post:
+      operationId: computerCreateRma
+      summary: Create RMA (Return Merchandise Authorization)
+      responses:
+        '200':
+          description: Success
+  /computer/rma/{id}/status:
+    patch:
+      operationId: computerUpdateRmaStatus
+      summary: Update RMA status
+      responses:
+        '200':
+          description: Success
+  /computer/serials:
+    get:
+      operationId: computerGetSerials
+      summary: List component serials with optional invoice filter
+      responses:
+        '200':
+          description: Success
+  /customer/fuel-fills:
+    get:
+      operationId: customerGetFuelFills
+      summary: Linked customer pump fill history (volume) for mobile app
+      responses:
+        '200':
+          description: Success
+  /customers/credit/reminder-candidates:
+    get:
+      operationId: getCreditReminderCandidates
+      summary: Udhar/credit parties with aged open balances (p20 data for reminders)
+      responses:
+        '200':
+          description: Success
+  /customers/recovery-visits:
+    get:
+      operationId: listRecoveryRegister
+      summary: Recovery register report by date range (p21)
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: recordRecoveryVisit
+      summary: Log credit recovery visit / follow-up (p21)
+      responses:
+        '200':
+          description: Success
+  /dashboard:
+    get:
+      operationId: getDashboard
+      summary: Returns business-type-specific dashboard data
+      responses:
+        '200':
+          description: Success
+  /dashboard-summary:
+    get:
+      operationId: getDashboardSummary
+      summary: Real-time billing dashboard KPI summary
+      responses:
+        '200':
+          description: Success
+  /estimates:
+    get:
+      operationId: estimateList
+      summary: List estimates with optional status filter
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: estimateCreate
+      summary: Create a new estimate/quotation (hardware)
+      responses:
+        '200':
+          description: Success
+  /estimates/{id}:
+    get:
+      operationId: estimateGet
+      summary: Get a single estimate with line items
+      responses:
+        '200':
+          description: Success
+  /estimates/{id}/convert:
+    post:
+      operationId: estimateConvert
+      summary: Convert estimate to invoice (atomic)
+      responses:
+        '200':
+          description: Success
+  /estimates/{id}/void:
+    post:
+      operationId: estimateVoid
+      summary: Void an estimate
+      responses:
+        '200':
+          description: Success
+  /grocery/batches:
+    get:
+      operationId: groceryBatchList
+      summary: List grocery batches for a product
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: groceryBatchCreate
+      summary: Create grocery batch lot with expiry and quantity
+      responses:
+        '200':
+          description: Success
+  /hardware/deposits:
+    get:
+      operationId: hardwareDepositList
+      summary: List returnable deposit records
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwareDepositCreate
+      summary: Create deposit liability for returnable goods
+      responses:
+        '200':
+          description: Success
+  /hardware/deposits/{id}/settle:
+    post:
+      operationId: hardwareDepositSettle
+      summary: Settle returnable deposit and refund
+      responses:
+        '200':
+          description: Success
+  /hardware/grn:
+    post:
+      operationId: hardwareCreateGrn
+      summary: Hardware Phase1+2 create GRN
+      responses:
+        '200':
+          description: Success
+  /hardware/indents:
+    get:
+      operationId: hardwareIndentList
+      summary: List hardware indents with optional project filter
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwareIndentCreate
+      summary: Create hardware indent/custom order request
+      responses:
+        '200':
+          description: Success
+  /hardware/indents/{id}/close:
+    post:
+      operationId: hardwareIndentClose
+      summary: Close hardware indent
+      responses:
+        '200':
+          description: Success
+  /hardware/invoice-profiles:
+    get:
+      operationId: hardwareGetInvoiceProfiles
+      summary: Hardware invoice format profile fetch
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: hardwareSaveInvoiceProfiles
+      summary: Hardware invoice format profile save
+      responses:
+        '200':
+          description: Success
+  /hardware/parties:
+    get:
+      operationId: hardwareListParties
+      summary: Hardware Phase1+2 list parties
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwareCreateParty
+      summary: Hardware Phase1+2 create party
+      responses:
+        '200':
+          description: Success
+  /hardware/parties-aging:
+    get:
+      operationId: hardwareGetPartyAging
+      summary: Hardware Phase1+2 party aging buckets
+      responses:
+        '200':
+          description: Success
+  /hardware/parties/{id}/ledger:
+    get:
+      operationId: hardwareGetPartyLedger
+      summary: Hardware Phase1+2 get party ledger
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwarePostPartyLedger
+      summary: Hardware Phase1+2 post party ledger entry
+      responses:
+        '200':
+          description: Success
+  /hardware/pos/quick-invoice:
+    post:
+      operationId: hardwareQuickCreateInvoice
+      summary: Hardware fast POS quick invoice create
+      responses:
+        '200':
+          description: Success
+  /hardware/project-outstanding:
+    get:
+      operationId: getHardwareProjectOutstanding
+      summary: Hardware project-wise outstanding and pending challans
+      responses:
+        '200':
+          description: Success
+  /hardware/projects:
+    get:
+      operationId: hardwareProjectList
+      summary: List hardware projects
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwareProjectCreate
+      summary: Create hardware project for contractor/site billing
+      responses:
+        '200':
+          description: Success
+  /hardware/projects/{id}/close:
+    post:
+      operationId: hardwareProjectClose
+      summary: Close hardware project
+      responses:
+        '200':
+          description: Success
+  /hardware/purchase-bills:
+    post:
+      operationId: hardwareCreatePurchaseBill
+      summary: Hardware Phase1+2 create purchase bill
+      responses:
+        '200':
+          description: Success
+  /hardware/purchase-orders:
+    get:
+      operationId: hardwareListPurchaseOrders
+      summary: Hardware Phase1+2 list purchase orders
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwareCreatePurchaseOrder
+      summary: Hardware Phase1+2 create purchase order
+      responses:
+        '200':
+          description: Success
+  /hardware/purchase-orders/pending:
+    get:
+      operationId: hardwarePendingPurchaseOrders
+      summary: Hardware pending purchase order tracker
+      responses:
+        '200':
+          description: Success
+  /hardware/purchase-orders/{id}/status:
+    post:
+      operationId: hardwareUpdatePurchaseOrderStatus
+      summary: Hardware Phase1+2 update purchase order status
+      responses:
+        '200':
+          description: Success
+  /hardware/rate-comparison:
+    get:
+      operationId: hardwareSupplierRateComparison
+      summary: Hardware best supplier rate comparison
+      responses:
+        '200':
+          description: Success
+  /hardware/reports/dead-stock:
+    get:
+      operationId: hardwareDeadStockReport
+      summary: Hardware dead stock report
+      responses:
+        '200':
+          description: Success
+  /hardware/reports/item-velocity:
+    get:
+      operationId: hardwareItemVelocityReport
+      summary: Hardware fast and slow moving item report
+      responses:
+        '200':
+          description: Success
+  /hardware/sales-orders:
+    get:
+      operationId: hardwareListSalesOrders
+      summary: Hardware sales order list
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwareCreateSalesOrder
+      summary: Hardware sales order create
+      responses:
+        '200':
+          description: Success
+  /hardware/sales-orders/{id}/status:
+    post:
+      operationId: hardwareUpdateSalesOrderStatus
+      summary: Hardware sales order status update
+      responses:
+        '200':
+          description: Success
+  /inventory/expiry-alerts:
+    get:
+      operationId: groceryExpiryAlerts
+      summary: Grocery product expiry alerts grouped by urgency (expired/7d/30d)
+      responses:
+        '200':
+          description: Success
+  /inventory/labels:
+    post:
+      operationId: barcodeBatchLabels
+      summary: Batch generate label data for multiple products
+      responses:
+        '200':
+          description: Success
+  /inventory/{id}/adjust:
+    post:
+      operationId: adjustStock
+      summary: Categorized stock adjustment (wastage, damage, theft, correction, expiry)
+      responses:
+        '200':
+          description: Success
+  /inventory/{id}/label:
+    post:
+      operationId: barcodeLabel
+      summary: Generate label data for a single product
+      responses:
+        '200':
+          description: Success
+  /invoices/{id}/einvoice:
+    get:
+      operationId: einvoiceStatus
+      summary: Get e-invoice status and IRN details
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: einvoiceGenerate
+      summary: Generate e-invoice (IRN) via NIC API
+      responses:
+        '200':
+          description: Success
+  /invoices/{id}/einvoice/cancel:
+    post:
+      operationId: einvoiceCancel
+      summary: Cancel e-invoice IRN (within 24h window)
+      responses:
+        '200':
+          description: Success
+  /invoices/{id}/ewaybill:
+    post:
+      operationId: ewaybillGenerate
+      summary: Generate e-way bill via NIC API
+      responses:
+        '200':
+          description: Success
+  /invoices/{id}/return:
+    post:
+      operationId: returnInvoice
+      summary: Process return/refund and create credit note
+      responses:
+        '200':
+          description: Success
+  /jewellery/reports/hallmark-register:
+    get:
+      operationId: jewelleryHallmarkRegister
+      summary: BIS Hallmark compliance register (HUID, purity, weight, article)
+      responses:
+        '200':
+          description: Success
+  /jewellery/reports/old-gold-register:
+    get:
+      operationId: jewelleryOldGoldRegister
+      summary: Old gold purchase register (PML Act compliance)
+      responses:
+        '200':
+          description: Success
+  /license/activate:
+    post:
+      operationId: licenseActivate
+      summary: Activate a license key for the tenant
+      responses:
+        '200':
+          description: Success
+  /license/generate:
+    post:
+      operationId: licenseGenerate
+      summary: Generate a new license key (admin only)
+      responses:
+        '200':
+          description: Success
+  /license/manage:
+    post:
+      operationId: licenseManage
+      summary: Deactivate/suspend/revoke a license key (admin only)
+      responses:
+        '200':
+          description: Success
+  /license/status:
+    get:
+      operationId: licenseStatus
+      summary: Get current license status
+      responses:
+        '200':
+          description: Success
+  /license/validate:
+    post:
+      operationId: licenseValidate
+      summary: Public license key validation (pre-auth, no JWT required)
+      responses:
+        '200':
+          description: Success
+  /loyalty/earn:
+    post:
+      operationId: loyaltyEarn
+      summary: Award loyalty points after invoice finalization
+      responses:
+        '200':
+          description: Success
+  /loyalty/history/{customerId}:
+    get:
+      operationId: loyaltyHistory
+      summary: Get loyalty point transaction history
+      responses:
+        '200':
+          description: Success
+  /loyalty/redeem:
+    post:
+      operationId: loyaltyRedeem
+      summary: Redeem loyalty points for bill discount
+      responses:
+        '200':
+          description: Success
+  /loyalty/{customerId}:
+    get:
+      operationId: loyaltyGetBalance
+      summary: Get loyalty points balance for a customer
+      responses:
+        '200':
+          description: Success
+  /notifications/register-device:
+    post:
+      operationId: registerDevice
+      summary: Register device FCM token for push notifications
+      responses:
+        '200':
+          description: Success
+  /payment-config:
+    get:
+      operationId: paymentConfigGet
+      summary: List gateway configs (status only, no secrets)
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: paymentConfigSave
+      summary: Save KMS-encrypted gateway credentials for tenant
+      responses:
+        '200':
+          description: Success
+  /payment-config/verify:
+    post:
+      operationId: paymentConfigVerify
+      summary: Verify and activate gateway credentials
+      responses:
+        '200':
+          description: Success
+  /payment-config/{gateway}:
+    delete:
+      operationId: paymentConfigDelete
+      summary: Remove gateway config for tenant
+      responses:
+        '200':
+          description: Success
+  /payment-status:
+    get:
+      operationId: getDashboardPaymentStatus
+      summary: Paid, unpaid, partial payment distribution
+      responses:
+        '200':
+          description: Success
+  /payment/initiate:
+    post:
+      operationId: initiatePayment
+      summary: Create payment order and generate QR code
+      responses:
+        '200':
+          description: Success
+  /payment/reconcile:
+    post:
+      operationId: reconcilePayments
+      summary: Cron job to sync pending payments with gateway
+      responses:
+        '200':
+          description: Success
+  /payment/status:
+    get:
+      operationId: getPaymentStatus
+      summary: Check payment order status
+      responses:
+        '200':
+          description: Success
+  /payment/webhook/phonepe:
+    post:
+      operationId: phonePeWebhook
+      summary: PhonePe Webhook endpoint
+      responses:
+        '200':
+          description: Success
+  /payment/webhook/razorpay:
+    post:
+      operationId: razorpayWebhook
+      summary: Razorpay Webhook endpoint
+      responses:
+        '200':
+          description: Success
+  /pharmacy/batch-intake:
+    post:
+      operationId: pharmacyBatchIntake
+      summary: Record medicine batch intake (GRN/purchase)
+      responses:
+        '200':
+          description: Success
+  /pharmacy/cds/screen:
+    post:
+      operationId: pharmacyCdsScreen
+      summary: Run interaction/allergy/contraindication CDS screening
+      responses:
+        '200':
+          description: Success
+  /pharmacy/claims:
+    get:
+      operationId: pharmacyClaimList
+      summary: List pharmacy claims with status and COB filters
+      responses:
+        '200':
+          description: Success
+  /pharmacy/claims/transmit:
+    post:
+      operationId: pharmacyClaimTransmit
+      summary: Transmit NCPDP D.0 claim payload
+      responses:
+        '200':
+          description: Success
+  /pharmacy/claims/{id}:
+    get:
+      operationId: pharmacyClaimGet
+      summary: Get pharmacy claim details by id
+      responses:
+        '200':
+          description: Success
+  /pharmacy/claims/{id}/adjudicate:
+    post:
+      operationId: pharmacyClaimAdjudicate
+      summary: Capture real-time payer adjudication outcome
+      responses:
+        '200':
+          description: Success
+  /pharmacy/claims/{id}/cob/next:
+    post:
+      operationId: pharmacyClaimCobNext
+      summary: Generate secondary or tertiary COB claim
+      responses:
+        '200':
+          description: Success
+  /pharmacy/drug-master/mappings:
+    get:
+      operationId: pharmacyDrugMasterList
+      summary: List drug master mappings and India brand bridge
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyDrugMasterUpsert
+      summary: Upsert NDC RxNorm ATC and India brand bridge mapping
+      responses:
+        '200':
+          description: Success
+  /pharmacy/fefo-override/authorize:
+    post:
+      operationId: pharmacyFefoOverrideAuthorize
+      summary: Backend-verified FEFO override authorization (replaces hardcoded PIN)
+      responses:
+        '200':
+          description: Success
+  /pharmacy/formulary:
+    get:
+      operationId: pharmacyFormularyList
+      summary: List payer formularies
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyFormularyUpsert
+      summary: Upsert payer formulary and utilization controls
+      responses:
+        '200':
+          description: Success
+  /pharmacy/h1-register:
+    get:
+      operationId: pharmacyH1List
+      summary: List Schedule H1 register entries (paginated)
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyH1Create
+      summary: Create Schedule H1 register entry (CDSCO H1 Rule)
+      responses:
+        '200':
+          description: Success
+  /pharmacy/h1-register/export:
+    get:
+      operationId: pharmacyH1Export
+      summary: Export Schedule H1 register rows for Drug Inspector audit
+      responses:
+        '200':
+          description: Success
+  /pharmacy/narcotic-register:
+    get:
+      operationId: pharmacyNarcoticList
+      summary: List Schedule X narcotic register entries (paginated)
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyNarcoticCreate
+      summary: Create Schedule X narcotic register entry
+      responses:
+        '200':
+          description: Success
+  /pharmacy/narcotic-register/export:
+    get:
+      operationId: pharmacyNarcoticExport
+      summary: Export Schedule X narcotic register rows for compliance filing
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/evidence:
+    get:
+      operationId: pharmacyPrescriptionEvidenceList
+      summary: List prescription evidence records
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyPrescriptionEvidenceUpload
+      summary: Upload prescription evidence metadata for compliance trail
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/partial-fills:
+    post:
+      operationId: pharmacyPartialFillCreate
+      summary: Record partial fill ledger entry for prescription
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/refills:
+    get:
+      operationId: pharmacyRefillList
+      summary: List prescription refill requests
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyRefillCreate
+      summary: Create prescription refill request
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/refills/backfill:
+    post:
+      operationId: pharmacyRefillBackfill
+      summary: Backfill legacy refill rows with product traceability fields
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/refills/backfill/bulk:
+    post:
+      operationId: pharmacyRefillBulkBackfill
+      summary: Bulk backfill legacy refill rows with product traceability fields
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/refills/incomplete:
+    get:
+      operationId: pharmacyRefillIncompleteList
+      summary: List legacy refill rows missing product traceability fields
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/refills/{id}/status:
+    post:
+      operationId: pharmacyRefillStatusUpdate
+      summary: Update refill workflow status (approve/reject/dispense)
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prior-auth:
+    get:
+      operationId: pharmacyPriorAuthList
+      summary: List prior authorization workflows
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyPriorAuthCreate
+      summary: Create prior authorization workflow request
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prior-auth/{id}:
+    get:
+      operationId: pharmacyPriorAuthGet
+      summary: Get prior authorization details by id
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prior-auth/{id}/status:
+    post:
+      operationId: pharmacyPriorAuthUpdate
+      summary: Update prior authorization decision status
+      responses:
+        '200':
+          description: Success
+  /pharmacy/program-track/events:
+    post:
+      operationId: pharmacyProgramTrackRecord
+      summary: Record optional 340B PBM tracking event
+      responses:
+        '200':
+          description: Success
+  /pharmacy/return-policy/evaluate:
+    post:
+      operationId: pharmacyReturnPolicyEvaluate
+      summary: Evaluate medicine return policy by state and schedule
+      responses:
+        '200':
+          description: Success
+  /prescriptions:
+    post:
+      operationId: sharedPrescriptionUpload
+      summary: Upload shared clinic prescription
+      responses:
+        '200':
+          description: Success
+  /prescriptions/check/{rxId}:
+    get:
+      operationId: sharedPrescriptionCheck
+      summary: Check shared prescription dispense status
+      responses:
+        '200':
+          description: Success
+  /prescriptions/{rxId}:
+    get:
+      operationId: sharedPrescriptionGet
+      summary: Fetch shared prescription by id
+      responses:
+        '200':
+          description: Success
+  /prescriptions/{rxId}/dispense:
+    patch:
+      operationId: sharedPrescriptionDispense
+      summary: Mark shared prescription as dispensed
+      responses:
+        '200':
+          description: Success
+  /pump/atg/ingest:
+    post:
+      operationId: pumpAtgIngest
+      summary: Ingest ATG tank readings (connector-gated)
+      responses:
+        '200':
+          description: Success
+  /pump/atg/poll:
+    post:
+      operationId: pumpAtgPoll
+      summary: Poll configured ATG connector now and persist TANKATG rows
+      responses:
+        '200':
+          description: Success
+  /pump/cash-drop:
+    post:
+      operationId: pumpCashDrop
+      summary: PP-001 FIX — Cash drop with computed expected amount
+      responses:
+        '200':
+          description: Success
+  /pump/dip-chart/convert:
+    get:
+      operationId: pumpDipConvert
+      summary: Convert dip millimeters to liters using active chart
+      responses:
+        '200':
+          description: Success
+  /pump/dip-chart/upload:
+    post:
+      operationId: pumpDipChartUpload
+      summary: Upload tank dip chart points (mm to liters)
+      responses:
+        '200':
+          description: Success
+  /pump/fleet/authorize:
+    post:
+      operationId: pumpFleetAuthorize
+      summary: Fleet card authorization (provider-gated)
+      responses:
+        '200':
+          description: Success
+  /pump/fuel-prices:
+    get:
+      operationId: pumpFuelPriceHistory
+      summary: Get fuel price change history by fuel type
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pumpUpdateFuelPrice
+      summary: Update fuel price with effective timestamp and audit log
+      responses:
+        '200':
+          description: Success
+  /pump/ppm-reading:
+    post:
+      operationId: pumpPpmReading
+      summary: Record PPM impurity reading (density sync entity)
+      responses:
+        '200':
+          description: Success
+  /pump/reports/atg-readings:
+    get:
+      operationId: pumpAtgReadingsReport
+      summary: ATG reading register (volume, water, temp, leak flags)
+      responses:
+        '200':
+          description: Success
+  /pump/reports/cashier-collection:
+    get:
+      operationId: pumpCashierCollectionReport
+      summary: Cashier-wise collection summary report
+      responses:
+        '200':
+          description: Success
+  /pump/reports/dip-variance:
+    get:
+      operationId: pumpDipVarianceReport
+      summary: Tank/nozzle dip variance trend and exception report
+      responses:
+        '200':
+          description: Success
+  /pump/reports/dsr:
+    get:
+      operationId: pumpDsrReport
+      summary: Daily sales report (DSR) for fuel station
+      responses:
+        '200':
+          description: Success
+  /pump/reports/nozzle-sales:
+    get:
+      operationId: pumpNozzleSalesReport
+      summary: Nozzle-wise sale and variance report
+      responses:
+        '200':
+          description: Success
+  /pump/reports/rate-variation:
+    get:
+      operationId: pumpRateVariationReport
+      summary: Fuel rate variation trend with estimated value impact
+      responses:
+        '200':
+          description: Success
+  /pump/reports/shift-collection:
+    get:
+      operationId: pumpShiftCollectionReport
+      summary: Shift-wise collection report
+      responses:
+        '200':
+          description: Success
+  /pump/reports/stock-valuation:
+    get:
+      operationId: pumpStockValuationReport
+      summary: Stock valuation report (fifo/purchase/sale/density-adjusted)
+      responses:
+        '200':
+          description: Success
+  /pump/reports/tank-stock:
+    get:
+      operationId: pumpTankStockReport
+      summary: Canonical tank stock report from dip/ATG readings
+      responses:
+        '200':
+          description: Success
+  /pump/reports/tanker-receipts:
+    get:
+      operationId: pumpTankerReceiptReport
+      summary: Tanker receipt register with dip-short summary
+      responses:
+        '200':
+          description: Success
+  /pump/reports/vehicle-ledger:
+    get:
+      operationId: pumpVehicleLedgerReport
+      summary: Vehicle-wise fuel sale history and outstanding (udhar) balance
+      responses:
+        '200':
+          description: Success
+  /pump/shift/approve-dsr:
+    post:
+      operationId: pumpShiftDsrApprove
+      summary: Manager approval and immutable lock for shift DSR snapshot
+      responses:
+        '200':
+          description: Success
+  /pump/shift/close:
+    post:
+      operationId: pumpShiftClose
+      summary: PP-004/PP-006 FIX — Close shift with reconciliation summary
+      responses:
+        '200':
+          description: Success
+  /pump/shift/handover-ack:
+    post:
+      operationId: pumpShiftHandoverAck
+      summary: Shift handover acknowledgement by receiving staff/manager
+      responses:
+        '200':
+          description: Success
+  /pump/shift/open:
+    post:
+      operationId: pumpShiftOpen
+      summary: PP-004 FIX — Open a new shift (creates SHIFT# entity)
+      responses:
+        '200':
+          description: Success
+  /pump/tank-dip:
+    post:
+      operationId: pumpTankDipRecord
+      summary: Record manual tank dip readings
+      responses:
+        '200':
+          description: Success
+  /pump/tanker-receipts:
+    post:
+      operationId: pumpTankerReceiptRecord
+      summary: Record tanker/bowser fuel receipt with dip-short detection
+      responses:
+        '200':
+          description: Success
+  /reports/balance-sheet:
+    get:
+      operationId: balanceSheetReport
+      summary: Simplified balance sheet snapshot (AR, inventory, collections register)
+      responses:
+        '200':
+          description: Success
+  /reports/cash-flow:
+    get:
+      operationId: cashFlowReport
+      summary: Operating cash flow from PAYMENT and EXPENSE rows
+      responses:
+        '200':
+          description: Success
+  /reports/expense-register:
+    get:
+      operationId: expenseRegisterReport
+      summary: Expense register with optional category filter
+      responses:
+        '200':
+          description: Success
+  /reports/export:
+    get:
+      operationId: csvExport
+      summary: CSV export for any report type
+      responses:
+        '200':
+          description: Success
+  /reports/fund-flow:
+    get:
+      operationId: fundFlowReport
+      summary: Fund sources vs applications (same window as cash-flow)
+      responses:
+        '200':
+          description: Success
+  /reports/gstr3b:
+    get:
+      operationId: gstr3bReport
+      summary: GSTR-3B summary report
+      responses:
+        '200':
+          description: Success
+  /reports/petty-cash:
+    get:
+      operationId: pettyCashReport
+      summary: Petty cash subset of expenses
+      responses:
+        '200':
+          description: Success
+  /reports/pnl:
+    get:
+      operationId: pnlReport
+      summary: Profit & Loss report
+      responses:
+        '200':
+          description: Success
+  /reports/share:
+    post:
+      operationId: reportShareCreate
+      summary: Queue or schedule report email/WhatsApp dispatch job
+      responses:
+        '200':
+          description: Success
+  /reports/share-dispatches/{id}/mark-attempt:
+    post:
+      operationId: reportShareDispatchMarkAttempt
+      summary: Internal worker marks dispatch attempt (x-internal-secret)
+      responses:
+        '200':
+          description: Success
+  /reports/stock-adjustments:
+    get:
+      operationId: stockAdjustmentsReport
+      summary: Stock adjustment / wastage report for reconciliation
+      responses:
+        '200':
+          description: Success
+  /revenue-monthly:
+    get:
+      operationId: getRevenueMonthly
+      summary: Monthly revenue comparison series
+      responses:
+        '200':
+          description: Success
+  /sales-trend:
+    get:
+      operationId: getSalesTrend
+      summary: Daily sales trend for 7 or 30 days
+      responses:
+        '200':
+          description: Success
+  /service/jobs:
+    get:
+      operationId: serviceGetMyJobs
+      summary: Active repair jobs for logged-in technician
+      responses:
+        '200':
+          description: Success
+  /service/jobs/{id}/parts:
+    post:
+      operationId: serviceAddJobParts
+      summary: Consume inventory parts for a repair job
+      responses:
+        '200':
+          description: Success
+  /service/jobs/{id}/status:
+    put:
+      operationId: serviceUpdateJobStatus
+      summary: Update repair job status
+      responses:
+        '200':
+          description: Success
+  /settings/einvoice:
+    get:
+      operationId: einvoiceSettingsGet
+      summary: Get NIC e-invoice/e-way bill integration settings
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: einvoiceSettingsUpsert
+      summary: Save NIC e-invoice/e-way bill integration settings
+      responses:
+        '200':
+          description: Success
+  /staff/sale:
+    post:
+      operationId: staffSaleCreate
+      summary: Record a fuel sale (cash or online) by staff member
+      responses:
+        '200':
+          description: Success
+  /staff/sale/daily-summary:
+    get:
+      operationId: staffSaleDailySummary
+      summary: Staff daily sale totals
+      responses:
+        '200':
+          description: Success
+  /staff/sale/generate-qr:
+    post:
+      operationId: staffSaleGenerateQr
+      summary: Generate payment QR for online fuel sale
+      responses:
+        '200':
+          description: Success
+  /staff/sale/history:
+    get:
+      operationId: staffSaleHistory
+      summary: Staff self-service sale history
+      responses:
+        '200':
+          description: Success
+  /staff/transactions:
+    get:
+      operationId: ownerStaffTransactions
+      summary: List all staff transactions (owner/admin view)
+      responses:
+        '200':
+          description: Success
+  /staff/transactions/summary:
+    get:
+      operationId: ownerStaffTransactionSummary
+      summary: Aggregated staff sale totals per-staff/per-product
+      responses:
+        '200':
+          description: Success
+  /staff/transactions/{id}:
+    get:
+      operationId: ownerStaffTransactionDetail
+      summary: Single staff transaction detail
+      responses:
+        '200':
+          description: Success
+  /stock-count:
+    get:
+      operationId: stockCountList
+      summary: List all stock count sessions
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: stockCountStart
+      summary: Start a new physical stock count session
+      responses:
+        '200':
+          description: Success
+  /stock-count/{id}:
+    get:
+      operationId: stockCountGet
+      summary: Get stock count details and items
+      responses:
+        '200':
+          description: Success
+  /stock-count/{id}/finalize:
+    post:
+      operationId: stockCountFinalize
+      summary: Finalize stock count, calculate variance report
+      responses:
+        '200':
+          description: Success
+  /stock-count/{id}/items:
+    post:
+      operationId: stockCountSubmitItems
+      summary: Submit counted quantities for a stock count session
+      responses:
+        '200':
+          description: Success
+  /storage/signed-url:
+    get:
+      operationId: getSignedUrl
+      summary: Generate pre-signed S3 URL for upload/download
+      responses:
+        '200':
+          description: Success
+  /suppliers:
+    get:
+      operationId: supplierList
+      summary: List supplier masters
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: supplierCreate
+      summary: Create supplier master for hardware payables
+      responses:
+        '200':
+          description: Success
+  /suppliers/payables/ageing:
+    get:
+      operationId: supplierPayablesAgeing
+      summary: Supplier payable ageing buckets
+      responses:
+        '200':
+          description: Success
+  /suppliers/payables/reminder-candidates:
+    get:
+      operationId: supplierReminderCandidates
+      summary: Supplier payable reminder candidate list
+      responses:
+        '200':
+          description: Success
+  /suppliers/payables/reminders/trigger:
+    post:
+      operationId: supplierRemindersTrigger
+      summary: Trigger supplier payable reminders
+      responses:
+        '200':
+          description: Success
+  /suppliers/payables/summary:
+    get:
+      operationId: supplierPayablesSummary
+      summary: Supplier payable outstanding summary
+      responses:
+        '200':
+          description: Success
+  /suppliers/payments:
+    post:
+      operationId: supplierRecordPayment
+      summary: Record supplier payable settlement
+      responses:
+        '200':
+          description: Success
+  /suppliers/{id}:
+    put:
+      operationId: supplierUpdate
+      summary: Update supplier master
+      responses:
+        '200':
+          description: Success
+  /suppliers/{id}/ledger:
+    get:
+      operationId: supplierLedger
+      summary: Supplier purchase and payment ledger
+      responses:
+        '200':
+          description: Success
+  /top-products:
+    get:
+      operationId: getTopProducts
+      summary: Top selling products by quantity and revenue
+      responses:
+        '200':
+          description: Success
+  /weighscale/read:
+    post:
+      operationId: weighScaleRead
+      summary: Receive weight reading from USB/serial scale, calculate line total
+      responses:
+        '200':
+          description: Success

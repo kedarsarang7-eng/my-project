@@ -128,12 +128,14 @@ class ComprehensiveResponsiveFixer {
 
   Future<void> _fixScreen(String filePath) async {
     final file = File(filePath);
-    
+
     try {
       var content = await file.readAsString();
 
       // Skip if already has responsive import
-      if (content.contains("import 'package:dukanx/core/responsive/responsive.dart'")) {
+      if (content.contains(
+        "import 'package:dukanx/core/responsive/responsive.dart'",
+      )) {
         skippedScreens++;
         print('SKIP: ${filePath.split('/').last} (already responsive)');
         return;
@@ -160,7 +162,6 @@ class ComprehensiveResponsiveFixer {
       await file.writeAsString(content);
       fixedScreens++;
       print('FIXED: ${filePath.split('/').last}');
-
     } catch (e) {
       errorScreens++;
       errors.add('$filePath: $e');
@@ -170,20 +171,26 @@ class ComprehensiveResponsiveFixer {
 
   String _addResponsiveImport(String content) {
     // Find a good place to add the import
-    final packageImports = RegExp(r"^import 'package:.*';", multiLine: true).allMatches(content);
-    
+    final packageImports = RegExp(
+      r"^import 'package:.*';",
+      multiLine: true,
+    ).allMatches(content);
+
     if (packageImports.isNotEmpty) {
       final lastPackageImport = packageImports.last;
       final insertPos = lastPackageImport.end;
-      
+
       // Check if already has it
-      if (!content.contains("import 'package:dukanx/core/responsive/responsive.dart'")) {
-        content = content.substring(0, insertPos) + 
-                  "\nimport 'package:dukanx/core/responsive/responsive.dart';" +
-                  content.substring(insertPos);
+      if (!content.contains(
+        "import 'package:dukanx/core/responsive/responsive.dart'",
+      )) {
+        content =
+            content.substring(0, insertPos) +
+            "\nimport 'package:dukanx/core/responsive/responsive.dart';" +
+            content.substring(insertPos);
       }
     }
-    
+
     return content;
   }
 
@@ -235,16 +242,16 @@ class ComprehensiveResponsiveFixer {
         multiLine: true,
       ),
       (match) {
-        final originalSize = match.group(1);
-        final mobileSize = int.parse(originalSize!) - 4;
+        final originalSize = match.group(1)!;
+        final mobileSize = int.parse(originalSize) - 4;
         final tabletSize = int.parse(originalSize) - 2;
-        
-        return '''style: TextStyle(
-                  fontSize: responsiveValue<double>(context,
-                    mobile: ${mobileSize.toDouble()},
-                    tablet: ${tabletSize.toDouble()},
-                    desktop: ${originalSize.toDouble()},  // PRESERVED: Desktop uses exactly $originalSize as before
-                  ),'';
+
+        return 'style: TextStyle(\n'
+            '                  fontSize: responsiveValue<double>(context,\n'
+            '                    mobile: $mobileSize.0,\n'
+            '                    tablet: $tabletSize.0,\n'
+            '                    desktop: $originalSize.0,  // PRESERVED: Desktop uses exactly $originalSize as before\n'
+            '                  ),';
       },
     );
 
@@ -255,14 +262,16 @@ class ComprehensiveResponsiveFixer {
         multiLine: true,
       ),
       (match) {
-        final originalSize = match.group(1);
-        return '''style: TextStyle(
-                  fontSize: responsiveValue<double>(context,
-                    mobile: ${int.parse(originalSize) - 2},
-                    tablet: ${int.parse(originalSize) - 1},
-                    desktop: ${int.parse(originalSize)}.0,  // PRESERVED
-                  ),
-                  color: Colors.grey''';
+        final originalSize = match.group(1)!;
+        final mobileSize = int.parse(originalSize) - 2;
+        final tabletSize = int.parse(originalSize) - 1;
+        return 'style: TextStyle(\n'
+            '                  fontSize: responsiveValue<double>(context,\n'
+            '                    mobile: $mobileSize.0,\n'
+            '                    tablet: $tabletSize.0,\n'
+            '                    desktop: $originalSize.0,  // PRESERVED\n'
+            '                  ),\n'
+            '                  color: Colors.grey';
       },
     );
 
@@ -274,12 +283,12 @@ class ComprehensiveResponsiveFixer {
     content = content.replaceAllMapped(
       RegExp(r'padding:\s*const\s+EdgeInsets\.all\((24|32)\)'),
       (match) {
-        final original = match.group(1);
-        return '''padding: EdgeInsets.all(responsiveValue<double>(context,
-              mobile: 16,
-              tablet: 20,
-              desktop: ${original.toDouble()},  // PRESERVED
-            ))''';
+        final original = match.group(1)!;
+        return 'padding: EdgeInsets.all(responsiveValue<double>(context,\n'
+            '              mobile: 16,\n'
+            '              tablet: 20,\n'
+            '              desktop: $original.0,  // PRESERVED\n'
+            '            ))';
       },
     );
 
@@ -291,13 +300,13 @@ class ComprehensiveResponsiveFixer {
     content = content.replaceAllMapped(
       RegExp(r'SizedBox\(\s*width:\s*(300|320|350|400|450)\.?0?\s*\)'),
       (match) {
-        final originalWidth = match.group(1);
-        return '''SizedBox(
-          width: responsiveValue<double>(context,
-            mobile: double.infinity,
-            tablet: $originalWidth,
-            desktop: $originalWidth,  // PRESERVED
-          )'';
+        final originalWidth = match.group(1)!;
+        return 'SizedBox(\n'
+            '          width: responsiveValue<double>(context,\n'
+            '            mobile: double.infinity,\n'
+            '            tablet: $originalWidth.0,\n'
+            '            desktop: $originalWidth.0,  // PRESERVED\n'
+            '          ))';
       },
     );
 
@@ -306,11 +315,10 @@ class ComprehensiveResponsiveFixer {
 
   String _addScrollViews(String content, String filePath) {
     // Check if the screen has a Column that might overflow but no SingleChildScrollView
-    if (content.contains('Column(') && 
+    if (content.contains('Column(') &&
         !content.contains('SingleChildScrollView') &&
         !content.contains('ListView') &&
         !content.contains('CustomScrollView')) {
-      
       // Add scroll view wrapping pattern for common build methods
       content = content.replaceAllMapped(
         RegExp(
@@ -318,22 +326,25 @@ class ComprehensiveResponsiveFixer {
           multiLine: true,
         ),
         (match) {
-          return '''${match.group(1)}Scaffold(
-      body: SingleChildScrollView(
-        child: Column(''';
+          return '${match.group(1)}Scaffold(\n'
+              '      body: SingleChildScrollView(\n'
+              '        child: Column(';
         },
       );
 
       // Close the SingleChildScrollView
-      if (content.contains('SingleChildScrollView(') && !content.contains('SingleChildScrollView(physics:')) {
+      if (content.contains('SingleChildScrollView(') &&
+          !content.contains('SingleChildScrollView(physics:')) {
         content = content.replaceAllMapped(
-          RegExp(r'(Column\([^)]*children:\s*\[[^]]*\],?\s*\)\),?\s*\)\s*;\s*\})'),
+          RegExp(
+            r'(Column\([^)]*children:\s*\[[^]]*\],?\s*\)\),?\s*\)\s*;\s*\})',
+          ),
           (match) {
-            return '''${match.group(1).toString().replaceFirst('Column(', 'Column(')}
-        ),
-      ),
-    );
-  }'';
+            return '${match.group(0)}\n'
+                '        ),\n'
+                '      ),\n'
+                '    );\n'
+                '  }';
           },
         );
       }
@@ -356,7 +367,7 @@ class ComprehensiveResponsiveFixer {
     print('Desktop experience: PRESERVED on all screens');
     print('Mobile/Tablet: Now adaptive with responsive values');
     print('=' * 80);
-    
+
     if (errors.isNotEmpty) {
       print('');
       print('ERRORS ENCOUNTERED:');

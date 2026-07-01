@@ -1,0 +1,7 @@
+# Property-based and example test suites for the Audit_System governance core
+# (per-screen-business-type-audit-remediation). Suites import the pure core via
+# a relative import, e.g.:
+#
+#     import '../../tool/audit_system/audit_system.dart';
+#
+# mirroring test/tool/responsive_audit_totality_property_test.dart.

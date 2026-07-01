@@ -1,0 +1,157 @@
+{
+  "mobileShop": {
+    "sections": [
+      {
+        "title": "Service & Repairs",
+        "items": [
+          "service_jobs",
+          "exchanges",
+          "imei_tracking",
+          "warranty",
+          "second_hand_intake"
+        ]
+      },
+      {
+        "title": "Parties & Ledger",
+        "items": [
+          "customers",
+          "suppliers",
+          "party_ledger",
+          "outstanding"
+        ]
+      },
+      {
+        "title": "Reports & Analytics",
+        "items": [
+          "analytics_hub",
+          "product_performance"
+        ]
+      }
+    ],
+    "routing": {
+      "service_jobs": "VendorRoleGuard",
+      "exchanges": "VendorRoleGuard",
+      "imei_tracking": "Null",
+      "warranty": "Null",
+      "second_hand_intake": "SecondHandIntakeScreen",
+      "customers": "CustomersListScreen",
+      "suppliers": "PartyLedgerListScreen",
+      "party_ledger": "PartyLedgerListScreen",
+      "outstanding": "PartyLedgerListScreen",
+      "analytics_hub": "ReportsHubScreen",
+      "product_performance": "ProductPerformanceScreen"
+    }
+  },
+  "computerShop": {
+    "sections": [
+      {
+        "title": "Dashboard & Control",
+        "items": [
+          "executive_dashboard",
+          "live_health",
+          "alerts",
+          "daily_snapshot"
+        ]
+      },
+      {
+        "title": "Revenue Desk",
+        "items": [
+          "revenue_overview",
+          "new_sale",
+          "receipt_entry",
+          "return_inwards",
+          "proforma_bids",
+          "booking_orders",
+          "dispatch_notes",
+          "sales_register"
+        ]
+      },
+      {
+        "title": "BuyFlow",
+        "items": [
+          "buyflow_dashboard",
+          "purchase_orders",
+          "stock_entry",
+          "stock_reversal",
+          "procurement_log",
+          "supplier_bills",
+          "purchase_register"
+        ]
+      },
+      {
+        "title": "Inventory & Stock",
+        "items": [
+          "stock_summary",
+          "item_stock",
+          "low_stock",
+          "stock_valuation",
+          "damage_logs"
+        ]
+      },
+      {
+        "title": "Parties & Ledger",
+        "items": [
+          "customers",
+          "suppliers",
+          "party_ledger",
+          "ledger_history",
+          "ledger_abstract",
+          "outstanding"
+        ]
+      },
+      {
+        "title": "Business Intelligence",
+        "items": [
+          "analytics_hub",
+          "turnover_analysis",
+          "product_performance",
+          "daily_activity",
+          "procurement_insights",
+          "margin_analysis",
+          "insights",
+          "catalogue"
+        ]
+      }
+    ],
+    "routing": {
+      "executive_dashboard": "DashboardController",
+      "live_health": "LiveBusinessHealthScreen",
+      "alerts": "AlertsNotificationsScreen",
+      "daily_snapshot": "DailySnapshotScreen",
+      "revenue_overview": "RevenueOverviewScreen",
+      "new_sale": "BillCreationScreenV2",
+      "receipt_entry": "ReceiptEntryScreen",
+      "return_inwards": "ReturnInwardsScreen",
+      "proforma_bids": "ProformaScreen",
+      "booking_orders": "BookingOrderScreen",
+      "dispatch_notes": "DispatchNoteScreen",
+      "sales_register": "SalesRegisterScreen",
+      "buyflow_dashboard": "BuyFlowDashboard",
+      "purchase_orders": "BuyOrdersScreen",
+      "stock_entry": "StockEntryScreen",
+      "stock_reversal": "StockReversalScreen",
+      "procurement_log": "ProcurementLogScreen",
+      "supplier_bills": "SupplierBillsScreen",
+      "purchase_register": "ProcurementLogScreen",
+      "stock_summary": "StockSummaryScreen",
+      "item_stock": "InventoryDashboardScreen",
+      "low_stock": "LowStockAlertsScreen",
+      "stock_valuation": "StockValuationScreen",
+      "damage_logs": "DamageLogsScreen",
+      "customers": "CustomersListScreen",
+      "suppliers": "PartyLedgerListScreen",
+      "party_ledger": "PartyLedgerListScreen",
+      "ledger_history": "AllTransactionsScreen",
+      "ledger_abstract": "TrialBalanceScreen",
+      "outstanding": "PartyLedgerListScreen",
+      "analytics_hub": "ReportsHubScreen",
+      "turnover_analysis": "AllTransactionsScreen",
+      "product_performance": "ProductPerformanceScreen",
+      "daily_activity": "AllTransactionsScreen",
+      "procurement_insights": "PurchaseReportScreen",
+      "margin_analysis": "BillWiseProfitScreen",
+      "insights": "InsightsScreen",
+      "catalogue": "CatalogueScreen"
+    }
+  }
+}

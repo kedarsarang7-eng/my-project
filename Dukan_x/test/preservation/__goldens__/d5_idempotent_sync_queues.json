@@ -1,0 +1,142 @@
+[
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/abstractions/sync_repository.dart",
+    "digest": 2050384123
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/background_sync_service.dart",
+    "digest": 537651659
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/conflict_resolution_dialog.dart",
+    "digest": 382042275
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/data/drift_sync_repository.dart",
+    "digest": 1092993254
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/data_integrity_validator.dart",
+    "digest": 1355719198
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/engine/circuit_breaker.dart",
+    "digest": 779726823
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/engine/rest_sync_engine.dart",
+    "digest": 1719534014
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/engine/sync_engine.dart",
+    "digest": 1960429386
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/engine/task_processor.dart",
+    "digest": 2032862533
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/models/sync_failure.dart",
+    "digest": 1119754892
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/models/sync_payloads.dart",
+    "digest": 293250999
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/models/sync_types.dart",
+    "digest": 1025973761
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/offline_mode_indicator.dart",
+    "digest": 2105565740
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/offline_queue.dart",
+    "digest": 1688624108
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/sync_conflict.dart",
+    "digest": 722720215
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/sync_conflict_listener.dart",
+    "digest": 1913365161
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/sync_manager.dart",
+    "digest": 1565231990
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/sync_queue_local_ops.dart",
+    "digest": 721552571
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/sync_queue_state_machine.dart",
+    "digest": 1934797338
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/sync_retry_service.dart",
+    "digest": 1405170187
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/sync_status_manager.dart",
+    "digest": 1330195686
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/sync_status_widget.dart",
+    "digest": 556565311
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/core/sync/sync_table_registry.dart",
+    "digest": 941017186
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/purchase/services/scan_bill_offline_queue.dart",
+    "digest": 1944695237
+  },
+  {
+    "app": "Dukan_x",
+    "path": "Dukan_x/lib/features/sync/presentation/controllers/sync_controller.dart",
+    "digest": 251766442
+  },
+  {
+    "app": "school_admin_app",
+    "path": "school_admin_app/lib/core/sync/sync_queue.dart",
+    "digest": 1299418226
+  },
+  {
+    "app": "school_student_app",
+    "path": "school_student_app/lib/core/sync/sync_queue.dart",
+    "digest": 149492213
+  },
+  {
+    "app": "school_teacher_app",
+    "path": "school_teacher_app/lib/core/offline/attendance_offline_queue.dart",
+    "digest": 1546667390
+  }
+]

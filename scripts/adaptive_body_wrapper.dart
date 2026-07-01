@@ -54,12 +54,16 @@ class AdaptiveBodyWrapper {
       // Skip if already uses AdaptiveScaffold
       if (content.contains('AdaptiveScaffold')) {
         skippedScreens++;
-        print('SKIP: ${filePath.split(Platform.pathSeparator).last} (already uses AdaptiveScaffold)');
+        print(
+          'SKIP: ${filePath.split(Platform.pathSeparator).last} (already uses AdaptiveScaffold)',
+        );
         return;
       }
 
       // Ensure responsive import exists
-      if (!content.contains("import 'package:dukanx/core/responsive/responsive.dart'")) {
+      if (!content.contains(
+        "import 'package:dukanx/core/responsive/responsive.dart'",
+      )) {
         content = _addResponsiveImport(content);
       }
 
@@ -71,7 +75,6 @@ class AdaptiveBodyWrapper {
       await file.writeAsString(content);
       wrappedScreens++;
       print('WRAPPED: ${filePath.split(Platform.pathSeparator).last}');
-
     } catch (e) {
       errorScreens++;
       errors.add('$filePath: $e');
@@ -80,13 +83,16 @@ class AdaptiveBodyWrapper {
   }
 
   String _addResponsiveImport(String content) {
-    final packageImports = RegExp(r"^import 'package:.*';", multiLine: true).allMatches(content);
+    final packageImports = RegExp(
+      r"^import 'package:.*';",
+      multiLine: true,
+    ).allMatches(content);
     if (packageImports.isNotEmpty) {
       final lastPackageImport = packageImports.last;
       final insertPos = lastPackageImport.end;
       return content.substring(0, insertPos) +
-             "\nimport 'package:dukanx/core/responsive/responsive.dart';" +
-             content.substring(insertPos);
+          "\nimport 'package:dukanx/core/responsive/responsive.dart';" +
+          content.substring(insertPos);
     }
     return content;
   }
@@ -95,32 +101,25 @@ class AdaptiveBodyWrapper {
     // Pattern 1: Simple Scaffold with body -> AdaptiveScaffold
     // Matches: return Scaffold(body: ...)
     content = content.replaceAllMapped(
-      RegExp(
-        r'return\s+Scaffold\(\s*body:\s*',
-        multiLine: true,
-      ),
+      RegExp(r'return\s+Scaffold\(\s*body:\s*', multiLine: true),
       (match) => 'return AdaptiveScaffold(\n        body: ',
     );
 
     // Pattern 2: Scaffold with other properties -> AdaptiveScaffold preserving props
     // This is a more complex pattern - we'll handle common properties
     content = content.replaceAllMapped(
-      RegExp(
-        r'Scaffold\(\s*key:\s*([^,]+),',
-        multiLine: true,
-      ),
+      RegExp(r'Scaffold\(\s*key:\s*([^,]+),', multiLine: true),
       (match) => 'AdaptiveScaffold(key: ${match.group(1)},',
     );
 
     // Close AdaptiveScaffold - replace closing Scaffold patterns
     content = content.replaceAllMapped(
-      RegExp(
-        r'(\);\s*\}\s*)$',
-        multiLine: true,
-      ),
+      RegExp(r'(\);\s*\}\s*)$', multiLine: true),
       (match) {
         // Check if we're at the end of a build method
-        if (content.substring(content.lastIndexOf(match.group(0)!) - 50).contains('AdaptiveScaffold')) {
+        if (content
+            .substring(content.lastIndexOf(match.group(0)!) - 50)
+            .contains('AdaptiveScaffold')) {
           return match.group(0)!;
         }
         return match.group(0)!;
@@ -139,22 +138,20 @@ class AdaptiveBodyWrapper {
       ),
       (match) {
         final padding = match.group(1);
-        return '''AdaptiveScroll(
-          padding: EdgeInsets.all($padding),
-          child: BoundedBox(
-            child: Column(''';
+        return 'AdaptiveScroll(\n'
+            '          padding: EdgeInsets.all($padding),\n'
+            '          child: BoundedBox(\n'
+            '            child: Column(';
       },
     );
 
     // Pattern 2: SingleChildScrollView without padding -> AdaptiveScroll
     content = content.replaceAllMapped(
-      RegExp(
-        r'SingleChildScrollView\(\s*child:\s*Column\(',
-        multiLine: true,
-      ),
-      (match) => '''AdaptiveScroll(
-          child: BoundedBox(
-            child: Column(',
+      RegExp(r'SingleChildScrollView\(\s*child:\s*Column\(', multiLine: true),
+      (match) =>
+          'AdaptiveScroll(\n'
+          '          child: BoundedBox(\n'
+          '            child: Column(',
     );
 
     // Pattern 3: Column directly in Scaffold body (no scroll) -> AdaptiveScroll wrapping
@@ -163,10 +160,14 @@ class AdaptiveBodyWrapper {
         r'body:\s*(AdaptiveScaffold\()?(\n\s*)?Column\(\s*crossAxisAlignment:\s*CrossAxisAlignment\.start',
         multiLine: true,
       ),
-      (match) => '''body: ${match.group(1) ?? ''}${match.group(2) ?? ''}AdaptiveScroll(
-            child: BoundedBox(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start''',
+      (match) {
+        final group1 = match.group(1) ?? '';
+        final group2 = match.group(2) ?? '';
+        return 'body: ${group1}${group2}AdaptiveScroll(\n'
+            '            child: BoundedBox(\n'
+            '              child: Column(\n'
+            '                crossAxisAlignment: CrossAxisAlignment.start';
+      },
     );
 
     // Close the BoundedBox and AdaptiveScroll when closing Column
@@ -180,7 +181,8 @@ class AdaptiveBodyWrapper {
     // Find patterns where we opened AdaptiveScroll + BoundedBox but didn't close
     // Look for Column children ending that needs closing
     final openCount = 'AdaptiveScroll('.allMatches(content).length;
-    final boundedOpenCount = 'BoundedBox('.allMatches(content).length;
+    // boundedOpenCount tracks BoundedBox parity (used for future validation)
+    final _ = 'BoundedBox('.allMatches(content).length;
 
     if (openCount > 0) {
       // We need to ensure proper closing of BoundedBox and AdaptiveScroll
@@ -192,9 +194,9 @@ class AdaptiveBodyWrapper {
         ),
         (match) {
           // Only wrap if we have an unclosed AdaptiveScroll
-          if (content.contains('AdaptiveScroll(') && !match.group(0)!.contains('BoundedBox')) {
-            return '''\n          ),\n        ),\n      ),
-    );'''; // Close Column, BoundedBox, AdaptiveScroll, then Scaffold return
+          if (content.contains('AdaptiveScroll(') &&
+              !match.group(0)!.contains('BoundedBox')) {
+            return '\n          ),\n        ),\n      ),\n    );';
           }
           return match.group(0)!;
         },
@@ -210,11 +212,9 @@ class AdaptiveBodyWrapper {
 
     // Pattern: Expanded(child: Column(...)) -> Expanded(child: BoundedBox(child: Column(...)))
     content = content.replaceAllMapped(
-      RegExp(
-        r'Expanded\(\s*child:\s*Column\(',
-        multiLine: true,
-      ),
-      (match) => 'Expanded(\n          child: BoundedBox(\n            child: Column(',
+      RegExp(r'Expanded\(\s*child:\s*Column\(', multiLine: true),
+      (match) =>
+          'Expanded(\n          child: BoundedBox(\n            child: Column(',
     );
 
     // Close the BoundedBox when Column closes

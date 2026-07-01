@@ -32,9 +32,7 @@ class ResponsiveScreenWrapper {
   Future<void> run() async {
     print('=' * 80);
     print('RESPONSIVE SCREEN WRAPPER');
-    print(
-      'Making all screens compliant with AdaptiveScaffold & AdaptiveScroll',
-    );
+    print('Making all screens compliant with AdaptiveScaffold & AdaptiveScroll');
     print('=' * 80);
     print('');
 
@@ -97,9 +95,7 @@ class ResponsiveScreenWrapper {
       final transformations = <String>[];
 
       // 1. Ensure responsive import
-      if (!content.contains(
-        "import 'package:dukanx/core/responsive/responsive.dart'",
-      )) {
+      if (!content.contains("import 'package:dukanx/core/responsive/responsive.dart'")) {
         content = _addImport(content);
         transformations.add('import');
       }
@@ -137,6 +133,7 @@ class ResponsiveScreenWrapper {
         skippedScreens++;
         print('SKIP: $fileName (no changes needed)');
       }
+
     } catch (e) {
       errorScreens++;
       errors.add('$filePath: $e');
@@ -153,8 +150,8 @@ class ResponsiveScreenWrapper {
 
     // If it uses adaptive widgets or already has scroll view with responsive patterns
     return hasAdaptiveScaffold ||
-        (hasAdaptiveScroll && hasBoundedBox) ||
-        (hasSingleChildScrollView && content.contains('responsiveValue'));
+           (hasAdaptiveScroll && hasBoundedBox) ||
+           (hasSingleChildScrollView && content.contains('responsiveValue'));
   }
 
   String _addImport(String content) {
@@ -181,10 +178,9 @@ class ResponsiveScreenWrapper {
     // Check if body has Column without SingleChildScrollView
     final hasScaffold = content.contains('Scaffold(');
     final hasColumnInBody = RegExp(r'body:\s*Column\(').hasMatch(content);
-    final hasScrollView =
-        content.contains('SingleChildScrollView') ||
-        content.contains('ListView') ||
-        content.contains('AdaptiveScroll');
+    final hasScrollView = content.contains('SingleChildScrollView') ||
+                          content.contains('ListView') ||
+                          content.contains('AdaptiveScroll');
 
     return hasScaffold && hasColumnInBody && !hasScrollView;
   }
@@ -192,7 +188,10 @@ class ResponsiveScreenWrapper {
   String _wrapBodyWithAdaptiveScroll(String content) {
     // Wrap body: Column(...) with body: SingleChildScrollView + padding
     return content.replaceAllMapped(
-      RegExp(r'body:\s*Column\(', multiLine: true),
+      RegExp(
+        r'body:\s*Column\(',
+        multiLine: true,
+      ),
       (match) => '''body: SingleChildScrollView(
           padding: EdgeInsets.all(responsiveValue<double>(context,
             mobile: 16,
@@ -209,19 +208,20 @@ class ResponsiveScreenWrapper {
 
   String _makeGridViewResponsive(String content) {
     // Fix crossAxisCount: 2 or 3 -> responsive
-    return content.replaceAllMapped(RegExp(r'crossAxisCount:\s*(\d+)'), (
-      match,
-    ) {
-      final count = int.parse(match.group(1)!);
-      final mobileCount = count > 2 ? 1 : (count > 1 ? 1 : count);
-      final tabletCount = count > 2 ? 2 : count;
+    return content.replaceAllMapped(
+      RegExp(r'crossAxisCount:\s*(\d+)'),
+      (match) {
+        final count = int.parse(match.group(1)!);
+        final mobileCount = count > 2 ? 1 : (count > 1 ? 1 : count);
+        final tabletCount = count > 2 ? 2 : count;
 
-      return '''crossAxisCount: responsiveValue<int>(context,
+        return '''crossAxisCount: responsiveValue<int>(context,
               mobile: $mobileCount,
               tablet: $tabletCount,
               desktop: $count,  // PRESERVED: Desktop uses exactly $count as before
             )''';
-    });
+      },
+    );
   }
 
   bool _hasHardcodedFontSizes(String content) {
@@ -230,22 +230,25 @@ class ResponsiveScreenWrapper {
 
   String _makeFontSizesResponsive(String content) {
     // Fix header font sizes (18-32 range)
-    return content.replaceAllMapped(RegExp(r'fontSize:\s*(\d+)\.?0?'), (match) {
-      final size = int.parse(match.group(1)!);
+    return content.replaceAllMapped(
+      RegExp(r'fontSize:\s*(\d+)\.?0?'),
+      (match) {
+        final size = int.parse(match.group(1)!);
 
-      // Only process sizes that are likely headers (>= 18)
-      if (size >= 18) {
-        final mobileSize = (size - 4).clamp(12, 32);
-        final tabletSize = (size - 2).clamp(14, 32);
+        // Only process sizes that are likely headers (>= 18)
+        if (size >= 18) {
+          final mobileSize = (size - 4).clamp(12, 32);
+          final tabletSize = (size - 2).clamp(14, 32);
 
-        return '''fontSize: responsiveValue<double>(context,
+          return '''fontSize: responsiveValue<double>(context,
                     mobile: $mobileSize.0,
                     tablet: $tabletSize.0,
                     desktop: $size.0,  // PRESERVED: Desktop uses exactly $size as before
                   )''';
-      }
-      return match.group(0)!;
-    });
+        }
+        return match.group(0)!;
+      },
+    );
   }
 
   bool _hasHardcodedPadding(String content) {
@@ -253,16 +256,17 @@ class ResponsiveScreenWrapper {
   }
 
   String _makePaddingResponsive(String content) {
-    return content.replaceAllMapped(RegExp(r'EdgeInsets\.all\((24|32)\)'), (
-      match,
-    ) {
-      final value = match.group(1)!;
-      return '''EdgeInsets.all(responsiveValue<double>(context,
+    return content.replaceAllMapped(
+      RegExp(r'EdgeInsets\.all\((24|32)\)'),
+      (match) {
+        final value = match.group(1)!;
+        return '''EdgeInsets.all(responsiveValue<double>(context,
               mobile: 16,
               tablet: 20,
               desktop: $value,  // PRESERVED: Desktop uses exactly $value as before
             ))''';
-    });
+      },
+    );
   }
 
   void _printSummary(Duration elapsed) {
@@ -298,9 +302,7 @@ class ResponsiveScreenWrapper {
     };
 
     final reportFile = File('scripts/responsive_wrapper_report.json');
-    await reportFile.writeAsString(
-      JsonEncoder.withIndent('  ').convert(report),
-    );
+    await reportFile.writeAsString(JsonEncoder.withIndent('  ').convert(report));
     print('');
     print('Report saved to: scripts/responsive_wrapper_report.json');
   }

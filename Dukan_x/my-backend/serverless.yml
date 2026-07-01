@@ -1,0 +1,691 @@
+# ============================================================================
+# BizMate — Serverless Framework Configuration
+# ============================================================================
+# Multi-Tenant SaaS Backend for 14 Business Types
+# AWS Free Tier Compliant: Lambda + API Gateway + RDS + Cognito + S3
+# ============================================================================
+
+service: my-backend
+
+frameworkVersion: '4'
+
+# ============================================================================
+# PROVIDER
+# ============================================================================
+provider:
+  name: aws
+  runtime: nodejs24.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-south-1'}
+  memorySize: 128          # Minimum — keeps Free Tier usage low
+  timeout: 10              # 10s — plenty for API calls
+  logRetentionInDays: 14   # Keep costs low
+
+  # ── API Gateway (HTTP API — cheaper than REST API) ──────────────────────
+  httpApi:
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+        - X-Tenant-Id
+
+  # ── Environment Variables ───────────────────────────────────────────────
+  environment:
+    NODE_ENV: ${self:provider.stage}
+    DB_HOST: ${env:DB_HOST, 'localhost'}
+    DB_PORT: ${env:DB_PORT, '5432'}
+    DB_NAME: ${env:DB_NAME, 'bizmate'}
+    DB_USER: ${env:DB_USER, 'bizmate_admin'}
+    DB_PASSWORD: ${env:DB_PASSWORD, ''}
+    DB_SSL: ${env:DB_SSL, 'false'}
+    DB_MAX_CONNECTIONS: ${env:DB_MAX_CONNECTIONS, '5'}
+    COGNITO_USER_POOL_ID: !Ref CognitoUserPool
+    COGNITO_CLIENT_ID: !Ref CognitoUserPoolClient
+    COGNITO_DESKTOP_CLIENT_ID: !Ref DesktopAppClient
+    COGNITO_MOBILE_CLIENT_ID: !Ref MobileAppClient
+    COGNITO_ADMIN_CLIENT_ID: !Ref AdminPanelClient
+    # COGNITO_IDENTITY_POOL_ID set after IAM stack deploy (see cf-iam-roles.yml)
+    COGNITO_REGION: ${self:provider.region}
+    S3_BUCKET_NAME: !Ref TenantStorageBucket
+    S3_REGION: ${self:provider.region}
+    PLATFORM_APPLICATION_ARN: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:app/GCM/DukanX-Customer-App'
+
+  # ── IAM Permissions ────────────────────────────────────────────────────
+  iam:
+    role:
+      statements:
+        # S3 — Tenant storage (invoices, images, reports)
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+            - s3:DeleteObject
+          Resource:
+            - !Join ['', ['arn:aws:s3:::', !Ref TenantStorageBucket, '/*']]
+        # Cognito — User management
+        - Effect: Allow
+          Action:
+            - cognito-idp:AdminGetUser
+            - cognito-idp:AdminUpdateUserAttributes
+          Resource:
+            - !GetAtt CognitoUserPool.Arn
+        # SNS — Push Notifications
+        - Effect: Allow
+          Action:
+            - sns:CreatePlatformEndpoint
+            - sns:Publish
+            - sns:DeleteEndpoint
+          Resource: '*'
+
+# ============================================================================
+# FUNCTIONS (Lambda Handlers)
+# ============================================================================
+functions:
+
+  # ── Authentication ──────────────────────────────────────────────────────
+  authSignup:
+    handler: dist/handlers/auth.signup
+    events:
+      - httpApi:
+          path: /auth/signup
+          method: POST
+    description: Register new tenant + owner account
+
+  authLogin:
+    handler: dist/handlers/auth.login
+    events:
+      - httpApi:
+          path: /auth/login
+          method: POST
+    description: Authenticate user, return Cognito tokens
+
+  authRefresh:
+    handler: dist/handlers/auth.refresh
+    events:
+      - httpApi:
+          path: /auth/refresh
+          method: POST
+    description: Refresh expired access tokens
+
+  # ── Dashboard (Business-Type Aware) ────────────────────────────────────
+  getDashboard:
+    handler: dist/handlers/dashboard.getDashboard
+    events:
+      - httpApi:
+          path: /dashboard
+          method: GET
+    description: Returns business-type-specific dashboard data
+
+  # ── Inventory CRUD ─────────────────────────────────────────────────────
+  getInventory:
+    handler: dist/handlers/inventory.getItems
+    events:
+      - httpApi:
+          path: /inventory
+          method: GET
+
+  createInventoryItem:
+    handler: dist/handlers/inventory.createItem
+    events:
+      - httpApi:
+          path: /inventory
+          method: POST
+
+  updateInventoryItem:
+    handler: dist/handlers/inventory.updateItem
+    events:
+      - httpApi:
+          path: /inventory/{id}
+          method: PUT
+
+  deleteInventoryItem:
+    handler: dist/handlers/inventory.deleteItem
+    events:
+      - httpApi:
+          path: /inventory/{id}
+          method: DELETE
+
+  # ── Payments (Hybrid Architecture) ─────────────────────────────────────
+  initiatePayment:
+    handler: dist/handlers/payment.initiatePayment
+    events:
+      - httpApi:
+          path: /payment/initiate
+          method: POST
+    environment:
+      FIREBASE_DB_URL: ${env:FIREBASE_DB_URL}
+      FIREBASE_SERVICE_ACCOUNT: ${env:FIREBASE_SERVICE_ACCOUNT}
+
+  paymentWebhook:
+    handler: dist/handlers/payment.paymentWebhook
+    events:
+      - httpApi:
+          path: /payment/webhook
+          method: POST
+    environment:
+      FIREBASE_DB_URL: ${env:FIREBASE_DB_URL}
+      FIREBASE_SERVICE_ACCOUNT: ${env:FIREBASE_SERVICE_ACCOUNT}
+
+
+  # ── Storage (Signed URLs) ──────────────────────────────────────────────
+  getSignedUrl:
+    handler: dist/handlers/storage.getSignedUrl
+    events:
+      - httpApi:
+          path: /storage/signed-url
+          method: GET
+    description: Generate pre-signed S3 URL for upload/download
+
+  # ── Notifications ──────────────────────────────────────────────────────
+  registerDevice:
+    handler: dist/handlers/notification.registerDevice
+    events:
+      - httpApi:
+          path: /notifications/register-device
+          method: POST
+    description: Register device FCM token for push notifications
+
+  # ── Vendor-Customer Linking (QR Handshake) ──────────────────────────
+  linkingGenerateToken:
+    handler: dist/handlers/linking.generateToken
+    events:
+      - httpApi:
+          path: /linking/generate-token
+          method: POST
+
+  linkingLink:
+    handler: dist/handlers/linking.link
+    events:
+      - httpApi:
+          path: /linking/link
+          method: POST
+
+  linkingMyVendors:
+    handler: dist/handlers/linking.myVendors
+    events:
+      - httpApi:
+          path: /linking/my-vendors
+          method: GET
+
+  linkingMyCustomers:
+    handler: dist/handlers/linking.myCustomers
+    events:
+      - httpApi:
+          path: /linking/my-customers
+          method: GET
+
+  linkingRevoke:
+    handler: dist/handlers/linking.revokeLink
+    events:
+      - httpApi:
+          path: /linking/{userId}
+          method: DELETE
+
+  # ── Invoices ─────────────────────────────────────────────────────────
+  createInvoice:
+    handler: dist/handlers/invoices.createInvoice
+    events:
+      - httpApi:
+          path: /invoices
+          method: POST
+
+  finalizeInvoice:
+    handler: dist/handlers/invoices.finalizeInvoice
+    events:
+      - httpApi:
+          path: /invoices/{id}/finalize
+          method: POST
+
+  # ── Stock Management ─────────────────────────────────────────────────
+  stockLookupBarcode:
+    handler: dist/handlers/stock.lookupBarcode
+    events:
+      - httpApi:
+          path: /stock/lookup-barcode
+          method: POST
+
+  stockAnalyzeImage:
+    handler: dist/handlers/stock.analyzeImage
+    events:
+      - httpApi:
+          path: /stock/analyze-image
+          method: POST
+
+  stockAdd:
+    handler: dist/handlers/stock.addStock
+    events:
+      - httpApi:
+          path: /stock/add
+          method: POST
+
+  # ── Offline Sync (Push/Pull) ─────────────────────────────────────────
+  syncPush:
+    handler: dist/handlers/sync.pushChanges
+    events:
+      - httpApi:
+          path: /sync/push
+          method: POST
+    timeout: 30
+
+  syncPull:
+    handler: dist/handlers/sync.pullChanges
+    events:
+      - httpApi:
+          path: /sync/pull
+          method: POST
+    timeout: 30
+
+  # ── AI Insights ──────────────────────────────────────────────────────
+  aiInsight:
+    handler: dist/handlers/insights.aiInsight
+    events:
+      - httpApi:
+          path: /insights/ai-insight
+          method: POST
+
+  # ── Invoices — Extended ─────────────────────────────────────────────
+  voidInvoice:
+    handler: dist/handlers/invoices.voidInvoice
+    events:
+      - httpApi:
+          path: /invoices/{id}/void
+          method: POST
+
+  sendInvoice:
+    handler: dist/handlers/invoices.sendInvoice
+    events:
+      - httpApi:
+          path: /invoices/{id}/send
+          method: POST
+
+  # ── Payments ─────────────────────────────────────────────────────────
+  listPayments:
+    handler: dist/handlers/payments.listPayments
+    events:
+      - httpApi:
+          path: /payments
+          method: GET
+
+  getPayment:
+    handler: dist/handlers/payments.getPayment
+    events:
+      - httpApi:
+          path: /payments/{id}
+          method: GET
+
+  recordPayment:
+    handler: dist/handlers/payments.recordPayment
+    events:
+      - httpApi:
+          path: /payments
+          method: POST
+
+  # ── Customers ────────────────────────────────────────────────────────
+  listCustomers:
+    handler: dist/handlers/customers.listCustomers
+    events:
+      - httpApi:
+          path: /customers
+          method: GET
+
+  getCustomerLedger:
+    handler: dist/handlers/customers.getCustomerLedger
+    events:
+      - httpApi:
+          path: /customers/{id}/ledger
+          method: GET
+
+  # ── Products ─────────────────────────────────────────────────────────
+  listProducts:
+    handler: dist/handlers/products.listProducts
+    events:
+      - httpApi:
+          path: /products
+          method: GET
+
+  # ── Reports ──────────────────────────────────────────────────────────
+  salesReport:
+    handler: dist/handlers/reports.salesReport
+    events:
+      - httpApi:
+          path: /reports/sales
+          method: GET
+    timeout: 30
+
+  gstr1Report:
+    handler: dist/handlers/reports.gstr1Report
+    events:
+      - httpApi:
+          path: /reports/gstr1
+          method: GET
+    timeout: 30
+
+  # ── Admin ────────────────────────────────────────────────────────────
+  killSwitch:
+    handler: dist/handlers/admin.killSwitch
+    events:
+      - httpApi:
+          path: /admin/kill-switch
+          method: POST
+
+  systemStatus:
+    handler: dist/handlers/admin.systemStatus
+    events:
+      - httpApi:
+          path: /admin/status
+          method: GET
+
+# ============================================================================
+# RESOURCES (CloudFormation)
+# ============================================================================
+resources:
+  Resources:
+
+    # ══════════════════════════════════════════════════════════════════════
+    # COGNITO USER POOL
+    # ══════════════════════════════════════════════════════════════════════
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      DeletionPolicy: Retain
+      Properties:
+        UserPoolName: bizmate-users-${self:provider.stage}
+        AutoVerifiedAttributes:
+          - email
+        UsernameAttributes:
+          - email
+        MfaConfiguration: OPTIONAL
+        EnabledMfas:
+          - SOFTWARE_TOKEN_MFA
+        AccountRecoverySetting:
+          RecoveryMechanisms:
+            - Name: verified_email
+              Priority: 1
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireSymbols: false
+            RequireUppercase: true
+            TemporaryPasswordValidityDays: 7
+        Schema:
+          - Name: email
+            AttributeDataType: String
+            Mutable: true
+            Required: true
+          - Name: phone_number
+            AttributeDataType: String
+            Mutable: true
+            Required: false
+          # ── Custom Attributes for Multi-Tenancy ──
+          - Name: tenant_id
+            AttributeDataType: String
+            Mutable: true
+          - Name: role
+            AttributeDataType: String
+            Mutable: true
+            # Values: owner, admin, manager, accountant, cashier, staff, customer
+          - Name: business_type
+            AttributeDataType: String
+            Mutable: true
+          - Name: license_status
+            AttributeDataType: String
+            Mutable: true
+            # Values: active, expired, suspended, trial
+          - Name: firebase_uid
+            AttributeDataType: String
+            Mutable: true
+            # Preserves original Firebase UID for migration mapping
+        UserPoolAddOns:
+          AdvancedSecurityMode: OFF
+        EmailConfiguration:
+          EmailSendingAccount: COGNITO_DEFAULT
+
+    # ══════════════════════════════════════════════════════════════════════
+    # USER GROUPS — Role-Based Access Control
+    # ══════════════════════════════════════════════════════════════════════
+    GroupSuperAdmin:
+      Type: AWS::Cognito::UserPoolGroup
+      Properties:
+        GroupName: SuperAdmin
+        UserPoolId: !Ref CognitoUserPool
+        Description: Platform super-administrators (you)
+        Precedence: 0
+
+    GroupBusinessOwner:
+      Type: AWS::Cognito::UserPoolGroup
+      Properties:
+        GroupName: BusinessOwner
+        UserPoolId: !Ref CognitoUserPool
+        Description: Business owners who manage their own tenant
+        Precedence: 10
+
+    GroupStaff:
+      Type: AWS::Cognito::UserPoolGroup
+      Properties:
+        GroupName: Staff
+        UserPoolId: !Ref CognitoUserPool
+        Description: Staff members (manager, cashier, accountant, etc.)
+        Precedence: 20
+
+    GroupCustomer:
+      Type: AWS::Cognito::UserPoolGroup
+      Properties:
+        GroupName: Customer
+        UserPoolId: !Ref CognitoUserPool
+        Description: End customers using the Customer Dashboard app
+        Precedence: 30
+
+    # ══════════════════════════════════════════════════════════════════════
+    # APP CLIENTS — Separate per platform
+    # ══════════════════════════════════════════════════════════════════════
+
+    # Desktop App Client (Electron/Flutter — public client, no secret)
+    DesktopAppClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: bizmate-desktop-${self:provider.stage}
+        UserPoolId: !Ref CognitoUserPool
+        GenerateSecret: false
+        ExplicitAuthFlows:
+          - ALLOW_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+          - ALLOW_USER_SRP_AUTH
+        PreventUserExistenceErrors: ENABLED
+        TokenValidityUnits:
+          AccessToken: hours
+          IdToken: hours
+          RefreshToken: days
+        AccessTokenValidity: 1          # 1 hour
+        IdTokenValidity: 1              # 1 hour
+        RefreshTokenValidity: 90        # 90 days (desktop needs longer offline)
+        ReadAttributes:
+          - email
+          - phone_number
+          - custom:tenant_id
+          - custom:role
+          - custom:business_type
+          - custom:license_status
+          - custom:firebase_uid
+        WriteAttributes:
+          - email
+          - phone_number
+
+    # Mobile App Client (React Native / Flutter — public client, no secret)
+    MobileAppClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: bizmate-mobile-${self:provider.stage}
+        UserPoolId: !Ref CognitoUserPool
+        GenerateSecret: false
+        ExplicitAuthFlows:
+          - ALLOW_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+          - ALLOW_USER_SRP_AUTH
+        PreventUserExistenceErrors: ENABLED
+        TokenValidityUnits:
+          AccessToken: hours
+          IdToken: hours
+          RefreshToken: days
+        AccessTokenValidity: 1          # 1 hour
+        IdTokenValidity: 1              # 1 hour
+        RefreshTokenValidity: 30        # 30 days
+        ReadAttributes:
+          - email
+          - phone_number
+          - custom:tenant_id
+          - custom:role
+          - custom:business_type
+          - custom:license_status
+          - custom:firebase_uid
+        WriteAttributes:
+          - email
+          - phone_number
+
+    # Admin Panel Client (Next.js web — confidential client with secret)
+    AdminPanelClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: bizmate-admin-${self:provider.stage}
+        UserPoolId: !Ref CognitoUserPool
+        GenerateSecret: true
+        ExplicitAuthFlows:
+          - ALLOW_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+          - ALLOW_USER_SRP_AUTH
+        PreventUserExistenceErrors: ENABLED
+        TokenValidityUnits:
+          AccessToken: minutes
+          IdToken: minutes
+          RefreshToken: days
+        AccessTokenValidity: 30         # 30 minutes (tighter for admin)
+        IdTokenValidity: 30             # 30 minutes
+        RefreshTokenValidity: 7         # 7 days
+        ReadAttributes:
+          - email
+          - phone_number
+          - custom:tenant_id
+          - custom:role
+          - custom:business_type
+          - custom:license_status
+          - custom:firebase_uid
+        WriteAttributes:
+          - email
+
+    # Legacy combined client (kept for backward compat during migration)
+    CognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: bizmate-app-${self:provider.stage}
+        UserPoolId: !Ref CognitoUserPool
+        GenerateSecret: false
+        ExplicitAuthFlows:
+          - ALLOW_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+          - ALLOW_USER_SRP_AUTH
+        TokenValidityUnits:
+          AccessToken: hours
+          IdToken: hours
+          RefreshToken: days
+        AccessTokenValidity: 1
+        IdTokenValidity: 1
+        RefreshTokenValidity: 30
+        ReadAttributes:
+          - email
+          - custom:tenant_id
+          - custom:role
+          - custom:business_type
+        WriteAttributes:
+          - email
+
+    # ══════════════════════════════════════════════════════════════════════
+    # COGNITO IDENTITY POOL + IAM ROLES
+    # Moved to cf-iam-roles.yml (deployed separately via aws cloudformation)
+    # Reason: SLS v4 cannot resolve ${cognito-identity.amazonaws.com:sub}
+    # ══════════════════════════════════════════════════════════════════════
+    # CognitoIdentityPool:
+    #   See cf-iam-roles.yml for Identity Pool + IAM roles
+
+    # IdentityPoolRoleAttachment:
+    #   See cf-iam-roles.yml
+
+    # ══════════════════════════════════════════════════════════════════════
+    # S3 BUCKET (Tenant Storage)
+    # ══════════════════════════════════════════════════════════════════════
+    TenantStorageBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: bizmate-storage-${self:provider.stage}-${aws:accountId}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: ['*']
+              AllowedMethods: [GET, PUT]
+              AllowedOrigins: ['*']
+              MaxAge: 3600
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+        LifecycleConfiguration:
+          Rules:
+            - Id: ArchiveOldReports
+              Prefix: tenants/
+              Status: Enabled
+              Transitions:
+                - StorageClass: GLACIER
+                  TransitionInDays: 90
+
+  # ══════════════════════════════════════════════════════════════════════
+  # OUTPUTS
+  # ══════════════════════════════════════════════════════════════════════
+  Outputs:
+    CognitoUserPoolId:
+      Value: !Ref CognitoUserPool
+      Description: Cognito User Pool ID
+
+    CognitoUserPoolArn:
+      Value: !GetAtt CognitoUserPool.Arn
+      Description: Cognito User Pool ARN
+
+    # Legacy client (backward compat)
+    CognitoUserPoolClientId:
+      Value: !Ref CognitoUserPoolClient
+      Description: Legacy Cognito App Client ID
+
+    # Per-platform clients
+    DesktopAppClientId:
+      Value: !Ref DesktopAppClient
+      Description: Desktop App Cognito Client ID
+
+    MobileAppClientId:
+      Value: !Ref MobileAppClient
+      Description: Mobile App Cognito Client ID
+
+    AdminPanelClientId:
+      Value: !Ref AdminPanelClient
+      Description: Admin Panel Cognito Client ID
+
+    # IdentityPoolId: deployed separately via cf-iam-roles.yml
+
+    S3BucketName:
+      Value: !Ref TenantStorageBucket
+      Description: Tenant storage bucket name
+
+    ApiEndpoint:
+      Value: !GetAtt HttpApi.ApiEndpoint
+      Description: HTTP API Gateway endpoint URL
+
+# ============================================================================
+# PLUGINS
+# ============================================================================
+plugins:
+  - serverless-offline       # Local development

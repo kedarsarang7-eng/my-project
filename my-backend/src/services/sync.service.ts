@@ -199,6 +199,10 @@ const TABLE_TO_SK_PREFIX: Record<string, string> = {
     // Vegetable Broker
     farmers: 'FARMER#',
     commission_ledger: 'COMMLEDGER#',
+    vegetable_lots: 'VEGLOT#',
+    mandi_settlements: 'MANDISETTLEMENT#',
+    rate_history: 'RATEHISTORY#',
+    mandi_buyers: 'MANDIBUYER#',
 
     // Manufacturing
     bill_of_materials: 'BOM#',

@@ -1,0 +1,16 @@
+{
+  "extends": "../../../../my-backend/tsconfig.json",
+  "compilerOptions": {
+    "types": ["jest", "node", "aws-lambda"],
+    "typeRoots": [
+      "../../../../my-backend/node_modules/@types"
+    ],
+    "allowJs": true,
+    "rootDir": "../../../../"
+  },
+  "include": [
+    "../../../../my-backend/src/**/*.ts",
+    "../../../../lambda/**/*.mjs",
+    "./**/*.ts"
+  ]
+}

@@ -1,0 +1,565 @@
+{
+  "grocery": {
+    "type": "grocery",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "unit",
+      "price"
+    ],
+    "optionalFields": [
+      "discount",
+      "gst",
+      "brand"
+    ],
+    "defaultGstRate": 0.0,
+    "gstEditable": true,
+    "unitOptions": [
+      "pcs",
+      "kg",
+      "gm",
+      "ltr",
+      "nos"
+    ],
+    "itemLabel": "Item",
+    "addItemLabel": "Add Item",
+    "priceLabel": "Rate",
+    "modules": [
+      "inventory",
+      "sales",
+      "returns",
+      "expenses",
+      "reports"
+    ]
+  },
+  "pharmacy": {
+    "type": "pharmacy",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price",
+      "batchNo",
+      "expiryDate",
+      "drugSchedule"
+    ],
+    "optionalFields": [
+      "doctorName",
+      "hsnCode"
+    ],
+    "defaultGstRate": 12.0,
+    "gstEditable": false,
+    "unitOptions": [
+      "pcs",
+      "strip",
+      "ml",
+      "gm",
+      "box"
+    ],
+    "itemLabel": "Medicine",
+    "addItemLabel": "Add Medicine",
+    "priceLabel": "MRP",
+    "modules": [
+      "inventory",
+      "prescriptions",
+      "sales",
+      "returns",
+      "suppliers",
+      "reports"
+    ]
+  },
+  "restaurant": {
+    "type": "restaurant",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price"
+    ],
+    "optionalFields": [
+      "isHalf",
+      "tableNo",
+      "isParcel"
+    ],
+    "defaultGstRate": 5.0,
+    "gstEditable": false,
+    "unitOptions": [
+      "pcs",
+      "nos"
+    ],
+    "itemLabel": "Dish",
+    "addItemLabel": "Add Dish",
+    "priceLabel": "Price",
+    "modules": [
+      "menu",
+      "sales",
+      "kot",
+      "tables",
+      "reports"
+    ]
+  },
+  "clothing": {
+    "type": "clothing",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price",
+      "size"
+    ],
+    "optionalFields": [
+      "color",
+      "brand",
+      "discount",
+      "gst"
+    ],
+    "defaultGstRate": 5.0,
+    "gstEditable": true,
+    "unitOptions": [
+      "pcs",
+      "set",
+      "mtr"
+    ],
+    "itemLabel": "Item",
+    "addItemLabel": "Add Item",
+    "priceLabel": "Price",
+    "modules": [
+      "inventory",
+      "sales",
+      "returns",
+      "reports"
+    ]
+  },
+  "electronics": {
+    "type": "electronics",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price",
+      "brand",
+      "hsnCode"
+    ],
+    "optionalFields": [
+      "serialNo",
+      "warrantyMonths",
+      "discount"
+    ],
+    "defaultGstRate": 18.0,
+    "gstEditable": false,
+    "unitOptions": [
+      "pcs",
+      "set",
+      "nos"
+    ],
+    "itemLabel": "Product",
+    "addItemLabel": "Add Product",
+    "priceLabel": "MRP",
+    "modules": [
+      "inventory",
+      "sales",
+      "returns",
+      "warranty",
+      "reports"
+    ]
+  },
+  "mobileShop": {
+    "type": "mobileShop",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price",
+      "brand",
+      "serialNo",
+      "hsnCode"
+    ],
+    "optionalFields": [
+      "warrantyMonths",
+      "color",
+      "discount"
+    ],
+    "defaultGstRate": 18.0,
+    "gstEditable": false,
+    "unitOptions": [
+      "pcs",
+      "set",
+      "nos"
+    ],
+    "itemLabel": "Mobile",
+    "addItemLabel": "Add Mobile",
+    "priceLabel": "MRP",
+    "modules": [
+      "inventory",
+      "sales",
+      "repairs",
+      "second_hand",
+      "reports"
+    ]
+  },
+  "computerShop": {
+    "type": "computerShop",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price",
+      "brand",
+      "hsnCode"
+    ],
+    "optionalFields": [
+      "serialNo",
+      "warrantyMonths",
+      "discount",
+      "notes"
+    ],
+    "defaultGstRate": 18.0,
+    "gstEditable": false,
+    "unitOptions": [
+      "pcs",
+      "set",
+      "nos"
+    ],
+    "itemLabel": "Product",
+    "addItemLabel": "Add Product",
+    "priceLabel": "MRP",
+    "modules": [
+      "inventory",
+      "sales",
+      "repairs",
+      "custom_builds",
+      "reports"
+    ]
+  },
+  "hardware": {
+    "type": "hardware",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "unit",
+      "price",
+      "gst"
+    ],
+    "optionalFields": [
+      "brand",
+      "weight",
+      "dimensions",
+      "hsnCode",
+      "batchNo"
+    ],
+    "defaultGstRate": 18.0,
+    "gstEditable": true,
+    "unitOptions": [
+      "pcs",
+      "kg",
+      "ft",
+      "mtr",
+      "box",
+      "nos"
+    ],
+    "itemLabel": "Item",
+    "addItemLabel": "Add Item",
+    "priceLabel": "Rate",
+    "modules": [
+      "inventory",
+      "sales",
+      "returns",
+      "quotations",
+      "reports"
+    ]
+  },
+  "service": {
+    "type": "service",
+    "requiredFields": [
+      "itemName",
+      "laborCharge"
+    ],
+    "optionalFields": [
+      "partsCharge",
+      "notes",
+      "gst"
+    ],
+    "defaultGstRate": 18.0,
+    "gstEditable": true,
+    "unitOptions": [
+      "pcs",
+      "hr",
+      "nos"
+    ],
+    "itemLabel": "Service",
+    "addItemLabel": "Add Service",
+    "priceLabel": "Labor",
+    "modules": [
+      "jobs",
+      "invoices",
+      "customers",
+      "reports"
+    ]
+  },
+  "wholesale": {
+    "type": "wholesale",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price"
+    ],
+    "optionalFields": [
+      "unit",
+      "discount",
+      "gst",
+      "hsnCode",
+      "drugSchedule",
+      "batchNo",
+      "expiryDate"
+    ],
+    "defaultGstRate": 18.0,
+    "gstEditable": true,
+    "unitOptions": [
+      "pcs",
+      "box",
+      "kg"
+    ],
+    "itemLabel": "Product",
+    "addItemLabel": "Add Product",
+    "priceLabel": "Rate",
+    "modules": [
+      "inventory",
+      "sales",
+      "bulk_orders",
+      "customers",
+      "reports"
+    ]
+  },
+  "petrolPump": {
+    "type": "petrolPump",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price"
+    ],
+    "optionalFields": [
+      "nozzleId",
+      "fuelType",
+      "litres",
+      "vehicleNumber",
+      "gst"
+    ],
+    "defaultGstRate": 0.0,
+    "gstEditable": false,
+    "unitOptions": [
+      "ltr",
+      "kg"
+    ],
+    "itemLabel": "Fuel",
+    "addItemLabel": "Add Fuel",
+    "priceLabel": "Rate/Ltr",
+    "modules": [
+      "inventory",
+      "sales",
+      "shifts",
+      "reading",
+      "reports"
+    ]
+  },
+  "clinic": {
+    "type": "clinic",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price"
+    ],
+    "optionalFields": [
+      "doctorName",
+      "batchNo",
+      "expiryDate",
+      "drugSchedule"
+    ],
+    "defaultGstRate": 0.0,
+    "gstEditable": true,
+    "unitOptions": [
+      "pcs",
+      "strip",
+      "nos"
+    ],
+    "itemLabel": "Medicine/Service",
+    "addItemLabel": "Add Med/Service",
+    "priceLabel": "Charge",
+    "modules": [
+      "appointments",
+      "patients",
+      "prescriptions",
+      "inventory",
+      "reports"
+    ]
+  },
+  "bookStore": {
+    "type": "bookStore",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price"
+    ],
+    "optionalFields": [
+      "isbn",
+      "brand",
+      "discount",
+      "gst"
+    ],
+    "defaultGstRate": 12.0,
+    "gstEditable": true,
+    "unitOptions": [
+      "pcs",
+      "set"
+    ],
+    "itemLabel": "Book",
+    "addItemLabel": "Add Book",
+    "priceLabel": "MRP",
+    "modules": [
+      "inventory",
+      "sales",
+      "school_orders",
+      "reports"
+    ]
+  },
+  "jewellery": {
+    "type": "jewellery",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price",
+      "metalWeight"
+    ],
+    "optionalFields": [
+      "makingCharges",
+      "purity",
+      "gst",
+      "discount"
+    ],
+    "defaultGstRate": 3.0,
+    "gstEditable": false,
+    "unitOptions": [
+      "gm",
+      "pcs"
+    ],
+    "itemLabel": "Jewellery",
+    "addItemLabel": "Add Item",
+    "priceLabel": "Rate/Gm",
+    "modules": [
+      "inventory",
+      "sales",
+      "custom_orders",
+      "reports"
+    ]
+  },
+  "autoParts": {
+    "type": "autoParts",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price"
+    ],
+    "optionalFields": [
+      "vehicleModel",
+      "brand",
+      "hsnCode",
+      "discount",
+      "gst"
+    ],
+    "defaultGstRate": 28.0,
+    "gstEditable": true,
+    "unitOptions": [
+      "pcs",
+      "nos",
+      "set"
+    ],
+    "itemLabel": "Part",
+    "addItemLabel": "Add Part",
+    "priceLabel": "MRP",
+    "modules": [
+      "inventory",
+      "sales",
+      "returns",
+      "reports"
+    ]
+  },
+  "decorationCatering": {
+    "type": "decorationCatering",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price"
+    ],
+    "optionalFields": [
+      "notes",
+      "gst",
+      "discount"
+    ],
+    "defaultGstRate": 18.0,
+    "gstEditable": true,
+    "unitOptions": [
+      "pcs",
+      "set",
+      "nos"
+    ],
+    "itemLabel": "Service/Item",
+    "addItemLabel": "Add Service/Item",
+    "priceLabel": "Charge",
+    "modules": [
+      "events",
+      "sales",
+      "caterers",
+      "inventory",
+      "reports"
+    ]
+  },
+  "schoolErp": {
+    "type": "schoolErp",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price"
+    ],
+    "optionalFields": [
+      "notes",
+      "gst"
+    ],
+    "defaultGstRate": 0.0,
+    "gstEditable": true,
+    "unitOptions": [
+      "pcs",
+      "set"
+    ],
+    "itemLabel": "Fee/Item",
+    "addItemLabel": "Add Fee/Item",
+    "priceLabel": "Amount",
+    "modules": [
+      "students",
+      "fees",
+      "attendance",
+      "exams",
+      "reports"
+    ]
+  },
+  "other": {
+    "type": "other",
+    "requiredFields": [
+      "itemName",
+      "quantity",
+      "price"
+    ],
+    "optionalFields": [
+      "unit",
+      "discount",
+      "gst"
+    ],
+    "defaultGstRate": 0.0,
+    "gstEditable": true,
+    "unitOptions": [
+      "pcs",
+      "kg",
+      "ltr"
+    ],
+    "itemLabel": "Item",
+    "addItemLabel": "Add Item",
+    "priceLabel": "Price",
+    "modules": [
+      "inventory",
+      "sales",
+      "reports"
+    ]
+  }
+}

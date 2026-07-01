@@ -1,0 +1,41 @@
+# Fixture: CloudFormation API Gateway template.
+# Exercises the config scanner's ApiGatewayV2::Route handling (REST + WebSocket
+# route keys) and the ApiGateway::Method + Resource tree path reconstruction
+# (Requirements 1.2, 1.5). CloudFormation intrinsics (!Ref, !GetAtt) are used
+# to confirm they parse and resolve.
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      RouteKey: $connect
+
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      RouteKey: $disconnect
+
+  SendMessageRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      RouteKey: POST /messages
+
+  RestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: products-api
+
+  ProductsResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !GetAtt RestApi.RootResourceId
+      PathPart: products
+
+  ProductsGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      ResourceId: !Ref ProductsResource
+      RestApiId: !Ref RestApi
