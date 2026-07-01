@@ -130,6 +130,8 @@ enum BusinessCapability {
   // Book Store
   useISBN,
   usePublisherReturns,
+  useSchoolOrders,
+  useConsignmentSettlement,
 
   // Jewellery
   useLoyaltyPoints,
@@ -837,6 +839,8 @@ final Map<String, Set<BusinessCapability>> businessCapabilityRegistry = {
     BusinessCapability.useBarcodeScanner,
     BusinessCapability.useScanOCR,
     BusinessCapability.useStockManagement,
+    BusinessCapability.useSchoolOrders,
+    BusinessCapability.useConsignmentSettlement,
   },
   // ──────────────────────────────────────────────────────────────────────────
   // Jewellery vertical — Phase 3 capability grant (Requirement 9.1, 9.2, 9.5).

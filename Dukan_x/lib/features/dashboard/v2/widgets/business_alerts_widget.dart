@@ -35,6 +35,7 @@ import '../../../../features/academic_coaching/data/repositories/ac_repository.d
 import '../../../../features/decoration_catering/data/repositories/dc_repository.dart';
 import '../../../../features/hardware/data/hardware_ops_repository.dart';
 import '../../../../features/jewellery/data/repositories/jewellery_repository_offline.dart';
+import '../../../../features/book_store/data/book_repository.dart';
 import '../../../../features/restaurant/providers/restaurant_alert_counts_provider.dart';
 import '../../../../features/service/data/repositories/imei_serial_repository.dart';
 import '../../../../features/service/models/service_job.dart';
@@ -970,6 +971,98 @@ final hardwareKpisProvider = FutureProvider.autoDispose<HardwareKpis>((
   );
 });
 
+/// Book Store dashboard alert snapshot — two tenant-scoped counts:
+///   1. Bestsellers Low Stock: total items from `GET /book-store/low-stock`
+///   2. Category Stock Low: distinct categories with low-stock items (local Drift)
+///
+/// Each metric is fetched independently — a single failing query marks that
+/// metric as unavailable without blanking the other (F11, R7.6, R7.9, R7.10).
+class BookStoreAlertSnapshot {
+  const BookStoreAlertSnapshot({
+    required this.bestsellersLowStock,
+    required this.categoriesLowStock,
+    this.bestsellersAvailable = true,
+    this.categoriesAvailable = true,
+  });
+
+  /// Total number of books below their low-stock threshold (from the
+  /// deployed `GET /book-store/low-stock` endpoint via BookRepository).
+  final int bestsellersLowStock;
+
+  /// Number of distinct product categories that contain at least one
+  /// low-stock item (from local tenant-scoped Drift query).
+  final int categoriesLowStock;
+
+  /// Whether each metric was successfully fetched.
+  final bool bestsellersAvailable;
+  final bool categoriesAvailable;
+}
+
+/// Provider that fetches real book-store alert counts from [BookRepository]
+/// and the local Drift database, tenant-scoped via the authenticated session.
+///
+/// Requirements: 7.6, 7.8, 7.9, 7.10 (F11, F19)
+final bookStoreAlertCountsProvider =
+    FutureProvider.autoDispose<BookStoreAlertSnapshot>((ref) async {
+      final session = sl<SessionManager>();
+      final userId = session.userId;
+      if (userId == null) {
+        return const BookStoreAlertSnapshot(
+          bestsellersLowStock: 0,
+          bestsellersAvailable: false,
+          categoriesLowStock: 0,
+          categoriesAvailable: false,
+        );
+      }
+
+      final bookRepo = ref.read(bookRepositoryProvider);
+
+      // --- Bestsellers Low Stock (from deployed endpoint) ---
+      int bestsellers = 0;
+      bool bestsellersOk = true;
+      try {
+        final result = await bookRepo.getLowStockBooks();
+        result.fold(
+          (failure) {
+            bestsellersOk = false;
+          },
+          (items) {
+            bestsellers = items.length;
+          },
+        );
+      } catch (_) {
+        bestsellersOk = false;
+      }
+
+      // --- Category Stock Low (distinct categories from local Drift) ---
+      int categoriesLow = 0;
+      bool categoriesOk = true;
+      try {
+        final db = sl<AppDatabase>();
+        final lowStockProducts = await (db.select(
+          db.products,
+        )..where((t) => t.userId.equals(userId) & t.deletedAt.isNull())).get();
+        final categoriesWithLowStock = <String>{};
+        for (final p in lowStockProducts) {
+          if (p.stockQuantity <= p.lowStockThreshold &&
+              p.category != null &&
+              p.category!.isNotEmpty) {
+            categoriesWithLowStock.add(p.category!);
+          }
+        }
+        categoriesLow = categoriesWithLowStock.length;
+      } catch (_) {
+        categoriesOk = false;
+      }
+
+      return BookStoreAlertSnapshot(
+        bestsellersLowStock: bestsellers,
+        bestsellersAvailable: bestsellersOk,
+        categoriesLowStock: categoriesLow,
+        categoriesAvailable: categoriesOk,
+      );
+    });
+
 /// Business-specific alerts widget for Dashboard V2.
 /// Shows relevant alerts based on business type:
 /// - Grocery/Pharmacy: Expiry alerts, low stock
@@ -1088,6 +1181,11 @@ class BusinessAlertsWidget extends ConsumerWidget {
                             .watch(schoolAlertCountsProvider)
                             .maybeWhen(data: (s) => s, orElse: () => null)
                       : null,
+                  bookStoreSnapshot: businessType == BusinessType.bookStore
+                      ? ref
+                            .watch(bookStoreAlertCountsProvider)
+                            .maybeWhen(data: (s) => s, orElse: () => null)
+                      : null,
                 ),
               ),
               loading: () => const Center(
@@ -1125,6 +1223,11 @@ class BusinessAlertsWidget extends ConsumerWidget {
                   schoolSnapshot: businessType == BusinessType.schoolErp
                       ? ref
                             .watch(schoolAlertCountsProvider)
+                            .maybeWhen(data: (s) => s, orElse: () => null)
+                      : null,
+                  bookStoreSnapshot: businessType == BusinessType.bookStore
+                      ? ref
+                            .watch(bookStoreAlertCountsProvider)
                             .maybeWhen(data: (s) => s, orElse: () => null)
                       : null,
                 ),
@@ -1222,6 +1325,7 @@ class BusinessAlertsWidget extends ConsumerWidget {
     JewelleryAlertSnapshot? jewellerySnapshot,
     SchoolAlertSnapshot? schoolSnapshot,
     ElectronicsAlertSnapshot? electronicsSnapshot,
+    BookStoreAlertSnapshot? bookStoreSnapshot,
   }) {
     final alerts = <Widget>[];
 
@@ -1518,13 +1622,27 @@ class BusinessAlertsWidget extends ConsumerWidget {
         break;
 
       case BusinessType.bookStore:
+        // Real counts from the tenant-scoped bookStoreAlertCountsProvider
+        // (F11, R7.6). Shows '...' while loading (snapshot == null) and '0'
+        // when the query returns no data (R7.9).
+        final bsLowStock = bookStoreSnapshot?.bestsellersLowStock;
+        final bsCategoriesLow = bookStoreSnapshot?.categoriesLowStock;
+        final bsLowStockAvailable =
+            bookStoreSnapshot?.bestsellersAvailable ?? false;
+        final bsCategoriesAvailable =
+            bookStoreSnapshot?.categoriesAvailable ?? false;
+
         alerts.add(
           _buildAlertItem(
             icon: Icons.menu_book_outlined,
             color: FuturisticColors.warning,
             title: 'Bestsellers Low Stock',
             subtitle: 'Fast-moving titles',
-            count: '11',
+            count: bookStoreSnapshot == null
+                ? '...'
+                : bsLowStockAvailable
+                ? _displayCount(bsLowStock ?? 0)
+                : '!',
           ),
         );
         alerts.add(
@@ -1533,7 +1651,11 @@ class BusinessAlertsWidget extends ConsumerWidget {
             color: FuturisticColors.accent2,
             title: 'Category Stock Low',
             subtitle: 'Review by genre',
-            count: '6',
+            count: bookStoreSnapshot == null
+                ? '...'
+                : bsCategoriesAvailable
+                ? _displayCount(bsCategoriesLow ?? 0)
+                : '!',
           ),
         );
         break;

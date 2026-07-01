@@ -146,6 +146,7 @@ enum AppScreen {
   // --- BOOK STORE SPECIFIC ---
   bookCatalogue,
   bookReturns,
+  bookPos,
 
   // --- DELIVERY ---
   deliveryChallans,

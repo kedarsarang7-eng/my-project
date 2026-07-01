@@ -349,7 +349,7 @@ class BusinessQuickActions extends ConsumerWidget {
               icon: Icons.document_scanner_outlined,
               label: 'ISBN Scan',
               color: FuturisticColors.accent1,
-              onTap: () {},
+              onTap: () => nav.navigateTo(AppScreen.bookPos),
             ),
           );
         }

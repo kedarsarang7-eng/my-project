@@ -61,6 +61,10 @@ import '../../features/hardware/presentation/screens/hardware_operations_screen.
 import '../../features/accounting/screens/accounting_reports_screen.dart';
 // MANDI VERTICAL — quick-action targets (Task 18.3; R12.3, R12.4)
 import '../../features/vegetable_broker/presentation/screens/farmer_ledger_entry_screen.dart';
+// BOOK STORE VERTICAL — quick-action targets (Task 5.3; Req 5.6, 5.7, 5.8)
+import '../../features/book_store/presentation/screens/book_inventory_screen.dart';
+import '../../features/book_store/presentation/screens/book_supplier_returns_screen.dart';
+import '../../features/book_store/presentation/screens/book_pos_screen.dart';
 // JEWELLERY VERTICAL — quick-action targets (Task 8.1; Req 12.1, 12.2)
 import '../../features/jewellery/presentation/screens/custom_order_management_screen.dart';
 import '../../features/jewellery/presentation/screens/gold_rate_management_screen.dart';
@@ -236,6 +240,14 @@ class _DesktopContentHostState extends ConsumerState<DesktopContentHost> {
       // select a farmer then navigates to the individual ledger.
       AppScreen.mandiFarmerLedger: () => const FarmerLedgerEntryScreen(),
 
+      // BOOK STORE VERTICAL — quick-action targets (Task 5.3; Req 5.6, 5.7, 5.8).
+      // bookCatalogue: resolves "Book Search" quick action to the inventory screen.
+      AppScreen.bookCatalogue: () => const BookInventoryScreen(),
+      // bookReturns: resolves "Returns" quick action to the supplier returns screen.
+      AppScreen.bookReturns: () => const BookSupplierReturnsScreen(),
+      // bookPos: resolves "ISBN Scan" quick action to the POS screen (has scanner).
+      AppScreen.bookPos: () => const BookPosScreen(),
+
       // FALLBACK
       AppScreen.unknown: () =>
           const Center(child: Text("Feature under development")),
@@ -343,6 +355,16 @@ class _DesktopContentHostState extends ConsumerState<DesktopContentHost> {
         // historical placeholder behaviour byte-for-byte unchanged.
         if (screen == AppScreen.h1Register) {
           _notifyScreenUnavailable(screen, 'H1 Register');
+          return _retainPreviousScreen();
+        }
+        // BOOK STORE VERTICAL (Req 5.5): If a book-store screen cannot
+        // resolve, retain the current screen, surface an "unavailable"
+        // indication, and raise no unhandled exception — never show the
+        // "Feature Not Found" placeholder for a book_* id.
+        if (screen == AppScreen.bookCatalogue ||
+            screen == AppScreen.bookReturns ||
+            screen == AppScreen.bookPos) {
+          _notifyScreenUnavailable(screen, 'Book Store');
           return _retainPreviousScreen();
         }
         widget = SidebarNavigationHandler.getScreenForItem(screen.id, context);

@@ -215,6 +215,16 @@ List<SidebarSection> _getSectionsForBusiness(BusinessType type) {
     // other business-type case remain byte-for-byte unchanged.
     case BusinessType.schoolErp:
       return _getSchoolSections();
+    // BOOK STORE VERTICAL (Task 5.1 — Requirements 5.1, 5.2, 5.3, 1.11, 1.12).
+    // Explicit case so the bookStore sidebar no longer falls through to
+    // `default: _getRetailSections()` (F1). Returns 5 book-specific items
+    // (Book Catalogue, Book POS, Consignments, School Orders, Publisher Returns)
+    // each with a stable id, a non-whitespace label, and a BusinessCapability gate.
+    // Phase 8 sign-off: Dev_Flag removed — bookStore sidebar is now always live.
+    // BLAST RADIUS: Only this case is added. The `default` branch and every
+    // other business-type case remain byte-for-byte unchanged.
+    case BusinessType.bookStore:
+      return _getBookStoreSections();
     default:
       return _getRetailSections();
   }
@@ -2412,6 +2422,112 @@ List<SidebarSection> _getCommonSections({required int startingIndex}) {
           icon: Icons.devices_outlined,
           label: 'Settings',
           permission: 'manageSettings',
+        ),
+      ],
+    ),
+  ];
+}
+
+// ---------------------------------------------------------------------------
+// BOOK STORE VERTICAL — sidebar sections (Task 5.1).
+// ---------------------------------------------------------------------------
+
+/// Dedicated sidebar for `BusinessType.bookStore` (Requirements 5.1, 5.2, 5.3, 1.11, 1.12).
+///
+/// Returns 5 book-specific items across 5 sections — Book Catalogue, Book POS,
+/// Consignments, School/Institution Orders, and Publisher Returns. Each item carries
+/// a non-empty label, a stable `book_*` id, and a [BusinessCapability] gate so that
+/// `FeatureResolver.canAccess` in [sidebarSectionsProvider] permits granted items and
+/// filters ungranted ones.
+///
+/// For Consignments and School Orders, new dedicated capabilities are added in Phase 9
+/// (task 19.1). Until then they use `useStockManagement` as a general gate — the item
+/// will still be visible to bookStore operators since that capability is granted.
+///
+/// BLAST RADIUS: This function is NEW. It does not modify any other business type's
+/// section list, the `default` branch, or `_getRetailSections()`.
+/// Shared file touched: `sidebar_configuration.dart` — added
+/// `case BusinessType.bookStore` and this function. No other case or the default
+/// branch was modified.
+List<SidebarSection> _getBookStoreSections() {
+  return [
+    // Book Catalogue — inventory/catalogue screen.
+    SidebarSection(
+      index: 0,
+      icon: Icons.menu_book_rounded,
+      title: 'Book Catalogue',
+      accentColor: FuturisticColors.accent1,
+      shortcutHint: 'Ctrl+1',
+      items: [
+        SidebarMenuItem(
+          id: 'book_catalogue',
+          icon: Icons.library_books_outlined,
+          label: 'Book Catalogue',
+          capability: BusinessCapability.useStockManagement,
+        ),
+      ],
+    ),
+    // Book POS — point of sale screen.
+    SidebarSection(
+      index: 1,
+      icon: Icons.point_of_sale_rounded,
+      title: 'Book POS',
+      accentColor: FuturisticColors.primary,
+      shortcutHint: 'Ctrl+2',
+      items: [
+        SidebarMenuItem(
+          id: 'book_pos',
+          icon: Icons.point_of_sale_outlined,
+          label: 'Book POS',
+          capability: BusinessCapability.useBarcodeScanner,
+        ),
+      ],
+    ),
+    // Consignments — consignment settlement screen.
+    SidebarSection(
+      index: 2,
+      icon: Icons.local_shipping_rounded,
+      title: 'Consignments',
+      accentColor: FuturisticColors.success,
+      shortcutHint: 'Ctrl+3',
+      items: [
+        SidebarMenuItem(
+          id: 'book_consignments',
+          icon: Icons.inventory_outlined,
+          label: 'Consignments',
+          capability: BusinessCapability.useConsignmentSettlement,
+        ),
+      ],
+    ),
+    // School / Institution Orders — school order screen.
+    SidebarSection(
+      index: 3,
+      icon: Icons.school_rounded,
+      title: 'School / Institution Orders',
+      accentColor: FuturisticColors.warning,
+      shortcutHint: 'Ctrl+4',
+      items: [
+        SidebarMenuItem(
+          id: 'book_school_orders',
+          icon: Icons.school_outlined,
+          label: 'School Orders',
+          capability: BusinessCapability.useSchoolOrders,
+        ),
+      ],
+    ),
+    // Publisher Returns — supplier returns screen.
+    SidebarSection(
+      index: 4,
+      icon: Icons.assignment_return_rounded,
+      title: 'Publisher Returns',
+      accentColor: FuturisticColors.error,
+      shortcutHint: 'Ctrl+5',
+      items: [
+        SidebarMenuItem(
+          id: 'book_publisher_returns',
+          icon: Icons.assignment_return_outlined,
+          label: 'Publisher Returns',
+          capability: BusinessCapability.usePublisherReturns,
         ),
       ],
     ),

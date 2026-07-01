@@ -25,6 +25,18 @@ const BOOK_STORE_CONSIGNMENT_OPTS = {
     requiredFeature: FeatureKey.BOOKSTORE_CONSIGNMENT_SETTLEMENT,
 };
 
+/**
+ * Guard: Rejects the request if auth.tenantId is falsy (null, undefined, empty string).
+ * Returns a 403 response with an "Unresolved tenant" error when tenant cannot be resolved,
+ * performing no DynamoDB I/O. Returns null when the tenant is valid.
+ */
+function rejectUnresolvedTenant(auth: { tenantId: string }): ReturnType<typeof response.forbidden> | null {
+    if (!auth.tenantId) {
+        return response.error(403, 'UNRESOLVED_TENANT', 'Unresolved tenant: Tenant_Id is missing or cannot be resolved. No read or write was performed.');
+    }
+    return null;
+}
+
 function normalizeIsbn(raw: string): string {
     return raw.replace(/[-\s]/g, '').toUpperCase();
 }
@@ -37,6 +49,9 @@ function isValidIsbn(value: string): boolean {
  * GET /book-store/books?search=&category=&lowStock=true&page=1&limit=20
  */
 export const getBooks = authorizedHandler([], async (event, _context, auth) => {
+    const tenantReject = rejectUnresolvedTenant(auth);
+    if (tenantReject) return tenantReject;
+
     const params = event.queryStringParameters || {};
     const page = parseInt(params.page || '1', 10);
     const limit = Math.min(parseInt(params.limit || '20', 10), 100);
@@ -81,6 +96,9 @@ export const getBooks = authorizedHandler([], async (event, _context, auth) => {
  * GET /book-store/low-stock
  */
 export const getLowStockBooks = authorizedHandler([], async (_event, _context, auth) => {
+    const tenantReject = rejectUnresolvedTenant(auth);
+    if (tenantReject) return tenantReject;
+
     const pk = Keys.tenantPK(auth.tenantId);
     const products = await queryItems<Record<string, any>>(pk, 'PRODUCT#', {
         filterExpression: '(attribute_not_exists(isDeleted) OR isDeleted = :false)',
@@ -105,6 +123,9 @@ export const getLowStockBooks = authorizedHandler([], async (_event, _context, a
 export const createBookReturn = authorizedHandler(
     [UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER],
     async (event, _context, auth) => {
+        const tenantReject = rejectUnresolvedTenant(auth);
+        if (tenantReject) return tenantReject;
+
         // SECURITY FIX S-7: Validate input with Zod schema
         const body = JSON.parse(event.body || '{}');
         const validated = createBookReturnSchema.parse(body);
@@ -150,6 +171,9 @@ export const createBookReturn = authorizedHandler(
  * GET /book-store/returns?status=draft&page=1&limit=20
  */
 export const listBookReturns = authorizedHandler([], async (event, _context, auth) => {
+    const tenantReject = rejectUnresolvedTenant(auth);
+    if (tenantReject) return tenantReject;
+
     const params = event.queryStringParameters || {};
     const page = parseInt(params.page || '1', 10);
     const limit = Math.min(parseInt(params.limit || '20', 10), 100);
@@ -175,6 +199,9 @@ export const listBookReturns = authorizedHandler([], async (event, _context, aut
  * GET /book-store/customer-loyalty?phone=9876543210
  */
 export const customerLoyaltyLookup = authorizedHandler([], async (event, _context, auth) => {
+    const tenantReject = rejectUnresolvedTenant(auth);
+    if (tenantReject) return tenantReject;
+
     const phone = event.queryStringParameters?.phone;
     if (!phone) return response.badRequest('Missing required query parameter: phone');
 
@@ -199,6 +226,9 @@ export const customerLoyaltyLookup = authorizedHandler([], async (event, _contex
  * GET /book-store/isbn/{isbn} — ISBN scan auto-fill lookup
  */
 export const lookupBookByIsbn = authorizedHandler([], async (event, _context, auth) => {
+    const tenantReject = rejectUnresolvedTenant(auth);
+    if (tenantReject) return tenantReject;
+
     const rawIsbn = event.pathParameters?.isbn || '';
     if (!rawIsbn) return response.badRequest('Missing ISBN');
 
@@ -248,6 +278,9 @@ export const lookupBookByIsbn = authorizedHandler([], async (event, _context, au
 export const createInstitutionalOrder = authorizedHandler(
     [UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER],
     async (event, _context, auth) => {
+        const tenantReject = rejectUnresolvedTenant(auth);
+        if (tenantReject) return tenantReject;
+
         const body = JSON.parse(event.body || '{}');
         const validated = (await import('../schemas')).createInstitutionalOrderSchema.parse(body);
 
@@ -302,6 +335,9 @@ export const createInstitutionalOrder = authorizedHandler(
 export const createConsignment = authorizedHandler(
     [UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER],
     async (event, _context, auth) => {
+        const tenantReject = rejectUnresolvedTenant(auth);
+        if (tenantReject) return tenantReject;
+
         const body = JSON.parse(event.body || '{}');
         const validated = (await import('../schemas')).createConsignmentSchema.parse(body);
 
@@ -355,6 +391,9 @@ export const createConsignment = authorizedHandler(
 export const settleConsignment = authorizedHandler(
     [UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER],
     async (event, _context, auth) => {
+        const tenantReject = rejectUnresolvedTenant(auth);
+        if (tenantReject) return tenantReject;
+
         const consignmentId = event.pathParameters?.id;
         if (!consignmentId) return response.badRequest('Missing consignment id');
 
@@ -365,6 +404,11 @@ export const settleConsignment = authorizedHandler(
 
         const consignment = await getItem<Record<string, any>>(pk, `CONSIGNMENT#${consignmentId}`);
         if (!consignment) return response.notFound('Consignment');
+
+        // Cross-tenant check: deny access if the record belongs to a different tenant
+        if (consignment.tenantId && consignment.tenantId !== auth.tenantId) {
+            return response.notFound('Consignment');
+        }
 
         const settlementId = crypto.randomUUID();
         const settlement = {
@@ -413,6 +457,9 @@ export const settleConsignment = authorizedHandler(
  * GET /books/school-orders
  */
 export const getSchoolOrders = authorizedHandler([], async (event, _context, auth) => {
+    const tenantReject = rejectUnresolvedTenant(auth);
+    if (tenantReject) return tenantReject;
+
     const pk = Keys.tenantPK(auth.tenantId);
     
     const orders = await queryItems<Record<string, any>>(pk, 'INSTORDER#', {
@@ -438,6 +485,9 @@ export const getSchoolOrders = authorizedHandler([], async (event, _context, aut
 export const fulfillSchoolOrder = authorizedHandler(
     [UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER],
     async (event, _context, auth) => {
+        const tenantReject = rejectUnresolvedTenant(auth);
+        if (tenantReject) return tenantReject;
+
         const orderId = event.pathParameters?.id;
         if (!orderId) return response.badRequest('Missing order id');
 
@@ -447,6 +497,11 @@ export const fulfillSchoolOrder = authorizedHandler(
         const pk = Keys.tenantPK(auth.tenantId);
         const existing = await getItem<Record<string, any>>(pk, `INSTORDER#${orderId}`);
         if (!existing) return response.notFound('Order');
+
+        // Cross-tenant check: deny access if the record belongs to a different tenant
+        if (existing.tenantId && existing.tenantId !== auth.tenantId) {
+            return response.notFound('Order');
+        }
         await updateItem(pk, `INSTORDER#${orderId}`, {
             updateExpression: 'ADD fulfilledSets :sets SET updatedAt = :now',
             expressionAttributeValues: {
@@ -473,6 +528,9 @@ export const fulfillSchoolOrder = authorizedHandler(
  * GET /books/consignments
  */
 export const getConsignments = authorizedHandler([], async (event, _context, auth) => {
+    const tenantReject = rejectUnresolvedTenant(auth);
+    if (tenantReject) return tenantReject;
+
     const pk = Keys.tenantPK(auth.tenantId);
 
     const consignments = await queryItems<Record<string, any>>(pk, 'CONSIGNMENT#', {

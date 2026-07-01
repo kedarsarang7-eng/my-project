@@ -6,6 +6,8 @@ import '../../../../core/repository/products_repository.dart';
 import '../../../../providers/app_state_providers.dart';
 import '../../../barcode/widgets/desktop_usb_scanner.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
+import '../../data/book_repository.dart';
+import '../../utils/book_store_business_rules.dart';
 
 /// Book Inventory Screen
 ///
@@ -17,6 +19,13 @@ import 'package:dukanx/core/responsive/responsive.dart';
 ///
 /// Data flow: Products table (isbn, author, publisher columns) → UI
 ///            UI Add/Edit → Products table → SyncQueue → Server inventory table
+///
+/// Accessibility (F35, Requirement 12.6):
+/// - Icon-only buttons carry tooltips and Semantics labels.
+/// - Category filter dropdown has a Semantics label.
+/// - Low-contrast hint/secondary text uses at least Colors.white54 (dark mode).
+/// - Category chips include text labels (not color-only indicators).
+/// - Note: Full WCAG AA validation requires manual assistive-technology testing.
 class BookInventoryScreen extends ConsumerStatefulWidget {
   const BookInventoryScreen({super.key});
 
@@ -29,59 +38,10 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _filterCategory = 'All';
 
-  // Sample data - will be replaced with DB query
-  final List<_BookRow> _books = [
-    _BookRow(
-      '978-0-06-112008-4',
-      'To Kill a Mockingbird',
-      'Harper Lee',
-      'HarperCollins',
-      'Fiction',
-      350,
-      12,
-      5,
-    ),
-    _BookRow(
-      '978-0-14-028329-7',
-      '1984',
-      'George Orwell',
-      'Penguin',
-      'Fiction',
-      299,
-      3,
-      5,
-    ),
-    _BookRow(
-      '978-0-7432-7356-5',
-      'The Great Gatsby',
-      'F. Scott Fitzgerald',
-      'Scribner',
-      'Classic',
-      250,
-      8,
-      5,
-    ),
-    _BookRow(
-      '978-0-06-093546-7',
-      'To Kill a Mockingbird',
-      'Harper Lee',
-      'HarperCollins',
-      'Textbook',
-      450,
-      2,
-      5,
-    ),
-    _BookRow(
-      '978-0-7352-1129-2',
-      'Atomic Habits',
-      'James Clear',
-      'Avery',
-      'Self-Help',
-      499,
-      25,
-      5,
-    ),
-  ];
+  // Real data from tenant-scoped Product query
+  List<_BookRow> _books = [];
+  bool _isLoading = true;
+  String? _errorMessage;
 
   List<_BookRow> get _filteredBooks {
     final query = _searchController.text.toLowerCase();
@@ -98,10 +58,83 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
     }).toList();
   }
 
+  /// Dynamic category options derived from loaded products.
+  List<String> get _categoryOptions {
+    final categories = _books
+        .map((b) => b.category)
+        .where((c) => c.isNotEmpty)
+        .toSet()
+        .toList();
+    categories.sort();
+    return ['All', ...categories];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  /// Fetches products from the local Drift Products table scoped to the active tenant.
+  Future<void> _loadProducts() async {
+    final userId = sl<SessionManager>().ownerId;
+    if (userId == null || userId.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'Unresolved tenant: unable to load catalogue.';
+        });
+      }
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final result = await sl<ProductsRepository>().getAll(userId: userId);
+      if (!mounted) return;
+
+      if (result.isSuccess) {
+        final products = result.data ?? [];
+        setState(() {
+          _books = products
+              .map(
+                (p) => _BookRow(
+                  p.barcode ?? p.sku ?? '',
+                  p.name,
+                  p.brand ?? '',
+                  '', // publisher — not a standard Product field yet
+                  p.category ?? 'Uncategorized',
+                  p.sellingPrice.toInt(),
+                  p.stockQuantity.toInt(),
+                  p.lowStockThreshold.toInt(),
+                ),
+              )
+              .toList();
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = result.errorMessage ?? 'Failed to load catalogue.';
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Error loading catalogue: $e';
+      });
+    }
   }
 
   Future<void> _scanIsbnToSearch(bool isDark, Color accent) async {
@@ -111,7 +144,14 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
       builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
-          padding: EdgeInsets.all(responsiveValue<double>(context, mobile: 16, tablet: 20, desktop: 24)),
+          padding: EdgeInsets.all(
+            responsiveValue<double>(
+              context,
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+            ),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -120,8 +160,13 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
                   Icon(Icons.qr_code_scanner, size: 24, color: accent),
                   const SizedBox(width: 10),
                   const Expanded(
-                    child: Text('Scan ISBN Barcode',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      'Scan ISBN Barcode',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close),
@@ -147,13 +192,12 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
 
     if (isbn == null || isbn.isEmpty) return;
 
-    // Validate ISBN format (10 or 13 digits)
-    final digits = isbn.replaceAll(RegExp(r'[^0-9Xx]'), '');
-    if (digits.length != 10 && digits.length != 13) {
+    // Validate ISBN using the authoritative checksum validator (F13, Requirements 8.1, 8.2)
+    if (!BookStoreBusinessRules.isValidIsbn(isbn)) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Invalid ISBN format: $isbn'),
+            content: Text('Invalid ISBN: $isbn'),
             backgroundColor: Colors.orange,
           ),
         );
@@ -164,7 +208,10 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
     // Check local DB first
     try {
       final userId = sl<SessionManager>().ownerId ?? '';
-      final result = await sl<ProductsRepository>().search(isbn, userId: userId);
+      final result = await sl<ProductsRepository>().search(
+        isbn,
+        userId: userId,
+      );
       final products = result.data ?? [];
       if (products.isNotEmpty) {
         final match = products.firstWhere(
@@ -195,7 +242,10 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Scan error: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Scan error: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -214,17 +264,17 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
       body: BoundedBox(
         maxWidth: 800,
         child: Column(
-        children: [
-          // Header
-          _buildHeader(isDark, accent),
+          children: [
+            // Header
+            _buildHeader(isDark, accent),
 
-          // Stats Row
-          _buildStatsRow(isDark, accent),
+            // Stats Row
+            _buildStatsRow(isDark, accent),
 
-          // Data Table
-          Expanded(child: _buildDataTable(isDark, accent)),
-        ],
-      ),
+            // Data Table with loading/error/empty states
+            Expanded(child: _buildContent(isDark, accent)),
+          ],
+        ),
       ),
 
       floatingActionButton: FloatingActionButton.extended(
@@ -250,7 +300,12 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
           Text(
             'Book Catalogue',
             style: TextStyle(
-              fontSize: responsiveValue<double>(context, mobile: 18, tablet: 20, desktop: 22),
+              fontSize: responsiveValue<double>(
+                context,
+                mobile: 18,
+                tablet: 20,
+                desktop: 22,
+              ),
               fontWeight: FontWeight.w800,
               color: isDark ? Colors.white : const Color(0xFF1E1B4B),
               letterSpacing: -0.5,
@@ -266,7 +321,7 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
               decoration: InputDecoration(
                 hintText: 'Search ISBN, title, author...',
                 hintStyle: TextStyle(
-                  color: isDark ? Colors.white30 : Colors.grey.shade400,
+                  color: isDark ? Colors.white60 : Colors.grey.shade400,
                   fontSize: 13,
                 ),
                 prefixIcon: Icon(
@@ -315,30 +370,37 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
           ),
           const SizedBox(width: 8),
 
-          // Category Filter
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isDark ? Colors.white10 : Colors.grey.shade200,
-              ),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: _filterCategory,
-                items: ['All', 'Fiction', 'Classic', 'Textbook', 'Self-Help']
-                    .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                    .toList(),
-                onChanged: (v) => setState(() => _filterCategory = v!),
-                style: TextStyle(
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  fontSize: 13,
+          // Category Filter (a11y: Semantics label for screen readers, F35)
+          Semantics(
+            label: 'Filter books by category',
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isDark ? Colors.white10 : Colors.grey.shade200,
                 ),
-                dropdownColor: isDark ? const Color(0xFF1A1128) : Colors.white,
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _categoryOptions.contains(_filterCategory)
+                      ? _filterCategory
+                      : 'All',
+                  items: _categoryOptions
+                      .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                      .toList(),
+                  onChanged: (v) => setState(() => _filterCategory = v!),
+                  style: TextStyle(
+                    color: isDark ? Colors.white70 : Colors.black87,
+                    fontSize: 13,
+                  ),
+                  dropdownColor: isDark
+                      ? const Color(0xFF1A1128)
+                      : Colors.white,
+                ),
               ),
             ),
           ),
@@ -414,7 +476,7 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
                 label,
                 style: TextStyle(
                   fontSize: 11,
-                  color: isDark ? Colors.white38 : Colors.grey.shade500,
+                  color: isDark ? Colors.white60 : Colors.grey.shade500,
                 ),
               ),
               Text(
@@ -430,6 +492,69 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildContent(bool isDark, Color accent) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: Colors.red.shade300),
+            const SizedBox(height: 12),
+            Text(
+              _errorMessage!,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: isDark ? Colors.white70 : Colors.black54,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: _loadProducts,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+    if (_books.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.library_books_outlined,
+              size: 48,
+              color: isDark ? Colors.white54 : Colors.grey.shade300,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'No books in catalogue',
+              style: TextStyle(
+                color: isDark ? Colors.white54 : Colors.grey.shade600,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Add your first book to get started.',
+              style: TextStyle(
+                color: isDark ? Colors.white54 : Colors.grey.shade400,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return _buildDataTable(isDark, accent);
   }
 
   Widget _buildDataTable(bool isDark, Color accent) {
@@ -547,24 +672,45 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
   );
 
   Widget _buildCategoryChip(String category, bool isDark, Color accent) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: accent.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        category,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: accent,
+    // a11y: The chip uses both color AND text label — not color-only (F35).
+    return Semantics(
+      label: 'Category: $category',
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+          color: accent.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          category,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: accent,
+          ),
         ),
       ),
     );
   }
 
   void _showAddBookDialog(bool isDark, Color accent) {
+    // In-widget RBAC: verify the acting user holds editStock permission
+    // before allowing product creation — enforced independent of the entry
+    // path since Content_Host applies no route guard (F27).
+    final session = sl<SessionManager>();
+    final userRole = session.currentSession.effectiveRole;
+    if (!RolePermissions.hasPermission(userRole, Permission.editStock)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Access denied: you don\'t have permission to perform this action',
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     final isbnCtrl = TextEditingController();
     final titleCtrl = TextEditingController();
     final authorCtrl = TextEditingController();
@@ -639,13 +785,29 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
                 return;
               }
 
-              final userId = sl<SessionManager>().ownerId;
-              if (userId == null) return;
+              // ISBN checksum validation (F14, Requirements 8.3, 8.4)
+              if (!BookStoreBusinessRules.isValidIsbn(isbn)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Invalid ISBN: checksum failed'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return; // Reject save, persist nothing, retain entered values
+              }
 
-              final result = await productsRepository.createProduct(
-                userId: userId,
-                name: title,
-                barcode: isbn,
+              // Use BookRepository.createBook to persist isbn, author, publisher
+              // on the Product record (F12, Requirements 7.4, 7.5, 1.8).
+              final bookRepo = ref.read(bookRepositoryProvider);
+              final result = await bookRepo.createBook(
+                title: title,
+                isbn: isbn,
+                author: authorCtrl.text.trim().isNotEmpty
+                    ? authorCtrl.text.trim()
+                    : null,
+                publisher: publisherCtrl.text.trim().isNotEmpty
+                    ? publisherCtrl.text.trim()
+                    : null,
                 category: categoryCtrl.text.trim().isNotEmpty
                     ? categoryCtrl.text.trim()
                     : 'Fiction',
@@ -657,37 +819,25 @@ class _BookInventoryScreenState extends ConsumerState<BookInventoryScreen> {
               if (ctx.mounted) Navigator.pop(ctx);
               if (!mounted) return;
 
-              if (result.isSuccess && result.data != null) {
-                setState(() {
-                  _books.add(
-                    _BookRow(
-                      isbn,
-                      title,
-                      authorCtrl.text.trim(),
-                      publisherCtrl.text.trim(),
-                      categoryCtrl.text.trim().isNotEmpty
-                          ? categoryCtrl.text.trim()
-                          : 'Fiction',
-                      mrp.toInt(),
-                      int.tryParse(stockCtrl.text.trim()) ?? 1,
-                      5,
+              result.fold(
+                (failure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed: ${failure.message}'),
+                      backgroundColor: Colors.red.shade700,
                     ),
                   );
-                });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('"$title" added to catalogue'),
-                    backgroundColor: accent,
-                  ),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Failed: ${result.errorMessage}'),
-                    backgroundColor: Colors.red.shade700,
-                  ),
-                );
-              }
+                },
+                (product) {
+                  _loadProducts(); // Refresh catalogue from DB
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('"$title" added to catalogue'),
+                      backgroundColor: accent,
+                    ),
+                  );
+                },
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: accent,

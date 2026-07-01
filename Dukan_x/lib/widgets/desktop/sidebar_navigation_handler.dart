@@ -156,6 +156,10 @@ import '../../core/session/session_manager.dart';
 // here so staff-role permission checks are enforced on both navigation systems.
 import '../../core/auth/role_guard.dart';
 import '../../config/permissions.dart';
+// BusinessGuard — used for book_store school-orders/consignments (Task 5.4;
+// Req 5.9). Matches the BusinessGuard([bookStore]) wrapper in legacy_routes.dart
+// so the in-shell path enforces the same business-type restriction.
+import '../../features/core/auth/business_type_guard.dart';
 
 // ============================================================
 // HARDWARE VERTICAL - In-shell navigation wiring (Task 3.1)
@@ -227,6 +231,17 @@ import '../../features/purchase/presentation/screens/scan_bill_image_picker_scre
 // Requirement: 2.23
 // ============================================================
 import '../../features/statements/presentation/screens/imei_tracking_statement_screen.dart';
+
+// ============================================================
+// BOOK STORE VERTICAL — Phase 2, Task 5.2
+// Wire all 5 book sidebar item ids to their respective Book_Screen widgets.
+// Requirements: 5.4, 5.5
+// ============================================================
+import '../../features/book_store/presentation/screens/book_inventory_screen.dart';
+import '../../features/book_store/presentation/screens/book_pos_screen.dart';
+import '../../features/book_store/presentation/screens/consignment_settlement_screen.dart';
+import '../../features/book_store/presentation/screens/school_order_screen.dart';
+import '../../features/book_store/presentation/screens/book_supplier_returns_screen.dart';
 
 // ============================================================
 // CLOTHING VERTICAL — Phase 2, Task 5.1
@@ -875,6 +890,45 @@ class SidebarNavigationHandler {
       // ============================================================
       case 'serial_stock':
         return const ImeiTrackingStatementScreen();
+
+      // ============================================================
+      // BOOK STORE VERTICAL — Phase 2, Task 5.2
+      // Maps each book_* sidebar item id to exactly one existing
+      // Book_Screen widget. None falls through to the placeholder.
+      // Requirements: 5.4, 5.5
+      // BLAST RADIUS: Additive only — no other case is modified.
+      // ============================================================
+      case 'book_catalogue':
+        return const BookInventoryScreen();
+      case 'book_pos':
+        return const BookPosScreen();
+      // BOOK STORE — Guarded routes (Task 5.4; Requirements 5.9, 5.10).
+      // Wraps ConsignmentSettlementScreen and SchoolOrderScreen with the SAME
+      // VendorRoleGuard(viewReports) + BusinessGuard([bookStore]) that the
+      // GoRouter paths `/book_store/consignments` and `/book_store/school_orders`
+      // in legacy_routes.dart enforce, so the in-shell Content_Host path does
+      // NOT bypass those guards. The GoRouter module (lib/modules/book_store/)
+      // is NOT mounted or migrated — F4 remains report-only.
+      case 'book_consignments':
+        return const VendorRoleGuard(
+          requiredPermission: Permissions.viewReports,
+          child: BusinessGuard(
+            allowedTypes: [BusinessType.bookStore],
+            denialMessage: 'Only Book Stores can access Consignments',
+            child: ConsignmentSettlementScreen(),
+          ),
+        );
+      case 'book_school_orders':
+        return const VendorRoleGuard(
+          requiredPermission: Permissions.viewReports,
+          child: BusinessGuard(
+            allowedTypes: [BusinessType.bookStore],
+            denialMessage: 'Only Book Stores can access School Orders',
+            child: SchoolOrderScreen(),
+          ),
+        );
+      case 'book_publisher_returns':
+        return const BookSupplierReturnsScreen();
 
       default:
         return null;

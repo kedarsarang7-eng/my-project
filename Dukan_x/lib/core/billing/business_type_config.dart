@@ -653,7 +653,8 @@ class BusinessTypeRegistry {
         ItemField.discount,
         ItemField.gst,
       ],
-      defaultGstRate: 12.0,
+      defaultGstRate:
+          0.0, // Fallback — printed books (HSN 4901) are exempt; per-item rate resolved from HSN via BookGstResolver
       gstEditable: true,
       unitOptions: [UnitType.pcs, UnitType.set],
       itemLabel: 'Book',
