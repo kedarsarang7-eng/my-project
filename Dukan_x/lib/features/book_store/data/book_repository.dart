@@ -3,9 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/api/api_client.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../providers/app_state_providers.dart';
 
 final bookRepositoryProvider = Provider<BookRepository>((ref) {
-  return BookRepository(apiClient: sl<ApiClient>());
+  return BookRepository(
+    apiClient: sl<ApiClient>(),
+    tenantIdResolver: () => ref.read(authStateProvider).userId,
+  );
 });
 
 class SchoolOrder {
@@ -86,11 +90,15 @@ class BookRepository {
     }
   }
 
-  Future<Either<Failure, bool>> fulfillSchoolOrder(String orderId, int setsToFulfill) async {
+  Future<Either<Failure, bool>> fulfillSchoolOrder(
+    String orderId,
+    int setsToFulfill,
+  ) async {
     try {
-      await apiClient.post('/books/school-orders/$orderId/fulfill', body: {
-        'sets': setsToFulfill,
-      });
+      await apiClient.post(
+        '/books/school-orders/$orderId/fulfill',
+        body: {'sets': setsToFulfill},
+      );
       return const Right(true);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -109,11 +117,15 @@ class BookRepository {
     }
   }
 
-  Future<Either<Failure, bool>> processSettlement(String consignmentId, double amount) async {
+  Future<Either<Failure, bool>> processSettlement(
+    String consignmentId,
+    double amount,
+  ) async {
     try {
-      await apiClient.post('/books/consignments/$consignmentId/settle', body: {
-        'amount': amount,
-      });
+      await apiClient.post(
+        '/books/consignments/$consignmentId/settle',
+        body: {'amount': amount},
+      );
       return const Right(true);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
