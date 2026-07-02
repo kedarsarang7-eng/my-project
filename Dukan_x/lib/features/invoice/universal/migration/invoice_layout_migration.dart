@@ -24,17 +24,40 @@ class MigrationRecord {
   });
 }
 
+/// Abstract store for the NEW `invoice_layout_config` records. Implementations:
+/// [InMemoryLayoutConfigStore] (tests / migration compute) and
+/// [SharedPrefsLayoutConfigStore] (offline-first local persistence). A remote
+/// (DynamoDB via API Gateway) syncer pushes/pulls these via [ApiClient].
+abstract interface class LayoutConfigStore {
+  bool has(BusinessType t);
+  void put(BusinessType t, InvoiceLayoutConfig c);
+  void remove(BusinessType t);
+  InvoiceLayoutConfig? get(BusinessType t);
+  int get count;
+  List<BusinessType> get types;
+  Map<BusinessType, InvoiceLayoutConfig> get all;
+}
+
 /// In-memory store standing in for the NEW `invoice_layout_config` table. The
 /// forward migration writes here; rollback deletes from here. Existing invoice
 /// records live in a SEPARATE store that this migration never touches.
-class InMemoryLayoutConfigStore {
+class InMemoryLayoutConfigStore implements LayoutConfigStore {
   final Map<BusinessType, InvoiceLayoutConfig> _configs = {};
 
+  @override
   bool has(BusinessType t) => _configs.containsKey(t);
+  @override
   void put(BusinessType t, InvoiceLayoutConfig c) => _configs[t] = c;
+  @override
   void remove(BusinessType t) => _configs.remove(t);
+  @override
+  InvoiceLayoutConfig? get(BusinessType t) => _configs[t];
+  @override
   int get count => _configs.length;
+  @override
   List<BusinessType> get types => _configs.keys.toList();
+  @override
+  Map<BusinessType, InvoiceLayoutConfig> get all => Map.unmodifiable(_configs);
 }
 
 /// Per-invoice old-vs-new comparison row.
@@ -133,7 +156,7 @@ class InvoiceLayoutMigration {
 
   MigrationReport migrate(
     List<MigrationRecord> records,
-    InMemoryLayoutConfigStore configStore, {
+    LayoutConfigStore configStore, {
     bool dryRun = false,
   }) {
     final before = records.length;
@@ -194,7 +217,7 @@ class InvoiceLayoutMigration {
 
   /// Reverse the forward migration by dropping the created layout configs.
   /// Existing invoice records are untouched, so this fully restores state.
-  int rollback(InMemoryLayoutConfigStore configStore, MigrationReport report) {
+  int rollback(LayoutConfigStore configStore, MigrationReport report) {
     var removed = 0;
     for (final t in report.createdConfigTypes) {
       if (configStore.has(t)) {
