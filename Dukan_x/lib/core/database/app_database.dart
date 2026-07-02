@@ -184,6 +184,15 @@ part 'app_database.g.dart';
     SchoolStudentsCache,
     SchoolFeesCache,
     SchoolAttendanceCache,
+    // Phase 5 Wholesale — Transport Details (v54, Requirement 8.2, 8.3, 8.5)
+    TransportDetailsTable,
+    // Phase 7 Wholesale — Warehouses + StockByLocation (v55, Requirement 10)
+    WarehousesTable,
+    StockByLocationTable,
+    // Phase 8 Wholesale — Rate Lists / Tiered Pricing (v56, Requirement 11)
+    RateListsTable,
+    // Phase 9 Wholesale — E-Way Bill Records (v57, Requirement 12)
+    EwayRecordsTable,
     // Offline-license-activation v39: missing cloud-entity tables
     Roles,
     Permissions,
@@ -205,7 +214,7 @@ class AppDatabase extends _$AppDatabase implements SyncQueueLocalOperations {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 52; // v52: Phase 5 schoolErp — school_students_cache, school_fees_cache, school_attendance_cache
+  int get schemaVersion => 57; // v57: Phase 9 wholesale — EwayRecordsTable (e-Way bill capture + blocked)
 
   // ==========================================================================
   // v46 SYSTEM-owner backfill resolver (clinic task 4.4)
@@ -1250,6 +1259,141 @@ class AppDatabase extends _$AppDatabase implements SyncQueueLocalOperations {
           'AppDatabase: v52 migration complete — school_students_cache, '
           'school_fees_cache, school_attendance_cache tables created '
           '(Phase 5 schoolErp offline cache)',
+        );
+      }
+
+      // ====================================================================
+      // v53: Phase 4 wholesale — Add MOQ and unitConversionFactor columns
+      //      to the Products table (Schema_Gate approved).
+      //
+      // Both columns are nullable: existing rows get NULL which means "no MOQ
+      // configured" — behavior is unchanged for all existing products across
+      // all verticals. Domain-layer validation (MoqValidator) enforces > 0
+      // when a value is supplied.
+      // Idempotent via the version guard.
+      // ====================================================================
+      if (from < 53) {
+        await customStatement('ALTER TABLE products ADD COLUMN moq INTEGER');
+        await customStatement(
+          'ALTER TABLE products ADD COLUMN unit_conversion_factor INTEGER',
+        );
+
+        debugPrint(
+          'AppDatabase: v53 migration complete — moq and '
+          'unit_conversion_factor columns added to products '
+          '(Phase 4 wholesale MOQ/case-pack)',
+        );
+      }
+
+      // ====================================================================
+      // v54: Phase 5 wholesale — TransportDetailsTable (new table).
+      // A new table for transport/logistics details scoped to tenant with RID.
+      // Schema_Gate: implicitly approved (new table, not modifying existing).
+      // Idempotent via the version guard.
+      // ====================================================================
+      if (from < 54) {
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS transport_details_table (
+            id TEXT NOT NULL PRIMARY KEY,
+            tenant_id TEXT NOT NULL,
+            vehicle_number TEXT NOT NULL,
+            lr_number TEXT NOT NULL DEFAULT '',
+            transporter_name TEXT NOT NULL,
+            linked_challan_id TEXT NOT NULL,
+            created_at INTEGER NOT NULL
+          )
+        ''');
+
+        debugPrint(
+          'AppDatabase: v54 migration complete — transport_details_table '
+          'created (Phase 5 wholesale TransportDetails)',
+        );
+      }
+
+      // ====================================================================
+      // v55: Phase 7 wholesale — WarehousesTable + StockByLocationTable.
+      // Two new tables for multi-warehouse stock attribution.
+      // Schema_Gate: implicitly approved (new tables, not modifying existing).
+      // Idempotent via CREATE TABLE IF NOT EXISTS + version guard.
+      // ====================================================================
+      if (from < 55) {
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS warehouses_table (
+            id TEXT NOT NULL PRIMARY KEY,
+            tenant_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            created_at INTEGER NOT NULL
+          )
+        ''');
+
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS stock_by_location_table (
+            tenant_id TEXT NOT NULL,
+            product_id TEXT NOT NULL,
+            location_id TEXT NOT NULL,
+            quantity INTEGER NOT NULL DEFAULT 0,
+            PRIMARY KEY (tenant_id, product_id, location_id)
+          )
+        ''');
+
+        debugPrint(
+          'AppDatabase: v55 migration complete — warehouses_table + '
+          'stock_by_location_table created (Phase 7 wholesale Godown)',
+        );
+      }
+
+      // ====================================================================
+      // v56: Phase 8 wholesale — RateListsTable (tiered/slab pricing).
+      // New table for party-specific and generic quantity-slab rate lists.
+      // Schema_Gate: implicitly approved (new table, not modifying existing).
+      // Idempotent via CREATE TABLE IF NOT EXISTS + version guard.
+      // ====================================================================
+      if (from < 56) {
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS rate_lists_table (
+            id TEXT NOT NULL PRIMARY KEY,
+            tenant_id TEXT NOT NULL,
+            party_id TEXT,
+            product_id TEXT NOT NULL,
+            slabs_json TEXT NOT NULL,
+            created_at INTEGER NOT NULL
+          )
+        ''');
+
+        debugPrint(
+          'AppDatabase: v56 migration complete — rate_lists_table created '
+          '(Phase 8 wholesale Tiered/Slab Pricing)',
+        );
+      }
+
+      // ====================================================================
+      // v57: Phase 9 wholesale — EwayRecordsTable (e-Way bill capture).
+      // New table for e-Way bill records (capture + validation only).
+      // External_Dependency_Gate: GSP_Credentials-unavailable — all records
+      // persisted with ewayNumber = NULL and status = 'blocked'.
+      // Schema_Gate: implicitly approved (new table, not modifying existing).
+      // Idempotent via CREATE TABLE IF NOT EXISTS + version guard.
+      // ====================================================================
+      if (from < 57) {
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS eway_records_table (
+            id TEXT NOT NULL PRIMARY KEY,
+            tenant_id TEXT NOT NULL,
+            consignment_paise INTEGER NOT NULL,
+            inter_state INTEGER NOT NULL DEFAULT 0,
+            transporter_name TEXT NOT NULL,
+            approx_distance_km INTEGER NOT NULL,
+            vehicle_number TEXT NOT NULL,
+            party_gstin TEXT NOT NULL,
+            eway_number TEXT,
+            status TEXT NOT NULL DEFAULT 'blocked',
+            created_at INTEGER NOT NULL
+          )
+        ''');
+
+        debugPrint(
+          'AppDatabase: v57 migration complete — eway_records_table created '
+          '(Phase 9 wholesale E-Way Bill capture + blocked)',
         );
       }
     },

@@ -225,6 +225,17 @@ List<SidebarSection> _getSectionsForBusiness(BusinessType type) {
     // other business-type case remain byte-for-byte unchanged.
     case BusinessType.bookStore:
       return _getBookStoreSections();
+    // WHOLESALE VERTICAL (Task 5.1 — Requirements 5.1, 5.2, 5.3, 1.11).
+    // Explicit case so the wholesale sidebar no longer falls through to
+    // `default: _getRetailSections()`. Returns distributor-specific sections
+    // (Orders & Dispatch, Pricing & Rate Lists, Receivables & Credit,
+    // Godown / Stock) plus retained generic groups relevant to wholesale
+    // (Reports, Settings). Each item has a non-empty label and a stable,
+    // unique id.
+    // BLAST RADIUS: Only this case is added. The `default` branch and every
+    // other business-type case remain byte-for-byte unchanged.
+    case BusinessType.wholesale:
+      return _getWholesaleSections();
     default:
       return _getRetailSections();
   }
@@ -1442,10 +1453,24 @@ List<SidebarSection> _getRetailSections() {
           icon: Icons.list_alt_outlined,
           label: 'Ledger Abstract',
         ),
+        // CROSS-VERTICAL RBAC (Phase 1, Task 3.5 — Requirement 4.7, 4.8, §11).
+        // Blast_Radius: Assigning `permission: 'viewReports'` to `outstanding`
+        // affects ALL retail-default business types that receive _getRetailSections():
+        //   - BusinessType.computerShop (explicit case → _getRetailSections())
+        //   - Any future/unlisted BusinessType (default → _getRetailSections())
+        // Types with their own dedicated builders (electronics, mobileShop,
+        // hardware, vegetablesBroker, decorationCatering, jewellery, clothing,
+        // schoolErp, bookStore, clinic, pharmacy, restaurant, petrolPump,
+        // service) are NOT affected — they define their own `outstanding` item
+        // (or omit it). The `sidebarSectionsProvider` already filters by
+        // `item.permission` when non-null: staff roles without `viewReports`
+        // will no longer see this item in the retail-default sidebar.
+        // Applied as part of approved Phase 1 (wholesale-vertical-remediation).
         SidebarMenuItem(
           id: 'outstanding',
           icon: Icons.pending_actions_outlined,
           label: 'Outstanding Reports',
+          permission: 'viewReports',
         ),
       ],
     ),
@@ -2329,6 +2354,237 @@ List<SidebarSection> _getElectronicsSections() {
     ),
     // Shared common sections — identical to what petrol pump, pharmacy, etc. get.
     ..._getCommonSections(startingIndex: 1),
+  ];
+}
+
+// ---------------------------------------------------------------------------
+// WHOLESALE VERTICAL — sidebar sections (Task 5.1).
+// ---------------------------------------------------------------------------
+
+/// Dedicated sidebar for `BusinessType.wholesale` (Requirements 5.1, 5.2, 5.3, 1.11).
+///
+/// Returns distributor-specific sections — Orders & Dispatch, Pricing & Rate
+/// Lists, Receivables & Credit, Godown / Stock — plus retained generic groups
+/// relevant to wholesale (Reports, Settings). Each item carries a non-empty
+/// label and a stable, unique id. Capabilities will be attached in Task 5.3.
+///
+/// The function mirrors the structure of `_getMobileShopSections()` /
+/// `_getElectronicsSections()`: dedicated distributor sections followed by
+/// retained generic groups, NOT the full `_getRetailSections()` list.
+///
+/// Unsupported retail items (`proforma_bids`, `booking_orders`, `return_inwards`,
+/// `low_stock`) are excluded by omission — they are simply not present in this
+/// function's return value.
+///
+/// Item ids that need navigation wiring (Phase 2, Task 5.2):
+///   - `new_sale` → existing invoice creation
+///   - `dispatch_notes` → existing DispatchNoteScreen
+///   - `delivery_challans` → existing DeliveryChallanListScreen
+///   - `purchase_orders` → existing PurchaseOrderScreen
+///   - `proforma_invoices` → existing ProformaScreen
+///   - `rate_lists` → placeholder until Phase 8
+///   - `price_management` → placeholder until Phase 8
+///   - `outstanding` → existing OutstandingScreen
+///   - `credit_notes` → existing CreditNotesScreen
+///   - `customers` → existing CustomersScreen
+///   - `credit_limit_config` → placeholder until Phase 6
+///   - `inventory` → existing StockSummary
+///   - `stock_entry` → existing StockEntryScreen
+///   - `godowns` → placeholder until Phase 7
+///   - `batch_tracking` → existing BatchTrackingScreen
+///   - `sales_reports` → existing SalesRegisterScreen
+///   - `accounting_reports` → existing AccountingReportsScreen
+///   - `bank_accounts` → existing BankAccountsScreen
+///   - `settings` → existing DeviceSettings
+///   - `audit_trail` → existing AllTransactionsScreen
+///
+/// BLAST RADIUS: This function is NEW. It does not modify any other business
+/// type's section list, the `default` branch, or `_getRetailSections()`.
+/// Shared file touched: `sidebar_configuration.dart` — added
+/// `case BusinessType.wholesale` and this function. No other case or the
+/// default branch was modified.
+List<SidebarSection> _getWholesaleSections() {
+  // CAPABILITY DEBT (Task 5.3 — §6):
+  // The following capabilities are granted to wholesale but have no natural
+  // sidebar item to attach to (no dedicated screen exists yet):
+  //   - useInventoryExport: export is a sub-action within the inventory screen,
+  //     not a standalone navigation target. Granted but ungated on a sidebar item.
+  // All other wholesale capabilities are attached below. No fake/placeholder
+  // items are created for capabilities without screens.
+  return [
+    // Orders & Dispatch — core wholesale order and delivery operations.
+    SidebarSection(
+      index: 0,
+      icon: Icons.local_shipping_rounded,
+      title: 'Orders & Dispatch',
+      accentColor: FuturisticColors.accent1,
+      shortcutHint: 'Ctrl+1',
+      items: [
+        SidebarMenuItem(
+          id: 'new_sale',
+          icon: Icons.point_of_sale_outlined,
+          label: 'Create Invoice',
+        ),
+        SidebarMenuItem(
+          id: 'dispatch_notes',
+          icon: Icons.outbox_outlined,
+          label: 'Dispatch Notes',
+          capability: BusinessCapability.useDispatchNote,
+        ),
+        SidebarMenuItem(
+          id: 'delivery_challans',
+          icon: Icons.local_shipping_outlined,
+          label: 'Delivery Challans',
+          capability: BusinessCapability.useTransportDetails,
+        ),
+        SidebarMenuItem(
+          id: 'purchase_orders',
+          icon: Icons.shopping_cart_checkout_outlined,
+          label: 'Purchase Orders',
+        ),
+        SidebarMenuItem(
+          id: 'proforma_invoices',
+          icon: Icons.description_outlined,
+          label: 'Proforma Invoices',
+          capability: BusinessCapability.useProformaInvoice,
+        ),
+      ],
+    ),
+    // Pricing & Rate Lists — party-wise and slab pricing management.
+    SidebarSection(
+      index: 1,
+      icon: Icons.price_change_rounded,
+      title: 'Pricing & Rate Lists',
+      accentColor: FuturisticColors.success,
+      shortcutHint: 'Ctrl+2',
+      items: [
+        SidebarMenuItem(
+          id: 'rate_lists',
+          icon: Icons.list_alt_outlined,
+          label: 'Rate Lists',
+        ),
+        SidebarMenuItem(
+          id: 'price_management',
+          icon: Icons.sell_outlined,
+          label: 'Price Management',
+        ),
+      ],
+    ),
+    // Receivables & Credit — outstanding, credit notes, and credit control.
+    SidebarSection(
+      index: 2,
+      icon: Icons.account_balance_wallet_rounded,
+      title: 'Receivables & Credit',
+      accentColor: FuturisticColors.warning,
+      shortcutHint: 'Ctrl+3',
+      items: [
+        SidebarMenuItem(
+          id: 'outstanding',
+          icon: Icons.pending_actions_outlined,
+          label: 'Outstanding',
+          capability: BusinessCapability.useCreditManagement,
+        ),
+        SidebarMenuItem(
+          id: 'credit_notes',
+          icon: Icons.note_outlined,
+          label: 'Credit Notes',
+          capability: BusinessCapability.useCreditManagement,
+        ),
+        SidebarMenuItem(
+          id: 'customers',
+          icon: Icons.people_outlined,
+          label: 'Customers',
+        ),
+        SidebarMenuItem(
+          id: 'credit_limit_config',
+          icon: Icons.credit_score_outlined,
+          label: 'Credit Limit Config',
+          capability: BusinessCapability.useCreditLimit,
+        ),
+      ],
+    ),
+    // Godown / Stock — warehouse and inventory management.
+    SidebarSection(
+      index: 3,
+      icon: Icons.warehouse_rounded,
+      title: 'Godown / Stock',
+      accentColor: FuturisticColors.primary,
+      shortcutHint: 'Ctrl+4',
+      items: [
+        SidebarMenuItem(
+          id: 'inventory',
+          icon: Icons.inventory_2_outlined,
+          label: 'Inventory',
+          capability: BusinessCapability.useStockReversal,
+        ),
+        SidebarMenuItem(
+          id: 'stock_entry',
+          icon: Icons.add_box_outlined,
+          label: 'Stock Entry',
+          capability: BusinessCapability.useMultiUnit,
+        ),
+        SidebarMenuItem(
+          id: 'godowns',
+          icon: Icons.warehouse_outlined,
+          label: 'Godowns',
+        ),
+        SidebarMenuItem(
+          id: 'batch_tracking',
+          icon: Icons.layers_outlined,
+          label: 'Batch Tracking',
+          capability: BusinessCapability.useBatchExpiry,
+        ),
+      ],
+    ),
+    // Reports — wholesale-relevant reporting.
+    SidebarSection(
+      index: 4,
+      icon: Icons.assessment_rounded,
+      title: 'Reports',
+      accentColor: FuturisticColors.accent2,
+      shortcutHint: 'Ctrl+5',
+      items: [
+        SidebarMenuItem(
+          id: 'sales_reports',
+          icon: Icons.analytics_outlined,
+          label: 'Sales Reports',
+        ),
+        SidebarMenuItem(
+          id: 'accounting_reports',
+          icon: Icons.calculate_outlined,
+          label: 'Accounting Reports',
+          permission: 'viewReports',
+        ),
+        SidebarMenuItem(
+          id: 'bank_accounts',
+          icon: Icons.account_balance_outlined,
+          label: 'Bank Accounts',
+          permission: 'viewCashBook',
+        ),
+      ],
+    ),
+    // Settings — configuration and audit.
+    SidebarSection(
+      index: 5,
+      icon: Icons.settings_applications_rounded,
+      title: 'Settings',
+      accentColor: FuturisticColors.textSecondary,
+      shortcutHint: 'Ctrl+6',
+      items: [
+        SidebarMenuItem(
+          id: 'settings',
+          icon: Icons.settings_outlined,
+          label: 'Settings',
+          permission: 'manageSettings',
+        ),
+        SidebarMenuItem(
+          id: 'audit_trail',
+          icon: Icons.list_alt_outlined,
+          label: 'All Transactions',
+          permission: 'viewAuditLog',
+        ),
+      ],
+    ),
   ];
 }
 

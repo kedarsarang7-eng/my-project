@@ -38,6 +38,7 @@ import '../../../../features/jewellery/data/repositories/jewellery_repository_of
 import '../../../../features/book_store/data/book_repository.dart';
 import '../../../../features/restaurant/providers/restaurant_alert_counts_provider.dart';
 import '../../../../features/service/data/repositories/imei_serial_repository.dart';
+import '../../../../features/wholesale/data/wholesale_repository.dart';
 import '../../../../features/service/models/service_job.dart';
 import '../../../../features/service/services/exchange_service.dart';
 import '../../../../features/service/services/service_job_service.dart';
@@ -271,6 +272,45 @@ final mandiAlertCountsProvider = FutureProvider.autoDispose<MandiAlertSnapshot>(
     return const MandiAlertSnapshot(lotsPendingPayment: 0, isAvailable: false);
   }
 });
+
+/// Wholesale credit-limit alert snapshot — provides the real "customers near
+/// limit" count from a tenant-scoped query, replacing the Phase 1 zeroed/hidden
+/// fabricated count (§5, §8; Requirement 9.7).
+class WholesaleCreditSnapshot {
+  const WholesaleCreditSnapshot({
+    required this.nearLimitCount,
+    required this.isAvailable,
+  });
+
+  /// Count of customers whose outstanding >= 80% of their credit limit.
+  final int nearLimitCount;
+
+  /// Whether the near-limit count was successfully retrieved.
+  final bool isAvailable;
+}
+
+/// Provider that fetches the real wholesale "customers near limit" count from
+/// [WholesaleRepository.nearCreditLimitCount]. Scoped to the active tenant.
+///
+/// On retrieval failure, returns `WholesaleCreditSnapshot(nearLimitCount: 0,
+/// isAvailable: false)` so the widget can display 0 with an unavailable
+/// indication (§5, §8; Requirement 9.7).
+final wholesaleCreditAlertCountsProvider =
+    FutureProvider.autoDispose<WholesaleCreditSnapshot>((ref) async {
+      try {
+        final WholesaleRepository repo = WholesaleRepositoryImpl();
+        final count = await repo.nearCreditLimitCount();
+        return WholesaleCreditSnapshot(
+          nearLimitCount: count,
+          isAvailable: true,
+        );
+      } catch (_) {
+        return const WholesaleCreditSnapshot(
+          nearLimitCount: 0,
+          isAvailable: false,
+        );
+      }
+    });
 
 /// Electronics dashboard alert counts — replaces the previous hardcoded
 /// literals (`'5'` Warranty Expiring / `'8'` Pending Repairs) with real,
@@ -1186,6 +1226,12 @@ class BusinessAlertsWidget extends ConsumerWidget {
                             .watch(bookStoreAlertCountsProvider)
                             .maybeWhen(data: (s) => s, orElse: () => null)
                       : null,
+                  wholesaleCreditSnapshot:
+                      businessType == BusinessType.wholesale
+                      ? ref
+                            .watch(wholesaleCreditAlertCountsProvider)
+                            .maybeWhen(data: (s) => s, orElse: () => null)
+                      : null,
                 ),
               ),
               loading: () => const Center(
@@ -1228,6 +1274,12 @@ class BusinessAlertsWidget extends ConsumerWidget {
                   bookStoreSnapshot: businessType == BusinessType.bookStore
                       ? ref
                             .watch(bookStoreAlertCountsProvider)
+                            .maybeWhen(data: (s) => s, orElse: () => null)
+                      : null,
+                  wholesaleCreditSnapshot:
+                      businessType == BusinessType.wholesale
+                      ? ref
+                            .watch(wholesaleCreditAlertCountsProvider)
                             .maybeWhen(data: (s) => s, orElse: () => null)
                       : null,
                 ),
@@ -1326,6 +1378,7 @@ class BusinessAlertsWidget extends ConsumerWidget {
     SchoolAlertSnapshot? schoolSnapshot,
     ElectronicsAlertSnapshot? electronicsSnapshot,
     BookStoreAlertSnapshot? bookStoreSnapshot,
+    WholesaleCreditSnapshot? wholesaleCreditSnapshot,
   }) {
     final alerts = <Widget>[];
 
@@ -1684,23 +1737,41 @@ class BusinessAlertsWidget extends ConsumerWidget {
         break;
 
       case BusinessType.wholesale:
+        // Real count derived from tenant-scoped alertCountsProvider (§5, §8).
+        // When the provider errors (counts map empty), show unavailable.
+        // When it succeeds with zero, show '0'. Never a fabricated value.
+        final wholesaleLowStockAvailable = counts.containsKey('lowStock');
+        final wholesaleLowStock = counts['lowStock'] ?? 0;
+
         alerts.add(
           _buildAlertItem(
             icon: Icons.inventory_2_outlined,
             color: FuturisticColors.warning,
             title: 'Bulk Stock Low',
-            subtitle: 'Below MOQ levels',
-            count: '15',
+            subtitle: wholesaleLowStockAvailable
+                ? 'Below MOQ levels'
+                : 'Data unavailable',
+            count: wholesaleLowStockAvailable
+                ? _displayCount(wholesaleLowStock)
+                : '!',
           ),
         );
         if (caps.accessCreditLimit) {
+          // Real near-limit count wired from wholesaleCreditAlertCountsProvider
+          // via WholesaleRepository.nearCreditLimitCount() (§5, §8; Req 9.7).
+          final creditSnap = wholesaleCreditSnapshot;
+          final nearLimitCount = creditSnap?.nearLimitCount ?? 0;
+          final creditAvailable = creditSnap?.isAvailable ?? false;
+
           alerts.add(
             _buildAlertItem(
               icon: Icons.account_balance_outlined,
               color: FuturisticColors.error,
               title: 'Credit Limit Alerts',
-              subtitle: 'Customers near limit',
-              count: '7',
+              subtitle: creditAvailable
+                  ? 'Customers near limit'
+                  : 'Data unavailable',
+              count: creditAvailable ? _displayCount(nearLimitCount) : '!',
             ),
           );
         }

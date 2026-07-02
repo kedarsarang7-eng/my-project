@@ -585,7 +585,6 @@ class BusinessTypeRegistry {
         ItemField.discount,
         ItemField.gst,
         ItemField.hsnCode,
-        ItemField.drugSchedule,
         ItemField.batchNo,
         ItemField.expiryDate,
       ],

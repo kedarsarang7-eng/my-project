@@ -226,6 +226,27 @@ import '../../features/jewellery/presentation/screens/making_charges_calculator_
 import '../../features/purchase/presentation/screens/scan_bill_image_picker_screen.dart';
 
 // ============================================================
+// WHOLESALE VERTICAL — Phase 6, Task 13.4
+// Credit-limit configuration screen.
+// Requirement: 9.6
+// ============================================================
+import '../../features/wholesale/presentation/screens/credit_limit_config_screen.dart';
+
+// ============================================================
+// WHOLESALE VERTICAL — Phase 7, Task 15.3
+// Godown management screen.
+// Requirement: 10.2, 10.5
+// ============================================================
+import '../../features/wholesale/presentation/screens/godown_management_screen.dart';
+
+// ============================================================
+// WHOLESALE VERTICAL — Phase 8, Task 17.4
+// Rate-list / slab-pricing editor screen.
+// Requirement: 11.7 (§4, §15)
+// ============================================================
+import '../../features/wholesale/presentation/screens/rate_list_editor_screen.dart';
+
+// ============================================================
 // ELECTRONICS VERTICAL — Phase 7, Task 23.2
 // Wire serial_stock sidebar id to ImeiTrackingStatementScreen.
 // Requirement: 2.23
@@ -668,8 +689,18 @@ class SidebarNavigationHandler {
       // P0: previously dead dashboard CTAs (1.1 / 1.2). These resolve through
       // the in-shell path so "Delivery Challan" and "Projects" no longer land
       // on the "Feature Not Found" placeholder.
+      //
+      // Phase 5, Task 11.1 (wholesale-vertical-remediation §6, §7):
+      // Wrapped in VendorRoleGuard(Permissions.viewInvoices) to match the
+      // GoRoute at `/delivery_challans` (legacy_routes.dart). Previously the
+      // in-shell path bypassed the guard that the route-based path enforced.
+      // This ensures wholesale sidebar navigation through the Live_Router
+      // (GoRouter routerConfig) enforces the same RBAC check.
       case 'delivery_challans':
-        return const DeliveryChallanListScreen();
+        return const VendorRoleGuard(
+          requiredPermission: Permissions.viewInvoices,
+          child: DeliveryChallanListScreen(),
+        );
       case 'hardware_operations':
         return const HardwareOperationsScreen();
 
@@ -892,6 +923,56 @@ class SidebarNavigationHandler {
         return const ImeiTrackingStatementScreen();
 
       // ============================================================
+      // WHOLESALE VERTICAL — Phase 2, Task 5.2
+      // Maps wholesale sidebar item ids to their respective screens.
+      // Items without a real screen yet (rate_lists, price_management)
+      // return null after surfacing an "unavailable" SnackBar —
+      // retaining the current screen and performing no navigation
+      // (§6, §7, §19).
+      // Requirements: 5.3, 5.6, 5.7
+      // BLAST RADIUS: Additive only — no other case is modified.
+      // ============================================================
+      case 'proforma_invoices':
+        return const ProformaScreen();
+      case 'inventory':
+        return const InventoryDashboardScreen();
+      case 'sales_reports':
+        return const ReportsHubScreen();
+      case 'settings':
+        return const DeviceSettingsScreen();
+      // Unavailable wholesale items — no real screen until their
+      // implementing phase lands. Show an "unavailable" indication and
+      // return null so callers retain the current screen.
+      // ============================================================
+      // WHOLESALE VERTICAL — Phase 8, Task 17.4
+      // Rate-list / slab-pricing editor screen wired to real sidebar ids.
+      // Previously "unavailable" — now resolves to RateListEditorScreen.
+      // Requirements: 11.7 (§4, §15)
+      // BLAST RADIUS: Additive only — no other case is modified.
+      // ============================================================
+      case 'rate_lists':
+      case 'price_management':
+        return const RateListEditorScreen();
+
+      // ============================================================
+      // WHOLESALE VERTICAL — Phase 7, Task 15.3
+      // Wire the godowns sidebar item to GodownManagementScreen.
+      // Requirements: 10.2, 10.5 (§2)
+      // BLAST RADIUS: Additive only — no other case is modified.
+      // ============================================================
+      case 'godowns':
+        return const GodownManagementScreen();
+
+      // ============================================================
+      // WHOLESALE VERTICAL — Phase 6, Task 13.4
+      // Credit-limit configuration screen wired behind `useCreditLimit`.
+      // Requirements: 9.6 (§4, §5)
+      // BLAST RADIUS: Additive only — no other case is modified.
+      // ============================================================
+      case 'credit_limit_config':
+        return const CreditLimitConfigScreen();
+
+      // ============================================================
       // BOOK STORE VERTICAL — Phase 2, Task 5.2
       // Maps each book_* sidebar item id to exactly one existing
       // Book_Screen widget. None falls through to the placeholder.
@@ -941,6 +1022,7 @@ class SidebarNavigationHandler {
   }
 
   /// Resolves whether the active session business type is pharmacy.
+
   ///
   /// Used only by the `executive_dashboard` pharmacy-gated branch (Req 12.1,
   /// 12.5). Defensive by design: any resolution failure (e.g. the service

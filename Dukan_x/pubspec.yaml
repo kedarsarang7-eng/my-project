@@ -236,4 +236,7 @@ flutter:
     - assets/templates/
     - assets/audio/splash_whoosh.mp3
     - assets/audio/splash_strike.mp3
+    # NotoSansDevanagari — bundled for PDF invoice rendering (Devanagari/Hindi
+    # glyphs) via rootBundle in the config-driven PDF builder.
+    - assets/fonts/
 

@@ -441,6 +441,11 @@ class Products extends Table with TableSystemColumns {
   TextColumn get author => text().nullable()();
   TextColumn get publisher => text().nullable()();
 
+  // Wholesale MOQ & multi-unit (Phase 4 — Schema_Gate approved)
+  // Nullable: existing products get null (no MOQ configured = no enforcement).
+  IntColumn get moq => integer().nullable()();
+  IntColumn get unitConversionFactor => integer().nullable()();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -4924,4 +4929,197 @@ class SchoolAttendanceCache extends Table {
   List<String> get customConstraints => [
     "CHECK (status IN ('present', 'absent', 'late'))",
   ];
+}
+
+// ============================================================================
+// WHOLESALE — TRANSPORT DETAILS (Phase 5, Task 11.2)
+// ============================================================================
+// New entity for wholesale transport/logistics data. Scoped to active Tenant_Id
+// with an RID identifier. Persists vehicle number, LR number, and transporter
+// name linked to a delivery challan. Schema_Gate: new table (implicitly approved
+// since it does not modify any existing table shape).
+
+/// Transport Details — per-dispatch/challan transport record for wholesale.
+///
+/// RID-based, tenant-scoped. Required fields: vehicleNumber, transporterName.
+/// lrNumber is optional. linkedChallanId references the DeliveryChallans table.
+@DataClassName('TransportDetailEntity')
+class TransportDetailsTable extends Table {
+  /// RID identifier: `{tenantId}-{timestamp_ms}-{uuid_v4_short}`.
+  TextColumn get id => text()();
+
+  /// Tenant scope — every query MUST filter by this column.
+  TextColumn get tenantId => text()();
+
+  /// Vehicle registration number (required, non-empty).
+  TextColumn get vehicleNumber => text()();
+
+  /// Lorry Receipt (LR) number (optional — may be empty string).
+  TextColumn get lrNumber => text().withDefault(const Constant(''))();
+
+  /// Transporter / transport company name (required, non-empty).
+  TextColumn get transporterName => text()();
+
+  /// The delivery challan this transport is linked to.
+  TextColumn get linkedChallanId => text()();
+
+  /// Creation timestamp.
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// ============================================================================
+// Phase 7 Wholesale — Warehouses and StockByLocation tables (Requirement 10)
+// Schema_Gate: implicitly approved — entirely NEW tables, not modifying
+// existing schemas (same treatment as TransportDetailsTable in Phase 5).
+// ============================================================================
+
+/// Warehouses / Godowns table — per-tenant physical stock locations.
+///
+/// RID-based, tenant-scoped. Each warehouse has a human-readable name.
+/// Used for multi-warehouse stock attribution (Phase 7, §2).
+@DataClassName('WarehouseEntity')
+class WarehousesTable extends Table {
+  /// RID identifier: `{tenantId}-{timestamp_ms}-{uuid_v4_short}`.
+  TextColumn get id => text()();
+
+  /// Tenant scope — every query MUST filter by this column.
+  TextColumn get tenantId => text()();
+
+  /// Human-readable warehouse/godown name (non-empty).
+  TextColumn get name => text()();
+
+  /// Creation timestamp (milliseconds since epoch stored as integer).
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Stock-by-location table — attributes product stock quantities to specific
+/// warehouse locations for a tenant.
+///
+/// Composite primary key: (tenantId, productId, locationId).
+/// INVARIANT: sum(quantity by product across locations) == product total stock.
+@DataClassName('StockByLocationEntity')
+class StockByLocationTable extends Table {
+  /// Tenant scope — every query MUST filter by this column.
+  TextColumn get tenantId => text()();
+
+  /// The product whose stock is tracked at this location.
+  TextColumn get productId => text()();
+
+  /// The warehouse/godown RID where this stock is held.
+  /// Must reference a warehouse belonging to [tenantId].
+  TextColumn get locationId => text()();
+
+  /// The quantity of the product at this location (integer units).
+  IntColumn get quantity => integer().withDefault(const Constant(0))();
+
+  @override
+  Set<Column> get primaryKey => {tenantId, productId, locationId};
+}
+
+/// Rate lists table — tiered/slab pricing for wholesale products.
+///
+/// RID-based, tenant-scoped. Each rate list optionally targets a specific
+/// party (customer) or is generic (partyId = null). Slabs are stored as
+/// JSON in a TEXT column for flexibility.
+///
+/// Design model (Phase 8, §3):
+/// ```
+/// RateList / PricingTier (new — Schema_Gate, Phase 8)
+///   id         : RID
+///   tenantId   : string
+///   partyId    : string?    // null => quantity-slab list (generic)
+///   productId  : string
+///   slabs      : [{ minQty: int, maxQty: int?, unitPaise: int }]
+/// ```
+@DataClassName('RateListEntity')
+class RateListsTable extends Table {
+  /// RID identifier: `{tenantId}-{timestamp_ms}-{uuid_v4_short}`.
+  TextColumn get id => text()();
+
+  /// Tenant scope — every query MUST filter by this column.
+  TextColumn get tenantId => text()();
+
+  /// The party (customer) this rate list applies to.
+  /// NULL means this is a generic (product-level) rate list.
+  TextColumn get partyId => text().nullable()();
+
+  /// The product this rate list prices.
+  TextColumn get productId => text()();
+
+  /// JSON-encoded array of pricing slabs.
+  /// Each slab: `{ "minQty": int, "maxQty": int|null, "unitPaise": int }`
+  TextColumn get slabsJson => text()();
+
+  /// Creation/update timestamp (milliseconds since epoch).
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// ============================================================================
+// Phase 9 Wholesale — E-Way Bill Records (v57, Requirement 12)
+// Schema_Gate: implicitly approved — entirely NEW table, not modifying
+// existing schemas (same treatment as prior Phase 5/7/8 new tables).
+// External_Dependency_Gate: GSP_Credentials-unavailable — all records are
+// persisted with ewayNumber = NULL and status = 'blocked' until credentials
+// become available. NO mock, simulation, or fabricated e-Way number.
+// ============================================================================
+
+/// E-Way bill records table — captures e-Way bill details for wholesale
+/// consignments exceeding the ₹50,000 threshold on inter-state movements.
+///
+/// RID-based, tenant-scoped. All money in integer paise.
+///
+/// Status values:
+/// - 'captured': Form fields saved, awaiting generation.
+/// - 'generated': Real e-Way number from NIC/GSP API.
+/// - 'blocked': GSP credentials unavailable; generation cannot proceed.
+///
+/// Per Phase 0 §5: ewayNumber is ALWAYS NULL and status is ALWAYS 'blocked'
+/// until GSP credentials become available.
+@DataClassName('EwayRecordEntity')
+class EwayRecordsTable extends Table {
+  /// RID identifier: `{tenantId}-{timestamp_ms}-{uuid_v4_short}`.
+  TextColumn get id => text()();
+
+  /// Tenant scope — every query MUST filter by this column.
+  TextColumn get tenantId => text()();
+
+  /// Consignment total in integer paise (must exceed 5,000,000 for e-Way).
+  IntColumn get consignmentPaise => integer()();
+
+  /// Whether this is an inter-state movement.
+  BoolColumn get interState => boolean()();
+
+  /// Transporter / transport company name (non-empty).
+  TextColumn get transporterName => text()();
+
+  /// Approximate distance in kilometres (> 0).
+  IntColumn get approxDistanceKm => integer()();
+
+  /// Vehicle registration number (non-empty).
+  TextColumn get vehicleNumber => text()();
+
+  /// Party's GSTIN — 15-character alphanumeric.
+  TextColumn get partyGstin => text()();
+
+  /// Real e-Way bill number from NIC/GSP, or NULL when blocked/captured.
+  /// NEVER fabricated, mocked, or simulated.
+  TextColumn get ewayNumber => text().nullable()();
+
+  /// Record status: 'captured', 'generated', or 'blocked'.
+  TextColumn get status => text().withDefault(const Constant('blocked'))();
+
+  /// Creation timestamp (milliseconds since epoch).
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }

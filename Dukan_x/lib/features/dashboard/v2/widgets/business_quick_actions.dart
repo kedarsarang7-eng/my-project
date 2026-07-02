@@ -7,6 +7,7 @@ import '../../../../core/theme/futuristic_colors.dart';
 import '../../../../models/business_type.dart';
 import '../../../../providers/app_state_providers.dart';
 import '../../../../core/config/business_capabilities.dart';
+import '../../../barcode/widgets/wholesale_bulk_scanner_widget.dart';
 import '../../../purchase/scan_bill.dart';
 
 /// Business-specific quick actions for Dashboard V2
@@ -397,7 +398,16 @@ class BusinessQuickActions extends ConsumerWidget {
               icon: Icons.qr_code_scanner_outlined,
               label: 'Bulk Scan',
               color: FuturisticColors.accent1,
-              onTap: () {},
+              onTap: () => showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) => WholesaleBulkScannerWidget(
+                  onCancel: () => Navigator.of(context).pop(),
+                  onComplete: (result) {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
             ),
           );
         }
