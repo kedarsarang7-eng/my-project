@@ -11,6 +11,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../data/repositories/computer_repository.dart';
+import 'product_search_bottom_sheet.dart';
 
 // ============================================================================
 // Add Part Bottom Sheet
@@ -38,31 +39,72 @@ class AddPartBottomSheet extends StatefulWidget {
 
 class _AddPartBottomSheetState extends State<AddPartBottomSheet> {
   final _formKey = GlobalKey<FormState>();
-  final _productIdController = TextEditingController();
   final _quantityController = TextEditingController(text: '1');
   final _unitPriceController = TextEditingController();
   final _notesController = TextEditingController();
   bool _isLoading = false;
 
+  // Picker state for product selection (Req 22.1, 22.2, 22.3).
+  String? _selectedProductId;
+  String? _selectedProductLabel;
+
   @override
   void dispose() {
-    _productIdController.dispose();
     _quantityController.dispose();
     _unitPriceController.dispose();
     _notesController.dispose();
     super.dispose();
   }
 
+  void _openProductPicker() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.7,
+        maxChildSize: 0.9,
+        minChildSize: 0.4,
+        builder: (_, scrollController) => ProductSearchBottomSheet(
+          jobId: widget.jobId,
+          onProductSelected: (productId, productName, unitPrice, quantity) {
+            setState(() {
+              _selectedProductId = productId;
+              _selectedProductLabel = productName;
+              _unitPriceController.text = unitPrice.toStringAsFixed(2);
+              _quantityController.text = quantity.toString();
+            });
+            Navigator.of(ctx).pop();
+          },
+        ),
+      ),
+    );
+  }
+
   Future<void> _submit() async {
+    if (_selectedProductId == null || _selectedProductId!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a product using the picker'),
+        ),
+      );
+      return;
+    }
+
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
       await widget.onAdd(
-        _productIdController.text.trim(),
+        _selectedProductId!,
         double.parse(_quantityController.text),
-        double.parse(_unitPriceController.text) * 100, // Convert to paise
+        double.parse(
+          _unitPriceController.text,
+        ), // Rupees — conversion to paise happens at the repository boundary
         _notesController.text.isEmpty ? null : _notesController.text,
       );
     } finally {
@@ -109,23 +151,13 @@ class _AddPartBottomSheetState extends State<AddPartBottomSheet> {
                   style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                 ),
                 const SizedBox(height: 24),
-                // Product ID
-                TextFormField(
-                  controller: _productIdController,
-                  decoration: InputDecoration(
-                    labelText: 'Product ID *',
-                    hintText: 'Enter product UUID',
-                    prefixIcon: const Icon(Icons.inventory_2),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Product ID is required';
-                    }
-                    return null;
-                  },
+                // Product — Picker (Req 22.1, 22.2, 22.3)
+                _DialogPickerTile(
+                  label: 'Product *',
+                  icon: Icons.inventory_2,
+                  selectedLabel: _selectedProductLabel,
+                  placeholder: 'Select Product',
+                  onTap: _openProductPicker,
                 ),
                 const SizedBox(height: 16),
                 // Quantity and Price Row
@@ -367,12 +399,12 @@ class _UpdateLaborDialogState extends State<UpdateLaborDialog> {
   _UpdateLaborDialogState() {
     _estimatedController = TextEditingController(
       text: widget.estimatedLaborCost != null
-          ? (widget.estimatedLaborCost! / 100).toStringAsFixed(2)
+          ? widget.estimatedLaborCost!.toStringAsFixed(2)
           : '',
     );
     _actualController = TextEditingController(
       text: widget.actualLaborCost != null
-          ? (widget.actualLaborCost! / 100).toStringAsFixed(2)
+          ? widget.actualLaborCost!.toStringAsFixed(2)
           : '',
     );
     _diagnosisController = TextEditingController(text: widget.diagnosis ?? '');
@@ -383,10 +415,14 @@ class _UpdateLaborDialogState extends State<UpdateLaborDialog> {
 
     final estimated = _estimatedController.text.isEmpty
         ? null
-        : double.parse(_estimatedController.text) * 100;
+        : double.parse(
+            _estimatedController.text,
+          ); // Rupees — conversion to paise happens at the repository boundary
     final actual = _actualController.text.isEmpty
         ? null
-        : double.parse(_actualController.text) * 100;
+        : double.parse(
+            _actualController.text,
+          ); // Rupees — conversion to paise happens at the repository boundary
     final diagnosis = _diagnosisController.text.isEmpty
         ? null
         : _diagnosisController.text;
@@ -494,7 +530,7 @@ class ConvertToInvoiceDialog extends StatefulWidget {
     String customerName,
     String? customerPhone,
     String paymentMode,
-    double discountCents,
+    double discount,
   )
   onConvert;
 
@@ -518,8 +554,8 @@ class _ConvertToInvoiceDialogState extends State<ConvertToInvoiceDialog> {
   final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: '₹');
 
   double get _laborCost =>
-      (widget.job.actualLaborCost ?? widget.job.estimatedLaborCost ?? 0) / 100;
-  double get _partsCost => (widget.job.actualPartsCost ?? 0) / 100;
+      widget.job.actualLaborCost ?? widget.job.estimatedLaborCost ?? 0;
+  double get _partsCost => widget.job.actualPartsCost ?? 0;
   double get _discount => double.tryParse(_discountController.text) ?? 0;
   double get _total => _laborCost + _partsCost - _discount;
 
@@ -540,7 +576,7 @@ class _ConvertToInvoiceDialogState extends State<ConvertToInvoiceDialog> {
             ? null
             : _customerPhoneController.text.trim(),
         _paymentMode,
-        _discount * 100, // Convert to paise
+        _discount, // Rupees — conversion to paise happens at the repository boundary
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -689,6 +725,56 @@ class _ConvertToInvoiceDialogState extends State<ConvertToInvoiceDialog> {
           ),
         ),
       ],
+    );
+  }
+}
+
+// ============================================================================
+// Shared Picker Tile Widget (Dialogs)
+// ============================================================================
+
+/// A tappable tile that displays a selected item label or a placeholder,
+/// styled to match the form field appearance. Used to replace raw UUID text
+/// fields with picker-based selection (Req 22.2).
+class _DialogPickerTile extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final String? selectedLabel;
+  final String placeholder;
+  final VoidCallback onTap;
+
+  const _DialogPickerTile({
+    required this.label,
+    required this.icon,
+    required this.selectedLabel,
+    required this.placeholder,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasSelection = selectedLabel != null && selectedLabel!.isNotEmpty;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          suffixIcon: const Icon(Icons.arrow_drop_down),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        child: Text(
+          hasSelection ? selectedLabel! : placeholder,
+          style: TextStyle(
+            fontSize: 16,
+            color: hasSelection
+                ? const Color(0xFF1E293B)
+                : Colors.grey.shade500,
+          ),
+        ),
+      ),
     );
   }
 }

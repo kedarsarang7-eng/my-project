@@ -12,8 +12,9 @@
 
 /**
  * Channel literals supported by the Delivery_Layer (REQ 5.1-5.5).
+ * WhatsApp added for consolidated OpenWA routing (Req 10.6, 10.8).
  */
-export type Channel = 'in_app' | 'push' | 'sms' | 'email' | 'webhook';
+export type Channel = 'in_app' | 'push' | 'sms' | 'email' | 'webhook' | 'whatsapp';
 
 /**
  * Priority tier (REQ 9.1, 9.2). Drives the delivery mode chosen by the

@@ -193,6 +193,10 @@ part 'app_database.g.dart';
     RateListsTable,
     // Phase 9 Wholesale — E-Way Bill Records (v57, Requirement 12)
     EwayRecordsTable,
+    // Computer Shop — Offline read cache (v58, Requirement 26.1, 26.2)
+    ComputerJobCardsCache,
+    ComputerWarrantyCache,
+    ComputerSerialsCache,
     // Offline-license-activation v39: missing cloud-entity tables
     Roles,
     Permissions,
@@ -214,7 +218,7 @@ class AppDatabase extends _$AppDatabase implements SyncQueueLocalOperations {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 57; // v57: Phase 9 wholesale — EwayRecordsTable (e-Way bill capture + blocked)
+  int get schemaVersion => 58; // v58: Computer Shop — offline read cache (job cards/warranty/serials)
 
   // ==========================================================================
   // v46 SYSTEM-owner backfill resolver (clinic task 4.4)
@@ -1394,6 +1398,51 @@ class AppDatabase extends _$AppDatabase implements SyncQueueLocalOperations {
         debugPrint(
           'AppDatabase: v57 migration complete — eway_records_table created '
           '(Phase 9 wholesale E-Way Bill capture + blocked)',
+        );
+      }
+
+      // ====================================================================
+      // v58: Computer Shop — offline read cache (Requirements 26.1, 26.2).
+      // Three new tables caching the most recent online reads for job
+      // cards, warranty records, and component serials so the module can
+      // serve reads from cache while offline. Purely additive: no existing
+      // table is modified. Every row carries tenant_id (=
+      // SessionManager.userId) for multi-tenant isolation.
+      // Schema_Gate: implicitly approved (new tables, not modifying existing).
+      // Idempotent via CREATE TABLE IF NOT EXISTS + version guard.
+      // ====================================================================
+      if (from < 58) {
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS computer_job_cards_cache (
+            id TEXT NOT NULL PRIMARY KEY,
+            tenant_id TEXT NOT NULL,
+            payload_json TEXT NOT NULL,
+            updated_at INTEGER NOT NULL
+          )
+        ''');
+
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS computer_warranty_cache (
+            id TEXT NOT NULL PRIMARY KEY,
+            tenant_id TEXT NOT NULL,
+            serial_number TEXT NOT NULL,
+            payload_json TEXT NOT NULL,
+            warranty_expiry_date INTEGER
+          )
+        ''');
+
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS computer_serials_cache (
+            serial_number TEXT NOT NULL PRIMARY KEY,
+            tenant_id TEXT NOT NULL,
+            payload_json TEXT NOT NULL
+          )
+        ''');
+
+        debugPrint(
+          'AppDatabase: v58 migration complete — computer_job_cards_cache, '
+          'computer_warranty_cache, computer_serials_cache tables created '
+          '(computerShop offline read cache)',
         );
       }
     },

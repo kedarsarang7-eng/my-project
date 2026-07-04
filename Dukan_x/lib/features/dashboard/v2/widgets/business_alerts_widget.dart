@@ -36,6 +36,7 @@ import '../../../../features/decoration_catering/data/repositories/dc_repository
 import '../../../../features/hardware/data/hardware_ops_repository.dart';
 import '../../../../features/jewellery/data/repositories/jewellery_repository_offline.dart';
 import '../../../../features/book_store/data/book_repository.dart';
+import '../../../../features/computer_shop/providers/computer_shop_dashboard_providers.dart';
 import '../../../../features/restaurant/providers/restaurant_alert_counts_provider.dart';
 import '../../../../features/service/data/repositories/imei_serial_repository.dart';
 import '../../../../features/wholesale/data/wholesale_repository.dart';
@@ -1113,14 +1114,9 @@ final bookStoreAlertCountsProvider =
 /// - Petrol Pump: Tank levels
 /// - Book Store: Low stock by category
 /// - Auto Parts: Part request alerts
-/// computerShop retains its established placeholder alert counts so its
-/// dashboard rendering is preserved unchanged (Preservation 3.6). Only the
-/// electronics branch is migrated to real data (bugfix.md 2.17). Defined as
-/// named constants (outside the alerts switch) so the electronics+computerShop
-/// branch contains no hardcoded count literals.
-const String _kComputerShopWarrantyCount = '5';
-const String _kComputerShopRepairsCount = '8';
-
+/// Both the electronics and computerShop branches are migrated to real
+/// tenant-scoped data (bugfix.md 2.17; Req 14) — neither hardcodes a count
+/// literal.
 class BusinessAlertsWidget extends ConsumerWidget {
   const BusinessAlertsWidget({super.key});
 
@@ -1187,6 +1183,11 @@ class BusinessAlertsWidget extends ConsumerWidget {
                 electronicsSnapshot: ref
                     .watch(electronicsAlertCountsProvider)
                     .maybeWhen(data: (s) => s, orElse: () => null),
+                computerShopSnapshot: businessType == BusinessType.computerShop
+                    ? ref
+                          .watch(computerShopAlertCountsProvider)
+                          .maybeWhen(data: (s) => s, orElse: () => null)
+                    : null,
               ),
             )
           else
@@ -1224,6 +1225,12 @@ class BusinessAlertsWidget extends ConsumerWidget {
                   bookStoreSnapshot: businessType == BusinessType.bookStore
                       ? ref
                             .watch(bookStoreAlertCountsProvider)
+                            .maybeWhen(data: (s) => s, orElse: () => null)
+                      : null,
+                  computerShopSnapshot:
+                      businessType == BusinessType.computerShop
+                      ? ref
+                            .watch(computerShopAlertCountsProvider)
                             .maybeWhen(data: (s) => s, orElse: () => null)
                       : null,
                   wholesaleCreditSnapshot:
@@ -1274,6 +1281,12 @@ class BusinessAlertsWidget extends ConsumerWidget {
                   bookStoreSnapshot: businessType == BusinessType.bookStore
                       ? ref
                             .watch(bookStoreAlertCountsProvider)
+                            .maybeWhen(data: (s) => s, orElse: () => null)
+                      : null,
+                  computerShopSnapshot:
+                      businessType == BusinessType.computerShop
+                      ? ref
+                            .watch(computerShopAlertCountsProvider)
                             .maybeWhen(data: (s) => s, orElse: () => null)
                       : null,
                   wholesaleCreditSnapshot:
@@ -1377,6 +1390,7 @@ class BusinessAlertsWidget extends ConsumerWidget {
     JewelleryAlertSnapshot? jewellerySnapshot,
     SchoolAlertSnapshot? schoolSnapshot,
     ElectronicsAlertSnapshot? electronicsSnapshot,
+    ComputerShopAlertSnapshot? computerShopSnapshot,
     BookStoreAlertSnapshot? bookStoreSnapshot,
     WholesaleCreditSnapshot? wholesaleCreditSnapshot,
   }) {
@@ -1535,28 +1549,36 @@ class BusinessAlertsWidget extends ConsumerWidget {
 
       case BusinessType.electronics:
       case BusinessType.computerShop:
-        // Electronics (bugfix.md 2.17): counts come from the real
-        // tenant-scoped electronicsAlertCountsProvider snapshot. computerShop
-        // is preserved on its established placeholder counts (Preservation
-        // 3.6) — rendered via named constants so its output is unchanged while
-        // the electronics branch no longer hardcodes any literal.
+        // Electronics (bugfix.md 2.17) and computerShop (Req 14) both source
+        // their counts from a real tenant-scoped snapshot provider. Each
+        // vertical's snapshot is independent, and per-metric availability
+        // flags drive the unavailable indicator without affecting the other
+        // metric.
         final bool isElectronics = type == BusinessType.electronics;
         final elec = isElectronics ? electronicsSnapshot : null;
+        final compShop = !isElectronics ? computerShopSnapshot : null;
+        final bool warrantyAvailable = isElectronics
+            ? (elec?.warrantyExpiringAvailable ?? false)
+            : (compShop?.warrantyExpiringAvailable ?? false);
+        final bool repairsAvailable = isElectronics
+            ? (elec?.pendingRepairsAvailable ?? false)
+            : (compShop?.pendingRepairsAvailable ?? false);
         if (caps.supportsSerialNumber) {
           alerts.add(
             _buildAlertItem(
               icon: Icons.confirmation_number_outlined,
               color: FuturisticColors.warning,
               title: 'Warranty Expiring',
-              subtitle:
-                  isElectronics && !(elec?.warrantyExpiringAvailable ?? false)
+              subtitle: !warrantyAvailable
                   ? 'Data unavailable'
                   : 'Service contracts ending',
               count: isElectronics
                   ? (elec == null || !elec.warrantyExpiringAvailable
                         ? '...'
                         : _displayCount(elec.warrantyExpiring))
-                  : _kComputerShopWarrantyCount,
+                  : (compShop == null || !compShop.warrantyExpiringAvailable
+                        ? '...'
+                        : _displayCount(compShop.warrantyExpiring)),
             ),
           );
         }
@@ -1565,14 +1587,16 @@ class BusinessAlertsWidget extends ConsumerWidget {
             icon: Icons.build_outlined,
             color: FuturisticColors.accent1,
             title: 'Pending Repairs',
-            subtitle: isElectronics && !(elec?.pendingRepairsAvailable ?? false)
+            subtitle: !repairsAvailable
                 ? 'Data unavailable'
                 : 'Service jobs in queue',
             count: isElectronics
                 ? (elec == null || !elec.pendingRepairsAvailable
                       ? '...'
                       : _displayCount(elec.pendingRepairs))
-                : _kComputerShopRepairsCount,
+                : (compShop == null || !compShop.pendingRepairsAvailable
+                      ? '...'
+                      : _displayCount(compShop.pendingRepairs)),
           ),
         );
         break;

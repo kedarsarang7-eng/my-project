@@ -28,10 +28,14 @@ import { StorageService } from '../services/storage.service';
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'; // install: npm i @aws-sdk/client-ses
 import { config } from '../config/environment';
+import { createWhatsAppDispatchService } from '../modules/whatsapp/services/whatsapp-dispatch.service';
 
 const storageService = new StorageService();
 const snsClient = new SNSClient(configureAwsClient({ region: config.aws.region }));
 const sesClient = new SESClient(configureAwsClient({ region: config.aws.region }));
+
+/** Shared dispatch service instance — canonical OpenWA gateway (Req 10.6, 10.8). */
+const whatsappDispatch = createWhatsAppDispatchService();
 
 async function sendSmsViaSns(phone: string, message: string, tenantId: string): Promise<void> {
     if (!config.aws.region || phone.length < 10) return;
@@ -69,31 +73,20 @@ async function sendEmailViaSes(to: string, subject: string, body: string, tenant
 }
 
 async function sendWhatsApp(phone: string, message: string, tenantId: string): Promise<void> {
-    const waUrl = config.whatsapp.apiUrl || '';
-    const waToken = config.whatsapp.accessToken || '';
-    const waPhoneId = config.whatsapp.phoneNumberId || '';
-    if (!waUrl || !waToken || !waPhoneId) return;
-    const normalized = phone.startsWith('+') ? phone.replace('+', '') : `91${phone}`;
+    // ── Re-routed to canonical OpenWA gateway via WhatsAppDispatchService (Req 10.6, 10.8) ──
+    if (!phone || phone.length < 10) return;
     try {
-        const { default: https } = await import('https');
-        const payload = JSON.stringify({
-            messaging_product: 'whatsapp',
+        const normalized = phone.startsWith('+') ? phone : `+91${phone}`;
+        await whatsappDispatch.sendMessage({
+            tenantId,
+            businessId: tenantId, // tenant-scoped context
             to: normalized,
-            type: 'text',
-            text: { body: message },
+            templateName: 'ac_notification',
+            params: { body: message },
         });
-        await new Promise<void>((resolve, reject) => {
-            const req = https.request(`${waUrl}/${waPhoneId}/messages`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${waToken}`, 'Content-Type': 'application/json' },
-            }, (res) => { res.resume(); resolve(); });
-            req.on('error', reject);
-            req.write(payload);
-            req.end();
-        });
-        logger.info('WhatsApp sent', { tenantId, phone: phone.slice(-4) });
+        logger.info('WhatsApp sent via OpenWA', { tenantId, phone: phone.slice(-4) });
     } catch (err) {
-        logger.error('WhatsApp send failed', { tenantId, error: (err as Error).message });
+        logger.error('WhatsApp send failed (OpenWA)', { tenantId, error: (err as Error).message });
     }
 }
 

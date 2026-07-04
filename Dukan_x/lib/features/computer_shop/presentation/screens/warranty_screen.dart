@@ -14,6 +14,11 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../providers/computer_job_providers.dart';
 import '../../data/repositories/computer_repository.dart';
+import '../../utils/computer_shop_business_rules.dart';
+import '../../utils/computer_shop_validators.dart';
+import '../widgets/product_search_bottom_sheet.dart';
+import '../widgets/invoice_search_bottom_sheet.dart';
+import '../widgets/customer_search_bottom_sheet.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
 
 class WarrantyScreen extends ConsumerStatefulWidget {
@@ -24,8 +29,10 @@ class WarrantyScreen extends ConsumerStatefulWidget {
 }
 
 class _WarrantyScreenState extends ConsumerState<WarrantyScreen> {
-  int _selectedTab = 0;
   final _serialSearchController = TextEditingController();
+
+  /// Number of tabs rendered by the TabBar.
+  static const _tabCount = 2;
 
   @override
   void dispose() {
@@ -36,11 +43,11 @@ class _WarrantyScreenState extends ConsumerState<WarrantyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF1E293B),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -54,48 +61,114 @@ class _WarrantyScreenState extends ConsumerState<WarrantyScreen> {
                   desktop: 20,
                 ),
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1E293B),
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             Text(
               'Track & Register Product Warranties',
-              style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
       ),
-      body: BoundedBox(
-        maxWidth: 800,
-        child: Column(
-          children: [
-            // Tab Bar
-            Container(
-              color: Colors.white,
-              child: TabBar(
-                onTap: (index) => setState(() => _selectedTab = index),
-                indicatorColor: const Color(0xFF3B82F6),
-                labelColor: const Color(0xFF3B82F6),
-                unselectedLabelColor: Colors.grey.shade600,
-                tabs: const [
-                  Tab(text: 'Lookup', icon: Icon(Icons.search)),
-                  Tab(text: 'Register', icon: Icon(Icons.add_card)),
+      body: DefaultTabController(
+        length: _tabCount,
+        child: BoundedBox(
+          maxWidth: 800,
+          child: Builder(
+            builder: (context) {
+              // Safety net: catch TabController resolution errors and show
+              // inline error instead of crashing the app (Req 1.7).
+              try {
+                final controller = DefaultTabController.of(context);
+                if (controller.length != _tabCount) {
+                  return _TabControllerErrorWidget(
+                    message:
+                        'Tab controller mismatch: expected $_tabCount tabs, '
+                        'got ${controller.length}.',
+                  );
+                }
+              } catch (e) {
+                return _TabControllerErrorWidget(
+                  message: 'Unable to resolve TabController: $e',
+                );
+              }
+
+              return Column(
+                children: [
+                  // Tab Bar
+                  Container(
+                    color: Theme.of(context).colorScheme.surface,
+                    child: TabBar(
+                      indicatorColor: Theme.of(context).colorScheme.primary,
+                      labelColor: Theme.of(context).colorScheme.primary,
+                      unselectedLabelColor: Colors.grey.shade600,
+                      tabs: const [
+                        Tab(text: 'Lookup', icon: Icon(Icons.search)),
+                        Tab(text: 'Register', icon: Icon(Icons.add_card)),
+                      ],
+                    ),
+                  ),
+                  // Tab Content — only the selected tab's content is visible.
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        _WarrantyLookupTab(
+                          searchController: _serialSearchController,
+                          onSearch: () => ref
+                              .read(warrantyProvider.notifier)
+                              .lookupWarranty(
+                                _serialSearchController.text.trim(),
+                              ),
+                        ),
+                        const _WarrantyRegisterTab(),
+                      ],
+                    ),
+                  ),
                 ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Inline error widget shown when the TabController cannot be resolved or
+/// its tab count doesn't match (Req 1.7). Keeps the app running instead of
+/// crashing.
+class _TabControllerErrorWidget extends StatelessWidget {
+  final String message;
+
+  const _TabControllerErrorWidget({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: Colors.red.shade400),
+            const SizedBox(height: 16),
+            Text(
+              'Unable to display tabs',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.red.shade700,
               ),
             ),
-            // Tab Content
-            Expanded(
-              child: IndexedStack(
-                index: _selectedTab,
-                children: [
-                  _WarrantyLookupTab(
-                    searchController: _serialSearchController,
-                    onSearch: () => ref
-                        .read(warrantyProvider.notifier)
-                        .lookupWarranty(_serialSearchController.text.trim()),
-                  ),
-                  const _WarrantyRegisterTab(),
-                ],
-              ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.red.shade600),
             ),
           ],
         ),
@@ -287,6 +360,9 @@ class _WarrantyResultCard extends StatelessWidget {
                   ),
               ],
             ),
+            const SizedBox(height: 12),
+            // AMC Status Indicator (Req 11.1–11.5)
+            _AmcStatusIndicator(warranty: warranty),
             const Divider(height: 32),
             // Warranty Details
             _DetailRow(
@@ -366,6 +442,99 @@ class _WarrantyResultCard extends StatelessWidget {
   }
 }
 
+// ============================================================================
+// AMC Status Indicator (Req 11.1–11.5)
+// ============================================================================
+// Displays the AMC due/not-due/unavailable state for a warranty record.
+// Input data (warrantyExpiryDate) is sourced from ComputerRepository via the
+// warrantyProvider — never from hardcoded or literal values (Req 11.4).
+
+class _AmcStatusIndicator extends StatelessWidget {
+  final ComputerWarranty warranty;
+
+  const _AmcStatusIndicator({required this.warranty});
+
+  @override
+  Widget build(BuildContext context) {
+    final expiryDateStr = warranty.warrantyExpiryDate;
+
+    // If the expiry date string is absent or unparseable, show unavailable (Req 11.5).
+    if (expiryDateStr.isEmpty) {
+      return _buildChip(
+        context,
+        label: 'AMC status unavailable',
+        color: Colors.grey,
+        icon: Icons.help_outline,
+      );
+    }
+
+    final expiryDate = DateTime.tryParse(expiryDateStr);
+    if (expiryDate == null) {
+      return _buildChip(
+        context,
+        label: 'AMC status unavailable',
+        color: Colors.grey,
+        icon: Icons.help_outline,
+      );
+    }
+
+    // Compute AMC due status via business rules (Req 11.1, 11.2).
+    final now = DateTime.now();
+    final isDue = ComputerShopBusinessRules.isAmcDue(expiryDate, now);
+
+    if (isDue) {
+      // Visually distinct "due" state (Req 11.3)
+      return _buildChip(
+        context,
+        label: 'AMC Due',
+        color: Colors.orange,
+        icon: Icons.warning_amber_rounded,
+      );
+    } else {
+      return _buildChip(
+        context,
+        label: 'AMC OK',
+        color: Colors.green,
+        icon: Icons.check_circle_outline,
+      );
+    }
+  }
+
+  Widget _buildChip(
+    BuildContext context, {
+    required String label,
+    required Color color,
+    required IconData icon,
+  }) {
+    return Semantics(
+      label: label,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withOpacity(0.4)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 16),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
@@ -393,7 +562,7 @@ class _DetailRow extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: valueColor ?? const Color(0xFF1E293B),
+              color: valueColor ?? Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),
@@ -439,7 +608,27 @@ class _ErrorResult extends StatelessWidget {
             const SizedBox(height: 16),
             OutlinedButton(
               onPressed: () {
-                // Switch to register tab
+                // Navigate to the Register tab (index 1).
+                try {
+                  DefaultTabController.of(context).animateTo(1);
+                } catch (e) {
+                  // If tab navigation fails, show error indication (Req 24.2).
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Row(
+                        children: [
+                          Icon(Icons.error, color: Colors.white),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text('Could not open warranty registration'),
+                          ),
+                        ],
+                      ),
+                      backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
               },
               child: const Text('Register Warranty'),
             ),
@@ -465,36 +654,102 @@ class _WarrantyRegisterTab extends ConsumerStatefulWidget {
 class _WarrantyRegisterTabState extends ConsumerState<_WarrantyRegisterTab> {
   final _formKey = GlobalKey<FormState>();
   final _serialController = TextEditingController();
-  final _productIdController = TextEditingController();
-  final _invoiceIdController = TextEditingController();
-  final _customerIdController = TextEditingController();
   int _warrantyMonths = 12;
   DateTime _purchaseDate = DateTime.now();
+
+  // Picker state: store both the id (for backend) and label (for display).
+  String? _selectedProductId;
+  String? _selectedProductLabel;
+  String? _selectedInvoiceId;
+  String? _selectedInvoiceLabel;
+  String? _selectedCustomerId;
+  String? _selectedCustomerLabel;
 
   @override
   void dispose() {
     _serialController.dispose();
-    _productIdController.dispose();
-    _invoiceIdController.dispose();
-    _customerIdController.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // Validate that required picker references are selected (Req 20.4, 20.5).
+    if (_selectedProductId == null || _selectedProductId!.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.error, color: Colors.white),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text('Please select a product using the picker'),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
+    if (_selectedInvoiceId == null || _selectedInvoiceId!.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.error, color: Colors.white),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text('Please select an invoice using the picker'),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Validate purchase date is not in the future (defense-in-depth).
+    final dateError = ComputerShopValidators.validatePurchaseDate(
+      _purchaseDate,
+    );
+    if (dateError != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(child: Text(dateError)),
+              ],
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
     try {
       await ref
           .read(warrantyProvider.notifier)
           .registerWarranty(
             serialNumber: _serialController.text.trim(),
-            productId: _productIdController.text.trim(),
+            productId: _selectedProductId!,
             warrantyPeriodMonths: _warrantyMonths,
             purchaseDate: _purchaseDate.toIso8601String().split('T')[0],
-            invoiceId: _invoiceIdController.text.trim(),
-            customerId: _customerIdController.text.isEmpty
-                ? null
-                : _customerIdController.text.trim(),
+            invoiceId: _selectedInvoiceId!,
+            customerId: _selectedCustomerId,
           );
 
       final state = ref.read(warrantyProvider);
@@ -515,12 +770,15 @@ class _WarrantyRegisterTabState extends ConsumerState<_WarrantyRegisterTab> {
 
         // Clear form
         _serialController.clear();
-        _productIdController.clear();
-        _invoiceIdController.clear();
-        _customerIdController.clear();
         setState(() {
           _warrantyMonths = 12;
           _purchaseDate = DateTime.now();
+          _selectedProductId = null;
+          _selectedProductLabel = null;
+          _selectedInvoiceId = null;
+          _selectedInvoiceLabel = null;
+          _selectedCustomerId = null;
+          _selectedCustomerLabel = null;
         });
       }
     } catch (e) {
@@ -540,6 +798,80 @@ class _WarrantyRegisterTabState extends ConsumerState<_WarrantyRegisterTab> {
         );
       }
     }
+  }
+
+  void _openProductPicker() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.7,
+        maxChildSize: 0.9,
+        minChildSize: 0.4,
+        builder: (_, scrollController) => ProductSearchBottomSheet(
+          jobId: '',
+          onProductSelected: (productId, productName, _, __) {
+            setState(() {
+              _selectedProductId = productId;
+              _selectedProductLabel = productName;
+            });
+            Navigator.of(ctx).pop();
+          },
+        ),
+      ),
+    );
+  }
+
+  void _openInvoicePicker() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.7,
+        maxChildSize: 0.9,
+        minChildSize: 0.4,
+        builder: (_, __) => InvoiceSearchBottomSheet(
+          onInvoiceSelected: (invoiceId, invoiceLabel) {
+            setState(() {
+              _selectedInvoiceId = invoiceId;
+              _selectedInvoiceLabel = invoiceLabel;
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  void _openCustomerPicker() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.7,
+        maxChildSize: 0.9,
+        minChildSize: 0.4,
+        builder: (_, __) => CustomerSearchBottomSheet(
+          onCustomerSelected: (customerId, customerLabel) {
+            setState(() {
+              _selectedCustomerId = customerId;
+              _selectedCustomerLabel = customerLabel;
+            });
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -589,21 +921,17 @@ class _WarrantyRegisterTabState extends ConsumerState<_WarrantyRegisterTab> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      validator: (v) => v?.isEmpty == true ? 'Required' : null,
+                      validator: ComputerShopValidators.validateSerial,
                     ),
                     const SizedBox(height: 16),
 
-                    // Product ID
-                    TextFormField(
-                      controller: _productIdController,
-                      decoration: InputDecoration(
-                        labelText: 'Product ID *',
-                        prefixIcon: const Icon(Icons.inventory_2),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      validator: (v) => v?.isEmpty == true ? 'Required' : null,
+                    // Product ID — Picker (Req 20.4, 22.1, 22.3)
+                    _PickerTile(
+                      label: 'Product *',
+                      icon: Icons.inventory_2,
+                      selectedLabel: _selectedProductLabel,
+                      placeholder: 'Select Product',
+                      onTap: () => _openProductPicker(),
                     ),
                     const SizedBox(height: 16),
 
@@ -636,8 +964,17 @@ class _WarrantyRegisterTabState extends ConsumerState<_WarrantyRegisterTab> {
                           firstDate: DateTime(2020),
                           lastDate: DateTime.now(),
                         );
+                        if (!mounted) return;
                         if (picked != null) {
-                          setState(() => _purchaseDate = picked);
+                          // Defense-in-depth: reject future dates, retain prior value.
+                          final error =
+                              ComputerShopValidators.validatePurchaseDate(
+                                picked,
+                              );
+                          if (error == null) {
+                            setState(() => _purchaseDate = picked);
+                          }
+                          // If validation fails, _purchaseDate retains its prior value.
                         }
                       },
                       child: InputDecorator(
@@ -655,30 +992,23 @@ class _WarrantyRegisterTabState extends ConsumerState<_WarrantyRegisterTab> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Invoice ID
-                    TextFormField(
-                      controller: _invoiceIdController,
-                      decoration: InputDecoration(
-                        labelText: 'Invoice ID *',
-                        prefixIcon: const Icon(Icons.receipt),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      validator: (v) => v?.isEmpty == true ? 'Required' : null,
+                    // Invoice — Picker (Req 20.4, 22.1)
+                    _PickerTile(
+                      label: 'Invoice *',
+                      icon: Icons.receipt,
+                      selectedLabel: _selectedInvoiceLabel,
+                      placeholder: 'Select Invoice',
+                      onTap: () => _openInvoicePicker(),
                     ),
                     const SizedBox(height: 16),
 
-                    // Customer ID (Optional)
-                    TextFormField(
-                      controller: _customerIdController,
-                      decoration: InputDecoration(
-                        labelText: 'Customer ID (Optional)',
-                        prefixIcon: const Icon(Icons.person),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
+                    // Customer — Picker (optional, Req 22.1)
+                    _PickerTile(
+                      label: 'Customer (Optional)',
+                      icon: Icons.person,
+                      selectedLabel: _selectedCustomerLabel,
+                      placeholder: 'Select Customer',
+                      onTap: () => _openCustomerPicker(),
                     ),
                   ],
                 ),
@@ -739,6 +1069,56 @@ class _WarrantyRegisterTabState extends ConsumerState<_WarrantyRegisterTab> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ============================================================================
+// Shared Picker Tile Widget
+// ============================================================================
+
+/// A tappable tile that displays a selected item label or a placeholder,
+/// styled to match the form field appearance. Used to replace raw UUID text
+/// fields with picker-based selection (Req 22.2).
+class _PickerTile extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final String? selectedLabel;
+  final String placeholder;
+  final VoidCallback onTap;
+
+  const _PickerTile({
+    required this.label,
+    required this.icon,
+    required this.selectedLabel,
+    required this.placeholder,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasSelection = selectedLabel != null && selectedLabel!.isNotEmpty;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          suffixIcon: const Icon(Icons.arrow_drop_down),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        child: Text(
+          hasSelection ? selectedLabel! : placeholder,
+          style: TextStyle(
+            fontSize: 16,
+            color: hasSelection
+                ? Theme.of(context).colorScheme.onSurface
+                : Colors.grey.shade500,
+          ),
         ),
       ),
     );

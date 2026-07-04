@@ -166,4 +166,15 @@ void main() {
     expect(inter.sgst, 0);
     expect(inter.igst, closeTo(18, 1e-9));
   });
+
+  test('InvoiceLineTax exposes totalTax and lineTotal', () {
+    final line = InvoiceGstCalculator.forLine(
+      quantity: 1,
+      unitPrice: 1000,
+      gstRate: 18,
+      isInterState: false,
+    );
+    expect(line.totalTax, closeTo(180, 1e-9));
+    expect(line.lineTotal, closeTo(1180, 1e-9));
+  });
 }

@@ -32,12 +32,18 @@
 // =============================================================================
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 // Guards / permissions (lifted verbatim from lib/app/routes.dart).
 import '../../components/auth/protected_route.dart';
 import '../../config/permissions.dart';
 import '../auth/role_guard.dart';
+
+// Active business type (single source of truth) — used by the computerShop
+// `/job/*` redirect (Req 17.2, 17.3, 17.4). Read the same way every other
+// guard in this file/app reads it: `businessTypeProvider.type`.
+import '../../providers/app_state_providers.dart';
 
 // Auth / entry screens.
 import '../../features/auth/presentation/screens/license_screen.dart';
@@ -80,6 +86,7 @@ import '../../features/invoice/screens/invoice_settings_screen.dart';
 import '../../features/settings/screens/tax_config_screen.dart';
 import '../../features/settings/screens/currency_settings_screen.dart';
 import '../../features/payment/presentation/screens/payment_gateway_settings_screen.dart';
+import '../../features/whatsapp_automation/presentation/screens/openwa_provisioning_settings_screen.dart';
 import '../../features/settings/presentation/screens/device_settings_screen.dart';
 import '../../features/settings/presentation/screens/server_settings_screen.dart';
 import '../../features/settings/presentation/screens/database_management_screen.dart';
@@ -320,6 +327,7 @@ abstract final class LegacyRoutes {
     '/settings/tax',
     '/settings/currency',
     '/settings/payment_gateway',
+    '/settings/whatsapp_gateway',
     '/settings/device',
     '/settings/server',
     '/settings/database',
@@ -418,6 +426,9 @@ abstract final class LegacyRoutes {
     '/computer-shop/job-card-detail',
     '/computer-shop/create-job-card',
     '/computer-shop/multi-unit',
+    '/computer-shop/rma',
+    '/computer-shop/build',
+    '/computer-shop/bulk-serials',
     // Electronics (Phase 2 — electronics-vertical-remediation).
     '/electronics/imei-tracking',
     // Jewellery (Phase 1 — jewellery-vertical-remediation).
@@ -483,6 +494,36 @@ abstract final class LegacyRoutes {
   /// by the dynamic-navigation safety net (AD-7) and parity tests.
   static bool isKnownLegacyPath(String path) =>
       _knownLegacyPaths.contains(path);
+
+  // ---------------------------------------------------------------------------
+  // computerShop `/job/*` redirect (Task 10.1, design AD-4, Req 17.2-17.4).
+  // ---------------------------------------------------------------------------
+
+  /// Redirects a computerShop session away from the generic
+  /// Service/Repair `/job/*` routes to the equivalent canonical
+  /// `/computer-shop/*` route, and does nothing (`null`, no redirect) for
+  /// every other business type — mobileShop/service/electronics keep
+  /// rendering the generic screens unchanged (Req 17.7 regression isolation).
+  ///
+  /// Reads the active business type the same way every other guard in this
+  /// app does — `businessTypeProvider.type` — via the enclosing widget's
+  /// provider container, since a `GoRoute.redirect` callback only receives a
+  /// [BuildContext], not a Riverpod `Ref`.
+  ///
+  /// Runs for EVERY navigation to the route (`GoRouter.redirect` fires for
+  /// programmatic navigation, browser/URL navigation, and deep links alike),
+  /// so deep-link/legacy access is covered automatically (Req 17.4) without
+  /// any extra wiring.
+  static String? _computerShopJobRedirect(
+    BuildContext context,
+    String computerShopTarget,
+  ) {
+    final BusinessType currentType = ProviderScope.containerOf(
+      context,
+      listen: false,
+    ).read(businessTypeProvider).type;
+    return currentType == BusinessType.computerShop ? computerShopTarget : null;
+  }
 
   // ---------------------------------------------------------------------------
   // Route registrations.
@@ -1044,6 +1085,13 @@ abstract final class LegacyRoutes {
         child: const PaymentGatewaySettingsScreen(),
       ),
     ),
+    GoRoute(
+      path: '/settings/whatsapp_gateway',
+      builder: (BuildContext context, GoRouterState state) => VendorRoleGuard(
+        requiredPermission: Permissions.systemSettings,
+        child: const OpenwaProvisioningSettingsScreen(),
+      ),
+    ),
     // '/settings/device': (context) => VendorRoleGuard(
     //       requiredPermission: Permissions.systemSettings,
     //       child: const DeviceSettingsScreen(),
@@ -1505,6 +1553,11 @@ abstract final class LegacyRoutes {
     //     ),
     GoRoute(
       path: '/job/create',
+      // computerShop sessions are redirected to the canonical
+      // /computer-shop/create-job-card route (Req 17.2-17.4); every other
+      // allowed type falls through to the builder below, unchanged.
+      redirect: (BuildContext context, GoRouterState state) =>
+          _computerShopJobRedirect(context, '/computer-shop/create-job-card'),
       builder: (BuildContext context, GoRouterState state) => VendorRoleGuard(
         requiredPermission: Permissions.manageStaff,
         child: BusinessGuard(
@@ -1533,6 +1586,11 @@ abstract final class LegacyRoutes {
     //     ),
     GoRoute(
       path: '/job/status',
+      // computerShop sessions are redirected to the canonical
+      // /computer-shop/job-cards route (Req 17.2-17.4); every other allowed
+      // type falls through to the builder below, unchanged.
+      redirect: (BuildContext context, GoRouterState state) =>
+          _computerShopJobRedirect(context, '/computer-shop/job-cards'),
       builder: (BuildContext context, GoRouterState state) => VendorRoleGuard(
         requiredPermission: Permissions.manageStaff,
         child: BusinessGuard(
@@ -1560,6 +1618,11 @@ abstract final class LegacyRoutes {
     //     ),
     GoRoute(
       path: '/job/deliver',
+      // computerShop sessions are redirected to the canonical
+      // /computer-shop/job-cards route (Req 17.2-17.4); every other allowed
+      // type falls through to the builder below, unchanged.
+      redirect: (BuildContext context, GoRouterState state) =>
+          _computerShopJobRedirect(context, '/computer-shop/job-cards'),
       builder: (BuildContext context, GoRouterState state) => VendorRoleGuard(
         requiredPermission: Permissions.manageStaff,
         child: BusinessGuard(
@@ -2656,11 +2719,16 @@ abstract final class LegacyRoutes {
     ),
     GoRoute(
       path: '/computer-shop/create-job-card',
+      // Req 17.5-17.6: repair-job creation for computerShop requires exactly
+      // `createInvoices`, enforced identically at every entry point. This is
+      // the landing route for the redirected `/job/create` (and the sidebar's
+      // `computer_create_job`, which already used `createInvoices`), so it is
+      // corrected here from `viewInvoices` to match.
       builder: (BuildContext context, GoRouterState state) {
         final extra = state.extra as Map<String, dynamic>?;
         final serialNumber = extra?['serialNumber'] as String?;
         return VendorRoleGuard(
-          requiredPermission: Permissions.viewInvoices,
+          requiredPermission: Permissions.createInvoices,
           child: BusinessGuard(
             allowedTypes: const [
               BusinessType.computerShop,
@@ -2698,6 +2766,41 @@ abstract final class LegacyRoutes {
           denialMessage:
               'Only Computer Shop businesses can access Multi-Unit config.',
           child: const MultiUnitScreen(),
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/computer-shop/rma',
+      builder: (BuildContext context, GoRouterState state) => VendorRoleGuard(
+        requiredPermission: Permissions.viewInvoices,
+        child: BusinessGuard(
+          allowedTypes: const [BusinessType.computerShop],
+          denialMessage: 'Only Computer Shop businesses can access RMA.',
+          child: const RmaScreen(),
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/computer-shop/build',
+      builder: (BuildContext context, GoRouterState state) => VendorRoleGuard(
+        requiredPermission: Permissions.createInvoices,
+        child: BusinessGuard(
+          allowedTypes: const [BusinessType.computerShop],
+          denialMessage:
+              'Only Computer Shop businesses can access Custom Build.',
+          child: const CustomBuildScreen(),
+        ),
+      ),
+    ),
+    GoRoute(
+      path: '/computer-shop/bulk-serials',
+      builder: (BuildContext context, GoRouterState state) => VendorRoleGuard(
+        requiredPermission: Permissions.createInvoices,
+        child: BusinessGuard(
+          allowedTypes: const [BusinessType.computerShop],
+          denialMessage:
+              'Only Computer Shop businesses can access Bulk Serial Intake.',
+          child: const BulkSerialIntakeScreen(),
         ),
       ),
     ),

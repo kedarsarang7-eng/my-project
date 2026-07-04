@@ -219,6 +219,11 @@ void _testCsvHeadersMatchSchema() {
     'Status',
     'StatusReason',
     'StatusTimestamp',
+    'LayoutOverflow',
+    'HardcodedValues',
+    'ResponsivenessCoverage',
+    'UiUxCorrectness',
+    'Performance',
   ];
 
   assert(
@@ -233,7 +238,7 @@ void _testCsvHeadersMatchSchema() {
     );
   }
 
-  print('  ✓ All 15 CSV headers match the schema');
+  print('  ✓ All ${expected.length} CSV headers match the schema');
 }
 
 // ─── Merge Tests ────────────────────────────────────────────────────────────
@@ -484,7 +489,7 @@ void _testStatusFieldsSerialization() {
 
   final row = entry.toCsvRow();
 
-  assert(row.length == 15, 'CSV row should have 15 columns, got ${row.length}');
+  assert(row.length == 20, 'CSV row should have 20 columns, got ${row.length}');
   assert(row[12] == 'Blocked', 'Status column (index 12)');
   assert(row[13] == 'Missing API endpoint', 'StatusReason column (index 13)');
   assert(

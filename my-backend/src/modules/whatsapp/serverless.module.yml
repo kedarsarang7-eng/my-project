@@ -1,0 +1,231 @@
+# ============================================================================
+# WhatsApp Automation Module — Lambda Function Definitions (Task 16.2)
+# ============================================================================
+# Imported by root serverless.yml or serverless.compose.yml
+#
+# AUTH MODEL:
+# - All routes except /whatsapp/webhook use cognitoAuthorizer (JWT)
+# - /whatsapp/webhook is PUBLIC — signature-only auth (HMAC-SHA256 in handler)
+# - Every authenticated handler uses authorizedHandler with fail-closed
+#   checkPermission, session-derived BusinessID, 401 for invalid tokens,
+#   and 403 with no data disclosure for cross-business access
+#
+# Requirements: 12.2, 12.3, 13.2
+# ============================================================================
+
+# ── Authenticated API (Cognito + RBAC) ────────────────────────────────────────
+
+whatsappApi:
+  handler: dist/modules/whatsapp/handlers/index.handler
+  description: WhatsApp automation — authenticated API (customers, templates, rules, config, logs, inbound)
+  timeout: 29
+  events:
+    # ── Customers ──────────────────────────────────────────────────────────────
+    - httpApi:
+        path: /whatsapp/customers
+        method: POST
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/customers
+        method: GET
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/customers/{id}
+        method: GET
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/customers/{id}
+        method: PUT
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/customers/{id}/consent
+        method: POST
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/customers/{id}/consent
+        method: PUT
+        authorizer:
+          name: cognitoAuthorizer
+
+    # ── Templates ─────────────────────────────────────────────────────────────
+    - httpApi:
+        path: /whatsapp/templates
+        method: POST
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/templates
+        method: GET
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/templates/{id}
+        method: GET
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/templates/{id}
+        method: PUT
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/templates/{id}
+        method: DELETE
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/templates/{id}/versions
+        method: GET
+        authorizer:
+          name: cognitoAuthorizer
+
+    # ── Rules ─────────────────────────────────────────────────────────────────
+    - httpApi:
+        path: /whatsapp/rules
+        method: POST
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/rules
+        method: GET
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/rules/{id}
+        method: GET
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/rules/{id}
+        method: PUT
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/rules/{id}
+        method: PATCH
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/rules/{id}
+        method: DELETE
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/rules/{id}/enable
+        method: POST
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/rules/{id}/disable
+        method: POST
+        authorizer:
+          name: cognitoAuthorizer
+
+    # ── Config ────────────────────────────────────────────────────────────────
+    - httpApi:
+        path: /whatsapp/config
+        method: GET
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/config
+        method: PUT
+        authorizer:
+          name: cognitoAuthorizer
+
+    # ── Provisioning (OpenWA credential onboarding) ──────────────────────────
+    - httpApi:
+        path: /whatsapp/provisioning
+        method: POST
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/provisioning
+        method: GET
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/provisioning/verify
+        method: POST
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/provisioning
+        method: DELETE
+        authorizer:
+          name: cognitoAuthorizer
+
+    # ── Logs (read-only) ──────────────────────────────────────────────────────
+    - httpApi:
+        path: /whatsapp/logs/delivery
+        method: GET
+        authorizer:
+          name: cognitoAuthorizer
+    - httpApi:
+        path: /whatsapp/logs/audit
+        method: GET
+        authorizer:
+          name: cognitoAuthorizer
+
+    # ── Inbound ───────────────────────────────────────────────────────────────
+    - httpApi:
+        path: /whatsapp/inbound
+        method: POST
+        authorizer:
+          name: cognitoAuthorizer
+
+# ── Webhook (PUBLIC — Signature-Only Auth) ────────────────────────────────────
+
+whatsappWebhook:
+  handler: dist/modules/whatsapp/handlers/webhook.handler.webhookHandler
+  description: WhatsApp — OpenWA status webhook (public, HMAC-SHA256 signature verification in handler)
+  timeout: 29
+  events:
+    - httpApi:
+        path: /whatsapp/webhook
+        method: POST
+        # NO authorizer — public endpoint
+        # Authentication is performed in-handler via HMAC-SHA256 signature verification
+
+# ── Engine (EventBridge consumer) ─────────────────────────────────────────────
+
+whatsappEngine:
+  handler: dist/modules/whatsapp/lambdas/whatsapp-engine.handler
+  description: WhatsApp — Automation engine (Business_Event consumer, rule eval, enqueue)
+  timeout: 60
+  events:
+    - eventBridge:
+        pattern:
+          source:
+            - dukanx.billing
+            - dukanx.inventory
+            - dukanx.whatsapp
+
+# ── Dispatcher (SQS consumer) ─────────────────────────────────────────────────
+
+whatsappDispatcher:
+  handler: dist/modules/whatsapp/lambdas/whatsapp-dispatcher.handler
+  description: WhatsApp — Message dispatcher (SQS FIFO drain, rate-limited OpenWA dispatch)
+  timeout: 300
+  reservedConcurrency: 5
+  events:
+    - sqs:
+        arn: !GetAtt WhatsAppMessageQueue.Arn
+        batchSize: 10
+        maximumBatchingWindow: 5
+
+# ── Scheduler (sweeper for delayed/scheduled messages) ────────────────────────
+
+whatsappScheduler:
+  handler: dist/modules/whatsapp/lambdas/whatsapp-scheduler.handler
+  description: WhatsApp — Scheduled message sweeper (scans WASCHED# due-time index)
+  timeout: 60
+  events:
+    - schedule:
+        rate: rate(1 minute)
+        enabled: true

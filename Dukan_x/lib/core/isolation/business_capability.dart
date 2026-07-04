@@ -991,6 +991,26 @@ final Map<String, Set<BusinessCapability>> businessCapabilityRegistry = {
   },
 };
 
+// ── Universal Staff Management Capability Injection ──────────────────────────
+// The staff module is universal — it adapts to EVERY business type via
+// Staff_Feature_Config (configuration, not code forks). We inject the
+// useStaffManagement capability into every registered business type so the
+// sidebar entry and feature gate resolve correctly regardless of type.
+// This is the ONLY place the capability is registered universally; the actual
+// sub-feature enablement (payroll, attendance, leave, etc.) is controlled by
+// the plan-tier × businessType Staff_Feature_Config in the backend.
+void _injectUniversalStaffCapability() {
+  for (final entry in businessCapabilityRegistry.values) {
+    entry.add(BusinessCapability.useStaffManagement);
+  }
+}
+
+// Run the injection at module load time.
+final _staffCapabilityInjected = (() {
+  _injectUniversalStaffCapability();
+  return true;
+})();
+
 // =============================================================================
 // Subscription tier-gating layer (subscription-plan-tiers feature, Req 3.3,
 // 19.1, 19.5).

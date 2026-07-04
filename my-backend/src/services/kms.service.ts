@@ -20,6 +20,9 @@ import {
     DecryptCommand,
 } from '@aws-sdk/client-kms';
 import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
+import { DynamoDBDocumentClient, UpdateCommand as KmsUpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBClient as KmsDDBClient } from '@aws-sdk/client-dynamodb';
+import { config } from '../config/environment';
 import { logger } from '../utils/logger';
 
 const kmsClient = new KMSClient(configureAwsClient({ region: config.aws.region }));
@@ -30,10 +33,6 @@ const KMS_KEY_ID = config.awsKms.keyId;
 // -- Decryption Anomaly Detection --------------------------------------------
 // CRIT-003 FIX: Moved from in-memory Map (useless on Lambda � resets every cold
 // start) to DynamoDB atomic counter with TTL for persistent tracking.
-
-import { DynamoDBDocumentClient, UpdateCommand as KmsUpdateCommand } from '@aws-sdk/lib-dynamodb';
-import { DynamoDBClient as KmsDDBClient } from '@aws-sdk/client-dynamodb';
-import { config } from '../config/environment';
 
 const DECRYPT_THRESHOLD_PER_HOUR = 100;
 const _kmsRlClient = DynamoDBDocumentClient.from(
@@ -209,6 +208,88 @@ export function secureWipe(buffer: Buffer): void {
 export function secureWipeString(_str: string): void {
     // NO-OP: JS strings are immutable. See HIGH-004 in audit report.
     // Callers should nullify string references after use instead.
+}
+
+// -- Generic Field-Level Encryption (envelope) -------------------------------
+
+/**
+ * Generic envelope-encryption helper for field-level encryption.
+ *
+ * Encrypts `plaintext` under the module KMS key using an encryption context of
+ * `{ tenant_id, purpose }`. The `purpose` scopes the ciphertext to a single use
+ * case (for example `staff_pii`), so a blob encrypted for one purpose cannot be
+ * decrypted under a different one — the same isolation guarantee the payment /
+ * plan-key / AI-key helpers rely on.
+ *
+ * @param plaintext - The value to encrypt
+ * @param tenantId  - Tenant ID bound into the encryption context for isolation
+ * @param purpose   - Encryption-context purpose tag (must match on decrypt)
+ * @returns Base64-encoded ciphertext string (safe for DB/JSON storage)
+ */
+export async function encryptWithContext(
+    plaintext: string,
+    tenantId: string,
+    purpose: string,
+): Promise<string> {
+    if (!KMS_KEY_ID) {
+        throw new Error('KMS_KEY_ID environment variable is not configured');
+    }
+
+    const command = new EncryptCommand({
+        KeyId: KMS_KEY_ID,
+        Plaintext: Buffer.from(plaintext, 'utf-8'),
+        EncryptionContext: {
+            tenant_id: tenantId,
+            purpose,
+        },
+    });
+
+    const response = await kmsClient.send(command);
+
+    if (!response.CiphertextBlob) {
+        throw new Error('KMS encryption returned empty ciphertext');
+    }
+
+    logger.debug('KMS field encryption successful', { tenantId, purpose });
+
+    return Buffer.from(response.CiphertextBlob).toString('base64');
+}
+
+/**
+ * Generic envelope-decryption helper matching {@link encryptWithContext}.
+ * Must use the same `purpose` used at encryption time. Tracks decryption
+ * frequency for anomaly detection. Throws on any failure — callers MUST NOT
+ * fall back to treating the ciphertext (or any value) as plaintext.
+ *
+ * @param ciphertextBase64 - Base64-encoded ciphertext from the database
+ * @param tenantId         - Tenant ID used as encryption context (must match)
+ * @param purpose          - Encryption-context purpose tag (must match encrypt)
+ * @returns Decrypted plaintext string
+ */
+export async function decryptWithContext(
+    ciphertextBase64: string,
+    tenantId: string,
+    purpose: string,
+): Promise<string> {
+    await checkDecryptionAnomaly(tenantId);
+
+    const command = new DecryptCommand({
+        CiphertextBlob: new Uint8Array(Buffer.from(ciphertextBase64, 'base64')),
+        EncryptionContext: {
+            tenant_id: tenantId,
+            purpose,
+        },
+    });
+
+    const response = await kmsClient.send(command);
+
+    if (!response.Plaintext) {
+        throw new Error('KMS decryption returned empty plaintext');
+    }
+
+    logger.debug('KMS field decryption successful', { tenantId, purpose });
+
+    return Buffer.from(response.Plaintext).toString('utf-8');
 }
 
 /**

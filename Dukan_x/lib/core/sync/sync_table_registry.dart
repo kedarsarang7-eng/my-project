@@ -1,4 +1,3 @@
-
 // Idempotency: Sync queue operations carry stable idempotency keys (operationId / requestId / idempotencyKey) to ensure server-side deduplication.
 // ============================================================================
 // SYNC TABLE REGISTRY
@@ -198,7 +197,7 @@ class SyncTableRegistry {
       priority: 30,
     ),
 
-    // ── Staff / HR ───────────────────────────────────────────────────────
+    // ── Staff / HR (Legacy) ─────────────────────────────────────────────
     const SyncTableConfig(
       localTableName: 'staff_members',
       remoteTableName: 'staff_members',
@@ -213,6 +212,105 @@ class SyncTableRegistry {
       localTableName: 'salary_records',
       remoteTableName: 'salary_records',
       priority: 35,
+    ),
+
+    // ── Universal Staff Management ───────────────────────────────────────
+    const SyncTableConfig(
+      localTableName: 'staff_employees',
+      remoteTableName: 'staff/employees',
+      priority: 20,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_departments',
+      remoteTableName: 'staff/departments',
+      priority: 20,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_designations',
+      remoteTableName: 'staff/designations',
+      priority: 20,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_attendance_events',
+      remoteTableName: 'staff/attendance/events',
+      priority: 30,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_shifts',
+      remoteTableName: 'staff/shifts',
+      priority: 25,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_rosters',
+      remoteTableName: 'staff/rosters',
+      priority: 30,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_leave_types',
+      remoteTableName: 'staff/leave/types',
+      priority: 25,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_leave_requests',
+      remoteTableName: 'staff/leave/requests',
+      priority: 30,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_leave_balances',
+      remoteTableName: 'staff/leave/balances',
+      priority: 30,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_tasks',
+      remoteTableName: 'staff/tasks',
+      priority: 30,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_payroll_runs',
+      remoteTableName: 'staff/payroll/runs',
+      priority: 35,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_payslips',
+      remoteTableName: 'staff/payslips',
+      priority: 35,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_salary_components',
+      remoteTableName: 'staff/salary-components',
+      priority: 35,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_commission_rules',
+      remoteTableName: 'staff/commission/rules',
+      priority: 30,
+    ),
+    const SyncTableConfig(
+      localTableName: 'staff_performance_scores',
+      remoteTableName: 'staff/performance/scores',
+      priority: 35,
+    ),
+
+    // ── WhatsApp Automation ──────────────────────────────────────────────
+    const SyncTableConfig(
+      localTableName: 'wa_customers',
+      remoteTableName: 'whatsapp/customers',
+      priority: 25,
+    ),
+    const SyncTableConfig(
+      localTableName: 'wa_message_templates',
+      remoteTableName: 'whatsapp/templates',
+      priority: 30,
+    ),
+    const SyncTableConfig(
+      localTableName: 'wa_automation_rules',
+      remoteTableName: 'whatsapp/rules',
+      priority: 30,
+    ),
+    const SyncTableConfig(
+      localTableName: 'wa_automation_config',
+      remoteTableName: 'whatsapp/config',
+      priority: 30,
     ),
 
     // ── Reminder / Period ────────────────────────────────────────────────

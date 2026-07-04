@@ -93,10 +93,10 @@ class _ComputerBarcodeScannerState extends State<ComputerBarcodeScanner> {
     if (widget.onBarcodeScanned != null) {
       widget.onBarcodeScanned!(barcode);
     }
-    
+
     // Show success feedback
     HapticFeedback.lightImpact();
-    
+
     // Refocus for next scan
     _focusNode.requestFocus();
     _controller.clear();
@@ -148,9 +148,7 @@ class _ComputerBarcodeScannerState extends State<ComputerBarcodeScanner> {
               ),
             ],
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
           fillColor: Colors.grey.shade50,
         ),
@@ -245,10 +243,7 @@ class SerialNumberScanner extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           'Scan the serial number sticker on the device',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
         ),
       ],
     );
@@ -286,6 +281,11 @@ class BarcodeScanResultCard extends StatelessWidget {
   final VoidCallback? onAddToJob;
   final VoidCallback? onViewDetails;
 
+  /// Callback invoked when user taps "Create Product" (shown only when product
+  /// is not found and this callback is non-null). If null, the button is hidden
+  /// to satisfy Req 24.5 (no enabled control is a no-op).
+  final VoidCallback? onCreateProduct;
+
   const BarcodeScanResultCard({
     super.key,
     required this.barcode,
@@ -294,11 +294,15 @@ class BarcodeScanResultCard extends StatelessWidget {
     this.stock,
     this.onAddToJob,
     this.onViewDetails,
+    this.onCreateProduct,
   });
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: sl<CurrencyService>().symbol);
+    final currencyFormat = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: sl<CurrencyService>().symbol,
+    );
     final bool found = productName != null;
 
     return Card(
@@ -340,7 +344,9 @@ class BarcodeScanResultCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: found ? Colors.green.shade700 : Colors.orange.shade700,
+                          color: found
+                              ? Colors.green.shade700
+                              : Colors.orange.shade700,
                         ),
                       ),
                       Text(
@@ -380,7 +386,10 @@ class BarcodeScanResultCard extends StatelessWidget {
                   if (stock != null) ...[
                     const SizedBox(width: 16),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: stock! > 0
                             ? Colors.green.withOpacity(0.1)
@@ -422,20 +431,22 @@ class BarcodeScanResultCard extends StatelessWidget {
                 ],
               ),
             ] else ...[
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        // Navigate to create product
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('Create Product'),
+              // "Create Product" button shown only when an onCreateProduct
+              // callback is provided (Req 24.5 — no enabled control is a no-op).
+              if (onCreateProduct != null) ...[
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: onCreateProduct,
+                        icon: const Icon(Icons.add),
+                        label: const Text('Create Product'),
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ],
           ],
         ),
@@ -443,5 +454,3 @@ class BarcodeScanResultCard extends StatelessWidget {
     );
   }
 }
-
-

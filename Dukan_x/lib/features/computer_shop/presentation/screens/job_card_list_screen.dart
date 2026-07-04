@@ -14,6 +14,8 @@ import '../../../../core/services/currency_service.dart';
 import '../../../../core/session/session_manager.dart';
 import '../../data/repositories/computer_repository.dart';
 import '../../providers/computer_job_providers.dart';
+import '../../utils/computer_shop_business_rules.dart';
+import '../../utils/job_status_codec.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
 
 class JobCardListScreen extends ConsumerStatefulWidget {
@@ -26,7 +28,7 @@ class JobCardListScreen extends ConsumerStatefulWidget {
 class _JobCardListScreenState extends ConsumerState<JobCardListScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
-  String? _selectedStatus;
+  ComputerJobStatus? _selectedStatus;
   String _searchQuery = '';
 
   @override
@@ -52,29 +54,27 @@ class _JobCardListScreenState extends ConsumerState<JobCardListScreen> {
     }
   }
 
-  List<ComputerJobCard> _filterJobs(List<ComputerJobCard> jobs) {
-    if (_searchQuery.isEmpty) return jobs;
-    return jobs.where((job) {
-      final query = _searchQuery.toLowerCase();
-      return job.deviceBrand.toLowerCase().contains(query) ||
-          job.deviceModel.toLowerCase().contains(query) ||
-          job.serialNumber?.toLowerCase().contains(query) == true ||
-          job.reportedIssue.toLowerCase().contains(query);
-    }).toList();
+  void _onSearchChanged(String value) {
+    setState(() => _searchQuery = value);
+    // Server-side search across the full dataset for queries >=1 char
+    // (Req 27.1, 27.2); empty query reverts to the paginated list (Req 27.5).
+    ref.read(jobSearchProvider.notifier).search(value.trim());
   }
 
   @override
   Widget build(BuildContext context) {
     final jobState = ref.watch(jobCardListProvider);
+    final searchState = ref.watch(jobSearchProvider);
     final statusOptions = ref.watch(jobStatusOptionsProvider);
-    final filteredJobs = _filterJobs(jobState.jobs);
+    final isSearching = _searchQuery.trim().isNotEmpty;
+    final displayedJobs = isSearching ? searchState.results : jobState.jobs;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF1E293B),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -88,18 +88,22 @@ class _JobCardListScreenState extends ConsumerState<JobCardListScreen> {
                   desktop: 20, // PRESERVED: Desktop uses exactly 20 as before
                 ),
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1E293B),
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             Text(
               'Computer Shop',
-              style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh job cards',
             onPressed: () => ref.read(jobCardListProvider.notifier).refresh(),
           ),
           const SizedBox(width: 8),
@@ -121,19 +125,20 @@ class _JobCardListScreenState extends ConsumerState<JobCardListScreen> {
                   // Search Field
                   TextField(
                     controller: _searchController,
-                    onChanged: (value) => setState(() => _searchQuery = value),
+                    onChanged: _onSearchChanged,
                     decoration: InputDecoration(
                       hintText: 'Search by brand, model, serial, issue...',
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         Icons.search,
-                        color: Color(0xFF64748B),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       suffixIcon: _searchQuery.isNotEmpty
                           ? IconButton(
                               icon: const Icon(Icons.clear),
+                              tooltip: 'Clear search',
                               onPressed: () {
                                 _searchController.clear();
-                                setState(() => _searchQuery = '');
+                                _onSearchChanged('');
                               },
                             )
                           : null,
@@ -164,7 +169,7 @@ class _JobCardListScreenState extends ConsumerState<JobCardListScreen> {
                             onSelected: (selected) {
                               setState(() {
                                 _selectedStatus = selected
-                                    ? option['value'] as String?
+                                    ? option['value'] as ComputerJobStatus?
                                     : null;
                               });
                               ref
@@ -201,47 +206,14 @@ class _JobCardListScreenState extends ConsumerState<JobCardListScreen> {
             // Job Cards List
             Expanded(
               child: RefreshIndicator(
-                onRefresh: () =>
-                    ref.read(jobCardListProvider.notifier).refresh(),
-                child: jobState.isLoading && jobState.jobs.isEmpty
-                    ? const _LoadingState()
-                    : jobState.error != null && jobState.jobs.isEmpty
-                    ? _ErrorState(
-                        error: jobState.error!,
-                        onRetry: () =>
-                            ref.read(jobCardListProvider.notifier).refresh(),
-                      )
-                    : filteredJobs.isEmpty
-                    ? _EmptyState(
-                        hasFilter:
-                            _searchQuery.isNotEmpty || _selectedStatus != null,
-                        onClearFilter: () {
-                          setState(() {
-                            _searchQuery = '';
-                            _searchController.clear();
-                            _selectedStatus = null;
-                          });
-                          ref
-                              .read(jobCardListProvider.notifier)
-                              .setStatusFilter(null);
-                        },
-                      )
-                    : ListView.builder(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.all(16),
-                        itemCount:
-                            filteredJobs.length + (jobState.hasMore ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index >= filteredJobs.length) {
-                            return const _LoadMoreIndicator();
-                          }
-                          final job = filteredJobs[index];
-                          return _JobCardTile(
-                            job: job,
-                            onTap: () => _navigateToDetail(job),
-                          );
-                        },
-                      ),
+                onRefresh: () => isSearching
+                    ? ref
+                          .read(jobSearchProvider.notifier)
+                          .search(_searchQuery.trim())
+                    : ref.read(jobCardListProvider.notifier).refresh(),
+                child: isSearching
+                    ? _buildSearchBody(context, searchState)
+                    : _buildPaginatedBody(context, jobState),
               ),
             ),
           ],
@@ -254,6 +226,77 @@ class _JobCardListScreenState extends ConsumerState<JobCardListScreen> {
         label: const Text('New Job'),
         backgroundColor: const Color(0xFF3B82F6),
       ),
+    );
+  }
+
+  /// Loading/empty/error states for the normal paginated job list
+  /// (shown when the search field is empty — Req 27.5).
+  Widget _buildPaginatedBody(BuildContext context, JobCardListState jobState) {
+    if (jobState.isLoading && jobState.jobs.isEmpty) {
+      return const _LoadingState();
+    }
+    if (jobState.error != null && jobState.jobs.isEmpty) {
+      return _ErrorState(
+        error: jobState.error!,
+        onRetry: () => ref.read(jobCardListProvider.notifier).refresh(),
+      );
+    }
+    if (jobState.jobs.isEmpty) {
+      return _EmptyState(
+        hasFilter: _selectedStatus != null,
+        onClearFilter: () {
+          setState(() => _selectedStatus = null);
+          ref.read(jobCardListProvider.notifier).setStatusFilter(null);
+        },
+      );
+    }
+    return ListView.builder(
+      controller: _scrollController,
+      padding: const EdgeInsets.all(16),
+      itemCount: jobState.jobs.length + (jobState.hasMore ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index >= jobState.jobs.length) {
+          return const _LoadMoreIndicator();
+        }
+        final job = jobState.jobs[index];
+        return _JobCardTile(job: job, onTap: () => _navigateToDetail(job));
+      },
+    );
+  }
+
+  /// Loading/empty/error states for server-side search results (Req 27).
+  /// On error, the prior results already held in [searchState.results] are
+  /// shown behind the retry banner rather than being cleared (Req 27.4).
+  Widget _buildSearchBody(BuildContext context, JobSearchState searchState) {
+    if (searchState.isLoading && searchState.results.isEmpty) {
+      return const _LoadingState();
+    }
+    if (searchState.error != null) {
+      return _SearchErrorState(
+        error: searchState.error!,
+        priorResults: searchState.results,
+        onRetry: () =>
+            ref.read(jobSearchProvider.notifier).search(_searchQuery.trim()),
+        onNavigateToDetail: _navigateToDetail,
+      );
+    }
+    if (searchState.results.isEmpty) {
+      return _EmptyState(
+        hasFilter: true,
+        onClearFilter: () {
+          setState(() => _searchQuery = '');
+          _searchController.clear();
+          ref.read(jobSearchProvider.notifier).clear();
+        },
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: searchState.results.length,
+      itemBuilder: (context, index) {
+        final job = searchState.results[index];
+        return _JobCardTile(job: job, onTap: () => _navigateToDetail(job));
+      },
     );
   }
 
@@ -321,10 +364,10 @@ class _JobCardTile extends StatelessWidget {
                       children: [
                         Text(
                           '${job.deviceBrand} ${job.deviceModel}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF1E293B),
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -340,21 +383,35 @@ class _JobCardTile extends StatelessWidget {
                     ),
                   ),
                   // Status Badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      _getStatusLabel(job.status),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: statusColor,
+                  Semantics(
+                    label: 'Status: ${_getStatusLabel(job.status)}',
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: statusColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            _getStatusIcon(job.status),
+                            size: 12,
+                            color: statusColor,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            _getStatusLabel(job.status),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: statusColor,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -398,10 +455,10 @@ class _JobCardTile extends StatelessWidget {
                       currencyFormat.format(
                         (job.actualLaborCost ?? 0) + (job.actualPartsCost ?? 0),
                       ),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF1E293B),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   const SizedBox(width: 12),
@@ -419,41 +476,49 @@ class _JobCardTile extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(ComputerJobStatus status) {
     switch (status) {
-      case 'INTAKE':
+      case ComputerJobStatus.intake:
         return Colors.orange;
-      case 'DIAGNOSIS':
+      case ComputerJobStatus.diagnosis:
         return Colors.amber;
-      case 'AWAITING_PARTS':
+      case ComputerJobStatus.partsOrdered:
         return Colors.deepOrange;
-      case 'REPAIRING':
+      case ComputerJobStatus.underRepair:
         return Colors.blue;
-      case 'QC':
+      case ComputerJobStatus.qa:
         return Colors.purple;
-      case 'DELIVERED':
+      case ComputerJobStatus.ready:
+        return Colors.teal;
+      case ComputerJobStatus.delivered:
         return Colors.green;
-      default:
+      case ComputerJobStatus.cancelled:
         return Colors.grey;
     }
   }
 
-  String _getStatusLabel(String status) {
+  String _getStatusLabel(ComputerJobStatus status) {
+    return JobStatusCodec.label(status);
+  }
+
+  IconData _getStatusIcon(ComputerJobStatus status) {
     switch (status) {
-      case 'INTAKE':
-        return 'Intake';
-      case 'DIAGNOSIS':
-        return 'Diagnosis';
-      case 'AWAITING_PARTS':
-        return 'Awaiting Parts';
-      case 'REPAIRING':
-        return 'Repairing';
-      case 'QC':
-        return 'QC';
-      case 'DELIVERED':
-        return 'Delivered';
-      default:
-        return status;
+      case ComputerJobStatus.intake:
+        return Icons.login;
+      case ComputerJobStatus.diagnosis:
+        return Icons.search;
+      case ComputerJobStatus.partsOrdered:
+        return Icons.shopping_cart;
+      case ComputerJobStatus.underRepair:
+        return Icons.build;
+      case ComputerJobStatus.qa:
+        return Icons.verified;
+      case ComputerJobStatus.ready:
+        return Icons.check_circle_outline;
+      case ComputerJobStatus.delivered:
+        return Icons.check_circle;
+      case ComputerJobStatus.cancelled:
+        return Icons.cancel;
     }
   }
 }
@@ -524,6 +589,68 @@ class _ErrorState extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Error/timeout banner for server-side search that retains and still
+/// renders the prior result list underneath it (Req 27.4) instead of
+/// clearing the screen on failure.
+class _SearchErrorState extends StatelessWidget {
+  final String error;
+  final List<ComputerJobCard> priorResults;
+  final VoidCallback onRetry;
+  final void Function(ComputerJobCard) onNavigateToDetail;
+
+  const _SearchErrorState({
+    required this.error,
+    required this.priorResults,
+    required this.onRetry,
+    required this.onNavigateToDetail,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.red.shade50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.red.shade200),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  error,
+                  style: TextStyle(fontSize: 13, color: Colors.red.shade700),
+                ),
+              ),
+              TextButton(onPressed: onRetry, child: const Text('Retry')),
+            ],
+          ),
+        ),
+        if (priorResults.isNotEmpty)
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: priorResults.length,
+              itemBuilder: (context, index) {
+                final job = priorResults[index];
+                return _JobCardTile(
+                  job: job,
+                  onTap: () => onNavigateToDetail(job),
+                );
+              },
+            ),
+          ),
+      ],
     );
   }
 }

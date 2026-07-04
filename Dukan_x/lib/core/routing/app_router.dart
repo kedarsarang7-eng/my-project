@@ -68,6 +68,7 @@ import '../../core/responsive/adaptive_shell.dart';
 import '../../components/auth/login_page.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/purchase/presentation/screens/scan_bill_image_picker_screen.dart';
+import '../../features/staff/presentation/presentation.dart' as staff;
 import '../../providers/app_state_providers.dart';
 import '../../widgets/desktop/sidebar_navigation_handler.dart';
 import 'legacy_routes.dart';
@@ -453,6 +454,53 @@ abstract final class AppRouter {
           builder: (BuildContext context, GoRouterState state) =>
               _buildMandiScreen(mandiItemId, context),
         ),
+
+      // =====================================================================
+      // Universal Staff Management routes — surfaces for ALL business types.
+      // Each staff sidebar item maps to its corresponding presentation screen.
+      // =====================================================================
+      GoRoute(
+        path: '/app/staff/dashboard',
+        name: 'staff_dashboard',
+        builder: (BuildContext context, GoRouterState state) =>
+            const staff.StaffDashboardScreen(),
+      ),
+      GoRoute(
+        path: '/app/staff/employees',
+        name: 'staff_employees',
+        builder: (BuildContext context, GoRouterState state) =>
+            const staff.EmployeeListScreen(),
+      ),
+      GoRoute(
+        path: '/app/staff/attendance',
+        name: 'staff_attendance',
+        builder: (BuildContext context, GoRouterState state) =>
+            const staff.AttendanceScreen(),
+      ),
+      GoRoute(
+        path: '/app/staff/leave',
+        name: 'staff_leave',
+        builder: (BuildContext context, GoRouterState state) =>
+            const staff.LeaveScreen(),
+      ),
+      GoRoute(
+        path: '/app/staff/tasks',
+        name: 'staff_tasks',
+        builder: (BuildContext context, GoRouterState state) =>
+            const staff.TaskListScreen(),
+      ),
+      GoRoute(
+        path: '/app/staff/payroll',
+        name: 'staff_payroll',
+        builder: (BuildContext context, GoRouterState state) =>
+            const staff.PayrollScreen(),
+      ),
+      GoRoute(
+        path: '/app/staff/performance',
+        name: 'staff_performance',
+        builder: (BuildContext context, GoRouterState state) =>
+            const staff.PerformanceScreen(),
+      ),
 
       // One route per legacy sidebar itemId (Task 3.3). The builder returns the
       // IDENTICAL screen + args the legacy switch returns via [screenForItemId]

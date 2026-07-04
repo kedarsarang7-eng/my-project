@@ -72,33 +72,33 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
       body: BoundedBox(
         maxWidth: 800,
         child: Column(
-        children: [
-          // Date Selector
-          _buildDateHeader(isDark, theme),
+          children: [
+            // Date Selector
+            _buildDateHeader(isDark, theme),
 
-          // Summary Cards
-          _buildSummaryCards(isDark),
+            // Summary Cards
+            _buildSummaryCards(isDark),
 
-          const SizedBox(height: 8),
+            const SizedBox(height: 8),
 
-          // Staff Attendance List
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _todayAttendance.isEmpty
-                ? _buildEmptyState(isDark)
-                : RefreshIndicator(
-                    onRefresh: _loadAttendance,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: _todayAttendance.length,
-                      itemBuilder: (_, i) =>
-                          _buildAttendanceCard(_todayAttendance[i], isDark),
+            // Staff Attendance List
+            Expanded(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _todayAttendance.isEmpty
+                  ? _buildEmptyState(isDark)
+                  : RefreshIndicator(
+                      onRefresh: _loadAttendance,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: _todayAttendance.length,
+                        itemBuilder: (_, i) =>
+                            _buildAttendanceCard(_todayAttendance[i], isDark),
+                      ),
                     ),
-                  ),
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -142,9 +142,14 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                 ),
                 Text(
                   DateFormat('dd MMMM, yyyy').format(_selectedDate),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: responsiveValue<double>(context, mobile: 16, tablet: 18, desktop: 20),
+                    fontSize: responsiveValue<double>(
+                      context,
+                      mobile: 16,
+                      tablet: 18,
+                      desktop: 20,
+                    ),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -227,7 +232,12 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
             Text(
               value,
               style: TextStyle(
-                fontSize: responsiveValue<double>(context, mobile: 18, tablet: 20, desktop: 24),
+                fontSize: responsiveValue<double>(
+                  context,
+                  mobile: 18,
+                  tablet: 20,
+                  desktop: 24,
+                ),
                 fontWeight: FontWeight.bold,
                 color: color,
               ),
@@ -285,7 +295,12 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                 child: Text(
                   staff.name.substring(0, 1).toUpperCase(),
                   style: TextStyle(
-                    fontSize: responsiveValue<double>(context, mobile: 16, tablet: 18, desktop: 20),
+                    fontSize: responsiveValue<double>(
+                      context,
+                      mobile: 16,
+                      tablet: 18,
+                      desktop: 20,
+                    ),
                     fontWeight: FontWeight.bold,
                     color: statusColor,
                   ),
@@ -435,11 +450,12 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
           Text(
             'No staff to mark attendance',
             style: TextStyle(
-              fontSize: responsiveValue<double>(context,
-                    mobile: 14.0,
-                    tablet: 16.0,
-                    desktop: 18.0,  // PRESERVED: Desktop uses exactly 18 as before
-                  ),
+              fontSize: responsiveValue<double>(
+                context,
+                mobile: 14.0,
+                tablet: 16.0,
+                desktop: 18.0, // PRESERVED: Desktop uses exactly 18 as before
+              ),
               fontWeight: FontWeight.w600,
               color: isDark ? Colors.white70 : Colors.grey[600],
             ),

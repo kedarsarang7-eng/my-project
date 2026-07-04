@@ -215,6 +215,33 @@ export enum FeatureKey {
     AC_REPORT_CARDS = 'ac_report_cards',
     AC_CLASSWISE_FEE = 'ac_classwise_fee',
     AC_INSTITUTION_CONFIG = 'ac_institution_config',
+
+    // ── Staff Management (Universal module) ─────────────────────────────
+    // The staff module activates for EVERY business type; therefore its
+    // capability keys are plan-tier core features (business-type differences
+    // are expressed via Staff_Feature_Config values only — AD-2, no forks).
+    // Each key maps 1:1 to a StaffModule in modules/staff/schemas.
+    STAFF_CORE = 'staff_core',                 // employee/department/designation
+    STAFF_ATTENDANCE = 'staff_attendance',     // attendance capture + shifts/rosters
+    STAFF_LEAVE = 'staff_leave',               // leave types, balances, approvals
+    STAFF_TASKS = 'staff_tasks',               // task assignment + workflow
+    STAFF_REPORTS = 'staff_reports',           // reporting/search/dashboards
+    STAFF_PAYROLL = 'staff_payroll',           // payroll engine + payslips
+    STAFF_PERFORMANCE = 'staff_performance',   // performance scoring
+    STAFF_COMMISSION = 'staff_commission',     // commission rules
+
+    // ── WhatsApp Automation (Universal module) ──────────────────────────
+    // Single canonical OpenWA gateway — NO second gateway introduced
+    // (Req 10.1, 10.2, 15.1). Activates for EVERY business type; capability
+    // differences are expressed via Automation_Config values only (AD-2).
+    WA_CORE = 'wa_core',                       // customer profiles, consent, templates
+    WA_AUTOMATION = 'wa_automation',           // automation rules + engine
+    WA_INVOICING = 'wa_invoicing',             // invoice/payment document automations
+    WA_REMINDERS = 'wa_reminders',             // payment/outstanding-balance reminders
+    WA_CAMPAIGNS = 'wa_campaigns',             // marketing/engagement campaigns
+    WA_ANALYTICS = 'wa_analytics',             // daily summaries / analytics delivery
+    WA_MULTI_BRANCH = 'wa_multi_branch',       // branch-scoped notifications
+    WA_AI_RESPONDER = 'wa_ai_responder',       // AI reply generation (OFF by default)
 }
 
 // ── Core Features per Plan ──────────────────────────────────────────────────
@@ -231,6 +258,12 @@ const BASIC_CORE_FEATURES: FeatureKey[] = [
     FeatureKey.CUSTOMER_LEDGER,
     FeatureKey.EXPENSE_TRACKER,
     FeatureKey.BASIC_REORDER_ALERTS,
+    // Staff Management (universal) — foundation available from Basic
+    FeatureKey.STAFF_CORE,
+    FeatureKey.STAFF_ATTENDANCE,
+    // WhatsApp Automation (universal) — core messaging available from Basic
+    FeatureKey.WA_CORE,
+    FeatureKey.WA_AUTOMATION,
 ];
 
 // PRO = Basic + advanced reports + barcode printing (additive)
@@ -239,6 +272,13 @@ const PRO_CORE_FEATURES: FeatureKey[] = [
     FeatureKey.ADVANCED_REPORTS,
     FeatureKey.BARCODE_TAG_PRINTING,
     FeatureKey.STOCK_VALUATION,
+    // Staff Management — leave, tasks, and reporting unlock at Pro
+    FeatureKey.STAFF_LEAVE,
+    FeatureKey.STAFF_TASKS,
+    FeatureKey.STAFF_REPORTS,
+    // WhatsApp Automation — invoice delivery + payment reminders at Pro
+    FeatureKey.WA_INVOICING,
+    FeatureKey.WA_REMINDERS,
 ];
 
 const PREMIUM_CORE_FEATURES: FeatureKey[] = [
@@ -251,6 +291,13 @@ const PREMIUM_CORE_FEATURES: FeatureKey[] = [
     FeatureKey.CLOUD_BACKUP,
     FeatureKey.ADVANCED_ANALYTICS,
     FeatureKey.GST_REPORTS,
+    // Staff Management — money-critical + incentive engines unlock at Premium
+    FeatureKey.STAFF_PAYROLL,
+    FeatureKey.STAFF_PERFORMANCE,
+    FeatureKey.STAFF_COMMISSION,
+    // WhatsApp Automation — campaigns + analytics delivery at Premium
+    FeatureKey.WA_CAMPAIGNS,
+    FeatureKey.WA_ANALYTICS,
 ];
 
 const ENTERPRISE_CORE_FEATURES: FeatureKey[] = [
@@ -260,6 +307,9 @@ const ENTERPRISE_CORE_FEATURES: FeatureKey[] = [
     FeatureKey.API_ACCESS,
     FeatureKey.FINANCIAL_RECONCILIATION_ENGINE,
     FeatureKey.HIERARCHICAL_ROLE_CONTROL,
+    // WhatsApp Automation — multi-branch + AI responder at Enterprise
+    FeatureKey.WA_MULTI_BRANCH,
+    FeatureKey.WA_AI_RESPONDER,
 ];
 
 export const PLAN_CORE_FEATURES: Record<PlanTier, FeatureKey[]> = {

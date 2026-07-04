@@ -33,6 +33,7 @@ import { pushChannelAdapter } from './push';
 import { createEmailAdapter } from './email';
 import { smsChannelAdapter } from './sms';
 import { webhookAdapter } from './webhook';
+import { whatsappChannelAdapter } from './whatsapp';
 import type { DispatchChannelAdapter } from '../service/types';
 
 // ---------------------------------------------------------------------------
@@ -108,6 +109,11 @@ export type {
     WebhookPayload,
 } from './webhook';
 
+export {
+    whatsappChannelAdapter,
+    _resetWhatsAppChannelAdapterForTests,
+} from './whatsapp';
+
 // ---------------------------------------------------------------------------
 // Façade + rate-limiter re-exports
 // ---------------------------------------------------------------------------
@@ -168,6 +174,7 @@ export function createDeliveryLayer(
         email: overrides.email ?? createEmailAdapter(),
         sms: overrides.sms ?? smsChannelAdapter,
         webhook: overrides.webhook ?? webhookAdapter,
+        whatsapp: overrides.whatsapp ?? whatsappChannelAdapter,
     };
     return new DeliveryLayer({
         ...options,

@@ -116326,6 +116326,1035 @@ class EwayRecordsTableCompanion extends UpdateCompanion<EwayRecordEntity> {
   }
 }
 
+class $ComputerJobCardsCacheTable extends ComputerJobCardsCache
+    with TableInfo<$ComputerJobCardsCacheTable, ComputerJobCardCacheEntity> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ComputerJobCardsCacheTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tenantIdMeta = const VerificationMeta(
+    'tenantId',
+  );
+  @override
+  late final GeneratedColumn<String> tenantId = GeneratedColumn<String>(
+    'tenant_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, tenantId, payloadJson, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'computer_job_cards_cache';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ComputerJobCardCacheEntity> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('tenant_id')) {
+      context.handle(
+        _tenantIdMeta,
+        tenantId.isAcceptableOrUnknown(data['tenant_id']!, _tenantIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tenantIdMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ComputerJobCardCacheEntity map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ComputerJobCardCacheEntity(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      tenantId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tenant_id'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ComputerJobCardsCacheTable createAlias(String alias) {
+    return $ComputerJobCardsCacheTable(attachedDatabase, alias);
+  }
+}
+
+class ComputerJobCardCacheEntity extends DataClass
+    implements Insertable<ComputerJobCardCacheEntity> {
+  /// The job card's id (server-assigned), used as the cache key.
+  final String id;
+
+  /// Owning tenant identifier (multi-tenant isolation). NOT nullable — every
+  /// cache row MUST belong to a tenant; reads are filtered by active
+  /// Tenant_Id (= SessionManager.userId).
+  final String tenantId;
+
+  /// Full JSON payload of the job card as returned by the backend, so the
+  /// cache can be replayed through the same `ComputerJobCard.fromJson`
+  /// parsing path used for online reads.
+  final String payloadJson;
+
+  /// When this cache row was last written (used for display/debugging; not
+  /// a TTL — cached data is served as-is while offline).
+  final DateTime updatedAt;
+  const ComputerJobCardCacheEntity({
+    required this.id,
+    required this.tenantId,
+    required this.payloadJson,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['tenant_id'] = Variable<String>(tenantId);
+    map['payload_json'] = Variable<String>(payloadJson);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ComputerJobCardsCacheCompanion toCompanion(bool nullToAbsent) {
+    return ComputerJobCardsCacheCompanion(
+      id: Value(id),
+      tenantId: Value(tenantId),
+      payloadJson: Value(payloadJson),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory ComputerJobCardCacheEntity.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ComputerJobCardCacheEntity(
+      id: serializer.fromJson<String>(json['id']),
+      tenantId: serializer.fromJson<String>(json['tenantId']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'tenantId': serializer.toJson<String>(tenantId),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  ComputerJobCardCacheEntity copyWith({
+    String? id,
+    String? tenantId,
+    String? payloadJson,
+    DateTime? updatedAt,
+  }) => ComputerJobCardCacheEntity(
+    id: id ?? this.id,
+    tenantId: tenantId ?? this.tenantId,
+    payloadJson: payloadJson ?? this.payloadJson,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  ComputerJobCardCacheEntity copyWithCompanion(
+    ComputerJobCardsCacheCompanion data,
+  ) {
+    return ComputerJobCardCacheEntity(
+      id: data.id.present ? data.id.value : this.id,
+      tenantId: data.tenantId.present ? data.tenantId.value : this.tenantId,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComputerJobCardCacheEntity(')
+          ..write('id: $id, ')
+          ..write('tenantId: $tenantId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, tenantId, payloadJson, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ComputerJobCardCacheEntity &&
+          other.id == this.id &&
+          other.tenantId == this.tenantId &&
+          other.payloadJson == this.payloadJson &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ComputerJobCardsCacheCompanion
+    extends UpdateCompanion<ComputerJobCardCacheEntity> {
+  final Value<String> id;
+  final Value<String> tenantId;
+  final Value<String> payloadJson;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const ComputerJobCardsCacheCompanion({
+    this.id = const Value.absent(),
+    this.tenantId = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ComputerJobCardsCacheCompanion.insert({
+    required String id,
+    required String tenantId,
+    required String payloadJson,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       tenantId = Value(tenantId),
+       payloadJson = Value(payloadJson),
+       updatedAt = Value(updatedAt);
+  static Insertable<ComputerJobCardCacheEntity> custom({
+    Expression<String>? id,
+    Expression<String>? tenantId,
+    Expression<String>? payloadJson,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (tenantId != null) 'tenant_id': tenantId,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ComputerJobCardsCacheCompanion copyWith({
+    Value<String>? id,
+    Value<String>? tenantId,
+    Value<String>? payloadJson,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return ComputerJobCardsCacheCompanion(
+      id: id ?? this.id,
+      tenantId: tenantId ?? this.tenantId,
+      payloadJson: payloadJson ?? this.payloadJson,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (tenantId.present) {
+      map['tenant_id'] = Variable<String>(tenantId.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComputerJobCardsCacheCompanion(')
+          ..write('id: $id, ')
+          ..write('tenantId: $tenantId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ComputerWarrantyCacheTable extends ComputerWarrantyCache
+    with TableInfo<$ComputerWarrantyCacheTable, ComputerWarrantyCacheEntity> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ComputerWarrantyCacheTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tenantIdMeta = const VerificationMeta(
+    'tenantId',
+  );
+  @override
+  late final GeneratedColumn<String> tenantId = GeneratedColumn<String>(
+    'tenant_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _serialNumberMeta = const VerificationMeta(
+    'serialNumber',
+  );
+  @override
+  late final GeneratedColumn<String> serialNumber = GeneratedColumn<String>(
+    'serial_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _warrantyExpiryDateMeta =
+      const VerificationMeta('warrantyExpiryDate');
+  @override
+  late final GeneratedColumn<DateTime> warrantyExpiryDate =
+      GeneratedColumn<DateTime>(
+        'warranty_expiry_date',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    tenantId,
+    serialNumber,
+    payloadJson,
+    warrantyExpiryDate,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'computer_warranty_cache';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ComputerWarrantyCacheEntity> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('tenant_id')) {
+      context.handle(
+        _tenantIdMeta,
+        tenantId.isAcceptableOrUnknown(data['tenant_id']!, _tenantIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tenantIdMeta);
+    }
+    if (data.containsKey('serial_number')) {
+      context.handle(
+        _serialNumberMeta,
+        serialNumber.isAcceptableOrUnknown(
+          data['serial_number']!,
+          _serialNumberMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_serialNumberMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    if (data.containsKey('warranty_expiry_date')) {
+      context.handle(
+        _warrantyExpiryDateMeta,
+        warrantyExpiryDate.isAcceptableOrUnknown(
+          data['warranty_expiry_date']!,
+          _warrantyExpiryDateMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ComputerWarrantyCacheEntity map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ComputerWarrantyCacheEntity(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      tenantId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tenant_id'],
+      )!,
+      serialNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}serial_number'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+      warrantyExpiryDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}warranty_expiry_date'],
+      ),
+    );
+  }
+
+  @override
+  $ComputerWarrantyCacheTable createAlias(String alias) {
+    return $ComputerWarrantyCacheTable(attachedDatabase, alias);
+  }
+}
+
+class ComputerWarrantyCacheEntity extends DataClass
+    implements Insertable<ComputerWarrantyCacheEntity> {
+  /// Warranty id (server-assigned) — primary cache key.
+  final String id;
+
+  /// Owning tenant identifier (multi-tenant isolation).
+  final String tenantId;
+
+  /// Serial number the warranty is registered against; used to look up a
+  /// warranty by serial while offline (mirrors [ComputerRepository.getWarranty]).
+  final String serialNumber;
+
+  /// Full JSON payload of the warranty as returned by the backend.
+  final String payloadJson;
+
+  /// Warranty expiry date, denormalized from the payload for fast lookups
+  /// (e.g. AMC/expiring-soon indicators while offline).
+  final DateTime? warrantyExpiryDate;
+  const ComputerWarrantyCacheEntity({
+    required this.id,
+    required this.tenantId,
+    required this.serialNumber,
+    required this.payloadJson,
+    this.warrantyExpiryDate,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['tenant_id'] = Variable<String>(tenantId);
+    map['serial_number'] = Variable<String>(serialNumber);
+    map['payload_json'] = Variable<String>(payloadJson);
+    if (!nullToAbsent || warrantyExpiryDate != null) {
+      map['warranty_expiry_date'] = Variable<DateTime>(warrantyExpiryDate);
+    }
+    return map;
+  }
+
+  ComputerWarrantyCacheCompanion toCompanion(bool nullToAbsent) {
+    return ComputerWarrantyCacheCompanion(
+      id: Value(id),
+      tenantId: Value(tenantId),
+      serialNumber: Value(serialNumber),
+      payloadJson: Value(payloadJson),
+      warrantyExpiryDate: warrantyExpiryDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(warrantyExpiryDate),
+    );
+  }
+
+  factory ComputerWarrantyCacheEntity.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ComputerWarrantyCacheEntity(
+      id: serializer.fromJson<String>(json['id']),
+      tenantId: serializer.fromJson<String>(json['tenantId']),
+      serialNumber: serializer.fromJson<String>(json['serialNumber']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+      warrantyExpiryDate: serializer.fromJson<DateTime?>(
+        json['warrantyExpiryDate'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'tenantId': serializer.toJson<String>(tenantId),
+      'serialNumber': serializer.toJson<String>(serialNumber),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+      'warrantyExpiryDate': serializer.toJson<DateTime?>(warrantyExpiryDate),
+    };
+  }
+
+  ComputerWarrantyCacheEntity copyWith({
+    String? id,
+    String? tenantId,
+    String? serialNumber,
+    String? payloadJson,
+    Value<DateTime?> warrantyExpiryDate = const Value.absent(),
+  }) => ComputerWarrantyCacheEntity(
+    id: id ?? this.id,
+    tenantId: tenantId ?? this.tenantId,
+    serialNumber: serialNumber ?? this.serialNumber,
+    payloadJson: payloadJson ?? this.payloadJson,
+    warrantyExpiryDate: warrantyExpiryDate.present
+        ? warrantyExpiryDate.value
+        : this.warrantyExpiryDate,
+  );
+  ComputerWarrantyCacheEntity copyWithCompanion(
+    ComputerWarrantyCacheCompanion data,
+  ) {
+    return ComputerWarrantyCacheEntity(
+      id: data.id.present ? data.id.value : this.id,
+      tenantId: data.tenantId.present ? data.tenantId.value : this.tenantId,
+      serialNumber: data.serialNumber.present
+          ? data.serialNumber.value
+          : this.serialNumber,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+      warrantyExpiryDate: data.warrantyExpiryDate.present
+          ? data.warrantyExpiryDate.value
+          : this.warrantyExpiryDate,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComputerWarrantyCacheEntity(')
+          ..write('id: $id, ')
+          ..write('tenantId: $tenantId, ')
+          ..write('serialNumber: $serialNumber, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('warrantyExpiryDate: $warrantyExpiryDate')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, tenantId, serialNumber, payloadJson, warrantyExpiryDate);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ComputerWarrantyCacheEntity &&
+          other.id == this.id &&
+          other.tenantId == this.tenantId &&
+          other.serialNumber == this.serialNumber &&
+          other.payloadJson == this.payloadJson &&
+          other.warrantyExpiryDate == this.warrantyExpiryDate);
+}
+
+class ComputerWarrantyCacheCompanion
+    extends UpdateCompanion<ComputerWarrantyCacheEntity> {
+  final Value<String> id;
+  final Value<String> tenantId;
+  final Value<String> serialNumber;
+  final Value<String> payloadJson;
+  final Value<DateTime?> warrantyExpiryDate;
+  final Value<int> rowid;
+  const ComputerWarrantyCacheCompanion({
+    this.id = const Value.absent(),
+    this.tenantId = const Value.absent(),
+    this.serialNumber = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.warrantyExpiryDate = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ComputerWarrantyCacheCompanion.insert({
+    required String id,
+    required String tenantId,
+    required String serialNumber,
+    required String payloadJson,
+    this.warrantyExpiryDate = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       tenantId = Value(tenantId),
+       serialNumber = Value(serialNumber),
+       payloadJson = Value(payloadJson);
+  static Insertable<ComputerWarrantyCacheEntity> custom({
+    Expression<String>? id,
+    Expression<String>? tenantId,
+    Expression<String>? serialNumber,
+    Expression<String>? payloadJson,
+    Expression<DateTime>? warrantyExpiryDate,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (tenantId != null) 'tenant_id': tenantId,
+      if (serialNumber != null) 'serial_number': serialNumber,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (warrantyExpiryDate != null)
+        'warranty_expiry_date': warrantyExpiryDate,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ComputerWarrantyCacheCompanion copyWith({
+    Value<String>? id,
+    Value<String>? tenantId,
+    Value<String>? serialNumber,
+    Value<String>? payloadJson,
+    Value<DateTime?>? warrantyExpiryDate,
+    Value<int>? rowid,
+  }) {
+    return ComputerWarrantyCacheCompanion(
+      id: id ?? this.id,
+      tenantId: tenantId ?? this.tenantId,
+      serialNumber: serialNumber ?? this.serialNumber,
+      payloadJson: payloadJson ?? this.payloadJson,
+      warrantyExpiryDate: warrantyExpiryDate ?? this.warrantyExpiryDate,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (tenantId.present) {
+      map['tenant_id'] = Variable<String>(tenantId.value);
+    }
+    if (serialNumber.present) {
+      map['serial_number'] = Variable<String>(serialNumber.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (warrantyExpiryDate.present) {
+      map['warranty_expiry_date'] = Variable<DateTime>(
+        warrantyExpiryDate.value,
+      );
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComputerWarrantyCacheCompanion(')
+          ..write('id: $id, ')
+          ..write('tenantId: $tenantId, ')
+          ..write('serialNumber: $serialNumber, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('warrantyExpiryDate: $warrantyExpiryDate, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ComputerSerialsCacheTable extends ComputerSerialsCache
+    with TableInfo<$ComputerSerialsCacheTable, ComputerSerialCacheEntity> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ComputerSerialsCacheTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _serialNumberMeta = const VerificationMeta(
+    'serialNumber',
+  );
+  @override
+  late final GeneratedColumn<String> serialNumber = GeneratedColumn<String>(
+    'serial_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tenantIdMeta = const VerificationMeta(
+    'tenantId',
+  );
+  @override
+  late final GeneratedColumn<String> tenantId = GeneratedColumn<String>(
+    'tenant_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [serialNumber, tenantId, payloadJson];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'computer_serials_cache';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ComputerSerialCacheEntity> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('serial_number')) {
+      context.handle(
+        _serialNumberMeta,
+        serialNumber.isAcceptableOrUnknown(
+          data['serial_number']!,
+          _serialNumberMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_serialNumberMeta);
+    }
+    if (data.containsKey('tenant_id')) {
+      context.handle(
+        _tenantIdMeta,
+        tenantId.isAcceptableOrUnknown(data['tenant_id']!, _tenantIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tenantIdMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {serialNumber};
+  @override
+  ComputerSerialCacheEntity map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ComputerSerialCacheEntity(
+      serialNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}serial_number'],
+      )!,
+      tenantId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tenant_id'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+    );
+  }
+
+  @override
+  $ComputerSerialsCacheTable createAlias(String alias) {
+    return $ComputerSerialsCacheTable(attachedDatabase, alias);
+  }
+}
+
+class ComputerSerialCacheEntity extends DataClass
+    implements Insertable<ComputerSerialCacheEntity> {
+  /// Serial number — primary cache key.
+  final String serialNumber;
+
+  /// Owning tenant identifier (multi-tenant isolation).
+  final String tenantId;
+
+  /// Full JSON payload of the serial record as returned by the backend.
+  final String payloadJson;
+  const ComputerSerialCacheEntity({
+    required this.serialNumber,
+    required this.tenantId,
+    required this.payloadJson,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['serial_number'] = Variable<String>(serialNumber);
+    map['tenant_id'] = Variable<String>(tenantId);
+    map['payload_json'] = Variable<String>(payloadJson);
+    return map;
+  }
+
+  ComputerSerialsCacheCompanion toCompanion(bool nullToAbsent) {
+    return ComputerSerialsCacheCompanion(
+      serialNumber: Value(serialNumber),
+      tenantId: Value(tenantId),
+      payloadJson: Value(payloadJson),
+    );
+  }
+
+  factory ComputerSerialCacheEntity.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ComputerSerialCacheEntity(
+      serialNumber: serializer.fromJson<String>(json['serialNumber']),
+      tenantId: serializer.fromJson<String>(json['tenantId']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'serialNumber': serializer.toJson<String>(serialNumber),
+      'tenantId': serializer.toJson<String>(tenantId),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+    };
+  }
+
+  ComputerSerialCacheEntity copyWith({
+    String? serialNumber,
+    String? tenantId,
+    String? payloadJson,
+  }) => ComputerSerialCacheEntity(
+    serialNumber: serialNumber ?? this.serialNumber,
+    tenantId: tenantId ?? this.tenantId,
+    payloadJson: payloadJson ?? this.payloadJson,
+  );
+  ComputerSerialCacheEntity copyWithCompanion(
+    ComputerSerialsCacheCompanion data,
+  ) {
+    return ComputerSerialCacheEntity(
+      serialNumber: data.serialNumber.present
+          ? data.serialNumber.value
+          : this.serialNumber,
+      tenantId: data.tenantId.present ? data.tenantId.value : this.tenantId,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComputerSerialCacheEntity(')
+          ..write('serialNumber: $serialNumber, ')
+          ..write('tenantId: $tenantId, ')
+          ..write('payloadJson: $payloadJson')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(serialNumber, tenantId, payloadJson);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ComputerSerialCacheEntity &&
+          other.serialNumber == this.serialNumber &&
+          other.tenantId == this.tenantId &&
+          other.payloadJson == this.payloadJson);
+}
+
+class ComputerSerialsCacheCompanion
+    extends UpdateCompanion<ComputerSerialCacheEntity> {
+  final Value<String> serialNumber;
+  final Value<String> tenantId;
+  final Value<String> payloadJson;
+  final Value<int> rowid;
+  const ComputerSerialsCacheCompanion({
+    this.serialNumber = const Value.absent(),
+    this.tenantId = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ComputerSerialsCacheCompanion.insert({
+    required String serialNumber,
+    required String tenantId,
+    required String payloadJson,
+    this.rowid = const Value.absent(),
+  }) : serialNumber = Value(serialNumber),
+       tenantId = Value(tenantId),
+       payloadJson = Value(payloadJson);
+  static Insertable<ComputerSerialCacheEntity> custom({
+    Expression<String>? serialNumber,
+    Expression<String>? tenantId,
+    Expression<String>? payloadJson,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (serialNumber != null) 'serial_number': serialNumber,
+      if (tenantId != null) 'tenant_id': tenantId,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ComputerSerialsCacheCompanion copyWith({
+    Value<String>? serialNumber,
+    Value<String>? tenantId,
+    Value<String>? payloadJson,
+    Value<int>? rowid,
+  }) {
+    return ComputerSerialsCacheCompanion(
+      serialNumber: serialNumber ?? this.serialNumber,
+      tenantId: tenantId ?? this.tenantId,
+      payloadJson: payloadJson ?? this.payloadJson,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (serialNumber.present) {
+      map['serial_number'] = Variable<String>(serialNumber.value);
+    }
+    if (tenantId.present) {
+      map['tenant_id'] = Variable<String>(tenantId.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComputerSerialsCacheCompanion(')
+          ..write('serialNumber: $serialNumber, ')
+          ..write('tenantId: $tenantId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $RolesTable extends Roles with TableInfo<$RolesTable, RoleEntity> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -121934,6 +122963,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $EwayRecordsTableTable ewayRecordsTable = $EwayRecordsTableTable(
     this,
   );
+  late final $ComputerJobCardsCacheTable computerJobCardsCache =
+      $ComputerJobCardsCacheTable(this);
+  late final $ComputerWarrantyCacheTable computerWarrantyCache =
+      $ComputerWarrantyCacheTable(this);
+  late final $ComputerSerialsCacheTable computerSerialsCache =
+      $ComputerSerialsCacheTable(this);
   late final $RolesTable roles = $RolesTable(this);
   late final $PermissionsTable permissions = $PermissionsTable(this);
   late final $CategoriesTable categories = $CategoriesTable(this);
@@ -122305,6 +123340,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     stockByLocationTable,
     rateListsTable,
     ewayRecordsTable,
+    computerJobCardsCache,
+    computerWarrantyCache,
+    computerSerialsCache,
     roles,
     permissions,
     categories,
@@ -177140,6 +178178,615 @@ typedef $$EwayRecordsTableTableProcessedTableManager =
       EwayRecordEntity,
       PrefetchHooks Function()
     >;
+typedef $$ComputerJobCardsCacheTableCreateCompanionBuilder =
+    ComputerJobCardsCacheCompanion Function({
+      required String id,
+      required String tenantId,
+      required String payloadJson,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$ComputerJobCardsCacheTableUpdateCompanionBuilder =
+    ComputerJobCardsCacheCompanion Function({
+      Value<String> id,
+      Value<String> tenantId,
+      Value<String> payloadJson,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$ComputerJobCardsCacheTableFilterComposer
+    extends Composer<_$AppDatabase, $ComputerJobCardsCacheTable> {
+  $$ComputerJobCardsCacheTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ComputerJobCardsCacheTableOrderingComposer
+    extends Composer<_$AppDatabase, $ComputerJobCardsCacheTable> {
+  $$ComputerJobCardsCacheTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ComputerJobCardsCacheTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ComputerJobCardsCacheTable> {
+  $$ComputerJobCardsCacheTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get tenantId =>
+      $composableBuilder(column: $table.tenantId, builder: (column) => column);
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$ComputerJobCardsCacheTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ComputerJobCardsCacheTable,
+          ComputerJobCardCacheEntity,
+          $$ComputerJobCardsCacheTableFilterComposer,
+          $$ComputerJobCardsCacheTableOrderingComposer,
+          $$ComputerJobCardsCacheTableAnnotationComposer,
+          $$ComputerJobCardsCacheTableCreateCompanionBuilder,
+          $$ComputerJobCardsCacheTableUpdateCompanionBuilder,
+          (
+            ComputerJobCardCacheEntity,
+            BaseReferences<
+              _$AppDatabase,
+              $ComputerJobCardsCacheTable,
+              ComputerJobCardCacheEntity
+            >,
+          ),
+          ComputerJobCardCacheEntity,
+          PrefetchHooks Function()
+        > {
+  $$ComputerJobCardsCacheTableTableManager(
+    _$AppDatabase db,
+    $ComputerJobCardsCacheTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ComputerJobCardsCacheTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$ComputerJobCardsCacheTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ComputerJobCardsCacheTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> tenantId = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ComputerJobCardsCacheCompanion(
+                id: id,
+                tenantId: tenantId,
+                payloadJson: payloadJson,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String tenantId,
+                required String payloadJson,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ComputerJobCardsCacheCompanion.insert(
+                id: id,
+                tenantId: tenantId,
+                payloadJson: payloadJson,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ComputerJobCardsCacheTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ComputerJobCardsCacheTable,
+      ComputerJobCardCacheEntity,
+      $$ComputerJobCardsCacheTableFilterComposer,
+      $$ComputerJobCardsCacheTableOrderingComposer,
+      $$ComputerJobCardsCacheTableAnnotationComposer,
+      $$ComputerJobCardsCacheTableCreateCompanionBuilder,
+      $$ComputerJobCardsCacheTableUpdateCompanionBuilder,
+      (
+        ComputerJobCardCacheEntity,
+        BaseReferences<
+          _$AppDatabase,
+          $ComputerJobCardsCacheTable,
+          ComputerJobCardCacheEntity
+        >,
+      ),
+      ComputerJobCardCacheEntity,
+      PrefetchHooks Function()
+    >;
+typedef $$ComputerWarrantyCacheTableCreateCompanionBuilder =
+    ComputerWarrantyCacheCompanion Function({
+      required String id,
+      required String tenantId,
+      required String serialNumber,
+      required String payloadJson,
+      Value<DateTime?> warrantyExpiryDate,
+      Value<int> rowid,
+    });
+typedef $$ComputerWarrantyCacheTableUpdateCompanionBuilder =
+    ComputerWarrantyCacheCompanion Function({
+      Value<String> id,
+      Value<String> tenantId,
+      Value<String> serialNumber,
+      Value<String> payloadJson,
+      Value<DateTime?> warrantyExpiryDate,
+      Value<int> rowid,
+    });
+
+class $$ComputerWarrantyCacheTableFilterComposer
+    extends Composer<_$AppDatabase, $ComputerWarrantyCacheTable> {
+  $$ComputerWarrantyCacheTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get serialNumber => $composableBuilder(
+    column: $table.serialNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get warrantyExpiryDate => $composableBuilder(
+    column: $table.warrantyExpiryDate,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ComputerWarrantyCacheTableOrderingComposer
+    extends Composer<_$AppDatabase, $ComputerWarrantyCacheTable> {
+  $$ComputerWarrantyCacheTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get serialNumber => $composableBuilder(
+    column: $table.serialNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get warrantyExpiryDate => $composableBuilder(
+    column: $table.warrantyExpiryDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ComputerWarrantyCacheTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ComputerWarrantyCacheTable> {
+  $$ComputerWarrantyCacheTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get tenantId =>
+      $composableBuilder(column: $table.tenantId, builder: (column) => column);
+
+  GeneratedColumn<String> get serialNumber => $composableBuilder(
+    column: $table.serialNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get warrantyExpiryDate => $composableBuilder(
+    column: $table.warrantyExpiryDate,
+    builder: (column) => column,
+  );
+}
+
+class $$ComputerWarrantyCacheTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ComputerWarrantyCacheTable,
+          ComputerWarrantyCacheEntity,
+          $$ComputerWarrantyCacheTableFilterComposer,
+          $$ComputerWarrantyCacheTableOrderingComposer,
+          $$ComputerWarrantyCacheTableAnnotationComposer,
+          $$ComputerWarrantyCacheTableCreateCompanionBuilder,
+          $$ComputerWarrantyCacheTableUpdateCompanionBuilder,
+          (
+            ComputerWarrantyCacheEntity,
+            BaseReferences<
+              _$AppDatabase,
+              $ComputerWarrantyCacheTable,
+              ComputerWarrantyCacheEntity
+            >,
+          ),
+          ComputerWarrantyCacheEntity,
+          PrefetchHooks Function()
+        > {
+  $$ComputerWarrantyCacheTableTableManager(
+    _$AppDatabase db,
+    $ComputerWarrantyCacheTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ComputerWarrantyCacheTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$ComputerWarrantyCacheTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ComputerWarrantyCacheTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> tenantId = const Value.absent(),
+                Value<String> serialNumber = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<DateTime?> warrantyExpiryDate = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ComputerWarrantyCacheCompanion(
+                id: id,
+                tenantId: tenantId,
+                serialNumber: serialNumber,
+                payloadJson: payloadJson,
+                warrantyExpiryDate: warrantyExpiryDate,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String tenantId,
+                required String serialNumber,
+                required String payloadJson,
+                Value<DateTime?> warrantyExpiryDate = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ComputerWarrantyCacheCompanion.insert(
+                id: id,
+                tenantId: tenantId,
+                serialNumber: serialNumber,
+                payloadJson: payloadJson,
+                warrantyExpiryDate: warrantyExpiryDate,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ComputerWarrantyCacheTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ComputerWarrantyCacheTable,
+      ComputerWarrantyCacheEntity,
+      $$ComputerWarrantyCacheTableFilterComposer,
+      $$ComputerWarrantyCacheTableOrderingComposer,
+      $$ComputerWarrantyCacheTableAnnotationComposer,
+      $$ComputerWarrantyCacheTableCreateCompanionBuilder,
+      $$ComputerWarrantyCacheTableUpdateCompanionBuilder,
+      (
+        ComputerWarrantyCacheEntity,
+        BaseReferences<
+          _$AppDatabase,
+          $ComputerWarrantyCacheTable,
+          ComputerWarrantyCacheEntity
+        >,
+      ),
+      ComputerWarrantyCacheEntity,
+      PrefetchHooks Function()
+    >;
+typedef $$ComputerSerialsCacheTableCreateCompanionBuilder =
+    ComputerSerialsCacheCompanion Function({
+      required String serialNumber,
+      required String tenantId,
+      required String payloadJson,
+      Value<int> rowid,
+    });
+typedef $$ComputerSerialsCacheTableUpdateCompanionBuilder =
+    ComputerSerialsCacheCompanion Function({
+      Value<String> serialNumber,
+      Value<String> tenantId,
+      Value<String> payloadJson,
+      Value<int> rowid,
+    });
+
+class $$ComputerSerialsCacheTableFilterComposer
+    extends Composer<_$AppDatabase, $ComputerSerialsCacheTable> {
+  $$ComputerSerialsCacheTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get serialNumber => $composableBuilder(
+    column: $table.serialNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ComputerSerialsCacheTableOrderingComposer
+    extends Composer<_$AppDatabase, $ComputerSerialsCacheTable> {
+  $$ComputerSerialsCacheTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get serialNumber => $composableBuilder(
+    column: $table.serialNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ComputerSerialsCacheTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ComputerSerialsCacheTable> {
+  $$ComputerSerialsCacheTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get serialNumber => $composableBuilder(
+    column: $table.serialNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get tenantId =>
+      $composableBuilder(column: $table.tenantId, builder: (column) => column);
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+}
+
+class $$ComputerSerialsCacheTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ComputerSerialsCacheTable,
+          ComputerSerialCacheEntity,
+          $$ComputerSerialsCacheTableFilterComposer,
+          $$ComputerSerialsCacheTableOrderingComposer,
+          $$ComputerSerialsCacheTableAnnotationComposer,
+          $$ComputerSerialsCacheTableCreateCompanionBuilder,
+          $$ComputerSerialsCacheTableUpdateCompanionBuilder,
+          (
+            ComputerSerialCacheEntity,
+            BaseReferences<
+              _$AppDatabase,
+              $ComputerSerialsCacheTable,
+              ComputerSerialCacheEntity
+            >,
+          ),
+          ComputerSerialCacheEntity,
+          PrefetchHooks Function()
+        > {
+  $$ComputerSerialsCacheTableTableManager(
+    _$AppDatabase db,
+    $ComputerSerialsCacheTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ComputerSerialsCacheTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ComputerSerialsCacheTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ComputerSerialsCacheTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> serialNumber = const Value.absent(),
+                Value<String> tenantId = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ComputerSerialsCacheCompanion(
+                serialNumber: serialNumber,
+                tenantId: tenantId,
+                payloadJson: payloadJson,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String serialNumber,
+                required String tenantId,
+                required String payloadJson,
+                Value<int> rowid = const Value.absent(),
+              }) => ComputerSerialsCacheCompanion.insert(
+                serialNumber: serialNumber,
+                tenantId: tenantId,
+                payloadJson: payloadJson,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ComputerSerialsCacheTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ComputerSerialsCacheTable,
+      ComputerSerialCacheEntity,
+      $$ComputerSerialsCacheTableFilterComposer,
+      $$ComputerSerialsCacheTableOrderingComposer,
+      $$ComputerSerialsCacheTableAnnotationComposer,
+      $$ComputerSerialsCacheTableCreateCompanionBuilder,
+      $$ComputerSerialsCacheTableUpdateCompanionBuilder,
+      (
+        ComputerSerialCacheEntity,
+        BaseReferences<
+          _$AppDatabase,
+          $ComputerSerialsCacheTable,
+          ComputerSerialCacheEntity
+        >,
+      ),
+      ComputerSerialCacheEntity,
+      PrefetchHooks Function()
+    >;
 typedef $$RolesTableCreateCompanionBuilder =
     RolesCompanion Function({
       Value<String?> tenantId,
@@ -179896,6 +181543,12 @@ class $AppDatabaseManager {
       $$RateListsTableTableTableManager(_db, _db.rateListsTable);
   $$EwayRecordsTableTableTableManager get ewayRecordsTable =>
       $$EwayRecordsTableTableTableManager(_db, _db.ewayRecordsTable);
+  $$ComputerJobCardsCacheTableTableManager get computerJobCardsCache =>
+      $$ComputerJobCardsCacheTableTableManager(_db, _db.computerJobCardsCache);
+  $$ComputerWarrantyCacheTableTableManager get computerWarrantyCache =>
+      $$ComputerWarrantyCacheTableTableManager(_db, _db.computerWarrantyCache);
+  $$ComputerSerialsCacheTableTableManager get computerSerialsCache =>
+      $$ComputerSerialsCacheTableTableManager(_db, _db.computerSerialsCache);
   $$RolesTableTableManager get roles =>
       $$RolesTableTableManager(_db, _db.roles);
   $$PermissionsTableTableManager get permissions =>

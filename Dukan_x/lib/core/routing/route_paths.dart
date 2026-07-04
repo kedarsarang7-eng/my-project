@@ -182,6 +182,14 @@ abstract final class RoutePaths {
     mandiCommissionReportItemId: mandiCommissionReport,
     mandiSettlementItemId: mandiSettlement,
     mandiRateBoardItemId: mandiRateBoard,
+    // Universal Staff Management — surfaces for ALL business types.
+    'staff_dashboard': '/app/staff/dashboard',
+    'staff_employees': '/app/staff/employees',
+    'staff_attendance': '/app/staff/attendance',
+    'staff_leave': '/app/staff/leave',
+    'staff_tasks': '/app/staff/tasks',
+    'staff_payroll': '/app/staff/payroll',
+    'staff_performance': '/app/staff/performance',
   };
 
   // ===========================================================================

@@ -80,6 +80,7 @@ export const DEFAULT_RATE_LIMITS_PER_MINUTE: Record<
     email: 10,
     sms: 5,
     webhook: 60,
+    whatsapp: 10,
 };
 
 /** One-minute window size in milliseconds (REQ 9.5). */

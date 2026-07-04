@@ -33,13 +33,16 @@ export type NotificationPriority = 'critical' | 'high' | 'normal' | 'low';
 
 /**
  * The five supported delivery channels (REQ 2.5, glossary `Channel`).
+ * WhatsApp added as the sixth channel, routing through the canonical
+ * OpenWA gateway via WhatsAppDispatchService (Req 10.6, 10.8).
  */
 export type NotificationChannel =
     | 'in_app'
     | 'push'
     | 'sms'
     | 'email'
-    | 'webhook';
+    | 'webhook'
+    | 'whatsapp';
 
 /**
  * Lifecycle status of a Notification record (REQ 4 lifecycle, REQ 14.1).

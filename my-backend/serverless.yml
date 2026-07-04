@@ -2914,6 +2914,14 @@ functions:
           method: GET
     description: List component serials with optional invoice filter
 
+  computerBulkIntakeSerials:
+    handler: dist/handlers/computer.bulkIntakeSerials
+    events:
+      - httpApi:
+          path: /computer/serials/bulk
+          method: POST
+    description: Bulk intake of component serials (1-500 per submission)
+
   # ═══════════════════════════════════════════════════════════════════════
   # COMPUTER SHOP — FIXES (May 2026)
   # All endpoints below added to address audit findings

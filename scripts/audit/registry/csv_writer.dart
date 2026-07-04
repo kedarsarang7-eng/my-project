@@ -118,6 +118,11 @@ class CsvWriter {
             status: existing.status,
             statusReason: existing.statusReason,
             statusTimestamp: existing.statusTimestamp,
+            layoutOverflow: existing.layoutOverflow,
+            hardcodedValues: existing.hardcodedValues,
+            responsivenessCoverage: existing.responsivenessCoverage,
+            uiUxCorrectness: existing.uiUxCorrectness,
+            performance: existing.performance,
           ),
         );
       } else {

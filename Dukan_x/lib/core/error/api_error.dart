@@ -7,7 +7,7 @@
 import 'package:dio/dio.dart';
 
 /// Structured API Error Model
-/// 
+///
 /// BUG-038: Replaces generic `e.toString()` with structured error handling
 class ApiError {
   final String code;
@@ -29,20 +29,22 @@ class ApiError {
   /// Parse from DioError with structure
   factory ApiError.fromDioError(DioException error) {
     final response = error.response;
-    
+
     // Handle different DioError types
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
+      case DioExceptionType.transformTimeout:
         return ApiError(
           code: 'TIMEOUT',
           message: 'Request timed out',
-          userMessage: 'The server is taking too long to respond. Please try again.',
+          userMessage:
+              'The server is taking too long to respond. Please try again.',
           statusCode: null,
           originalError: error,
         );
-        
+
       case DioExceptionType.connectionError:
       case DioExceptionType.unknown:
         if (error.message?.contains('SocketException') == true) {
@@ -61,17 +63,17 @@ class ApiError {
           statusCode: null,
           originalError: error,
         );
-        
+
       case DioExceptionType.badResponse:
         final statusCode = response?.statusCode;
         final data = response?.data;
-        
+
         // Try to parse server error message
         String serverMessage = 'An error occurred';
         if (data is Map) {
           serverMessage = data['message'] ?? data['error'] ?? serverMessage;
         }
-        
+
         // Map status codes to user-friendly messages
         String userMessage;
         switch (statusCode) {
@@ -91,7 +93,8 @@ class ApiError {
             userMessage = 'Validation failed. Please check your input.';
             break;
           case 429:
-            userMessage = 'Too many requests. Please wait a moment and try again.';
+            userMessage =
+                'Too many requests. Please wait a moment and try again.';
             break;
           case 500:
           case 502:
@@ -102,7 +105,7 @@ class ApiError {
           default:
             userMessage = 'Something went wrong. Please try again.';
         }
-        
+
         return ApiError(
           code: 'HTTP_${statusCode ?? 'UNKNOWN'}',
           message: 'HTTP $statusCode: $serverMessage',
@@ -111,7 +114,7 @@ class ApiError {
           originalError: error,
           details: data is Map ? Map<String, dynamic>.from(data) : null,
         );
-        
+
       case DioExceptionType.cancel:
         return ApiError(
           code: 'CANCELLED',
@@ -120,7 +123,7 @@ class ApiError {
           statusCode: null,
           originalError: error,
         );
-        
+
       case DioExceptionType.badCertificate:
         return ApiError(
           code: 'CERTIFICATE_ERROR',
@@ -137,7 +140,7 @@ class ApiError {
     if (error is DioException) {
       return ApiError.fromDioError(error);
     }
-    
+
     if (error is Exception) {
       return ApiError(
         code: 'GENERIC_ERROR',
@@ -146,7 +149,7 @@ class ApiError {
         originalError: error,
       );
     }
-    
+
     return ApiError(
       code: 'UNKNOWN',
       message: error?.toString() ?? 'Unknown error',
@@ -156,7 +159,8 @@ class ApiError {
   }
 
   @override
-  String toString() => 'ApiError(code: $code, message: $message, statusCode: $statusCode)';
+  String toString() =>
+      'ApiError(code: $code, message: $message, statusCode: $statusCode)';
 }
 
 /// Extension for easier error handling

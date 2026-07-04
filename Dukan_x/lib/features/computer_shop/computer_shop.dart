@@ -17,9 +17,11 @@ export 'presentation/screens/create_job_card_screen.dart';
 export 'presentation/screens/warranty_screen.dart';
 export 'presentation/screens/serial_history_screen.dart';
 export 'presentation/screens/multi_unit_screen.dart';
+export 'presentation/screens/rma_screen.dart';
+export 'presentation/screens/custom_build_screen.dart';
+export 'presentation/screens/bulk_serial_intake_screen.dart';
 
 // Widgets
 export 'presentation/widgets/job_card_dialogs.dart';
-export 'presentation/widgets/computer_shop_sidebar.dart';
 export 'presentation/widgets/computer_barcode_scanner.dart';
 export 'presentation/widgets/product_search_bottom_sheet.dart';

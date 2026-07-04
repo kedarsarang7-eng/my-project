@@ -171,6 +171,20 @@ export const PERMISSION_MATRIX: Record<string, PermissionRule> = {
     [FeatureKey.AUTOPARTS_FITMENT_GUIDE]: { minRole: UserRole.STAFF, requiredPlan: PlanTier.PREMIUM },
     [FeatureKey.AUTOPARTS_RETURN_WARRANTY]: { minRole: UserRole.MANAGER, requiredPlan: PlanTier.ENTERPRISE },
     [FeatureKey.AUTOPARTS_JOB_CARD]: { minRole: UserRole.STAFF, requiredPlan: PlanTier.ENTERPRISE },
+
+    // ── Staff Management (Universal module) ──
+    // Fail-closed matrix requires an entry per feature key. The staff module's
+    // minRole is MANAGER (see modules/staff/manifest.ts); payroll/commission are
+    // more sensitive and require ACCOUNTANT+. Plan gating mirrors the tier at
+    // which each capability unlocks in the core feature lists (plan-feature-registry).
+    [FeatureKey.STAFF_CORE]: { minRole: UserRole.MANAGER, requiredPlan: PlanTier.BASIC },
+    [FeatureKey.STAFF_ATTENDANCE]: { minRole: UserRole.STAFF, requiredPlan: PlanTier.BASIC },
+    [FeatureKey.STAFF_LEAVE]: { minRole: UserRole.STAFF, requiredPlan: PlanTier.PRO },
+    [FeatureKey.STAFF_TASKS]: { minRole: UserRole.STAFF, requiredPlan: PlanTier.PRO },
+    [FeatureKey.STAFF_REPORTS]: { minRole: UserRole.MANAGER, requiredPlan: PlanTier.PRO },
+    [FeatureKey.STAFF_PAYROLL]: { minRole: UserRole.ACCOUNTANT, requiredPlan: PlanTier.PREMIUM },
+    [FeatureKey.STAFF_PERFORMANCE]: { minRole: UserRole.MANAGER, requiredPlan: PlanTier.PREMIUM },
+    [FeatureKey.STAFF_COMMISSION]: { minRole: UserRole.ACCOUNTANT, requiredPlan: PlanTier.PREMIUM },
 };
 
 /**

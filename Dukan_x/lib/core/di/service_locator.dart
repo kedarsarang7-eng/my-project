@@ -145,6 +145,11 @@ import '../billing/dunning_service.dart';
 
 // Payment
 import '../../features/payment/services/payment_gateway_api_service.dart';
+import '../../features/whatsapp_automation/services/openwa_provisioning_api_service.dart';
+import '../../features/whatsapp_automation/data/repositories/whatsapp_automation_repository.dart';
+import '../../features/whatsapp_automation/services/whatsapp_offline_service.dart';
+import '../sync/offline_queue.dart';
+import '../sync/drift_offline_queue_database.dart';
 import '../../features/payment/services/upi_payment_service.dart';
 import '../../features/doctor/data/repositories/appointment_repository.dart';
 import '../../features/doctor/data/repositories/prescription_repository.dart';
@@ -1040,6 +1045,32 @@ Future<void> initializeDependencies() async {
   // Payment Gateway API Service (Desktop ↔ Backend Integration)
   sl.registerLazySingleton<PaymentGatewayApiService>(
     () => PaymentGatewayApiService(sl<ApiClient>()),
+  );
+
+  // OpenWA Provisioning API Service (WhatsApp Gateway credential onboarding)
+  sl.registerLazySingleton<OpenwaProvisioningApiService>(
+    () => OpenwaProvisioningApiService(sl<ApiClient>()),
+  );
+
+  // WhatsApp Automation Repository
+  sl.registerLazySingleton<WhatsAppAutomationRepository>(
+    () => WhatsAppAutomationRepository(sl<ApiClient>()),
+  );
+
+  // OfflineQueue (shared offline mutation queue backed by Drift)
+  sl.registerLazySingleton<OfflineQueue>(
+    () => OfflineQueue(database: DriftOfflineQueueDatabase(sl<AppDatabase>())),
+  );
+
+  // WhatsApp Offline Service (offline queue for WA writes)
+  sl.registerLazySingleton<WhatsAppOfflineService>(
+    () => WhatsAppOfflineService(
+      repository: sl<WhatsAppAutomationRepository>(),
+      offlineQueue: sl<OfflineQueue>(),
+      connectivity: sl<Connectivity>(),
+      db: sl<AppDatabase>(),
+      tenantId: sl<SessionManager>().ownerId ?? '',
+    ),
   );
 
   // Delivery Challan Module

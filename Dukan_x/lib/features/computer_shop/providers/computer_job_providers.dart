@@ -5,11 +5,15 @@
 // All providers connect to real backend APIs via ComputerRepository
 // ============================================================================
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:dukanx/core/di/service_locator.dart';
 import '../data/repositories/computer_repository.dart';
+import '../utils/computer_shop_business_rules.dart';
+import '../utils/job_status_codec.dart';
 import 'package:dukanx/core/api/api_client.dart';
 
 // ============================================================================
@@ -37,7 +41,7 @@ class JobCardListState {
   final String? error;
   final bool hasMore;
   final int currentPage;
-  final String? statusFilter;
+  final ComputerJobStatus? statusFilter;
 
   const JobCardListState({
     this.jobs = const [],
@@ -54,7 +58,7 @@ class JobCardListState {
     String? error,
     bool? hasMore,
     int? currentPage,
-    String? statusFilter,
+    Object? statusFilter = _sentinel,
   }) {
     return JobCardListState(
       jobs: jobs ?? this.jobs,
@@ -62,9 +66,18 @@ class JobCardListState {
       error: error,
       hasMore: hasMore ?? this.hasMore,
       currentPage: currentPage ?? this.currentPage,
-      statusFilter: statusFilter ?? this.statusFilter,
+      statusFilter: statusFilter == _sentinel
+          ? this.statusFilter
+          : statusFilter as ComputerJobStatus?,
     );
   }
+}
+
+/// Sentinel value for distinguishing "not provided" from `null`.
+const Object _sentinel = _Sentinel();
+
+class _Sentinel {
+  const _Sentinel();
 }
 
 class JobCardListNotifier extends StateNotifier<JobCardListState> {
@@ -105,7 +118,7 @@ class JobCardListNotifier extends StateNotifier<JobCardListState> {
     }
   }
 
-  void setStatusFilter(String? status) {
+  void setStatusFilter(ComputerJobStatus? status) {
     state = state.copyWith(
       statusFilter: status,
       currentPage: 1,
@@ -116,6 +129,86 @@ class JobCardListNotifier extends StateNotifier<JobCardListState> {
 
   Future<void> refresh() => loadJobs(refresh: true);
 }
+
+// ============================================================================
+// Job Search Provider (Req 27 — server-side search)
+// ============================================================================
+
+class JobSearchState {
+  final bool isLoading;
+  final List<ComputerJobCard> results;
+  final String? error;
+
+  const JobSearchState({
+    this.isLoading = false,
+    this.results = const [],
+    this.error,
+  });
+
+  JobSearchState copyWith({
+    bool? isLoading,
+    List<ComputerJobCard>? results,
+    Object? error = _sentinel,
+  }) {
+    return JobSearchState(
+      isLoading: isLoading ?? this.isLoading,
+      results: results ?? this.results,
+      error: error == _sentinel ? this.error : error as String?,
+    );
+  }
+}
+
+/// Drives server-side job-card search for `JobCardListScreen` (Req 27).
+///
+/// Calling [search] with a non-empty query invokes
+/// [ComputerRepository.searchJobCards] across the full dataset. On error
+/// (including a 10s timeout), the prior [JobSearchState.results] are
+/// retained and [JobSearchState.error] is set so the screen can show an
+/// error/retry message without losing what was already found (Req 27.4).
+class JobSearchNotifier extends StateNotifier<JobSearchState> {
+  final ComputerRepository _repository;
+  String _lastQuery = '';
+
+  JobSearchNotifier(this._repository) : super(const JobSearchState());
+
+  Future<void> search(String query) async {
+    _lastQuery = query;
+    if (query.isEmpty) {
+      state = const JobSearchState();
+      return;
+    }
+
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final results = await _repository.searchJobCards(query);
+      // Guard against a stale response overwriting a newer query's result.
+      if (_lastQuery != query) return;
+      state = state.copyWith(isLoading: false, results: results, error: null);
+    } on TimeoutException {
+      if (_lastQuery != query) return;
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Search timed out. Please try again.',
+      );
+    } catch (e) {
+      if (_lastQuery != query) return;
+      state = state.copyWith(isLoading: false, error: 'Search failed: $e');
+    }
+  }
+
+  /// Clears search state, reverting the screen to the paginated list.
+  void clear() {
+    _lastQuery = '';
+    state = const JobSearchState();
+  }
+}
+
+final jobSearchProvider =
+    StateNotifierProvider<JobSearchNotifier, JobSearchState>((ref) {
+      final repository = ref.watch(computerRepositoryProvider);
+      return JobSearchNotifier(repository);
+    });
 
 // ============================================================================
 // Single Job Card Provider (Family)
@@ -246,7 +339,7 @@ class JobCardDetailNotifier extends StateNotifier<JobCardDetailState> {
     String? customerPhone,
     String paymentMode = 'cash',
     String? notes,
-    double discountCents = 0,
+    double discount = 0,
   }) async {
     try {
       final result = await _repository.convertJobToInvoice(
@@ -255,7 +348,7 @@ class JobCardDetailNotifier extends StateNotifier<JobCardDetailState> {
         customerPhone: customerPhone,
         paymentMode: paymentMode,
         notes: notes,
-        discountCents: discountCents,
+        discount: discount,
       );
       await loadJob();
       return result;
@@ -265,13 +358,41 @@ class JobCardDetailNotifier extends StateNotifier<JobCardDetailState> {
     }
   }
 
-  Future<void> updateStatus(String status) async {
+  /// Updates the job status after validating the transition.
+  ///
+  /// Rejects invalid transitions pre-network with a reason message.
+  /// Handles a 30s timeout leaving status unchanged.
+  Future<void> updateStatus(ComputerJobStatus newStatus) async {
+    final currentJob = state.job;
+    if (currentJob == null) {
+      state = state.copyWith(error: 'Cannot update status: job not loaded');
+      return;
+    }
+
+    final currentStatus = currentJob.status;
+
+    // Validate transition before any backend call
+    if (!ComputerShopBusinessRules.isValidJobTransition(
+      currentStatus,
+      newStatus,
+    )) {
+      state = state.copyWith(
+        error:
+            'Invalid transition from ${JobStatusCodec.label(currentStatus)} '
+            'to ${JobStatusCodec.label(newStatus)}',
+      );
+      return;
+    }
+
     try {
-      await _repository.updateJobCardStatus(_jobId, status);
+      await _repository
+          .updateJobCardStatus(_jobId, newStatus)
+          .timeout(const Duration(seconds: 30));
       await loadJob();
+    } on TimeoutException {
+      state = state.copyWith(error: 'Status change did not complete');
     } catch (e) {
       state = state.copyWith(error: 'Failed to update status: $e');
-      rethrow;
     }
   }
 }
@@ -534,18 +655,362 @@ class CreateJobCardNotifier extends StateNotifier<CreateJobCardState> {
 // Status Filter Options
 // ============================================================================
 
+/// Status filter options derived from the canonical [ComputerJobStatus] enum.
+/// Wire strings are never exposed here — labels come from [JobStatusCodec].
 final jobStatusOptionsProvider = Provider<List<Map<String, dynamic>>>(
   (ref) => [
     {'value': null, 'label': 'All Statuses', 'color': Colors.grey},
-    {'value': 'INTAKE', 'label': 'Intake', 'color': Colors.orange},
-    {'value': 'DIAGNOSIS', 'label': 'Diagnosis', 'color': Colors.amber},
     {
-      'value': 'AWAITING_PARTS',
-      'label': 'Awaiting Parts',
+      'value': ComputerJobStatus.intake,
+      'label': JobStatusCodec.label(ComputerJobStatus.intake),
+      'color': Colors.orange,
+    },
+    {
+      'value': ComputerJobStatus.diagnosis,
+      'label': JobStatusCodec.label(ComputerJobStatus.diagnosis),
+      'color': Colors.amber,
+    },
+    {
+      'value': ComputerJobStatus.partsOrdered,
+      'label': JobStatusCodec.label(ComputerJobStatus.partsOrdered),
       'color': Colors.deepOrange,
     },
-    {'value': 'REPAIRING', 'label': 'Repairing', 'color': Colors.blue},
-    {'value': 'QC', 'label': 'QC', 'color': Colors.purple},
-    {'value': 'DELIVERED', 'label': 'Delivered', 'color': Colors.green},
+    {
+      'value': ComputerJobStatus.underRepair,
+      'label': JobStatusCodec.label(ComputerJobStatus.underRepair),
+      'color': Colors.blue,
+    },
+    {
+      'value': ComputerJobStatus.qa,
+      'label': JobStatusCodec.label(ComputerJobStatus.qa),
+      'color': Colors.purple,
+    },
+    {
+      'value': ComputerJobStatus.ready,
+      'label': JobStatusCodec.label(ComputerJobStatus.ready),
+      'color': Colors.teal,
+    },
+    {
+      'value': ComputerJobStatus.delivered,
+      'label': JobStatusCodec.label(ComputerJobStatus.delivered),
+      'color': Colors.green,
+    },
+    {
+      'value': ComputerJobStatus.cancelled,
+      'label': JobStatusCodec.label(ComputerJobStatus.cancelled),
+      'color': Colors.red,
+    },
   ],
 );
+
+// ============================================================================
+// Valid Status Transitions
+// ============================================================================
+
+/// Returns the list of valid next statuses for a given [current] status,
+/// computed from [ComputerShopBusinessRules.isValidJobTransition].
+///
+/// Used by the UI to populate the status-change control with only valid
+/// options. When the returned list is empty, the control should be disabled.
+List<ComputerJobStatus> getValidTransitions(ComputerJobStatus current) {
+  return ComputerJobStatus.values
+      .where(
+        (next) => ComputerShopBusinessRules.isValidJobTransition(current, next),
+      )
+      .toList();
+}
+
+/// Provider that returns valid next statuses for a given current status.
+/// Pass the current job status and get back the list of valid transitions.
+final validStatusTransitionsProvider =
+    Provider.family<List<ComputerJobStatus>, ComputerJobStatus>(
+      (ref, currentStatus) => getValidTransitions(currentStatus),
+    );
+
+// ============================================================================
+// RMA (Return Merchandise Authorization) Provider
+// ============================================================================
+
+/// RMA statuses as defined by the backend.
+enum RmaStatus {
+  initiated,
+  shippedToOem,
+  replacementReceived,
+  rejectedByOem,
+  resolved,
+}
+
+/// Wire strings for RMA statuses.
+class RmaStatusCodec {
+  static const _wireMap = {
+    RmaStatus.initiated: 'INITIATED',
+    RmaStatus.shippedToOem: 'SHIPPED_TO_OEM',
+    RmaStatus.replacementReceived: 'REPLACEMENT_RECEIVED',
+    RmaStatus.rejectedByOem: 'REJECTED_BY_OEM',
+    RmaStatus.resolved: 'RESOLVED',
+  };
+
+  static String toWire(RmaStatus status) => _wireMap[status]!;
+
+  static String label(RmaStatus status) {
+    switch (status) {
+      case RmaStatus.initiated:
+        return 'Initiated';
+      case RmaStatus.shippedToOem:
+        return 'Shipped to OEM';
+      case RmaStatus.replacementReceived:
+        return 'Replacement Received';
+      case RmaStatus.rejectedByOem:
+        return 'Rejected by OEM';
+      case RmaStatus.resolved:
+        return 'Resolved';
+    }
+  }
+}
+
+class RmaState {
+  final bool isLoading;
+  final String? error;
+  final String? createdRmaId;
+  final bool statusUpdateSuccess;
+
+  const RmaState({
+    this.isLoading = false,
+    this.error,
+    this.createdRmaId,
+    this.statusUpdateSuccess = false,
+  });
+
+  RmaState copyWith({
+    bool? isLoading,
+    String? error,
+    String? createdRmaId,
+    bool? statusUpdateSuccess,
+  }) {
+    return RmaState(
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
+      createdRmaId: createdRmaId ?? this.createdRmaId,
+      statusUpdateSuccess: statusUpdateSuccess ?? this.statusUpdateSuccess,
+    );
+  }
+}
+
+class RmaNotifier extends StateNotifier<RmaState> {
+  final ComputerRepository _repository;
+
+  RmaNotifier(this._repository) : super(const RmaState());
+
+  /// Creates an RMA. Returns the created RMA id on success.
+  /// On error, sets state.error and leaves prior data unchanged.
+  Future<void> createRma({
+    required String componentSerialId,
+    required String brand,
+    required String reason,
+    String? oemRmaNumber,
+  }) async {
+    state = state.copyWith(
+      isLoading: true,
+      error: null,
+      statusUpdateSuccess: false,
+    );
+    try {
+      final rmaId = await _repository.createRma(
+        componentSerialId: componentSerialId,
+        brand: brand,
+        reason: reason,
+        oemRmaNumber: oemRmaNumber,
+      );
+      state = state.copyWith(isLoading: false, createdRmaId: rmaId);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  /// Updates an existing RMA's status.
+  /// On error, sets state.error and leaves prior data unchanged.
+  Future<void> updateRmaStatus(String rmaId, RmaStatus status) async {
+    state = state.copyWith(
+      isLoading: true,
+      error: null,
+      statusUpdateSuccess: false,
+    );
+    try {
+      await _repository.updateRmaStatus(rmaId, RmaStatusCodec.toWire(status));
+      state = state.copyWith(isLoading: false, statusUpdateSuccess: true);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  /// Clears any error state.
+  void clearError() {
+    state = state.copyWith(error: null);
+  }
+}
+
+final rmaProvider = StateNotifierProvider<RmaNotifier, RmaState>((ref) {
+  final repository = ref.watch(computerRepositoryProvider);
+  return RmaNotifier(repository);
+});
+
+// ============================================================================
+// Custom Build / BOM Checkout Provider (Req 10)
+// ============================================================================
+
+class BuildCheckoutState {
+  final bool isLoading;
+  final String? error;
+  final bool success;
+  final String? unitReference;
+
+  const BuildCheckoutState({
+    this.isLoading = false,
+    this.error,
+    this.success = false,
+    this.unitReference,
+  });
+
+  BuildCheckoutState copyWith({
+    bool? isLoading,
+    String? error,
+    bool? success,
+    String? unitReference,
+  }) {
+    return BuildCheckoutState(
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
+      success: success ?? this.success,
+      unitReference: unitReference ?? this.unitReference,
+    );
+  }
+}
+
+class BuildCheckoutNotifier extends StateNotifier<BuildCheckoutState> {
+  final ComputerRepository _repository;
+
+  BuildCheckoutNotifier(this._repository) : super(const BuildCheckoutState());
+
+  /// Checks out a PC build. On success, [BuildCheckoutState.unitReference]
+  /// holds the unit reference returned by the backend, falling back to the
+  /// invoice reference when the backend response carries none (Req 10.5).
+  /// On error, sets state.error and leaves prior data unchanged (Req 10.6).
+  Future<void> checkout({
+    required List<Map<String, dynamic>> components,
+    String? customerId,
+    required String invoiceId,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null, success: false);
+    try {
+      final unitRef = await _repository.checkoutBuild(
+        components: components,
+        customerId: customerId,
+        invoiceId: invoiceId,
+      );
+      state = state.copyWith(
+        isLoading: false,
+        success: true,
+        unitReference: unitRef ?? invoiceId,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  /// Clears any error state without discarding the BOM/invoice held by the
+  /// caller (that data lives in the screen's own state, not here).
+  void clearError() {
+    state = state.copyWith(error: null);
+  }
+
+  /// Resets to the initial state (used after starting a new build).
+  void reset() {
+    state = const BuildCheckoutState();
+  }
+}
+
+final buildCheckoutProvider =
+    StateNotifierProvider<BuildCheckoutNotifier, BuildCheckoutState>((ref) {
+      final repository = ref.watch(computerRepositoryProvider);
+      return BuildCheckoutNotifier(repository);
+    });
+
+// ============================================================================
+// Bulk Serial Intake Provider (Req 12)
+// ============================================================================
+
+class BulkSerialIntakeState {
+  final bool isLoading;
+  final String? error;
+  final BulkSerialIntakeResult? result;
+
+  const BulkSerialIntakeState({
+    this.isLoading = false,
+    this.error,
+    this.result,
+  });
+
+  BulkSerialIntakeState copyWith({
+    bool? isLoading,
+    String? error,
+    BulkSerialIntakeResult? result,
+  }) {
+    return BulkSerialIntakeState(
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
+      result: result ?? this.result,
+    );
+  }
+}
+
+class BulkSerialIntakeNotifier extends StateNotifier<BulkSerialIntakeState> {
+  final ComputerRepository _repository;
+
+  BulkSerialIntakeNotifier(this._repository)
+    : super(const BulkSerialIntakeState());
+
+  /// Submits [serials] for bulk intake against [productId].
+  ///
+  /// Callers must have already enforced the 1-500 bound and filtered out
+  /// format-invalid/intra-submission-duplicate serials (Req 12.1, 12.2);
+  /// [clientRejected] carries those client-side rejections so they can be
+  /// merged into the displayed report alongside any backend rejections.
+  ///
+  /// On failure, sets state.error and does not mark anything as persisted
+  /// (Req 12.5).
+  Future<void> submit({
+    required String productId,
+    required List<String> serials,
+    List<BulkSerialRejection> clientRejected = const [],
+  }) async {
+    state = state.copyWith(isLoading: true, error: null, result: null);
+    try {
+      final result = await _repository.bulkIntakeSerials(
+        productId: productId,
+        serials: serials,
+      );
+      state = state.copyWith(
+        isLoading: false,
+        result: BulkSerialIntakeResult(
+          accepted: result.accepted,
+          rejected: [...clientRejected, ...result.rejected],
+        ),
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  /// Resets to the initial state (used after starting a new submission).
+  void reset() {
+    state = const BulkSerialIntakeState();
+  }
+}
+
+final bulkSerialIntakeProvider =
+    StateNotifierProvider<BulkSerialIntakeNotifier, BulkSerialIntakeState>((
+      ref,
+    ) {
+      final repository = ref.watch(computerRepositoryProvider);
+      return BulkSerialIntakeNotifier(repository);
+    });

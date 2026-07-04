@@ -6,7 +6,7 @@
 
 import { configureAwsClient } from '../config/aws.config';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import * as whatsappService from './whatsapp.service';
+import { createWhatsAppDispatchService } from '../modules/whatsapp/services/whatsapp-dispatch.service';
 import { Keys, getItem, queryItems, updateItem } from '../config/dynamodb.config';
 import { logger } from '../utils/logger';
 import { recordRevision } from './revision-history.service';
@@ -14,6 +14,9 @@ import { config } from '../config/environment';
 
 const s3Client = new S3Client(configureAwsClient({ region: config.aws.region }));
 const S3_BUCKET = config.s3.bucketName;
+
+/** Shared dispatch service instance — canonical OpenWA gateway (Req 10.6, 10.8). */
+const whatsappDispatch = createWhatsAppDispatchService();
 
 interface PostPaymentInput {
     tenantId: string;
@@ -114,17 +117,22 @@ export async function executePostPaymentActions(input: PostPaymentInput): Promis
         logger.error('Post-payment: PDF generation failed', { invoiceId, error: (err as Error).message });
     }
 
-    // ── Action 2: Send WhatsApp Notification ────────────────────────────
+    // ── Action 2: Send WhatsApp Notification via OpenWA (Req 10.6, 10.8) ──
     if (invoiceDetails.customerPhone) {
         try {
             const amount = formatAmount(amountCents);
-            await whatsappService.sendPaymentConfirmation({
-                customerPhone: invoiceDetails.customerPhone,
-                customerName: invoiceDetails.customerName || 'Customer',
-                amount,
-                transactionId: gatewayTransactionId || paymentOrderId,
-                invoiceNumber: invoiceDetails.invoiceNumber,
-                invoicePdfUrl,
+            await whatsappDispatch.sendMessage({
+                tenantId,
+                businessId: tenantId, // business-scoped; tenantId used as businessId context
+                to: invoiceDetails.customerPhone,
+                templateName: 'payment_confirmation',
+                params: {
+                    customerName: invoiceDetails.customerName || 'Customer',
+                    amount,
+                    transactionId: gatewayTransactionId || paymentOrderId,
+                    invoiceNumber: invoiceDetails.invoiceNumber,
+                },
+                mediaUrl: invoicePdfUrl,
             });
         } catch (err) {
             logger.error('Post-payment: WhatsApp notification failed', { invoiceId, error: (err as Error).message });

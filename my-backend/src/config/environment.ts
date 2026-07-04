@@ -174,6 +174,7 @@ const environmentSchema = z.object({
     SLS_BACKEND_URL: z.string().optional().default(''),
     TENANT_STORAGE_BUCKET: z.string().optional().default(''),
     WEBSOCKET_CONNECTIONS_TABLE: z.string().optional().default(''),
+    WA_LEGACY_CLOUD: z.string().optional().default('false'),
     WHATSAPP_ACCESS_TOKEN: z.string().optional().default(''),
     WHATSAPP_API_URL: z.string().optional().default('https://graph.facebook.com/v17.0'),
     WHATSAPP_PHONE_NUMBER_ID: z.string().optional().default(''),
@@ -416,6 +417,8 @@ export const config = Object.freeze({
         templateName: env.WHATSAPP_TEMPLATE_NAME,
         reportDispatchWebhookUrl: env.REPORT_DISPATCH_WHATSAPP_WEBHOOK_URL,
         reportDispatchWorkerEnabled: env.REPORT_DISPATCH_WORKER_ENABLED,
+        /** WA_LEGACY_CLOUD flag — when OFF (default), Meta Cloud API calls are blocked. */
+        legacyCloudEnabled: env.WA_LEGACY_CLOUD === 'true',
     },
 });
 

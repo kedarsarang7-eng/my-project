@@ -6,7 +6,7 @@
 // ============================================================================
 import { authorizedHandler } from '../middleware/handler-wrapper';
 import { FeatureKey } from '../config/plan-feature-registry';
-import { Keys, queryItems, putItem, updateItem, getItem, transactWrite, TABLE_NAME } from '../config/dynamodb.config';
+import { Keys, queryItems, queryAllItems, putItem, updateItem, getItem, transactWrite, batchWrite, TABLE_NAME } from '../config/dynamodb.config';
 import { parseBody } from '../middleware/validation';
 import { APIGatewayProxyEventV2, Context } from 'aws-lambda';
 import { AuthContext, BusinessType, UserRole } from '../types/tenant.types';
@@ -29,6 +29,11 @@ const checkoutBuildSchema = z.object({
     components: z.array(buildComponentSchema).min(1).max(50),
     customerId: z.string().uuid().optional(),
     invoiceId: z.string().uuid(),
+});
+
+const bulkIntakeSerialsSchema = z.object({
+    productId: z.string().uuid(),
+    serials: z.array(z.string().min(1).max(150)).min(1).max(500),
 });
 
 const createJobCardSchema = z.object({
@@ -263,12 +268,19 @@ export const updateJobCardStatus = authorizedHandler([UserRole.OWNER, UserRole.A
 
 /**
  * GET /computer/job-cards — List job cards for this tenant.
+ *
+ * Supports an optional `search` query parameter (Req 27.1, 27.2) which, when
+ * present, searches the tenant's FULL job-card dataset (not just a single
+ * page) by substring match against brand/model/serial/reported issue,
+ * following the same in-memory filter pattern used by
+ * `suppliers.listSuppliers`.
  */
 export const getJobCards = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.STAFF], async (
     event: APIGatewayProxyEventV2, context: Context, auth: AuthContext
 ) => {
     const pk = Keys.tenantPK(auth.tenantId);
     const status = event.queryStringParameters?.status;
+    const search = (event.queryStringParameters?.search || '').trim();
 
     const filterParts: string[] = ['(attribute_not_exists(isDeleted) OR isDeleted = :false)'];
     const exprValues: Record<string, any> = { ':false': false };
@@ -278,11 +290,27 @@ export const getJobCards = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, Us
         exprValues[':status'] = status;
     }
 
-    const jobs = await queryItems<Record<string, any>>(pk, 'COMPJOBCARD#', {
+    const queryOpts = {
         filterExpression: filterParts.join(' AND '),
         expressionAttributeValues: exprValues,
         ...(status ? { expressionAttributeNames: { '#s': 'status' } } : {}),
-    });
+    };
+
+    if (search) {
+        // Search the complete tenant dataset, not just one page (Req 27.2).
+        const all = await queryAllItems<Record<string, any>>(pk, 'COMPJOBCARD#', {
+            ...queryOpts,
+            maxPages: 20,
+        });
+        const searchLower = search.toLowerCase();
+        const filtered = all.filter((j) => {
+            const haystack = `${j.deviceBrand || ''} ${j.deviceModel || ''} ${j.serialNumber || ''} ${j.reportedIssue || ''}`.toLowerCase();
+            return haystack.includes(searchLower);
+        });
+        return response.success(filtered);
+    }
+
+    const jobs = await queryItems<Record<string, any>>(pk, 'COMPJOBCARD#', queryOpts);
 
     return response.success(jobs.items);
 }, COMPUTER_OPTS);
@@ -413,6 +441,74 @@ export const getSerials = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, Use
     });
 
     return response.success(serials.items);
+}, COMPUTER_OPTS);
+
+/**
+ * POST /computer/serials/bulk — Bulk intake of component serials (1-500 per
+ * submission). Persists each serial not already present for the tenant;
+ * serials that already exist are rejected with a reason so the caller can
+ * report them without failing the whole submission.
+ */
+export const bulkIntakeSerials = authorizedHandler([UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.STAFF], async (
+    event: APIGatewayProxyEventV2, context: Context, auth: AuthContext
+) => {
+    const valid = parseBody(bulkIntakeSerialsSchema, event);
+    if (!valid.success) return valid.error;
+    const body = valid.data;
+
+    const pk = Keys.tenantPK(auth.tenantId);
+    const now = new Date().toISOString();
+
+    // Load existing serials for this tenant to detect duplicates against
+    // previously-persisted records (intra-submission duplicates are the
+    // caller's responsibility, but we defend against them here too).
+    const existing = await queryAllItems<Record<string, any>>(pk, 'COMPSERIAL#');
+    const existingSerialNumbers = new Set(
+        existing.map((s) => (s.serialNumber || '').toString()),
+    );
+
+    const seenInSubmission = new Set<string>();
+    const toPersist: Array<{ serialId: string; serialNumber: string }> = [];
+    const rejected: Array<{ serial: string; reason: string }> = [];
+
+    for (const serial of body.serials) {
+        if (existingSerialNumbers.has(serial)) {
+            rejected.push({ serial, reason: 'Serial already exists' });
+            continue;
+        }
+        if (seenInSubmission.has(serial)) {
+            rejected.push({ serial, reason: 'Duplicate within submission' });
+            continue;
+        }
+        seenInSubmission.add(serial);
+        toPersist.push({ serialId: crypto.randomUUID(), serialNumber: serial });
+    }
+
+    if (toPersist.length > 0) {
+        await batchWrite(
+            toPersist.map(({ serialId, serialNumber }) => ({
+                type: 'put' as const,
+                item: {
+                    PK: pk,
+                    SK: `COMPSERIAL#${serialId}`,
+                    entityType: 'COMPUTER_COMPONENT_SERIAL',
+                    tenantId: auth.tenantId,
+                    id: serialId,
+                    productId: body.productId,
+                    serialNumber,
+                    isSold: false,
+                    createdAt: now,
+                    updatedAt: now,
+                },
+            })),
+        );
+    }
+
+    return response.success({
+        accepted: toPersist.map((p) => p.serialNumber),
+        rejected,
+        insertedCount: toPersist.length,
+    }, 201);
 }, COMPUTER_OPTS);
 
 // ============================================================================

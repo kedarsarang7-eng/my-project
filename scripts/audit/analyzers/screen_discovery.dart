@@ -292,6 +292,11 @@ class ScreenDiscoveryEngine {
       status: entry.status,
       statusReason: entry.statusReason,
       statusTimestamp: entry.statusTimestamp,
+      layoutOverflow: entry.layoutOverflow,
+      hardcodedValues: entry.hardcodedValues,
+      responsivenessCoverage: entry.responsivenessCoverage,
+      uiUxCorrectness: entry.uiUxCorrectness,
+      performance: entry.performance,
     );
   }
 }

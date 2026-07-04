@@ -467,6 +467,13 @@ paths:
       responses:
         '200':
           description: Success
+  /computer/serials/bulk:
+    post:
+      operationId: computerBulkIntakeSerials
+      summary: Bulk intake of component serials (1-500 per submission)
+      responses:
+        '200':
+          description: Success
   /customer/fuel-fills:
     get:
       operationId: customerGetFuelFills

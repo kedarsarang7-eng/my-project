@@ -299,6 +299,13 @@ import '../../features/academic_coaching/presentation/screens/ac_lesson_plans_sc
 import '../../features/academic_coaching/presentation/screens/ac_homework_screen.dart';
 import '../../features/academic_coaching/presentation/screens/ac_id_cards_screen.dart';
 
+// ============================================================
+// COMPUTER SHOP VERTICAL — Task 5.3
+// Wire five computerShop sidebar ids to their dedicated screens.
+// Requirements: 4.3, 4.4, 28.2, 28.3, 28.5
+// ============================================================
+import '../../features/computer_shop/computer_shop.dart';
+
 /// Shared `itemId -> screen` resolver for the application shell.
 ///
 /// This is the SINGLE source of truth mapping a sidebar `itemId` to its screen
@@ -1010,6 +1017,41 @@ class SidebarNavigationHandler {
         );
       case 'book_publisher_returns':
         return const BookSupplierReturnsScreen();
+
+      // ============================================================
+      // COMPUTER SHOP VERTICAL — Task 5.3
+      // Maps five computerShop sidebar item ids to their dedicated
+      // /computer-shop/* screens, each wrapped in VendorRoleGuard with
+      // the matching permission from legacy_routes.dart so the in-shell
+      // path enforces identical RBAC.
+      // Requirements: 4.3, 4.4, 28.2, 28.3, 28.5
+      // BLAST RADIUS: Additive only — no other case is modified.
+      // ============================================================
+      case 'computer_job_cards':
+        return const VendorRoleGuard(
+          requiredPermission: Permissions.viewInvoices,
+          child: JobCardListScreen(),
+        );
+      case 'computer_create_job':
+        return const VendorRoleGuard(
+          requiredPermission: Permissions.createInvoices,
+          child: CreateJobCardScreen(),
+        );
+      case 'computer_warranty':
+        return const VendorRoleGuard(
+          requiredPermission: Permissions.viewInvoices,
+          child: WarrantyScreen(),
+        );
+      case 'computer_serial_history':
+        return VendorRoleGuard(
+          requiredPermission: Permissions.viewInvoices,
+          child: const SerialHistoryScreen(serialNumber: ''),
+        );
+      case 'computer_multi_unit':
+        return const VendorRoleGuard(
+          requiredPermission: Permissions.systemSettings,
+          child: MultiUnitScreen(),
+        );
 
       default:
         return null;

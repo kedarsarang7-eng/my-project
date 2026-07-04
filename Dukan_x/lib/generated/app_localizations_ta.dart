@@ -518,4 +518,208 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get businessTypeOther => 'மற்றவை';
+
+  @override
+  String get staffDashboard => 'ஊழியர் டாஷ்போர்டு';
+
+  @override
+  String get staffEmployees => 'ஊழியர்கள்';
+
+  @override
+  String get staffAttendance => 'வருகை';
+
+  @override
+  String get staffLeave => 'விடுப்பு';
+
+  @override
+  String get staffTasks => 'பணிகள்';
+
+  @override
+  String get staffPayroll => 'ஊதியம்';
+
+  @override
+  String get staffPerformance => 'செயல்திறன்';
+
+  @override
+  String get staffTotal => 'மொத்தம்';
+
+  @override
+  String get staffActive => 'செயலில்';
+
+  @override
+  String get staffInactive => 'செயலற்ற';
+
+  @override
+  String get staffSearchEmployees => 'ஊழியர்களைத் தேடு...';
+
+  @override
+  String get staffNoEmployees => 'ஊழியர்கள் யாரும் இல்லை';
+
+  @override
+  String get staffNoEmployeesDesc => 'தொடங்க உங்கள் முதல் ஊழியரைச் சேர்க்கவும்';
+
+  @override
+  String get staffAddEmployee => 'ஊழியரைச் சேர்';
+
+  @override
+  String get staffEmployeeDetail => 'ஊழியர் விவரங்கள்';
+
+  @override
+  String get staffDepartment => 'துறை';
+
+  @override
+  String get staffDesignation => 'பதவி';
+
+  @override
+  String get staffPhone => 'தொலைபேசி';
+
+  @override
+  String get staffEmail => 'மின்னஞ்சல்';
+
+  @override
+  String get staffCheckIn => 'செக் இன்';
+
+  @override
+  String get staffCheckOut => 'செக் அவுட்';
+
+  @override
+  String get staffTodayAttendance => 'இன்றைய வருகை';
+
+  @override
+  String get staffNoAttendance => 'வருகைப் பதிவுகள் இல்லை';
+
+  @override
+  String get staffNoAttendanceDesc => 'வருகைப் பதிவுகள் இங்கே தோன்றும்';
+
+  @override
+  String get staffLeaveRequests => 'விடுப்பு கோரிக்கைகள்';
+
+  @override
+  String get staffNoLeaveRequests => 'விடுப்பு கோரிக்கைகள் இல்லை';
+
+  @override
+  String get staffNoLeaveRequestsDesc => 'விடுப்பு கோரிக்கைகள் இங்கே தோன்றும்';
+
+  @override
+  String get staffApprove => 'அங்கீகரி';
+
+  @override
+  String get staffReject => 'நிராகரி';
+
+  @override
+  String get staffPending => 'நிலுவையில்';
+
+  @override
+  String get staffApproved => 'அங்கீகரிக்கப்பட்டது';
+
+  @override
+  String get staffRejected => 'நிராகரிக்கப்பட்டது';
+
+  @override
+  String get staffNoTasks => 'பணிகள் இல்லை';
+
+  @override
+  String get staffNoTasksDesc => 'தொடங்க ஒரு பணியை உருவாக்கவும்';
+
+  @override
+  String get staffCreateTask => 'பணியை உருவாக்கு';
+
+  @override
+  String get staffOpen => 'திறந்த';
+
+  @override
+  String get staffInProgress => 'நடைபெறுகிறது';
+
+  @override
+  String get staffCompleted => 'முடிந்தது';
+
+  @override
+  String get staffBlocked => 'தடுக்கப்பட்டது';
+
+  @override
+  String get staffHighPriority => 'உயர்';
+
+  @override
+  String get staffMediumPriority => 'நடுத்தர';
+
+  @override
+  String get staffLowPriority => 'குறைந்த';
+
+  @override
+  String get staffPayrollRuns => 'ஊதிய செயல்முறைகள்';
+
+  @override
+  String get staffNoPayrollRuns => 'ஊதிய செயல்முறைகள் இல்லை';
+
+  @override
+  String get staffNoPayrollRunsDesc =>
+      'செயலாக்கத்திற்குப் பிறகு ஊதிய செயல்முறைகள் இங்கே தோன்றும்';
+
+  @override
+  String get staffRunPayroll => 'ஊதியத்தை இயக்கு';
+
+  @override
+  String get staffDraft => 'வரைவு';
+
+  @override
+  String get staffProcessed => 'செயலாக்கப்பட்டது';
+
+  @override
+  String get staffLocked => 'பூட்டப்பட்டது';
+
+  @override
+  String get staffPerformanceScores => 'செயல்திறன் மதிப்பெண்கள்';
+
+  @override
+  String get staffNoPerformance => 'செயல்திறன் தரவு இல்லை';
+
+  @override
+  String get staffNoPerformanceDesc =>
+      'மதிப்பீட்டிற்குப் பிறகு செயல்திறன் மதிப்பெண்கள் தோன்றும்';
+
+  @override
+  String get staffScore => 'மதிப்பெண்';
+
+  @override
+  String get staffPeriod => 'காலம்';
+
+  @override
+  String get staffGps => 'GPS';
+
+  @override
+  String get staffFaceId => 'முக அடையாளம்';
+
+  @override
+  String get staffKiosk => 'கியோஸ்க்';
+
+  @override
+  String get staffManual => 'கைமுறை';
+
+  @override
+  String get staffQrCode => 'QR குறியீடு';
+
+  @override
+  String get staffBarcode => 'பார்கோடு';
+
+  @override
+  String get staffWifi => 'வைஃபை';
+
+  @override
+  String get staffReporting => 'அறிக்கைகள்';
+
+  @override
+  String get staffRbac => 'அணுகல் கட்டுப்பாடு';
+
+  @override
+  String get staffErrorLoading => 'தரவை ஏற்ற முடியவில்லை';
+
+  @override
+  String get staffRetry => 'மீண்டும் முயற்சி';
+
+  @override
+  String get staffFeatureUnavailable => 'அம்சம் கிடைக்கவில்லை';
+
+  @override
+  String get staffFeatureUnavailableDesc =>
+      'இந்த அம்சம் உங்கள் தற்போதைய திட்டத்தில் கிடைக்கவில்லை';
 }

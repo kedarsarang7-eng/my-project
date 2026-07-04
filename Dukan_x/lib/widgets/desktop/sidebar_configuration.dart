@@ -150,8 +150,18 @@ List<SidebarSection> _getSectionsForBusiness(BusinessType type) {
     // branch are untouched (Preservation 3.1, 3.6).
     case BusinessType.electronics:
       return _getElectronicsSections();
+    // COMPUTER SHOP VERTICAL (Task 5.2 — Requirements 4.1, 4.2, 5.1–5.5, 6.3, 6.4, 28.1, 28.4).
+    // Explicit case so the computer-shop sidebar no longer falls through to
+    // `_getRetailSections()`. Returns exactly five computer-shop-specific entries
+    // (Job Cards, New Job Card, Warranty, Serial History, Multi-Unit) in a
+    // "Repairs & Service" section plus the same shared common sections every type
+    // receives. Each item carries capability + permission gates applied by
+    // `sidebarSectionsProvider` via `FeatureResolver.canAccess` and
+    // `RolePermissions.hasPermission`.
+    // BLAST RADIUS: Only this case changes. electronics, mobileShop, retail,
+    // and the `default` branch remain byte-for-byte unchanged.
     case BusinessType.computerShop:
-      return _getRetailSections();
+      return _getComputerShopSections();
     // MOBILE SHOP VERTICAL (Task 9.1 — Requirements 7.1, 7.8, 7.10, 1.9, 1.12).
     // Explicit case so the mobile-shop sidebar no longer falls through to
     // `_getRetailSections()`. Returns exactly five mobile-specific entries
@@ -2201,6 +2211,75 @@ List<SidebarSection> _getPharmacySections() {
   ];
 }
 
+/// Dedicated sidebar for `BusinessType.computerShop` (Task 5.2 — Requirements 4.1, 4.2,
+/// 5.1, 5.2, 5.3, 5.4, 5.5, 6.3, 6.4, 28.1, 28.4).
+///
+/// Returns exactly five computer-shop-specific entries — Job Cards, New Job Card,
+/// Warranty, Serial History, Multi-Unit — in a "Repairs & Service" section, plus the
+/// same shared common sections (`_getCommonSections`) returned for every other
+/// `BusinessType`.
+///
+/// Each item carries BOTH a [BusinessCapability] gate AND a permission string so that
+/// `FeatureResolver.canAccess` in [sidebarSectionsProvider] permits granted capabilities
+/// and `RolePermissions.hasPermission` enforces the RBAC permission. The disabled-shop
+/// case (Req 5.5) is covered because a disabled shop grants no capabilities, so all five
+/// entries are filtered out automatically.
+///
+/// BLAST RADIUS: This function is NEW. It does not modify any other business type's
+/// section list, the `default` branch, `_getRetailSections()`, `_getMobileShopSections()`,
+/// or `_getElectronicsSections()`.
+List<SidebarSection> _getComputerShopSections() {
+  return [
+    // Dedicated "Repairs & Service" section — exactly 5 computer-shop items in fixed order.
+    SidebarSection(
+      index: 0,
+      icon: Icons.computer_rounded,
+      title: 'Repairs & Service',
+      accentColor: FuturisticColors.warning,
+      shortcutHint: 'Ctrl+1',
+      items: [
+        SidebarMenuItem(
+          id: 'computer_job_cards',
+          icon: Icons.assignment_outlined,
+          label: 'Job Cards',
+          capability: BusinessCapability.useJobSheets,
+          permission: 'viewInvoices',
+        ),
+        SidebarMenuItem(
+          id: 'computer_create_job',
+          icon: Icons.add_box_outlined,
+          label: 'New Job Card',
+          capability: BusinessCapability.useJobSheets,
+          permission: 'createInvoices',
+        ),
+        SidebarMenuItem(
+          id: 'computer_warranty',
+          icon: Icons.verified_user_outlined,
+          label: 'Warranty',
+          capability: BusinessCapability.useWarranty,
+          permission: 'viewInvoices',
+        ),
+        SidebarMenuItem(
+          id: 'computer_serial_history',
+          icon: Icons.history_outlined,
+          label: 'Serial History',
+          capability: BusinessCapability.useIMEI,
+          permission: 'viewInvoices',
+        ),
+        SidebarMenuItem(
+          id: 'computer_multi_unit',
+          icon: Icons.view_module_outlined,
+          label: 'Multi-Unit',
+          capability: BusinessCapability.useMultiUnit,
+          permission: 'systemSettings',
+        ),
+      ],
+    ),
+    // Shared common sections — identical to what mobileShop, electronics, etc. get.
+    ..._getCommonSections(startingIndex: 1),
+  ];
+}
+
 /// Dedicated sidebar for `BusinessType.mobileShop` (Task 9.1 — Requirements 7.1, 7.8, 7.10).
 ///
 /// Returns exactly five mobile-specific entries — Service Jobs, Exchanges,
@@ -2591,6 +2670,61 @@ List<SidebarSection> _getWholesaleSections() {
 List<SidebarSection> _getCommonSections({required int startingIndex}) {
   int idx = startingIndex;
   return [
+    // ── Universal Staff Management ───────────────────────────────────────────
+    // Surfaces for ALL business types via config gating (AD-2). The
+    // StaffFeatureConfig determines which sub-areas are enabled per
+    // BusinessType × SubscriptionTier — no per-type code forks here.
+    SidebarSection(
+      index: idx++,
+      icon: Icons.badge_rounded,
+      title: 'Staff Management',
+      accentColor: const Color(0xFF7C4DFF),
+      items: [
+        SidebarMenuItem(
+          id: 'staff_dashboard',
+          icon: Icons.dashboard_customize_outlined,
+          label: 'Staff Dashboard',
+          capability: BusinessCapability.useStaffManagement,
+        ),
+        SidebarMenuItem(
+          id: 'staff_employees',
+          icon: Icons.people_outline,
+          label: 'Employees',
+          capability: BusinessCapability.useStaffManagement,
+        ),
+        SidebarMenuItem(
+          id: 'staff_attendance',
+          icon: Icons.access_time_outlined,
+          label: 'Attendance',
+          capability: BusinessCapability.useStaffManagement,
+        ),
+        SidebarMenuItem(
+          id: 'staff_leave',
+          icon: Icons.event_note_outlined,
+          label: 'Leave',
+          capability: BusinessCapability.useStaffManagement,
+        ),
+        SidebarMenuItem(
+          id: 'staff_tasks',
+          icon: Icons.task_alt_outlined,
+          label: 'Tasks',
+          capability: BusinessCapability.useStaffManagement,
+        ),
+        SidebarMenuItem(
+          id: 'staff_payroll',
+          icon: Icons.account_balance_wallet_outlined,
+          label: 'Payroll',
+          capability: BusinessCapability.useStaffManagement,
+          permission: 'managePayroll',
+        ),
+        SidebarMenuItem(
+          id: 'staff_performance',
+          icon: Icons.trending_up_outlined,
+          label: 'Performance',
+          capability: BusinessCapability.useStaffManagement,
+        ),
+      ],
+    ),
     SidebarSection(
       index: idx++,
       icon: Icons.people_alt_rounded,

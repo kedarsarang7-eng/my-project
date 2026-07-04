@@ -15,9 +15,12 @@ import '../../../../core/services/currency_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:timelines_plus/timelines_plus.dart';
 import '../../providers/computer_job_providers.dart';
 import '../../data/repositories/computer_repository.dart';
+import '../../utils/computer_shop_business_rules.dart';
+import '../../utils/job_status_codec.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
 
 class SerialHistoryScreen extends ConsumerStatefulWidget {
@@ -35,12 +38,15 @@ class _SerialHistoryScreenState extends ConsumerState<SerialHistoryScreen> {
   Widget build(BuildContext context) {
     final historyAsync = ref.watch(serialHistoryProvider(widget.serialNumber));
 
+    // QR control: only show when serial data is successfully loaded (Req 24.4).
+    final hasSerialData = historyAsync.hasValue;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF1E293B),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -54,26 +60,33 @@ class _SerialHistoryScreenState extends ConsumerState<SerialHistoryScreen> {
                   desktop: 20,
                 ),
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1E293B),
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             Text(
               widget.serialNumber,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: Color(0xFF64748B),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontFamily: 'monospace',
               ),
             ),
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.qr_code),
-            onPressed: () {
-              // Show QR code or barcode for serial
-            },
-          ),
+          // QR control is hidden from the widget tree when serial data is not
+          // available (Req 24.4). Shows QR dialog when tapped (Req 24.3).
+          if (hasSerialData)
+            Semantics(
+              label: 'Show serial QR code',
+              child: Tooltip(
+                message: 'Show QR Code',
+                child: IconButton(
+                  icon: const Icon(Icons.qr_code),
+                  onPressed: () => _showQrDialog(context),
+                ),
+              ),
+            ),
         ],
       ),
       body: BoundedBox(
@@ -87,6 +100,35 @@ class _SerialHistoryScreenState extends ConsumerState<SerialHistoryScreen> {
                 ref.refresh(serialHistoryProvider(widget.serialNumber)),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Displays a dialog with the QR code for the serial number (Req 24.3).
+  void _showQrDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Serial QR Code', textAlign: TextAlign.center),
+        content: SizedBox(
+          width: 250,
+          height: 250,
+          child: Center(
+            child: QrImageView(
+              data: widget.serialNumber,
+              version: QrVersions.auto,
+              size: 220,
+              gapless: true,
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Close'),
+          ),
+        ],
       ),
     );
   }
@@ -413,21 +455,35 @@ class _TimelineJobCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      job.status,
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: statusColor,
+                  Semantics(
+                    label: 'Status: ${JobStatusCodec.label(job.status)}',
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: statusColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            _getStatusIcon(job.status),
+                            size: 10,
+                            color: statusColor,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            JobStatusCodec.label(job.status),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: statusColor,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -483,22 +539,45 @@ class _TimelineJobCard extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(ComputerJobStatus status) {
     switch (status) {
-      case 'INTAKE':
+      case ComputerJobStatus.intake:
         return Colors.orange;
-      case 'DIAGNOSIS':
+      case ComputerJobStatus.diagnosis:
         return Colors.amber;
-      case 'AWAITING_PARTS':
+      case ComputerJobStatus.partsOrdered:
         return Colors.deepOrange;
-      case 'REPAIRING':
+      case ComputerJobStatus.underRepair:
         return Colors.blue;
-      case 'QC':
+      case ComputerJobStatus.qa:
         return Colors.purple;
-      case 'DELIVERED':
+      case ComputerJobStatus.ready:
+        return Colors.teal;
+      case ComputerJobStatus.delivered:
         return Colors.green;
-      default:
+      case ComputerJobStatus.cancelled:
         return Colors.grey;
+    }
+  }
+
+  IconData _getStatusIcon(ComputerJobStatus status) {
+    switch (status) {
+      case ComputerJobStatus.intake:
+        return Icons.login;
+      case ComputerJobStatus.diagnosis:
+        return Icons.search;
+      case ComputerJobStatus.partsOrdered:
+        return Icons.shopping_cart;
+      case ComputerJobStatus.underRepair:
+        return Icons.build;
+      case ComputerJobStatus.qa:
+        return Icons.verified;
+      case ComputerJobStatus.ready:
+        return Icons.check_circle_outline;
+      case ComputerJobStatus.delivered:
+        return Icons.check_circle;
+      case ComputerJobStatus.cancelled:
+        return Icons.cancel;
     }
   }
 }
@@ -550,18 +629,35 @@ class _RMAList extends StatelessWidget {
                   Text('OEM RMA: ${rma['oemRmaNumber']}'),
               ],
             ),
-            trailing: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: statusColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                status,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: statusColor,
+            trailing: Semantics(
+              label: 'RMA Status: $status',
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: statusColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _getRMAStatusIcon(status),
+                      size: 12,
+                      color: statusColor,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      status,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: statusColor,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -585,6 +681,23 @@ class _RMAList extends StatelessWidget {
         return Colors.green;
       default:
         return Colors.grey;
+    }
+  }
+
+  IconData _getRMAStatusIcon(String status) {
+    switch (status) {
+      case 'INITIATED':
+        return Icons.play_circle_outline;
+      case 'SHIPPED_TO_OEM':
+        return Icons.local_shipping;
+      case 'REPLACEMENT_RECEIVED':
+        return Icons.check_circle;
+      case 'REJECTED_BY_OEM':
+        return Icons.cancel;
+      case 'RESOLVED':
+        return Icons.done_all;
+      default:
+        return Icons.help_outline;
     }
   }
 }
@@ -663,7 +776,7 @@ class _InfoRow extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: valueColor ?? const Color(0xFF1E293B),
+              color: valueColor ?? Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),

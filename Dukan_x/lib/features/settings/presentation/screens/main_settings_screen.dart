@@ -365,6 +365,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       color: Colors.blueGrey,
                     ),
                     _buildSettingsTile(
+                      icon: Icons.chat_rounded,
+                      title: "WhatsApp Gateway",
+                      subtitle:
+                          "Connect OpenWA for automated WhatsApp messages",
+                      onTap: () => context.push('/settings/whatsapp_gateway'),
+                      isDark: isDark,
+                      color: const Color(0xFF25D366),
+                    ),
+                    _buildSettingsTile(
                       icon: Icons.schedule_send_rounded,
                       title: "Dunning / Reminders Config",
                       subtitle: "Automated payment-reminder schedule",
@@ -747,6 +756,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       onTap: () => context.push('/settings/payment_gateway'),
                       isDark: isDark,
                       color: Colors.blueGrey,
+                    ),
+                    _buildSettingsTile(
+                      icon: Icons.chat_rounded,
+                      title: "WhatsApp Gateway",
+                      subtitle:
+                          "Connect OpenWA for automated WhatsApp messages",
+                      onTap: () => context.push('/settings/whatsapp_gateway'),
+                      isDark: isDark,
+                      color: const Color(0xFF25D366),
                     ),
                     _buildSettingsTile(
                       icon: Icons.schedule_send_rounded,

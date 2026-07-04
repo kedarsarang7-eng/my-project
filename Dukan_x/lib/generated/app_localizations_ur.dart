@@ -513,4 +513,209 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get businessTypeOther => 'دیگر';
+
+  @override
+  String get staffDashboard => 'اسٹاف ڈیش بورڈ';
+
+  @override
+  String get staffEmployees => 'ملازمین';
+
+  @override
+  String get staffAttendance => 'حاضری';
+
+  @override
+  String get staffLeave => 'چھٹی';
+
+  @override
+  String get staffTasks => 'کام';
+
+  @override
+  String get staffPayroll => 'تنخواہ';
+
+  @override
+  String get staffPerformance => 'کارکردگی';
+
+  @override
+  String get staffTotal => 'کل';
+
+  @override
+  String get staffActive => 'فعال';
+
+  @override
+  String get staffInactive => 'غیر فعال';
+
+  @override
+  String get staffSearchEmployees => 'ملازمین تلاش کریں...';
+
+  @override
+  String get staffNoEmployees => 'کوئی ملازم نہیں ملا';
+
+  @override
+  String get staffNoEmployeesDesc =>
+      'شروع کرنے کے لیے اپنا پہلا ملازم شامل کریں';
+
+  @override
+  String get staffAddEmployee => 'ملازم شامل کریں';
+
+  @override
+  String get staffEmployeeDetail => 'ملازم کی تفصیلات';
+
+  @override
+  String get staffDepartment => 'شعبہ';
+
+  @override
+  String get staffDesignation => 'عہدہ';
+
+  @override
+  String get staffPhone => 'فون';
+
+  @override
+  String get staffEmail => 'ای میل';
+
+  @override
+  String get staffCheckIn => 'چیک اِن';
+
+  @override
+  String get staffCheckOut => 'چیک آؤٹ';
+
+  @override
+  String get staffTodayAttendance => 'آج کی حاضری';
+
+  @override
+  String get staffNoAttendance => 'کوئی حاضری ریکارڈ نہیں';
+
+  @override
+  String get staffNoAttendanceDesc => 'حاضری ریکارڈ یہاں ظاہر ہوں گے';
+
+  @override
+  String get staffLeaveRequests => 'چھٹی کی درخواستیں';
+
+  @override
+  String get staffNoLeaveRequests => 'کوئی چھٹی کی درخواست نہیں';
+
+  @override
+  String get staffNoLeaveRequestsDesc => 'چھٹی کی درخواستیں یہاں ظاہر ہوں گی';
+
+  @override
+  String get staffApprove => 'منظور کریں';
+
+  @override
+  String get staffReject => 'مسترد کریں';
+
+  @override
+  String get staffPending => 'زیر التوا';
+
+  @override
+  String get staffApproved => 'منظور شدہ';
+
+  @override
+  String get staffRejected => 'مسترد شدہ';
+
+  @override
+  String get staffNoTasks => 'کوئی کام نہیں';
+
+  @override
+  String get staffNoTasksDesc => 'شروع کرنے کے لیے ایک کام بنائیں';
+
+  @override
+  String get staffCreateTask => 'کام بنائیں';
+
+  @override
+  String get staffOpen => 'کھلا';
+
+  @override
+  String get staffInProgress => 'جاری ہے';
+
+  @override
+  String get staffCompleted => 'مکمل';
+
+  @override
+  String get staffBlocked => 'بلاک شدہ';
+
+  @override
+  String get staffHighPriority => 'زیادہ';
+
+  @override
+  String get staffMediumPriority => 'درمیانہ';
+
+  @override
+  String get staffLowPriority => 'کم';
+
+  @override
+  String get staffPayrollRuns => 'تنخواہ کے عمل';
+
+  @override
+  String get staffNoPayrollRuns => 'کوئی تنخواہ کا عمل نہیں';
+
+  @override
+  String get staffNoPayrollRunsDesc =>
+      'پروسیسنگ کے بعد تنخواہ کے عمل یہاں ظاہر ہوں گے';
+
+  @override
+  String get staffRunPayroll => 'تنخواہ چلائیں';
+
+  @override
+  String get staffDraft => 'مسودہ';
+
+  @override
+  String get staffProcessed => 'پروسیس شدہ';
+
+  @override
+  String get staffLocked => 'مقفل';
+
+  @override
+  String get staffPerformanceScores => 'کارکردگی اسکور';
+
+  @override
+  String get staffNoPerformance => 'کوئی کارکردگی ڈیٹا نہیں';
+
+  @override
+  String get staffNoPerformanceDesc =>
+      'تشخیص کے بعد کارکردگی اسکور ظاہر ہوں گے';
+
+  @override
+  String get staffScore => 'اسکور';
+
+  @override
+  String get staffPeriod => 'مدت';
+
+  @override
+  String get staffGps => 'GPS';
+
+  @override
+  String get staffFaceId => 'فیس آئی ڈی';
+
+  @override
+  String get staffKiosk => 'کیوسک';
+
+  @override
+  String get staffManual => 'دستی';
+
+  @override
+  String get staffQrCode => 'QR کوڈ';
+
+  @override
+  String get staffBarcode => 'بارکوڈ';
+
+  @override
+  String get staffWifi => 'وائی فائی';
+
+  @override
+  String get staffReporting => 'رپورٹس';
+
+  @override
+  String get staffRbac => 'رسائی کنٹرول';
+
+  @override
+  String get staffErrorLoading => 'ڈیٹا لوڈ کرنے میں ناکام';
+
+  @override
+  String get staffRetry => 'دوبارہ کوشش کریں';
+
+  @override
+  String get staffFeatureUnavailable => 'خصوصیت دستیاب نہیں';
+
+  @override
+  String get staffFeatureUnavailableDesc =>
+      'یہ خصوصیت آپ کے موجودہ پلان پر دستیاب نہیں ہے';
 }

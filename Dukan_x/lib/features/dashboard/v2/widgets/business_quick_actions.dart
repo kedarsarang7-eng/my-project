@@ -236,7 +236,6 @@ class BusinessQuickActions extends ConsumerWidget {
 
       case BusinessType.electronics:
       case BusinessType.mobileShop:
-      case BusinessType.computerShop:
         actions.add(
           _buildActionButton(
             icon: Icons.build_outlined,
@@ -256,9 +255,9 @@ class BusinessQuickActions extends ConsumerWidget {
               label: 'IMEI Lookup',
               color: FuturisticColors.accent1,
               // Electronics has a dedicated IMEI tracking destination
-              // (/electronics/imei-tracking, Phase 2 task 8.2). mobileShop and
-              // computerShop keep their existing serial-history destination
-              // unchanged (Preservation 3.6).
+              // (/electronics/imei-tracking, Phase 2 task 8.2). mobileShop
+              // keeps its existing serial-history destination unchanged
+              // (Preservation 3.6).
               onTap: () => context.push(
                 type == BusinessType.electronics
                     ? '/electronics/imei-tracking'
@@ -276,6 +275,46 @@ class BusinessQuickActions extends ConsumerWidget {
               color: FuturisticColors.accent2,
               onTap: () => nav.navigateTo(AppScreen.exchanges),
               semanticLabel: 'Exchange, manage device exchange or trade-in',
+            ),
+          );
+        }
+        break;
+
+      case BusinessType.computerShop:
+        // computerShop has its own dedicated repair module — quick actions
+        // route exclusively to /computer-shop/* screens, never through the
+        // generic /job/* service module (Requirement 15.3).
+        actions.add(
+          _buildActionButton(
+            icon: Icons.build_outlined,
+            label: 'New Repair',
+            color: FuturisticColors.success,
+            onTap: () => context.push('/computer-shop/create-job-card'),
+            semanticLabel: 'New Repair, create a new computer shop job card',
+          ),
+        );
+        actions.add(
+          _buildActionButton(
+            icon: Icons.assignment_outlined,
+            label: 'Job Cards',
+            color: FuturisticColors.accent2,
+            onTap: () => context.push('/computer-shop/job-cards'),
+            semanticLabel: 'Job Cards, view all computer shop job cards',
+          ),
+        );
+        if (caps.supportsSerialNumber) {
+          actions.add(
+            _buildActionButton(
+              icon: Icons.confirmation_number_outlined,
+              label: 'IMEI Lookup',
+              color: FuturisticColors.accent1,
+              // Real serial/IMEI lookup: prompts for a value (1-64 chars,
+              // Requirement 15.4/15.5) then reuses Serial_History_Screen,
+              // which performs the actual lookup via serialHistoryProvider
+              // and shows a "no results" state without navigating away
+              // (Requirement 15.6).
+              onTap: () => _showImeiLookupDialog(context),
+              semanticLabel: 'IMEI Lookup, search serial or IMEI tracking',
             ),
           );
         }
@@ -626,6 +665,64 @@ class BusinessQuickActions extends ConsumerWidget {
     }
 
     return actions;
+  }
+
+  /// Prompts for a serial/IMEI value and, once valid, navigates to
+  /// Serial_History_Screen to perform the real lookup (Requirement 15.4).
+  ///
+  /// Validation happens in the dialog itself: an empty value or one longer
+  /// than 64 characters is rejected with an inline error and the entered
+  /// text is retained (Requirement 15.5). No navigation occurs until the
+  /// value passes validation.
+  void _showImeiLookupDialog(BuildContext context) {
+    final controller = TextEditingController();
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        String? errorText;
+        return StatefulBuilder(
+          builder: (context, setState) {
+            void submit() {
+              final value = controller.text.trim();
+              if (value.isEmpty || value.length > 64) {
+                setState(() {
+                  errorText = value.isEmpty
+                      ? 'Enter a serial or IMEI number'
+                      : 'Serial/IMEI must be 64 characters or fewer';
+                });
+                return;
+              }
+              Navigator.of(dialogContext).pop();
+              context.push(
+                '/computer-shop/serial-history',
+                extra: {'serialNumber': value},
+              );
+            }
+
+            return AlertDialog(
+              title: const Text('IMEI / Serial Lookup'),
+              content: TextField(
+                controller: controller,
+                autofocus: true,
+                maxLength: 64,
+                decoration: InputDecoration(
+                  labelText: 'Serial or IMEI number',
+                  errorText: errorText,
+                ),
+                onSubmitted: (_) => submit(),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(onPressed: submit, child: const Text('Search')),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   /// Navigates to a Mandi quick-action target screen (R12.3, R12.4, R12.5).

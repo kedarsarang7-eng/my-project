@@ -136,10 +136,12 @@ _ApiResult _simulateApiFailure(
 
   for (var retry = 0; retry < maxRetries; retry++) {
     attempts++;
-    // Simulate API call that throws — the implementation must NOT
-    // modify form state on failure
+    // Simulate API call that always fails — the implementation must NOT
+    // modify form state on failure.
+    // ignore: dead_code
     final success = false; // All retries fail
 
+    // ignore: dead_code
     if (success) {
       return _ApiResult(success: true, retryCount: attempts);
     }

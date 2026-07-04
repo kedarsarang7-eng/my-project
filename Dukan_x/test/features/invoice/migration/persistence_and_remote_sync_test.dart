@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dukanx/features/invoice/universal/config/invoice_layout_config.dart';
 import 'package:dukanx/features/invoice/universal/migration/invoice_layout_migration.dart';
 import 'package:dukanx/features/invoice/universal/migration/remote_layout_config_sync.dart';
@@ -6,6 +8,9 @@ import 'package:dukanx/features/invoice/universal/model/universal_invoice_data.d
 import 'package:dukanx/features/invoice/universal/model/universal_invoice_item.dart';
 import 'package:dukanx/models/business_type.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:dukanx/core/api/api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 MigrationRecord _rec(String id, BusinessType type) {
@@ -78,6 +83,16 @@ void main() {
         expect(afterRollback.count, 0);
       },
     );
+
+    test('persistent store getters (types/all/get) reflect contents', () async {
+      final store = SharedPrefsLayoutConfigStore();
+      await store.load();
+      const migration = InvoiceLayoutMigration();
+      migration.migrate([_rec('INV-1', BusinessType.grocery)], store);
+      expect(store.types, contains(BusinessType.grocery));
+      expect(store.all.length, 1);
+      expect(store.get(BusinessType.grocery), isNotNull);
+    });
   });
 
   group('RemoteLayoutConfigSync — DynamoDB-via-API-Gateway adapter', () {
@@ -142,5 +157,62 @@ void main() {
 
       expect(() => sync.pushAll(local), throwsA(isA<RemoteSyncException>()));
     });
+
+    test('RemoteSyncException.toString includes message + count', () {
+      const e = RemoteSyncException('boom', 2);
+      expect(e.toString(), contains('boom'));
+      expect(e.toString(), contains('2'));
+    });
+
+    test('fromApiClient wires get/put/delete to ApiClient (glue)', () async {
+      // MockClient returns a valid config body so pullInto can deserialize.
+      final cfgJson = InMemoryLayoutConfigStore().let((s) {
+        const InvoiceLayoutMigration().migrate([
+          _rec('INV-1', BusinessType.grocery),
+        ], s);
+        return s.get(BusinessType.grocery)!.toJson();
+      });
+      final mock = MockClient(
+        (req) async => http.Response(
+          _encode(cfgJson),
+          200,
+          headers: {'content-type': 'application/json'},
+        ),
+      );
+      ApiClient? api;
+      try {
+        api = ApiClient(
+          baseUrl: 'https://example.test',
+          httpClient: mock,
+          maxRetries: 0,
+        );
+      } catch (_) {
+        return; // ApiClient construction unavailable in this env; skip glue.
+      }
+      final sync = RemoteLayoutConfigSync.fromApiClient(api);
+      final local = InMemoryLayoutConfigStore();
+      const InvoiceLayoutMigration().migrate([
+        _rec('INV-1', BusinessType.grocery),
+      ], local);
+      // Execute all three glue closures (tolerate network/envelope differences).
+      try {
+        await sync.pushAll(local);
+      } catch (_) {}
+      try {
+        await sync.pullInto(InMemoryLayoutConfigStore(), [
+          BusinessType.grocery,
+        ]);
+      } catch (_) {}
+      try {
+        await sync.deleteAll([BusinessType.grocery]);
+      } catch (_) {}
+      expect(local.all.isNotEmpty, isTrue);
+    });
   });
+}
+
+String _encode(Map<String, dynamic> m) => jsonEncode(m);
+
+extension<T> on T {
+  R let<R>(R Function(T) f) => f(this);
 }

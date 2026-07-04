@@ -512,4 +512,208 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get businessTypeOther => 'Other';
+
+  @override
+  String get staffDashboard => 'Staff Dashboard';
+
+  @override
+  String get staffEmployees => 'Employees';
+
+  @override
+  String get staffAttendance => 'Attendance';
+
+  @override
+  String get staffLeave => 'Leave';
+
+  @override
+  String get staffTasks => 'Tasks';
+
+  @override
+  String get staffPayroll => 'Payroll';
+
+  @override
+  String get staffPerformance => 'Performance';
+
+  @override
+  String get staffTotal => 'Total';
+
+  @override
+  String get staffActive => 'Active';
+
+  @override
+  String get staffInactive => 'Inactive';
+
+  @override
+  String get staffSearchEmployees => 'Search employees...';
+
+  @override
+  String get staffNoEmployees => 'No employees found';
+
+  @override
+  String get staffNoEmployeesDesc => 'Add your first employee to get started';
+
+  @override
+  String get staffAddEmployee => 'Add Employee';
+
+  @override
+  String get staffEmployeeDetail => 'Employee Details';
+
+  @override
+  String get staffDepartment => 'Department';
+
+  @override
+  String get staffDesignation => 'Designation';
+
+  @override
+  String get staffPhone => 'Phone';
+
+  @override
+  String get staffEmail => 'Email';
+
+  @override
+  String get staffCheckIn => 'Check In';
+
+  @override
+  String get staffCheckOut => 'Check Out';
+
+  @override
+  String get staffTodayAttendance => 'Today\'s Attendance';
+
+  @override
+  String get staffNoAttendance => 'No attendance records';
+
+  @override
+  String get staffNoAttendanceDesc => 'Attendance records will appear here';
+
+  @override
+  String get staffLeaveRequests => 'Leave Requests';
+
+  @override
+  String get staffNoLeaveRequests => 'No leave requests';
+
+  @override
+  String get staffNoLeaveRequestsDesc => 'Leave requests will appear here';
+
+  @override
+  String get staffApprove => 'Approve';
+
+  @override
+  String get staffReject => 'Reject';
+
+  @override
+  String get staffPending => 'Pending';
+
+  @override
+  String get staffApproved => 'Approved';
+
+  @override
+  String get staffRejected => 'Rejected';
+
+  @override
+  String get staffNoTasks => 'No tasks';
+
+  @override
+  String get staffNoTasksDesc => 'Create a task to get started';
+
+  @override
+  String get staffCreateTask => 'Create Task';
+
+  @override
+  String get staffOpen => 'Open';
+
+  @override
+  String get staffInProgress => 'In Progress';
+
+  @override
+  String get staffCompleted => 'Completed';
+
+  @override
+  String get staffBlocked => 'Blocked';
+
+  @override
+  String get staffHighPriority => 'High';
+
+  @override
+  String get staffMediumPriority => 'Medium';
+
+  @override
+  String get staffLowPriority => 'Low';
+
+  @override
+  String get staffPayrollRuns => 'Payroll Runs';
+
+  @override
+  String get staffNoPayrollRuns => 'No payroll runs';
+
+  @override
+  String get staffNoPayrollRunsDesc =>
+      'Payroll runs will appear here after processing';
+
+  @override
+  String get staffRunPayroll => 'Run Payroll';
+
+  @override
+  String get staffDraft => 'Draft';
+
+  @override
+  String get staffProcessed => 'Processed';
+
+  @override
+  String get staffLocked => 'Locked';
+
+  @override
+  String get staffPerformanceScores => 'Performance Scores';
+
+  @override
+  String get staffNoPerformance => 'No performance data';
+
+  @override
+  String get staffNoPerformanceDesc =>
+      'Performance scores will appear after evaluation';
+
+  @override
+  String get staffScore => 'Score';
+
+  @override
+  String get staffPeriod => 'Period';
+
+  @override
+  String get staffGps => 'GPS';
+
+  @override
+  String get staffFaceId => 'Face ID';
+
+  @override
+  String get staffKiosk => 'Kiosk';
+
+  @override
+  String get staffManual => 'Manual';
+
+  @override
+  String get staffQrCode => 'QR Code';
+
+  @override
+  String get staffBarcode => 'Barcode';
+
+  @override
+  String get staffWifi => 'WiFi';
+
+  @override
+  String get staffReporting => 'Reports';
+
+  @override
+  String get staffRbac => 'Access Control';
+
+  @override
+  String get staffErrorLoading => 'Failed to load data';
+
+  @override
+  String get staffRetry => 'Retry';
+
+  @override
+  String get staffFeatureUnavailable => 'Feature not available';
+
+  @override
+  String get staffFeatureUnavailableDesc =>
+      'This feature is not available on your current plan';
 }

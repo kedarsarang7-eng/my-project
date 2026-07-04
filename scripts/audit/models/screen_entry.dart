@@ -79,6 +79,21 @@ class ScreenEntry {
   /// ISO8601 timestamp of the last status change.
   final String statusTimestamp;
 
+  /// Layout & Overflow checklist result ("PASS", "FAIL", "N/A", or "").
+  final String layoutOverflow;
+
+  /// Hardcoded Values checklist result ("PASS", "FAIL", "N/A", or "").
+  final String hardcodedValues;
+
+  /// Responsiveness & Platform Coverage checklist result ("PASS", "FAIL", "N/A", or "").
+  final String responsivenessCoverage;
+
+  /// UI/UX Correctness checklist result ("PASS", "FAIL", "N/A", or "").
+  final String uiUxCorrectness;
+
+  /// Performance checklist result ("PASS", "FAIL", "N/A", or "").
+  final String performance;
+
   const ScreenEntry({
     required this.project,
     required this.feature,
@@ -95,6 +110,11 @@ class ScreenEntry {
     this.status = 'Not Started',
     this.statusReason = '',
     this.statusTimestamp = '',
+    this.layoutOverflow = '',
+    this.hardcodedValues = '',
+    this.responsivenessCoverage = '',
+    this.uiUxCorrectness = '',
+    this.performance = '',
   });
 
   /// Serializes this entry to a CSV row (list of field values).
@@ -114,6 +134,11 @@ class ScreenEntry {
     status,
     statusReason,
     statusTimestamp,
+    layoutOverflow,
+    hardcodedValues,
+    responsivenessCoverage,
+    uiUxCorrectness,
+    performance,
   ];
 
   /// CSV header row matching the Discovery Registry schema.
@@ -133,6 +158,11 @@ class ScreenEntry {
     'Status',
     'StatusReason',
     'StatusTimestamp',
+    'LayoutOverflow',
+    'HardcodedValues',
+    'ResponsivenessCoverage',
+    'UiUxCorrectness',
+    'Performance',
   ];
 
   /// Parses a ScreenEntry from a CSV row (list of field values).
@@ -158,6 +188,11 @@ class ScreenEntry {
       status: row.length > 12 ? row[12] : 'Not Started',
       statusReason: row.length > 13 ? row[13] : '',
       statusTimestamp: row.length > 14 ? row[14] : '',
+      layoutOverflow: row.length > 15 ? row[15] : '',
+      hardcodedValues: row.length > 16 ? row[16] : '',
+      responsivenessCoverage: row.length > 17 ? row[17] : '',
+      uiUxCorrectness: row.length > 18 ? row[18] : '',
+      performance: row.length > 19 ? row[19] : '',
     );
   }
 
@@ -179,7 +214,12 @@ class ScreenEntry {
           priority == other.priority &&
           status == other.status &&
           statusReason == other.statusReason &&
-          statusTimestamp == other.statusTimestamp;
+          statusTimestamp == other.statusTimestamp &&
+          layoutOverflow == other.layoutOverflow &&
+          hardcodedValues == other.hardcodedValues &&
+          responsivenessCoverage == other.responsivenessCoverage &&
+          uiUxCorrectness == other.uiUxCorrectness &&
+          performance == other.performance;
 
   @override
   int get hashCode => Object.hash(
@@ -198,6 +238,11 @@ class ScreenEntry {
     status,
     statusReason,
     statusTimestamp,
+    layoutOverflow,
+    hardcodedValues,
+    responsivenessCoverage,
+    uiUxCorrectness,
+    performance,
   );
 
   @override

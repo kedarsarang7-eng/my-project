@@ -1,9 +1,13 @@
 import { config } from '../config/environment';
 // ============================================================================
-// WhatsApp Service — Business Cloud API Integration
+// WhatsApp Service — Business Cloud API Integration (LEGACY)
 // ============================================================================
-// Sends payment confirmations and invoice PDFs via WhatsApp Business API.
-// Uses Meta Graph API v17.0 with pre-approved template messages.
+// LEGACY PATH — Gated behind WA_LEGACY_CLOUD feature flag (default OFF).
+// When the flag is OFF, all Meta Cloud API calls are blocked and callers
+// receive a no-op response. New WhatsApp traffic MUST route through the
+// canonical WhatsAppDispatchService (OpenWA gateway) instead.
+//
+// See: Req 10.6, 10.8 — consolidate all WhatsApp traffic onto OpenWA.
 // ============================================================================
 
 import { logger } from '../utils/logger';
@@ -25,10 +29,22 @@ interface PaymentConfirmationParams {
 /**
  * Send a payment confirmation message via WhatsApp.
  * Uses a pre-approved template message with dynamic parameters.
+ *
+ * LEGACY: Gated behind WA_LEGACY_CLOUD flag (default OFF).
+ * When OFF, returns { success: false } without making any API call.
  */
 export async function sendPaymentConfirmation(
     params: PaymentConfirmationParams
 ): Promise<{ success: boolean; messageId?: string }> {
+    // ── WA_LEGACY_CLOUD gate (Req 10.6, 10.8) ──────────────────────────
+    if (!config.whatsapp.legacyCloudEnabled) {
+        logger.info('WhatsApp Meta Cloud API blocked — WA_LEGACY_CLOUD is OFF', {
+            customerPhone: params.customerPhone,
+            invoiceNumber: params.invoiceNumber,
+        });
+        return { success: false };
+    }
+
     if (!PHONE_NUMBER_ID || !ACCESS_TOKEN) {
         logger.warn('WhatsApp not configured — skipping notification', {
             customerPhone: params.customerPhone,
@@ -121,11 +137,22 @@ export async function sendPaymentConfirmation(
 
 /**
  * Send a simple text message (non-template) for notifications.
+ *
+ * LEGACY: Gated behind WA_LEGACY_CLOUD flag (default OFF).
+ * When OFF, returns false without making any API call.
  */
 export async function sendTextMessage(
     phone: string,
     message: string
 ): Promise<boolean> {
+    // ── WA_LEGACY_CLOUD gate (Req 10.6, 10.8) ──────────────────────────
+    if (!config.whatsapp.legacyCloudEnabled) {
+        logger.info('WhatsApp Meta Cloud API blocked — WA_LEGACY_CLOUD is OFF', {
+            phone,
+        });
+        return false;
+    }
+
     if (!PHONE_NUMBER_ID || !ACCESS_TOKEN) return false;
 
     try {

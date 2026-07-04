@@ -86,31 +86,31 @@ class _StaffPayrollScreenState extends State<StaffPayrollScreen> {
       body: BoundedBox(
         maxWidth: 800,
         child: Column(
-        children: [
-          // Month Selector
-          _buildMonthSelector(isDark, theme),
+          children: [
+            // Month Selector
+            _buildMonthSelector(isDark, theme),
 
-          // Summary Card
-          _buildPayrollSummary(isDark, theme),
+            // Summary Card
+            _buildPayrollSummary(isDark, theme),
 
-          // Staff Salary List
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _staffList.isEmpty
-                ? _buildEmptyState(isDark)
-                : RefreshIndicator(
-                    onRefresh: _loadData,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: _staffList.length,
-                      itemBuilder: (_, i) =>
-                          _buildStaffSalaryCard(_staffList[i], isDark),
+            // Staff Salary List
+            Expanded(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _staffList.isEmpty
+                  ? _buildEmptyState(isDark)
+                  : RefreshIndicator(
+                      onRefresh: _loadData,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: _staffList.length,
+                        itemBuilder: (_, i) =>
+                            _buildStaffSalaryCard(_staffList[i], isDark),
+                      ),
                     ),
-                  ),
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -151,9 +151,14 @@ class _StaffPayrollScreenState extends State<StaffPayrollScreen> {
                   DateFormat(
                     'MMMM yyyy',
                   ).format(DateTime(_selectedYear, _selectedMonth)),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: responsiveValue<double>(context, mobile: 16, tablet: 18, desktop: 20),
+                    fontSize: responsiveValue<double>(
+                      context,
+                      mobile: 16,
+                      tablet: 18,
+                      desktop: 20,
+                    ),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -320,7 +325,12 @@ class _StaffPayrollScreenState extends State<StaffPayrollScreen> {
                 child: Text(
                   staff.name.substring(0, 1).toUpperCase(),
                   style: TextStyle(
-                    fontSize: responsiveValue<double>(context, mobile: 16, tablet: 18, desktop: 20),
+                    fontSize: responsiveValue<double>(
+                      context,
+                      mobile: 16,
+                      tablet: 18,
+                      desktop: 20,
+                    ),
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.primary,
                   ),
@@ -424,11 +434,12 @@ class _StaffPayrollScreenState extends State<StaffPayrollScreen> {
           Text(
             'No staff members',
             style: TextStyle(
-              fontSize: responsiveValue<double>(context,
-                    mobile: 14.0,
-                    tablet: 16.0,
-                    desktop: 18.0,  // PRESERVED: Desktop uses exactly 18 as before
-                  ),
+              fontSize: responsiveValue<double>(
+                context,
+                mobile: 14.0,
+                tablet: 16.0,
+                desktop: 18.0, // PRESERVED: Desktop uses exactly 18 as before
+              ),
               fontWeight: FontWeight.w600,
               color: isDark ? Colors.white70 : Colors.grey[600],
             ),

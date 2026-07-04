@@ -1087,6 +1087,408 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Other'**
   String get businessTypeOther;
+
+  /// Title for staff dashboard screen
+  ///
+  /// In en, this message translates to:
+  /// **'Staff Dashboard'**
+  String get staffDashboard;
+
+  /// Label for employees section
+  ///
+  /// In en, this message translates to:
+  /// **'Employees'**
+  String get staffEmployees;
+
+  /// Label for attendance section
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
+  String get staffAttendance;
+
+  /// Label for leave section
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get staffLeave;
+
+  /// Label for tasks section
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks'**
+  String get staffTasks;
+
+  /// Label for payroll section
+  ///
+  /// In en, this message translates to:
+  /// **'Payroll'**
+  String get staffPayroll;
+
+  /// Label for performance section
+  ///
+  /// In en, this message translates to:
+  /// **'Performance'**
+  String get staffPerformance;
+
+  /// Label for total count
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get staffTotal;
+
+  /// Label for active status
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get staffActive;
+
+  /// Label for inactive status
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get staffInactive;
+
+  /// Placeholder for employee search field
+  ///
+  /// In en, this message translates to:
+  /// **'Search employees...'**
+  String get staffSearchEmployees;
+
+  /// Message when no employees to display
+  ///
+  /// In en, this message translates to:
+  /// **'No employees found'**
+  String get staffNoEmployees;
+
+  /// Description for empty employee state
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first employee to get started'**
+  String get staffNoEmployeesDesc;
+
+  /// Button label to add employee
+  ///
+  /// In en, this message translates to:
+  /// **'Add Employee'**
+  String get staffAddEmployee;
+
+  /// Title for employee detail screen
+  ///
+  /// In en, this message translates to:
+  /// **'Employee Details'**
+  String get staffEmployeeDetail;
+
+  /// Label for department
+  ///
+  /// In en, this message translates to:
+  /// **'Department'**
+  String get staffDepartment;
+
+  /// Label for designation
+  ///
+  /// In en, this message translates to:
+  /// **'Designation'**
+  String get staffDesignation;
+
+  /// Label for phone
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get staffPhone;
+
+  /// Label for email
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get staffEmail;
+
+  /// Button label for check in
+  ///
+  /// In en, this message translates to:
+  /// **'Check In'**
+  String get staffCheckIn;
+
+  /// Button label for check out
+  ///
+  /// In en, this message translates to:
+  /// **'Check Out'**
+  String get staffCheckOut;
+
+  /// Title for today attendance section
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Attendance'**
+  String get staffTodayAttendance;
+
+  /// Message for empty attendance
+  ///
+  /// In en, this message translates to:
+  /// **'No attendance records'**
+  String get staffNoAttendance;
+
+  /// Description for empty attendance
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance records will appear here'**
+  String get staffNoAttendanceDesc;
+
+  /// Title for leave requests
+  ///
+  /// In en, this message translates to:
+  /// **'Leave Requests'**
+  String get staffLeaveRequests;
+
+  /// Message for empty leave requests
+  ///
+  /// In en, this message translates to:
+  /// **'No leave requests'**
+  String get staffNoLeaveRequests;
+
+  /// Description for empty leave requests
+  ///
+  /// In en, this message translates to:
+  /// **'Leave requests will appear here'**
+  String get staffNoLeaveRequestsDesc;
+
+  /// Button label to approve
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get staffApprove;
+
+  /// Button label to reject
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get staffReject;
+
+  /// Label for pending status
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get staffPending;
+
+  /// Label for approved status
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get staffApproved;
+
+  /// Label for rejected status
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get staffRejected;
+
+  /// Message for empty tasks
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks'**
+  String get staffNoTasks;
+
+  /// Description for empty tasks
+  ///
+  /// In en, this message translates to:
+  /// **'Create a task to get started'**
+  String get staffNoTasksDesc;
+
+  /// Button label to create task
+  ///
+  /// In en, this message translates to:
+  /// **'Create Task'**
+  String get staffCreateTask;
+
+  /// Label for open status
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get staffOpen;
+
+  /// Label for in-progress status
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get staffInProgress;
+
+  /// Label for completed status
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get staffCompleted;
+
+  /// Label for blocked status
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get staffBlocked;
+
+  /// Label for high priority
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get staffHighPriority;
+
+  /// Label for medium priority
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get staffMediumPriority;
+
+  /// Label for low priority
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get staffLowPriority;
+
+  /// Title for payroll runs screen
+  ///
+  /// In en, this message translates to:
+  /// **'Payroll Runs'**
+  String get staffPayrollRuns;
+
+  /// Message for empty payroll
+  ///
+  /// In en, this message translates to:
+  /// **'No payroll runs'**
+  String get staffNoPayrollRuns;
+
+  /// Description for empty payroll
+  ///
+  /// In en, this message translates to:
+  /// **'Payroll runs will appear here after processing'**
+  String get staffNoPayrollRunsDesc;
+
+  /// Button label to run payroll
+  ///
+  /// In en, this message translates to:
+  /// **'Run Payroll'**
+  String get staffRunPayroll;
+
+  /// Label for draft status
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get staffDraft;
+
+  /// Label for processed status
+  ///
+  /// In en, this message translates to:
+  /// **'Processed'**
+  String get staffProcessed;
+
+  /// Label for locked status
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get staffLocked;
+
+  /// Title for performance scores screen
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Scores'**
+  String get staffPerformanceScores;
+
+  /// Message for empty performance
+  ///
+  /// In en, this message translates to:
+  /// **'No performance data'**
+  String get staffNoPerformance;
+
+  /// Description for empty performance
+  ///
+  /// In en, this message translates to:
+  /// **'Performance scores will appear after evaluation'**
+  String get staffNoPerformanceDesc;
+
+  /// Label for score
+  ///
+  /// In en, this message translates to:
+  /// **'Score'**
+  String get staffScore;
+
+  /// Label for period
+  ///
+  /// In en, this message translates to:
+  /// **'Period'**
+  String get staffPeriod;
+
+  /// Label for GPS attendance method
+  ///
+  /// In en, this message translates to:
+  /// **'GPS'**
+  String get staffGps;
+
+  /// Label for face recognition (deferred)
+  ///
+  /// In en, this message translates to:
+  /// **'Face ID'**
+  String get staffFaceId;
+
+  /// Label for kiosk attendance mode
+  ///
+  /// In en, this message translates to:
+  /// **'Kiosk'**
+  String get staffKiosk;
+
+  /// Label for manual attendance
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get staffManual;
+
+  /// Label for QR code attendance
+  ///
+  /// In en, this message translates to:
+  /// **'QR Code'**
+  String get staffQrCode;
+
+  /// Label for barcode attendance
+  ///
+  /// In en, this message translates to:
+  /// **'Barcode'**
+  String get staffBarcode;
+
+  /// Label for WiFi attendance
+  ///
+  /// In en, this message translates to:
+  /// **'WiFi'**
+  String get staffWifi;
+
+  /// Label for reporting section
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get staffReporting;
+
+  /// Label for RBAC section
+  ///
+  /// In en, this message translates to:
+  /// **'Access Control'**
+  String get staffRbac;
+
+  /// Generic error message for loading failures
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load data'**
+  String get staffErrorLoading;
+
+  /// Button label to retry
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get staffRetry;
+
+  /// Message for unavailable/deferred features
+  ///
+  /// In en, this message translates to:
+  /// **'Feature not available'**
+  String get staffFeatureUnavailable;
+
+  /// Description for unavailable features
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is not available on your current plan'**
+  String get staffFeatureUnavailableDesc;
 }
 
 class _AppLocalizationsDelegate

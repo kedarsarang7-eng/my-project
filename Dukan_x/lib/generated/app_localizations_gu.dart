@@ -512,4 +512,207 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get businessTypeOther => 'અન્ય';
+
+  @override
+  String get staffDashboard => 'સ્ટાફ ડેશબોર્ડ';
+
+  @override
+  String get staffEmployees => 'કર્મચારીઓ';
+
+  @override
+  String get staffAttendance => 'હાજરી';
+
+  @override
+  String get staffLeave => 'રજા';
+
+  @override
+  String get staffTasks => 'કાર્યો';
+
+  @override
+  String get staffPayroll => 'પગાર';
+
+  @override
+  String get staffPerformance => 'કામગીરી';
+
+  @override
+  String get staffTotal => 'કુલ';
+
+  @override
+  String get staffActive => 'સક્રિય';
+
+  @override
+  String get staffInactive => 'નિષ્ક્રિય';
+
+  @override
+  String get staffSearchEmployees => 'કર્મચારીઓ શોધો...';
+
+  @override
+  String get staffNoEmployees => 'કોઈ કર્મચારી મળ્યા નથી';
+
+  @override
+  String get staffNoEmployeesDesc => 'શરૂ કરવા માટે તમારો પ્રથમ કર્મચારી ઉમેરો';
+
+  @override
+  String get staffAddEmployee => 'કર્મચારી ઉમેરો';
+
+  @override
+  String get staffEmployeeDetail => 'કર્મચારીની વિગતો';
+
+  @override
+  String get staffDepartment => 'વિભાગ';
+
+  @override
+  String get staffDesignation => 'હોદ્દો';
+
+  @override
+  String get staffPhone => 'ફોન';
+
+  @override
+  String get staffEmail => 'ઈમેલ';
+
+  @override
+  String get staffCheckIn => 'ચેક ઇન';
+
+  @override
+  String get staffCheckOut => 'ચેક આઉટ';
+
+  @override
+  String get staffTodayAttendance => 'આજની હાજરી';
+
+  @override
+  String get staffNoAttendance => 'કોઈ હાજરી રેકોર્ડ નથી';
+
+  @override
+  String get staffNoAttendanceDesc => 'હાજરી રેકોર્ડ અહીં દેખાશે';
+
+  @override
+  String get staffLeaveRequests => 'રજા વિનંતીઓ';
+
+  @override
+  String get staffNoLeaveRequests => 'કોઈ રજા વિનંતી નથી';
+
+  @override
+  String get staffNoLeaveRequestsDesc => 'રજા વિનંતીઓ અહીં દેખાશે';
+
+  @override
+  String get staffApprove => 'મંજૂર કરો';
+
+  @override
+  String get staffReject => 'નકારો';
+
+  @override
+  String get staffPending => 'બાકી';
+
+  @override
+  String get staffApproved => 'મંજૂર';
+
+  @override
+  String get staffRejected => 'નકારેલ';
+
+  @override
+  String get staffNoTasks => 'કોઈ કાર્યો નથી';
+
+  @override
+  String get staffNoTasksDesc => 'શરૂ કરવા માટે કાર્ય બનાવો';
+
+  @override
+  String get staffCreateTask => 'કાર્ય બનાવો';
+
+  @override
+  String get staffOpen => 'ખુલ્લું';
+
+  @override
+  String get staffInProgress => 'પ્રગતિમાં';
+
+  @override
+  String get staffCompleted => 'પૂર્ણ';
+
+  @override
+  String get staffBlocked => 'અવરોધિત';
+
+  @override
+  String get staffHighPriority => 'ઉચ્ચ';
+
+  @override
+  String get staffMediumPriority => 'મધ્યમ';
+
+  @override
+  String get staffLowPriority => 'નીચું';
+
+  @override
+  String get staffPayrollRuns => 'પગાર પ્રક્રિયાઓ';
+
+  @override
+  String get staffNoPayrollRuns => 'કોઈ પગાર પ્રક્રિયા નથી';
+
+  @override
+  String get staffNoPayrollRunsDesc =>
+      'પ્રક્રિયા પછી પગાર પ્રક્રિયાઓ અહીં દેખાશે';
+
+  @override
+  String get staffRunPayroll => 'પગાર ચલાવો';
+
+  @override
+  String get staffDraft => 'ડ્રાફ્ટ';
+
+  @override
+  String get staffProcessed => 'પ્રક્રિયા કરેલ';
+
+  @override
+  String get staffLocked => 'લૉક કરેલ';
+
+  @override
+  String get staffPerformanceScores => 'કામગીરી સ્કોર';
+
+  @override
+  String get staffNoPerformance => 'કોઈ કામગીરી ડેટા નથી';
+
+  @override
+  String get staffNoPerformanceDesc => 'મૂલ્યાંકન પછી કામગીરી સ્કોર દેખાશે';
+
+  @override
+  String get staffScore => 'સ્કોર';
+
+  @override
+  String get staffPeriod => 'સમયગાળો';
+
+  @override
+  String get staffGps => 'GPS';
+
+  @override
+  String get staffFaceId => 'ફેસ આઈડી';
+
+  @override
+  String get staffKiosk => 'કિઓસ્ક';
+
+  @override
+  String get staffManual => 'મેન્યુઅલ';
+
+  @override
+  String get staffQrCode => 'QR કોડ';
+
+  @override
+  String get staffBarcode => 'બારકોડ';
+
+  @override
+  String get staffWifi => 'વાઈ-ફાઈ';
+
+  @override
+  String get staffReporting => 'અહેવાલો';
+
+  @override
+  String get staffRbac => 'ઍક્સેસ નિયંત્રણ';
+
+  @override
+  String get staffErrorLoading => 'ડેટા લોડ કરવામાં નિષ્ફળ';
+
+  @override
+  String get staffRetry => 'ફરી પ્રયાસ કરો';
+
+  @override
+  String get staffFeatureUnavailable => 'સુવિધા ઉપલબ્ધ નથી';
+
+  @override
+  String get staffFeatureUnavailableDesc =>
+      'આ સુવિધા તમારી વર્તમાન યોજનામાં ઉપલબ્ધ નથી';
 }

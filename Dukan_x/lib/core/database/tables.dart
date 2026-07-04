@@ -5123,3 +5123,84 @@ class EwayRecordsTable extends Table {
   @override
   Set<Column> get primaryKey => {id};
 }
+
+// ============================================================================
+// COMPUTER SHOP — OFFLINE READ CACHE (v58, Requirements 26.1, 26.2)
+// ============================================================================
+// Three new tables caching the computerShop module's most recent online
+// reads so Job_Card_List/Detail, Warranty, and Serial_History screens can
+// serve data while offline. Purely additive: no existing table is modified.
+// Every row carries tenantId (= SessionManager.userId) for multi-tenant
+// isolation — every cache query/write MUST filter/scope by tenantId.
+// Payloads are stored as the raw JSON returned by ComputerRepository so the
+// cache stays a pure write-through mirror of the backend response shape.
+// Schema_Gate: implicitly approved — entirely NEW tables (same treatment as
+// SchoolStudentsCache/TransportDetailsTable/RateListsTable additions above).
+// ============================================================================
+
+/// Computer Shop Job Cards Cache — tenant-scoped local cache of the most
+/// recently fetched job card records (list + detail reads).
+@DataClassName('ComputerJobCardCacheEntity')
+class ComputerJobCardsCache extends Table {
+  /// The job card's id (server-assigned), used as the cache key.
+  TextColumn get id => text()();
+
+  /// Owning tenant identifier (multi-tenant isolation). NOT nullable — every
+  /// cache row MUST belong to a tenant; reads are filtered by active
+  /// Tenant_Id (= SessionManager.userId).
+  TextColumn get tenantId => text()();
+
+  /// Full JSON payload of the job card as returned by the backend, so the
+  /// cache can be replayed through the same `ComputerJobCard.fromJson`
+  /// parsing path used for online reads.
+  TextColumn get payloadJson => text()();
+
+  /// When this cache row was last written (used for display/debugging; not
+  /// a TTL — cached data is served as-is while offline).
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Computer Shop Warranty Cache — tenant-scoped local cache of the most
+/// recently fetched warranty records, keyed by serial number.
+@DataClassName('ComputerWarrantyCacheEntity')
+class ComputerWarrantyCache extends Table {
+  /// Warranty id (server-assigned) — primary cache key.
+  TextColumn get id => text()();
+
+  /// Owning tenant identifier (multi-tenant isolation).
+  TextColumn get tenantId => text()();
+
+  /// Serial number the warranty is registered against; used to look up a
+  /// warranty by serial while offline (mirrors [ComputerRepository.getWarranty]).
+  TextColumn get serialNumber => text()();
+
+  /// Full JSON payload of the warranty as returned by the backend.
+  TextColumn get payloadJson => text()();
+
+  /// Warranty expiry date, denormalized from the payload for fast lookups
+  /// (e.g. AMC/expiring-soon indicators while offline).
+  DateTimeColumn get warrantyExpiryDate => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Computer Shop Serials Cache — tenant-scoped local cache of the most
+/// recently fetched component serial records.
+@DataClassName('ComputerSerialCacheEntity')
+class ComputerSerialsCache extends Table {
+  /// Serial number — primary cache key.
+  TextColumn get serialNumber => text()();
+
+  /// Owning tenant identifier (multi-tenant isolation).
+  TextColumn get tenantId => text()();
+
+  /// Full JSON payload of the serial record as returned by the backend.
+  TextColumn get payloadJson => text()();
+
+  @override
+  Set<Column> get primaryKey => {serialNumber};
+}

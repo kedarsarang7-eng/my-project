@@ -16,7 +16,13 @@ import 'package:dukanx/core/api/api_client.dart';
 /// Bottom sheet for searching and selecting products to add as parts
 class ProductSearchBottomSheet extends ConsumerStatefulWidget {
   final String jobId;
-  final Function(String productId, String productName, double unitPrice, int quantity) onProductSelected;
+  final Function(
+    String productId,
+    String productName,
+    double unitPrice,
+    int quantity,
+  )
+  onProductSelected;
 
   const ProductSearchBottomSheet({
     super.key,
@@ -25,12 +31,16 @@ class ProductSearchBottomSheet extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ProductSearchBottomSheet> createState() => _ProductSearchBottomSheetState();
+  ConsumerState<ProductSearchBottomSheet> createState() =>
+      _ProductSearchBottomSheetState();
 }
 
-class _ProductSearchBottomSheetState extends ConsumerState<ProductSearchBottomSheet> {
+class _ProductSearchBottomSheetState
+    extends ConsumerState<ProductSearchBottomSheet> {
   final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController(text: '1');
+  final TextEditingController _quantityController = TextEditingController(
+    text: '1',
+  );
   List<ProductModel> _searchResults = [];
   bool _isSearching = false;
   String? _error;
@@ -60,16 +70,15 @@ class _ProductSearchBottomSheetState extends ConsumerState<ProductSearchBottomSh
 
     try {
       final repository = ref.read(productRepositoryProvider);
-      final results = await repository.searchProducts(
-        query: query,
-        limit: 20,
-      );
+      final results = await repository.searchProducts(query: query, limit: 20);
 
+      if (!mounted) return;
       setState(() {
         _searchResults = results;
         _isSearching = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _error = 'Failed to search: $e';
         _isSearching = false;
@@ -87,10 +96,11 @@ class _ProductSearchBottomSheetState extends ConsumerState<ProductSearchBottomSh
 
     try {
       final repository = ref.read(productRepositoryProvider);
-      
+
       // Try barcode lookup first
       final product = await repository.getProductByBarcode(barcode);
-      
+
+      if (!mounted) return;
       if (product != null) {
         setState(() {
           _selectedProduct = product;
@@ -102,6 +112,7 @@ class _ProductSearchBottomSheetState extends ConsumerState<ProductSearchBottomSh
         await _searchProducts(barcode);
       }
     } catch (e) {
+      if (!mounted) return;
       // Fallback to search
       await _searchProducts(barcode);
     }
@@ -117,7 +128,7 @@ class _ProductSearchBottomSheetState extends ConsumerState<ProductSearchBottomSh
     if (_selectedProduct == null) return;
 
     final quantity = int.tryParse(_quantityController.text) ?? 1;
-    
+
     widget.onProductSelected(
       _selectedProduct!.id,
       _selectedProduct!.name,
@@ -128,7 +139,10 @@ class _ProductSearchBottomSheetState extends ConsumerState<ProductSearchBottomSh
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: sl<CurrencyService>().symbol);
+    final currencyFormat = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: sl<CurrencyService>().symbol,
+    );
 
     return Container(
       decoration: const BoxDecoration(
@@ -154,17 +168,14 @@ class _ProductSearchBottomSheetState extends ConsumerState<ProductSearchBottomSh
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Title
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
                     'Add Part to Job',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                     icon: Icon(
@@ -183,13 +194,10 @@ class _ProductSearchBottomSheetState extends ConsumerState<ProductSearchBottomSh
               const SizedBox(height: 4),
               Text(
                 'Search for a product to add as a part',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
               const SizedBox(height: 20),
-              
+
               // Scanner or Search Input
               if (_showScanner)
                 ProductBarcodeScanner(
@@ -228,7 +236,7 @@ class _ProductSearchBottomSheetState extends ConsumerState<ProductSearchBottomSh
                   ),
                 ),
               const SizedBox(height: 16),
-              
+
               // Search Results or Selected Product
               if (_isSearching)
                 const Center(
@@ -243,7 +251,11 @@ class _ProductSearchBottomSheetState extends ConsumerState<ProductSearchBottomSh
                     padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        Icon(Icons.error_outline, color: Colors.red.shade300, size: 48),
+                        Icon(
+                          Icons.error_outline,
+                          color: Colors.red.shade300,
+                          size: 48,
+                        ),
                         const SizedBox(height: 8),
                         Text(_error!, textAlign: TextAlign.center),
                       ],
@@ -280,7 +292,11 @@ class _ProductSearchBottomSheetState extends ConsumerState<ProductSearchBottomSh
                     padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        Icon(Icons.search_off, color: Colors.grey.shade300, size: 48),
+                        Icon(
+                          Icons.search_off,
+                          color: Colors.grey.shade300,
+                          size: 48,
+                        ),
                         const SizedBox(height: 8),
                         Text(
                           'No products found',
@@ -290,7 +306,7 @@ class _ProductSearchBottomSheetState extends ConsumerState<ProductSearchBottomSh
                     ),
                   ),
                 ),
-              
+
               // Submit Button
               if (_selectedProduct != null) ...[
                 const SizedBox(height: 20),
@@ -333,7 +349,10 @@ class _ProductListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: sl<CurrencyService>().symbol);
+    final currencyFormat = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: sl<CurrencyService>().symbol,
+    );
     final bool hasStock = (product.currentStock ?? 0) > 0;
 
     return ListTile(
@@ -359,10 +378,7 @@ class _ProductListTile extends StatelessWidget {
           if (product.barcode != null)
             Text(
               'SKU: ${product.barcode}',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade600,
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
             ),
           Row(
             children: [
@@ -375,7 +391,9 @@ class _ProductListTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  hasStock ? '${product.currentStock} in stock' : 'Out of stock',
+                  hasStock
+                      ? '${product.currentStock} in stock'
+                      : 'Out of stock',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
@@ -413,7 +431,10 @@ class _SelectedProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: sl<CurrencyService>().symbol);
+    final currencyFormat = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: sl<CurrencyService>().symbol,
+    );
     final unitPrice = product.sellingPrice ?? 0;
     final quantity = int.tryParse(quantityController.text) ?? 1;
     final total = unitPrice * quantity;
@@ -453,10 +474,7 @@ class _SelectedProductCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               'Unit Price: ${currencyFormat.format(unitPrice)}',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade700,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
             ),
             const SizedBox(height: 12),
             Row(
@@ -474,7 +492,10 @@ class _SelectedProductCard extends StatelessWidget {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                     ),
                   ),
                 ),
@@ -521,8 +542,11 @@ final productRepositoryProvider = Provider<ProductRepository>((ref) {
 class ProductRepository {
   final dynamic apiClient;
   ProductRepository(this.apiClient);
-  
-  Future<List<ProductModel>> searchProducts({required String query, int limit = 20}) async => [];
+
+  Future<List<ProductModel>> searchProducts({
+    required String query,
+    int limit = 20,
+  }) async => [];
   Future<ProductModel?> getProductByBarcode(String barcode) async => null;
 }
 
@@ -541,5 +565,3 @@ class ProductModel {
     this.barcode,
   });
 }
-
-
