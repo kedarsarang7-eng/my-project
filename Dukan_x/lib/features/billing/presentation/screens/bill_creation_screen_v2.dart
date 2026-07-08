@@ -39,6 +39,7 @@ import '../../services/barcode_scanner_service.dart'; // Import scanner
 import '../../../../core/config/business_capabilities.dart'; // Import config
 import '../../../../core/billing/business_type_config.dart'; // Grocery unitOptions (kg/gm) source of truth
 import '../../../../widgets/weighing_scale_widget.dart'; // Grocery loose-weight (kg/gm) capture
+import '../../../hardware/widgets/dimension_calculator.dart'; // Hardware dimension-unit (HARDWARE-002)
 import 'package:image_picker/image_picker.dart'; // Import Image Picker
 import '../../../../features/ml/ml_services/ocr_router.dart'; // Import OCR Router
 import '../../../invoice/screens/invoice_preview_screen.dart';
@@ -60,6 +61,7 @@ import '../../../pharmacy/utils/drug_schedule_resolver.dart';
 import '../../../pharmacy/utils/prescription_id.dart';
 import '../../../../utils/mrp_enforcement_validator.dart';
 import '../../../../core/pharmacy/paise.dart';
+import '../../../../core/pharmacy/pharmacy_gst_resolver.dart';
 // Pharmacy salt/substitute search embedded in billing (Requirement 25).
 import '../../../pharmacy/screens/salt_search_screen.dart';
 
@@ -69,6 +71,7 @@ import '../../../../core/keyboard/global_keyboard_handler.dart';
 import '../../../../widgets/ui/shortcut_pill.dart';
 import '../../../dashboard/v2/providers/dashboard_v2_providers.dart';
 import 'package:go_router/go_router.dart';
+import '../../../hardware/utils/credit_limit_validator.dart';
 
 class BillCreationScreenV2 extends ConsumerStatefulWidget {
   final Customer? initialCustomer;
@@ -94,6 +97,31 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
   // Repositories
   final _billsRepo = sl<BillsRepository>();
   final _session = sl<SessionManager>();
+
+  // Pharmacy: shared HSN/schedule-aware GST resolver (Requirement 2). Resolves
+  // the statutory GST rate for a pharmacy line item instead of relying on the
+  // flat `product.taxRate`. See pharmacy_gst_resolver.dart.
+  static final PharmacyGstResolver _pharmacyGstResolver = PharmacyGstResolver();
+
+  /// Resolve the pharmacy GST rate (whole-number percentage) for a line item
+  /// from its HSN code and/or drug schedule.
+  int _resolvePharmacyGstRatePercent({String? hsn, String? schedule}) =>
+      _pharmacyGstResolver.resolve(hsn: hsn, schedule: schedule).ratePercent;
+
+  /// Compute the GST amount (in rupees) for a pharmacy line item's taxable
+  /// base, routing through integer-paise round-half-up math via [Paise] and
+  /// [PharmacyGstResolver.gstAmountPaise].
+  double _pharmacyGstAmountRupees({
+    required double taxableAmountRupees,
+    required int ratePercent,
+  }) {
+    final int taxableAmountPaise = Paise.fromRupees(taxableAmountRupees);
+    final int gstPaise = _pharmacyGstResolver.gstAmountPaise(
+      taxableAmountPaise: taxableAmountPaise,
+      ratePercent: ratePercent,
+    );
+    return gstPaise / 100.0;
+  }
 
   // Bill State
   Customer? _selectedCustomer;
@@ -440,6 +468,14 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
       _showGroceryWeightSheet(product);
       return;
     }
+    // Hardware dimension-unit (sqft/sqmtr/ft/mtr): surface the
+    // DimensionCalculator so the user enters length × width before billing
+    // (HARDWARE-002). Non-dimension hardware items (pcs, kg, box, nos) skip.
+    if (businessType == BusinessType.hardware &&
+        _isHardwareDimensionUnit(product.unit)) {
+      _showHardwareDimensionSheet(product);
+      return;
+    }
     // For pharmacy: auto-select FEFO (first-expiry) batch
     String? fefosBatchNo;
     DateTime? fefoBatchExpiry;
@@ -508,6 +544,28 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
           0.0,
           double.infinity,
         );
+        double newItemGstRate;
+        double newItemCgst;
+        double newItemSgst;
+        if (businessType == BusinessType.pharmacy) {
+          // Pharmacy: resolve the statutory rate from HSN/drug schedule
+          // instead of the flat product.taxRate (see PharmacyGstResolver).
+          final ratePercent = _resolvePharmacyGstRatePercent(
+            hsn: product.hsnCode,
+            schedule: product.drugSchedule,
+          );
+          final gstAmountRupees = _pharmacyGstAmountRupees(
+            taxableAmountRupees: taxablePrice,
+            ratePercent: ratePercent,
+          );
+          newItemGstRate = ratePercent.toDouble();
+          newItemCgst = gstAmountRupees / 2;
+          newItemSgst = gstAmountRupees / 2;
+        } else {
+          newItemGstRate = product.taxRate;
+          newItemCgst = taxablePrice * (product.taxRate / 200);
+          newItemSgst = taxablePrice * (product.taxRate / 200);
+        }
         _items.add(
           BillItem(
             productId: product.id,
@@ -515,10 +573,10 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
             qty: 1,
             price: product.sellingPrice,
             unit: product.unit,
-            gstRate: product.taxRate,
+            gstRate: newItemGstRate,
             discount: happyHourPerUnit,
-            cgst: taxablePrice * (product.taxRate / 200),
-            sgst: taxablePrice * (product.taxRate / 200),
+            cgst: newItemCgst,
+            sgst: newItemSgst,
             size: product.size,
             color: product.color,
             drugSchedule: product.drugSchedule,
@@ -558,6 +616,14 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
     if (businessType == BusinessType.grocery &&
         _isGroceryWeightUnit(product.unit)) {
       _showGroceryWeightSheet(product);
+      return;
+    }
+
+    // Hardware dimension-unit (sqft/sqmtr/ft/mtr): same dimension-driven path,
+    // even after a stock warning override (HARDWARE-002).
+    if (businessType == BusinessType.hardware &&
+        _isHardwareDimensionUnit(product.unit)) {
+      _showHardwareDimensionSheet(product);
       return;
     }
 
@@ -628,6 +694,28 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
           0.0,
           double.infinity,
         );
+        double newItemGstRate;
+        double newItemCgst;
+        double newItemSgst;
+        if (businessType == BusinessType.pharmacy) {
+          // Pharmacy: resolve the statutory rate from HSN/drug schedule
+          // instead of the flat product.taxRate (see PharmacyGstResolver).
+          final ratePercent = _resolvePharmacyGstRatePercent(
+            hsn: product.hsnCode,
+            schedule: product.drugSchedule,
+          );
+          final gstAmountRupees = _pharmacyGstAmountRupees(
+            taxableAmountRupees: taxablePrice,
+            ratePercent: ratePercent,
+          );
+          newItemGstRate = ratePercent.toDouble();
+          newItemCgst = gstAmountRupees / 2;
+          newItemSgst = gstAmountRupees / 2;
+        } else {
+          newItemGstRate = product.taxRate;
+          newItemCgst = taxablePrice * (product.taxRate / 200);
+          newItemSgst = taxablePrice * (product.taxRate / 200);
+        }
         _items.add(
           BillItem(
             productId: product.id,
@@ -635,10 +723,10 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
             qty: 1,
             price: product.sellingPrice,
             unit: product.unit,
-            gstRate: product.taxRate,
+            gstRate: newItemGstRate,
             discount: happyHourPerUnit,
-            cgst: taxablePrice * (product.taxRate / 200),
-            sgst: taxablePrice * (product.taxRate / 200),
+            cgst: newItemCgst,
+            sgst: newItemSgst,
             size: product.size,
             color: product.color,
             drugSchedule: product.drugSchedule,
@@ -1158,6 +1246,129 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
     return config.unitOptions.contains(matched);
   }
 
+  /// Returns true when [unit] is a hardware dimension unit (area or linear
+  /// length) that requires the [DimensionCalculator] for proper pricing.
+  ///
+  /// Dimension units: sqft, sqmtr, ft, mtr — items sold by area/length need
+  /// length × width capture before billing (HARDWARE-002).
+  bool _isHardwareDimensionUnit(String unit) {
+    final u = unit.trim().toLowerCase();
+    return u == 'sqft' ||
+        u == 'sqmtr' ||
+        u == 'ft' ||
+        u == 'mtr' ||
+        u == 'sq.ft' ||
+        u == 'sq.mtr' ||
+        u == 'meter' ||
+        u == 'feet';
+  }
+
+  /// Presents the [DimensionCalculator] in a bottom sheet for a hardware
+  /// dimension-unit product added via quick-add or barcode scan, then adds
+  /// the correctly-dimensioned line item to the bill (HARDWARE-002).
+  ///
+  /// Mirrors `_showGroceryWeightSheet`: captures dimensions before adding.
+  void _showHardwareDimensionSheet(Product product) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(ctx).viewInsets.bottom + 16,
+          left: 16,
+          right: 16,
+          top: 16,
+        ),
+        child: Material(
+          borderRadius: BorderRadius.circular(16),
+          clipBehavior: Clip.antiAlias,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.name,
+                  style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Enter dimensions to calculate area',
+                  style: Theme.of(ctx).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 16),
+                DimensionCalculator(
+                  showPresets: true,
+                  onCalculate: (result) {
+                    Navigator.pop(ctx);
+                    _addDimensionedHardwareItem(product, result);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Adds a hardware dimension-billed line item to the bill after the user
+  /// confirms dimensions via the [DimensionCalculator].
+  ///
+  /// Quantity = computed area; unit = areaUnit mapped to the billing unit set;
+  /// dimensions metadata preserved on the BillItem for invoice rendering.
+  void _addDimensionedHardwareItem(Product product, DimensionResult result) {
+    if (result.area <= 0) return;
+
+    final double qty = result.area;
+    final double price = product.sellingPrice;
+    final double taxRate = product.taxRate;
+    final double halfGst = qty * (price * (taxRate / 200));
+    final String billingUnit = result.areaUnit == 'sqft' ? 'sq.ft' : 'meter';
+
+    setState(() {
+      final existingIndex = _items.indexWhere((i) => i.productId == product.id);
+      if (existingIndex != -1) {
+        // Accumulate onto existing dimensioned line.
+        final existing = _items[existingIndex];
+        final double newQty = existing.qty + qty;
+        final double newHalfGst =
+            newQty * (existing.price * (existing.gstRate / 200));
+        _items[existingIndex] = existing.copyWith(
+          qty: newQty,
+          cgst: newHalfGst,
+          sgst: newHalfGst,
+          dimensions: result.dimensionsOnly,
+        );
+      } else {
+        _items.add(
+          BillItem(
+            productId: product.id,
+            productName: product.name,
+            qty: qty,
+            price: price,
+            unit: billingUnit,
+            gstRate: taxRate,
+            cgst: halfGst,
+            sgst: halfGst,
+            size: product.size,
+            dimensions: result.dimensionsOnly,
+          ),
+        );
+      }
+    });
+
+    _updateRecommendations();
+
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) _itemSearchFocusNode.requestFocus();
+    });
+  }
+
   /// Presents the [WeighingScaleWidget] for a grocery loose-weight product and,
   /// on confirmation, adds a bill line via the standard add-line-item path.
   void _showGroceryWeightSheet(Product product) {
@@ -1667,9 +1878,29 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
               final price = double.tryParse(priceController.text) ?? 0;
 
               final matched = await _findProductByName(enteredName);
-              final double gstRate = matched?.taxRate ?? 0;
               final double taxableBase = qty * price;
-              final double halfGst = taxableBase * (gstRate / 200);
+              double gstRate;
+              double halfGst;
+              if (businessType == BusinessType.pharmacy) {
+                // Pharmacy: resolve the statutory rate from HSN/drug
+                // schedule instead of the flat product.taxRate (see
+                // PharmacyGstResolver). When there is no matched product,
+                // hsn/schedule are both null and the resolver's 12%
+                // fallback applies (matches today's effective default).
+                final ratePercent = _resolvePharmacyGstRatePercent(
+                  hsn: matched?.hsnCode,
+                  schedule: matched?.drugSchedule,
+                );
+                final gstAmountRupees = _pharmacyGstAmountRupees(
+                  taxableAmountRupees: taxableBase,
+                  ratePercent: ratePercent,
+                );
+                gstRate = ratePercent.toDouble();
+                halfGst = gstAmountRupees / 2;
+              } else {
+                gstRate = matched?.taxRate ?? 0;
+                halfGst = taxableBase * (gstRate / 200);
+              }
               final String unit =
                   matched?.unit ?? _defaultManualUnit(businessType);
 
@@ -1799,7 +2030,28 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
           BillItem finalItem = item;
           if (item.gstRate == 0) {
             final matched = await _findProductByName(item.productName);
-            if (matched != null && matched.taxRate > 0) {
+            if (businessType == BusinessType.pharmacy && matched != null) {
+              // Pharmacy: resolve the statutory rate from HSN/drug schedule
+              // instead of the flat product.taxRate (see PharmacyGstResolver).
+              // A pharmacy product can validly resolve to a rate even when
+              // matched.taxRate is 0, so there is no `> 0` guard here.
+              final double taxableBase =
+                  (item.qty * item.price) - item.discount;
+              final ratePercent = _resolvePharmacyGstRatePercent(
+                hsn: matched.hsnCode,
+                schedule: matched.drugSchedule,
+              );
+              final gstAmountRupees = _pharmacyGstAmountRupees(
+                taxableAmountRupees: taxableBase,
+                ratePercent: ratePercent,
+              );
+              final double halfGst = gstAmountRupees / 2;
+              finalItem = item.copyWith(
+                gstRate: ratePercent.toDouble(),
+                cgst: halfGst,
+                sgst: halfGst,
+              );
+            } else if (matched != null && matched.taxRate > 0) {
               final double taxableBase =
                   (item.qty * item.price) - item.discount;
               final double halfGst = taxableBase * (matched.taxRate / 200);
@@ -2572,6 +2824,57 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
           ),
         );
         if (proceed != true) return;
+      }
+    }
+
+    // =========================================================================
+    // HARDWARE-012: Credit Limit Enforcement at billing time
+    // When the sale is on credit (Unpaid) and the customer has a non-zero
+    // creditLimit, warn if outstandingBalance + newAmount > creditLimit.
+    // creditLimit == 0 means "no limit" — no warning ever shown.
+    // The user can override the warning (it's a warning, not a hard block).
+    // =========================================================================
+    if (_paymentMode == 'Unpaid' && _selectedCustomer != null && mounted) {
+      final customerCreditLimit = _selectedCustomer!.creditLimit;
+      if (customerCreditLimit > 0) {
+        final outstandingBalance = _selectedCustomer!.totalDues;
+        final creditCheckResult = CreditLimitValidator.check(
+          creditLimit: customerCreditLimit,
+          outstandingBalance: outstandingBalance,
+          newInvoiceAmount: _grandTotal,
+        );
+        if (creditCheckResult.exceedsLimit) {
+          final proceed = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Row(
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: Colors.orange),
+                  SizedBox(width: 8),
+                  Expanded(child: Text('Credit Limit Exceeded')),
+                ],
+              ),
+              content: Text(creditCheckResult.warningMessage),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Cancel Sale'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                  ),
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text(
+                    'Proceed Anyway',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          );
+          if (proceed != true) return;
+        }
       }
     }
 

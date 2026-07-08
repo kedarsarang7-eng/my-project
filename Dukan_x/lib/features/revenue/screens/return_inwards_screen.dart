@@ -10,6 +10,7 @@ import '../models/revenue_models.dart';
 import '../services/revenue_service.dart';
 import '../../../widgets/desktop/desktop_content_container.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
+import 'package:dukanx/features/hardware/widgets/dimension_calculator.dart';
 // Serial validation for electronics device returns (Phase 7, Task 23.1 / Req 2.22).
 // The repository layer (addReturnInward) validates the serialNo/imeiOrSerial
 // against IMEISerials via IMEISerialRepository (exists, tenant-scoped, status == SOLD).
@@ -353,8 +354,42 @@ class _AddReturnScreenState extends ConsumerState<_AddReturnScreen> {
   final List<ReturnItem> _returnItems = [];
   bool _isSaving = false;
 
+  /// Tracks partial-area dimension results for dimension-billed return items.
+  /// Key: itemId, Value: DimensionResult from the DimensionCalculator.
+  final Map<String, DimensionResult> _dimensionReturnResults = {};
+
   double get _totalReturnAmount =>
       _returnItems.fold(0, (total, item) => total + item.amount);
+
+  /// Returns true when [unit] is a hardware dimension unit (area or linear
+  /// length) that indicates the item was billed by dimensions.
+  bool _isHardwareDimensionUnit(String unit) {
+    final u = unit.trim().toLowerCase();
+    return u == 'sqft' ||
+        u == 'sqmtr' ||
+        u == 'ft' ||
+        u == 'mtr' ||
+        u == 'sq.ft' ||
+        u == 'sq.mtr' ||
+        u == 'meter' ||
+        u == 'feet';
+  }
+
+  /// Whether the current business type is hardware.
+  bool get _isHardware {
+    final bizState = ref.read(businessTypeProvider);
+    return bizState.type == BusinessType.hardware;
+  }
+
+  /// Whether a bill item is dimension-billed (has dimension metadata and a
+  /// dimension unit). Only applies to hardware business type.
+  bool _isDimensionBilledItem(BillItem item) {
+    if (!_isHardware) return false;
+    // Item is dimension-billed if it has dimensions metadata OR its unit
+    // is a dimension unit (sqft/sqmtr/ft/mtr).
+    return (item.dimensions != null && item.dimensions!.isNotEmpty) ||
+        _isHardwareDimensionUnit(item.unit);
+  }
 
   @override
   void dispose() {
@@ -609,48 +644,179 @@ class _AddReturnScreenState extends ConsumerState<_AddReturnScreen> {
           const SizedBox(height: 12),
           ..._selectedBill!.items.map((item) {
             final isSelected = _returnItems.any((r) => r.itemId == item.vegId);
-            return CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                item.itemName,
-                style: TextStyle(color: isDark ? Colors.white : Colors.black87),
-              ),
-              subtitle: Text(
-                'Qty: ${item.qty} \u00D7 \u20B9${item.unitPrice}',
-                style: TextStyle(
-                  color: isDark ? Colors.white54 : Colors.black45,
-                ),
-              ),
-              secondary: Text(
-                '\u20B9${item.totalAmount.toStringAsFixed(0)}',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              value: isSelected,
-              onChanged: (val) {
-                setState(() {
-                  if (val == true) {
-                    _returnItems.add(
-                      ReturnItem(
-                        itemId: item.vegId,
-                        itemName: item.itemName,
-                        quantity: item.qty,
-                        rate: item.unitPrice,
-                        amount: item.totalAmount,
+            final isDimensionItem = _isDimensionBilledItem(item);
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    item.itemName,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Qty: ${item.qty} \u00D7 \u20B9${item.unitPrice}',
+                        style: TextStyle(
+                          color: isDark ? Colors.white54 : Colors.black45,
+                        ),
                       ),
-                    );
-                  } else {
-                    _returnItems.removeWhere((r) => r.itemId == item.vegId);
-                  }
-                });
-              },
+                      // Show original dimensions if this is a dimension-billed item
+                      if (isDimensionItem && item.dimensions != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            'Original: ${item.dimensions} (${item.unit})',
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.blue[200]
+                                  : Colors.blue[700],
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  secondary: Text(
+                    '\u20B9${item.totalAmount.toStringAsFixed(0)}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  value: isSelected,
+                  onChanged: (val) {
+                    setState(() {
+                      if (val == true) {
+                        if (isDimensionItem) {
+                          // For dimension-billed items, add with dimension metadata.
+                          // Default to full area; user can adjust via DimensionCalculator.
+                          _returnItems.add(
+                            ReturnItem(
+                              itemId: item.vegId,
+                              itemName: item.itemName,
+                              quantity: item.qty,
+                              rate: item.unitPrice,
+                              amount: item.totalAmount,
+                              dimensions: item.dimensions,
+                              unit: item.unit,
+                            ),
+                          );
+                        } else {
+                          _returnItems.add(
+                            ReturnItem(
+                              itemId: item.vegId,
+                              itemName: item.itemName,
+                              quantity: item.qty,
+                              rate: item.unitPrice,
+                              amount: item.totalAmount,
+                            ),
+                          );
+                        }
+                      } else {
+                        _returnItems.removeWhere((r) => r.itemId == item.vegId);
+                        _dimensionReturnResults.remove(item.vegId);
+                      }
+                    });
+                  },
+                ),
+                // Show DimensionCalculator for selected dimension-billed items
+                // to allow partial-area return entry
+                if (isSelected && isDimensionItem)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: 12,
+                    ),
+                    child: _buildDimensionReturnEntry(item, isDark),
+                  ),
+              ],
             );
           }),
         ],
       ),
+    );
+  }
+
+  /// Builds the DimensionCalculator-based partial-area return entry for a
+  /// dimension-billed item. Allows the user to specify what portion of the
+  /// original area they are returning.
+  Widget _buildDimensionReturnEntry(BillItem item, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.orange.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.square_foot, size: 16, color: Colors.orange),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Enter return dimensions (partial area return)',
+                  style: TextStyle(
+                    color: Colors.orange[700],
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        DimensionCalculator(
+          initialDimensions: item.dimensions,
+          showPresets: false,
+          onCalculate: (result) {
+            // Update the return item with the new partial-area quantity
+            setState(() {
+              _dimensionReturnResults[item.vegId] = result;
+              final returnIdx = _returnItems.indexWhere(
+                (r) => r.itemId == item.vegId,
+              );
+              if (returnIdx >= 0) {
+                final returnArea = result.area;
+                final returnAmount = returnArea * item.unitPrice;
+                _returnItems[returnIdx] = ReturnItem(
+                  itemId: item.vegId,
+                  itemName: item.itemName,
+                  quantity: returnArea,
+                  rate: item.unitPrice,
+                  amount: returnAmount,
+                  dimensions:
+                      '${result.length.toStringAsFixed(2)} \u00D7 ${result.width.toStringAsFixed(2)} ${result.unit}',
+                  unit: item.unit,
+                );
+              }
+            });
+          },
+        ),
+        if (_dimensionReturnResults.containsKey(item.vegId))
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              'Return area: ${_dimensionReturnResults[item.vegId]!.area.toStringAsFixed(2)} ${_dimensionReturnResults[item.vegId]!.areaUnit}',
+              style: TextStyle(
+                color: Colors.green[700],
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -830,7 +996,25 @@ class _AddReturnScreenState extends ConsumerState<_AddReturnScreen> {
             ),
             Expanded(
               child: bills.isEmpty
-                  ? const Center(child: Text('No bills found'))
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.receipt_long_outlined,
+                            size: 48,
+                            color: isDark ? Colors.white24 : Colors.grey[300],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'No bills found',
+                            style: TextStyle(
+                              color: isDark ? Colors.white60 : Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                   : ListView.builder(
                       itemCount: bills.length,
                       itemBuilder: (context, index) {

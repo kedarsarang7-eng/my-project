@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,12 +25,29 @@ class _HardwareCreditControlScreenState
   List<Map<String, dynamic>> _items = const [];
   Map<String, dynamic> _totals = const {};
 
+  /// Debounce timer for filter changes (HARDWARE-010).
+  /// Coalesces rapid filter changes into a single _load() call after 300ms.
+  Timer? _debounce;
+
   ApiClient get _api => sl<ApiClient>();
 
   @override
   void initState() {
     super.initState();
     _load();
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  /// Called by filter dropdowns. Cancels any pending debounced load and
+  /// reschedules after 300ms so rapid changes coalesce into one fetch.
+  void _onFilterChanged() {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () => _load());
   }
 
   Future<void> _load() async {
@@ -129,7 +148,7 @@ class _HardwareCreditControlScreenState
             onChanged: (v) {
               if (v == null) return;
               setState(() => _minAgeDays = v);
-              _load();
+              _onFilterChanged();
             },
           ),
           _smallDropdown<int>(
@@ -140,7 +159,7 @@ class _HardwareCreditControlScreenState
             onChanged: (v) {
               if (v == null) return;
               setState(() => _minBalanceRs = v);
-              _load();
+              _onFilterChanged();
             },
           ),
         ],

@@ -1042,13 +1042,13 @@ class _AddProformaScreenState extends ConsumerState<_AddProformaScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Add Item'),
+        title: const Text('Add Item'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
-              decoration: InputDecoration(labelText: 'Item Name'),
+              decoration: const InputDecoration(labelText: 'Item Name'),
             ),
             const SizedBox(height: 8),
             Row(
@@ -1057,7 +1057,7 @@ class _AddProformaScreenState extends ConsumerState<_AddProformaScreen> {
                   child: TextField(
                     controller: qtyController,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: 'Quantity'),
+                    decoration: const InputDecoration(labelText: 'Quantity'),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -1065,7 +1065,7 @@ class _AddProformaScreenState extends ConsumerState<_AddProformaScreen> {
                   child: TextField(
                     controller: rateController,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: 'Rate (\u20B9)'),
+                    decoration: const InputDecoration(labelText: 'Rate (\u20B9)'),
                   ),
                 ),
               ],
@@ -1075,7 +1075,7 @@ class _AddProformaScreenState extends ConsumerState<_AddProformaScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -1096,7 +1096,7 @@ class _AddProformaScreenState extends ConsumerState<_AddProformaScreen> {
                 Navigator.pop(ctx);
               }
             },
-            child: Text('Add'),
+            child: const Text('Add'),
           ),
         ],
       ),

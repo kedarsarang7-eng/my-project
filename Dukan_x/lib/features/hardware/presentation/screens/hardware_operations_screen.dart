@@ -230,6 +230,14 @@ class _HardwareOperationsScreenState extends State<HardwareOperationsScreen>
                 onPressed: () => Navigator.pop(ctx),
                 child: const Text('OK'),
               ),
+              if (_tabController.index == 0)
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    _showCreateIndentDialog(prefillProductName: productName);
+                  },
+                  child: const Text('Create Indent for Project'),
+                ),
               if (_tabController.index == 1)
                 ElevatedButton(
                   onPressed: () {
@@ -237,6 +245,14 @@ class _HardwareOperationsScreenState extends State<HardwareOperationsScreen>
                     _showCreateIndentDialog(prefillProductName: productName);
                   },
                   child: const Text('Add to Indent'),
+                ),
+              if (_tabController.index == 2)
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    _showCreateDepositDialog(prefillItemType: productName);
+                  },
+                  child: const Text('Add to Deposit'),
                 ),
             ],
           ),
@@ -281,11 +297,11 @@ class _HardwareOperationsScreenState extends State<HardwareOperationsScreen>
     // Future.wait rather than awaiting them one-by-one, so a refresh is bound by
     // the slowest call instead of the sum of all five.
     final results = await Future.wait<List<Map<String, dynamic>>>([
-      safe('Projects', () => _repo.listProjects(), _projects),
-      safe('Indents', () => _repo.listIndents(), _indents),
+      safe('Projects', () => _repo.listProjectsAsMap(), _projects),
+      safe('Indents', () => _repo.listIndentsAsMap(), _indents),
       safe(
         'Deposits',
-        () => _repo.listDeposits(status: _depositStatusFilter),
+        () => _repo.listDepositsAsMap(status: _depositStatusFilter),
         _deposits,
       ),
       safe('Customers', () => _repo.listCustomers(), _customers),
@@ -696,13 +712,13 @@ class _HardwareOperationsScreenState extends State<HardwareOperationsScreen>
     }
   }
 
-  Future<void> _showCreateDepositDialog() async {
+  Future<void> _showCreateDepositDialog({String? prefillItemType}) async {
     if (_customers.isEmpty) {
       _notify('No customers found');
       return;
     }
     String selectedCustomerId = _customers.first['id'].toString();
-    final itemType = TextEditingController();
+    final itemType = TextEditingController(text: prefillItemType ?? '');
     final quantity = TextEditingController(text: '1');
     final amount = TextEditingController();
     final refNo = TextEditingController();
@@ -767,6 +783,12 @@ class _HardwareOperationsScreenState extends State<HardwareOperationsScreen>
   }
 
   Future<void> _showSettleDepositDialog(Map<String, dynamic> dep) async {
+    // Extract original deposit bounds for upper-bound validation (bugfix.md
+    // 2.18 / HARDWARE-018).
+    final double originalQty = (dep['quantity'] as num?)?.toDouble() ?? 0;
+    final int maxRefundCents =
+        (dep['outstandingDepositCents'] as num?)?.toInt() ?? 0;
+
     final returnedQty = TextEditingController(text: '1');
     final refund = TextEditingController();
     final notes = TextEditingController();
@@ -775,12 +797,12 @@ class _HardwareOperationsScreenState extends State<HardwareOperationsScreen>
       fields: [
         _field(
           returnedQty,
-          'Returned quantity *',
+          'Returned quantity * (max: $originalQty)',
           keyboardType: TextInputType.number,
         ),
         _field(
           refund,
-          'Refund amount (₹) *',
+          'Refund amount (₹) * (max: ${_currency.format(maxRefundCents / 100)})',
           keyboardType: TextInputType.number,
         ),
         _field(notes, 'Notes'),
@@ -793,11 +815,30 @@ class _HardwareOperationsScreenState extends State<HardwareOperationsScreen>
       _notify('Settlement values invalid');
       return;
     }
+
+    // Upper-bound validation (HARDWARE-018): reject settlements that exceed
+    // the original deposit's quantity or outstanding amount.
+    if (qty > originalQty) {
+      _notify(
+        'Returned quantity ($qty) must not exceed original deposit '
+        'quantity ($originalQty)',
+      );
+      return;
+    }
+    final refundCents = (refundRs * 100).round();
+    if (refundCents > maxRefundCents) {
+      _notify(
+        'Refund amount (${_currency.format(refundRs)}) must not exceed '
+        'outstanding deposit (${_currency.format(maxRefundCents / 100)})',
+      );
+      return;
+    }
+
     try {
       await _repo.settleDeposit(
         depositId: dep['id'].toString(),
         returnedQuantity: qty,
-        refundAmountCents: (refundRs * 100).round(),
+        refundAmountCents: refundCents,
         notes: notes.text,
       );
       _notify('Deposit settled');

@@ -201,6 +201,10 @@ part 'app_database.g.dart';
     Inventory,
     BusinessSettings,
     TaxRates,
+    // Computer Shop — local cache tables (codegen stubs)
+    ComputerJobCardsCache,
+    ComputerWarrantyCache,
+    ComputerSerialsCache,
   ],
 )
 class AppDatabase extends _$AppDatabase implements SyncQueueLocalOperations {
@@ -214,7 +218,7 @@ class AppDatabase extends _$AppDatabase implements SyncQueueLocalOperations {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 57; // v57: Phase 9 wholesale — EwayRecordsTable (e-Way bill capture + blocked)
+  int get schemaVersion => 60; // v60: hardware local-first tables (bugfix.md 2.1, 2.19, 2.25)
 
   // ==========================================================================
   // v46 SYSTEM-owner backfill resolver (clinic task 4.4)
@@ -1394,6 +1398,118 @@ class AppDatabase extends _$AppDatabase implements SyncQueueLocalOperations {
         debugPrint(
           'AppDatabase: v57 migration complete — eway_records_table created '
           '(Phase 9 wholesale E-Way Bill capture + blocked)',
+        );
+      }
+
+      // ====================================================================
+      // v60: Hardware local-first offline cache tables (bugfix.md 2.1, 2.19,
+      // 2.25). Six new additive tables for the hardware vertical's local-first
+      // repository refactor. No existing data affected.
+      // ====================================================================
+      if (from < 60) {
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS hardware_projects (
+            id TEXT NOT NULL PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            project_name TEXT,
+            contractor_name TEXT,
+            site_address TEXT,
+            notes TEXT,
+            status TEXT NOT NULL DEFAULT 'active',
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            deleted_at INTEGER
+          )
+        ''');
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS hardware_site_indents (
+            id TEXT NOT NULL PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            project_id TEXT,
+            requested_by TEXT,
+            priority TEXT NOT NULL DEFAULT 'normal',
+            status TEXT NOT NULL DEFAULT 'open',
+            notes TEXT,
+            items_json TEXT NOT NULL DEFAULT '[]',
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            deleted_at INTEGER
+          )
+        ''');
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS hardware_material_deposits (
+            id TEXT NOT NULL PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            customer_id TEXT,
+            customer_name TEXT,
+            item_type TEXT,
+            quantity REAL NOT NULL DEFAULT 0.0,
+            deposit_amount_cents INTEGER NOT NULL DEFAULT 0,
+            reference_no TEXT,
+            notes TEXT,
+            status TEXT NOT NULL DEFAULT 'active',
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            deleted_at INTEGER
+          )
+        ''');
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS hardware_purchase_orders (
+            id TEXT NOT NULL PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            supplier_id TEXT,
+            supplier_name TEXT,
+            status TEXT NOT NULL DEFAULT 'pending',
+            expected_delivery_date TEXT,
+            notes TEXT,
+            items_json TEXT NOT NULL DEFAULT '[]',
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            deleted_at INTEGER
+          )
+        ''');
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS hardware_parties (
+            id TEXT NOT NULL PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            name TEXT,
+            type TEXT,
+            phone TEXT,
+            gstin TEXT,
+            address TEXT,
+            credit_limit INTEGER NOT NULL DEFAULT 0,
+            credit_days INTEGER NOT NULL DEFAULT 30,
+            price_category TEXT NOT NULL DEFAULT 'retail',
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            deleted_at INTEGER
+          )
+        ''');
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS hardware_sales_orders (
+            id TEXT NOT NULL PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            customer_id TEXT,
+            customer_name TEXT,
+            status TEXT NOT NULL DEFAULT 'pending',
+            notes TEXT,
+            items_json TEXT NOT NULL DEFAULT '[]',
+            is_synced INTEGER NOT NULL DEFAULT 0,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            deleted_at INTEGER
+          )
+        ''');
+
+        debugPrint(
+          'AppDatabase: v60 migration complete — hardware local-first '
+          'tables created (projects, indents, deposits, POs, parties, '
+          'sales orders)',
         );
       }
     },

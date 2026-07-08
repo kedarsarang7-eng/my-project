@@ -1,7 +1,8 @@
 class HardwareApiContract {
   static const createPurchaseOrder = '/hardware/purchase-orders';
   static const listPurchaseOrders = '/hardware/purchase-orders';
-  static const updatePurchaseOrderStatus = '/hardware/purchase-orders/{id}/status';
+  static const updatePurchaseOrderStatus =
+      '/hardware/purchase-orders/{id}/status';
 
   static const createGrn = '/hardware/grn';
   static const listGrn = '/hardware/grn';
@@ -29,7 +30,7 @@ class HardwarePermissionMatrix {
     'pos': {'view', 'create', 'edit', 'delete', 'print'},
     'inventory': {'view', 'create', 'edit', 'delete'},
     'purchase': {'view', 'create', 'approve'},
-    'suppliers': {'view', 'create'},
+    'suppliers': {'view', 'create', 'trigger_reminders'},
     'party_credit': {'view', 'create'},
     'gst': {'view', 'export'},
     'reports': {'view', 'export'},

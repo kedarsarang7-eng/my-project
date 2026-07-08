@@ -313,6 +313,7 @@
   ],
   "bookStore": [
     "useBarcodeScanner",
+    "useConsignmentSettlement",
     "useDailySnapshot",
     "useDeadStock",
     "useGeneralAlerts",
@@ -338,6 +339,7 @@
     "useRevenueOverview",
     "useSalesReturn",
     "useScanOCR",
+    "useSchoolOrders",
     "useStockEntry",
     "useStockManagement",
     "useSupplierBill",

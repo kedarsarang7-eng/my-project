@@ -128,6 +128,8 @@ enum AppScreen {
 
   // --- HARDWARE SPECIFIC ---
   hardwareOperations,
+  hardwareGrn,
+  hardwarePurchaseBills,
 
   // --- DECORATION & CATERING SPECIFIC ---
   dcBookings,

@@ -970,11 +970,11 @@ final hardwareKpisProvider = FutureProvider.autoDispose<HardwareKpis>((
 
   // Fire the independent reads concurrently (offline/error-resilient).
   final indentsF = safe(
-    () => repo.listIndents(),
+    () => repo.listIndentsAsMap(),
     const <Map<String, dynamic>>[],
   );
   final depositsF = safe(
-    () => repo.listDeposits(),
+    () => repo.listDepositsAsMap(),
     const <Map<String, dynamic>>[],
   );
   final velocityF = safe(

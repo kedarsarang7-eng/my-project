@@ -15,8 +15,16 @@
 // the hardware path (sidebar id `eway_bill`).
 // ============================================================================
 
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:uuid/uuid.dart';
+
+import '../../../../core/database/app_database.dart';
+import '../../../../core/di/service_locator.dart';
+import '../../../../core/session/session_manager.dart';
+import '../../../../core/sync/sync_manager.dart';
+import '../../../../core/sync/sync_queue_state_machine.dart';
 
 /// Consignment value (in ₹) at/above which a GST e-Way bill is required.
 const double eWayBillThresholdRupees = 50000;
@@ -26,8 +34,105 @@ const double eWayBillThresholdRupees = 50000;
 bool isEWayBillRequired(double consignmentValueRupees) =>
     consignmentValueRupees >= eWayBillThresholdRupees;
 
+/// Persists an E-Way Bill Part-A record to the local Drift [EWayBills] table
+/// and queues it for sync via [SyncManager].
+///
+/// Returns the generated record ID on success, or `null` if the consignment
+/// value is below the threshold (no e-Way bill required).
+///
+/// Parameters:
+/// - [consignmentValueRupees]: The dispatch value in INR.
+/// - [recipientGstin]: The recipient's GSTIN (optional).
+/// - [fromPlace]: Dispatch origin.
+/// - [toPlace]: Delivery destination.
+/// - [transporterName]: Name of the transporter (optional).
+/// - [vehicleNo]: Vehicle registration number (optional).
+/// - [deliveryChallanId]: The associated delivery challan ID (optional link).
+/// - [userId]: The business owner / user ID. If null, resolved from session.
+/// - [db]: Optional AppDatabase override (for testing).
+/// - [syncManager]: Optional SyncManager override (for testing).
+Future<String?> persistEWayBillRecord({
+  required double consignmentValueRupees,
+  String? recipientGstin,
+  required String fromPlace,
+  required String toPlace,
+  String? transporterName,
+  String? vehicleNo,
+  String? deliveryChallanId,
+  String? userId,
+  AppDatabase? db,
+  SyncManager? syncManager,
+}) async {
+  // Threshold check — no persistence needed below the limit.
+  if (!isEWayBillRequired(consignmentValueRupees)) return null;
+
+  final database = db ?? sl<AppDatabase>();
+  final sync = syncManager ?? SyncManager.instance;
+  final resolvedUserId = userId ?? sl<SessionManager>().userId ?? 'unknown';
+
+  final id = const Uuid().v4();
+  final now = DateTime.now();
+
+  // Persist Part-A record to local EWayBills Drift table.
+  await database
+      .into(database.eWayBills)
+      .insert(
+        EWayBillsCompanion.insert(
+          id: id,
+          userId: resolvedUserId,
+          billId: deliveryChallanId ?? '',
+          date: now,
+          fromPlace: Value(fromPlace),
+          toPlace: Value(toPlace),
+          vehicleNumber: Value(vehicleNo),
+          transporterName: Value(transporterName),
+          status: const Value('PENDING'),
+          createdAt: now,
+          updatedAt: now,
+          isSynced: const Value(false),
+        ),
+      );
+
+  // Queue for sync so the record is durable across dismissal and uploaded
+  // when connectivity is available.
+  await sync.enqueue(
+    SyncQueueItem.create(
+      userId: resolvedUserId,
+      operationType: SyncOperationType.create,
+      targetCollection: 'eway_bills',
+      documentId: id,
+      payload: {
+        'id': id,
+        'userId': resolvedUserId,
+        'billId': deliveryChallanId ?? '',
+        'consignmentValueRupees': consignmentValueRupees,
+        'recipientGstin': recipientGstin,
+        'fromPlace': fromPlace,
+        'toPlace': toPlace,
+        'transporterName': transporterName,
+        'vehicleNo': vehicleNo,
+        'status': 'PENDING',
+        'createdAt': now.toIso8601String(),
+      },
+    ),
+  );
+
+  // Update the delivery challan's eWayBillNumber field if linked.
+  if (deliveryChallanId != null && deliveryChallanId.isNotEmpty) {
+    final ref = 'EWB-${now.millisecondsSinceEpoch.toString().substring(5)}';
+    await (database.update(database.deliveryChallans)
+          ..where((t) => t.id.equals(deliveryChallanId)))
+        .write(DeliveryChallansCompanion(eWayBillNumber: Value(ref)));
+  }
+
+  return id;
+}
+
 class EWayBillScreen extends StatefulWidget {
-  const EWayBillScreen({super.key});
+  /// Optional delivery challan ID to link this e-way bill to.
+  final String? deliveryChallanId;
+
+  const EWayBillScreen({super.key, this.deliveryChallanId});
 
   @override
   State<EWayBillScreen> createState() => _EWayBillScreenState();
@@ -70,7 +175,25 @@ class _EWayBillScreenState extends State<EWayBillScreen> {
     // layer; here we capture and confirm the consignment details.
     final ref =
         'EWB-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
-    _snack('e-Way bill Part-A captured: $ref');
+
+    // Persist the Part-A record to local Drift table and queue for sync.
+    persistEWayBillRecord(
+          consignmentValueRupees: _value,
+          recipientGstin: _recipientGstin.text.isEmpty
+              ? null
+              : _recipientGstin.text,
+          fromPlace: _fromPlace.text,
+          toPlace: _toPlace.text,
+          transporterName: _transporter.text.isEmpty ? null : _transporter.text,
+          vehicleNo: _vehicleNo.text.isEmpty ? null : _vehicleNo.text,
+          deliveryChallanId: widget.deliveryChallanId,
+        )
+        .then((_) {
+          _snack('e-Way bill Part-A captured & saved: $ref');
+        })
+        .catchError((e) {
+          _snack('e-Way bill Part-A captured: $ref (sync pending)');
+        });
   }
 
   void _snack(String message) {

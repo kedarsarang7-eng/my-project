@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../../core/api/api_client.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/session/session_manager.dart';
 import '../../../../widgets/desktop/desktop_content_container.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
+import '../../utils/csv_export_helper.dart';
 
 class HardwareSupplierManagementScreen extends StatefulWidget {
   const HardwareSupplierManagementScreen({super.key});
@@ -30,6 +30,12 @@ class _HardwareSupplierManagementScreenState
   final _notesCtrl = TextEditingController();
 
   ApiClient get _api => sl<ApiClient>();
+
+  /// RBAC gate: only owner/manager roles can trigger supplier reminders.
+  bool get _canTriggerReminders {
+    final role = sl<SessionManager>().currentSession.effectiveRole;
+    return role == UserRole.owner || role == UserRole.manager;
+  }
 
   bool _loading = true;
   List<Map<String, dynamic>> _suppliers = const [];
@@ -145,11 +151,12 @@ class _HardwareSupplierManagementScreenState
             label: const Text('Export CSV'),
           ),
           const SizedBox(width: 8),
-          OutlinedButton.icon(
-            onPressed: _triggerRemindersDialog,
-            icon: const Icon(Icons.notifications_active_outlined),
-            label: const Text('Reminders'),
-          ),
+          if (_canTriggerReminders)
+            OutlinedButton.icon(
+              onPressed: _triggerRemindersDialog,
+              icon: const Icon(Icons.notifications_active_outlined),
+              label: const Text('Reminders'),
+            ),
           const SizedBox(width: 8),
           IconButton(
             tooltip: 'Refresh',
@@ -219,16 +226,22 @@ class _HardwareSupplierManagementScreenState
         );
       }
       final csv = '${rows.join('\n')}\n';
-      final docs = await getApplicationDocumentsDirectory();
-      final dir = Directory('${docs.path}${Platform.pathSeparator}exports');
-      if (!await dir.exists()) await dir.create(recursive: true);
-      final filePath =
-          '${dir.path}${Platform.pathSeparator}hardware_suppliers_$ts.csv';
-      await File(filePath).writeAsString(csv);
+      final filename = 'hardware_suppliers_$ts.csv';
+
+      // Cross-platform export: web uses in-memory XFile, native uses file I/O.
+      final result = await HardwareCsvExportHelper.exportCsv(
+        csvContent: csv,
+        filename: filename,
+      );
+
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('CSV exported: $filePath'),
+          content: Text(
+            result == 'web-download'
+                ? 'CSV exported (download started)'
+                : 'CSV exported: $result',
+          ),
           duration: const Duration(seconds: 5),
         ),
       );
@@ -736,7 +749,7 @@ class _HardwareSupplierManagementScreenState
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText:
-                        'Amount (Rs) <= ${maxPayableRs.toStringAsFixed(2)}',
+                        'Amount (₹) <= ${_currency.format(maxPayableRs)}',
                     border: const OutlineInputBorder(),
                     isDense: true,
                   ),

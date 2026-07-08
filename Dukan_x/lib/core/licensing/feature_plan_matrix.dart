@@ -120,5 +120,12 @@ class FeaturePlanMatrix {
 
     // Online order integrations (restaurant-specific Enterprise)
     'online_orders': 'enterprise',
+
+    // ── WhatsApp / OpenWA (Pro+) ─────────────────────────────────────────────
+    'wa_connection': 'pro',
+    'wa_chats': 'pro',
+    'wa_templates': 'pro',
+    'wa_analytics': 'pro',
+    'wa_bulk_send': 'premium',
   };
 }

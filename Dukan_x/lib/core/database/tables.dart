@@ -5123,3 +5123,173 @@ class EwayRecordsTable extends Table {
   @override
   Set<Column> get primaryKey => {id};
 }
+
+// ============================================================================
+// HARDWARE — LOCAL-FIRST OFFLINE CACHE TABLES (bugfix.md 2.1, 2.19, 2.25)
+// ============================================================================
+
+/// Hardware Projects — local cache of hardware project records.
+@DataClassName('HardwareProjectEntity')
+class HardwareProjects extends Table {
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+  TextColumn get projectName => text().nullable()();
+  TextColumn get contractorName => text().nullable()();
+  TextColumn get siteAddress => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  TextColumn get status => text().withDefault(const Constant('active'))();
+  BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Hardware Site Indents — local cache of indent records.
+@DataClassName('HardwareSiteIndentEntity')
+class HardwareSiteIndents extends Table {
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+  TextColumn get projectId => text().nullable()();
+  TextColumn get requestedBy => text().nullable()();
+  TextColumn get priority => text().withDefault(const Constant('normal'))();
+  TextColumn get status => text().withDefault(const Constant('open'))();
+  TextColumn get notes => text().nullable()();
+  TextColumn get itemsJson => text().withDefault(const Constant('[]'))();
+  BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Hardware Material Deposits — local cache of deposit records.
+@DataClassName('HardwareMaterialDepositEntity')
+class HardwareMaterialDeposits extends Table {
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+  TextColumn get customerId => text().nullable()();
+  TextColumn get customerName => text().nullable()();
+  TextColumn get itemType => text().nullable()();
+  RealColumn get quantity => real().withDefault(const Constant(0.0))();
+  IntColumn get depositAmountCents =>
+      integer().withDefault(const Constant(0))();
+  TextColumn get referenceNo => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  TextColumn get status => text().withDefault(const Constant('active'))();
+  BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Hardware Purchase Orders — local cache of purchase order records.
+@DataClassName('HardwarePurchaseOrderEntity')
+class HardwarePurchaseOrdersTable extends Table {
+  @override
+  String get tableName => 'hardware_purchase_orders';
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+  TextColumn get supplierId => text().nullable()();
+  TextColumn get supplierName => text().nullable()();
+  TextColumn get status => text().withDefault(const Constant('pending'))();
+  TextColumn get expectedDeliveryDate => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  TextColumn get itemsJson => text().withDefault(const Constant('[]'))();
+  BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Hardware Parties — local cache of party records.
+@DataClassName('HardwarePartyEntity')
+class HardwarePartiesTable extends Table {
+  @override
+  String get tableName => 'hardware_parties';
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+  TextColumn get name => text().nullable()();
+  TextColumn get type => text().nullable()();
+  TextColumn get phone => text().nullable()();
+  TextColumn get gstin => text().nullable()();
+  TextColumn get address => text().nullable()();
+  IntColumn get creditLimit => integer().withDefault(const Constant(0))();
+  IntColumn get creditDays => integer().withDefault(const Constant(30))();
+  TextColumn get priceCategory =>
+      text().withDefault(const Constant('retail'))();
+  BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Hardware Sales Orders — local cache of sales order records.
+@DataClassName('HardwareSalesOrderEntity')
+class HardwareSalesOrdersTable extends Table {
+  @override
+  String get tableName => 'hardware_sales_orders';
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+  TextColumn get customerId => text().nullable()();
+  TextColumn get customerName => text().nullable()();
+  TextColumn get status => text().withDefault(const Constant('pending'))();
+  TextColumn get notes => text().nullable()();
+  TextColumn get itemsJson => text().withDefault(const Constant('[]'))();
+  BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+// ============================================================================
+// COMPUTER SHOP — LOCAL CACHE TABLES (codegen stubs)
+// ============================================================================
+// These tables are referenced in the generated app_database.g.dart but were
+// missing from this file. Adding them here so the generated code compiles.
+
+/// Computer Job Cards — local cache for service/repair job cards.
+@DataClassName('ComputerJobCardCacheEntity')
+class ComputerJobCardsCache extends Table {
+  TextColumn get id => text()();
+  TextColumn get tenantId => text()();
+  TextColumn get payloadJson => text()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Computer Warranty Claims — local cache for warranty tracking.
+@DataClassName('ComputerWarrantyCacheEntity')
+class ComputerWarrantyCache extends Table {
+  TextColumn get id => text()();
+  TextColumn get tenantId => text()();
+  TextColumn get serialNumber => text()();
+  TextColumn get payloadJson => text()();
+  DateTimeColumn get warrantyExpiryDate => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Computer Serials — local cache for serial-number tracking.
+@DataClassName('ComputerSerialCacheEntity')
+class ComputerSerialsCache extends Table {
+  TextColumn get serialNumber => text()();
+  TextColumn get tenantId => text()();
+  TextColumn get payloadJson => text()();
+
+  @override
+  Set<Column> get primaryKey => {serialNumber};
+}

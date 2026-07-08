@@ -54,8 +54,7 @@
           "suppliers",
           "party_ledger",
           "ledger_history",
-          "ledger_abstract",
-          "outstanding"
+          "ledger_abstract"
         ]
       },
       {
@@ -104,7 +103,6 @@
       "party_ledger": "PartyLedgerListScreen",
       "ledger_history": "AllTransactionsScreen",
       "ledger_abstract": "TrialBalanceScreen",
-      "outstanding": "PartyLedgerListScreen",
       "analytics_hub": "ReportsHubScreen",
       "turnover_analysis": "AllTransactionsScreen",
       "product_performance": "ProductPerformanceScreen",
@@ -175,6 +173,14 @@
           "analytics_hub",
           "product_performance"
         ]
+      },
+      {
+        "title": "WhatsApp",
+        "items": [
+          "wa_connection",
+          "wa_chats",
+          "wa_templates"
+        ]
       }
     ],
     "routing": {
@@ -201,7 +207,10 @@
       "party_ledger": "PartyLedgerListScreen",
       "outstanding": "PartyLedgerListScreen",
       "analytics_hub": "ReportsHubScreen",
-      "product_performance": "ProductPerformanceScreen"
+      "product_performance": "ProductPerformanceScreen",
+      "wa_connection": "WhatsAppConnectionScreen",
+      "wa_chats": "WhatsAppChatScreen",
+      "wa_templates": "WhatsAppTemplatesScreen"
     }
   },
   "restaurant": {
@@ -323,6 +332,14 @@
           "analytics_hub",
           "product_performance"
         ]
+      },
+      {
+        "title": "WhatsApp",
+        "items": [
+          "wa_connection",
+          "wa_chats",
+          "wa_templates"
+        ]
       }
     ],
     "routing": {
@@ -335,54 +352,21 @@
       "party_ledger": "PartyLedgerListScreen",
       "outstanding": "PartyLedgerListScreen",
       "analytics_hub": "ReportsHubScreen",
-      "product_performance": "ProductPerformanceScreen"
+      "product_performance": "ProductPerformanceScreen",
+      "wa_connection": "WhatsAppConnectionScreen",
+      "wa_chats": "WhatsAppChatScreen",
+      "wa_templates": "WhatsAppTemplatesScreen"
     }
   },
   "electronics": {
     "sections": [
       {
-        "title": "Dashboard & Control",
+        "title": "Devices & Service",
         "items": [
-          "executive_dashboard",
-          "live_health",
-          "alerts",
-          "daily_snapshot"
-        ]
-      },
-      {
-        "title": "Revenue Desk",
-        "items": [
-          "revenue_overview",
-          "new_sale",
-          "receipt_entry",
+          "imei_tracking",
+          "warranty",
           "return_inwards",
-          "proforma_bids",
-          "booking_orders",
-          "dispatch_notes",
-          "sales_register"
-        ]
-      },
-      {
-        "title": "BuyFlow",
-        "items": [
-          "buyflow_dashboard",
-          "purchase_orders",
-          "stock_entry",
-          "stock_reversal",
-          "procurement_log",
-          "supplier_bills",
-          "purchase_register",
-          "scan_bill"
-        ]
-      },
-      {
-        "title": "Inventory & Stock",
-        "items": [
-          "stock_summary",
-          "item_stock",
-          "low_stock",
-          "stock_valuation",
-          "damage_logs"
+          "serial_stock"
         ]
       },
       {
@@ -391,65 +375,39 @@
           "customers",
           "suppliers",
           "party_ledger",
-          "ledger_history",
-          "ledger_abstract",
           "outstanding"
         ]
       },
       {
-        "title": "Business Intelligence",
+        "title": "Reports & Analytics",
         "items": [
           "analytics_hub",
-          "turnover_analysis",
-          "product_performance",
-          "daily_activity",
-          "procurement_insights",
-          "margin_analysis",
-          "insights",
-          "catalogue"
+          "product_performance"
+        ]
+      },
+      {
+        "title": "WhatsApp",
+        "items": [
+          "wa_connection",
+          "wa_chats",
+          "wa_templates"
         ]
       }
     ],
     "routing": {
-      "executive_dashboard": "DashboardController",
-      "live_health": "LiveBusinessHealthScreen",
-      "alerts": "AlertsNotificationsScreen",
-      "daily_snapshot": "DailySnapshotScreen",
-      "revenue_overview": "RevenueOverviewScreen",
-      "new_sale": "BillCreationScreenV2",
-      "receipt_entry": "ReceiptEntryScreen",
+      "imei_tracking": "Null",
+      "warranty": "Null",
       "return_inwards": "ReturnInwardsScreen",
-      "proforma_bids": "ProformaScreen",
-      "booking_orders": "BookingOrderScreen",
-      "dispatch_notes": "DispatchNoteScreen",
-      "sales_register": "SalesRegisterScreen",
-      "buyflow_dashboard": "BuyFlowDashboard",
-      "purchase_orders": "BuyOrdersScreen",
-      "stock_entry": "StockEntryScreen",
-      "stock_reversal": "StockReversalScreen",
-      "procurement_log": "ProcurementLogScreen",
-      "supplier_bills": "SupplierBillsScreen",
-      "purchase_register": "ProcurementLogScreen",
-      "scan_bill": "ScanBillImagePickerScreen",
-      "stock_summary": "StockSummaryScreen",
-      "item_stock": "InventoryDashboardScreen",
-      "low_stock": "LowStockAlertsScreen",
-      "stock_valuation": "StockValuationScreen",
-      "damage_logs": "DamageLogsScreen",
+      "serial_stock": "ImeiTrackingStatementScreen",
       "customers": "CustomersListScreen",
       "suppliers": "PartyLedgerListScreen",
       "party_ledger": "PartyLedgerListScreen",
-      "ledger_history": "AllTransactionsScreen",
-      "ledger_abstract": "TrialBalanceScreen",
       "outstanding": "PartyLedgerListScreen",
       "analytics_hub": "ReportsHubScreen",
-      "turnover_analysis": "AllTransactionsScreen",
       "product_performance": "ProductPerformanceScreen",
-      "daily_activity": "AllTransactionsScreen",
-      "procurement_insights": "PurchaseReportScreen",
-      "margin_analysis": "BillWiseProfitScreen",
-      "insights": "InsightsScreen",
-      "catalogue": "CatalogueScreen"
+      "wa_connection": "WhatsAppConnectionScreen",
+      "wa_chats": "WhatsAppChatScreen",
+      "wa_templates": "WhatsAppTemplatesScreen"
     }
   },
   "mobileShop": {
@@ -479,6 +437,14 @@
           "analytics_hub",
           "product_performance"
         ]
+      },
+      {
+        "title": "WhatsApp",
+        "items": [
+          "wa_connection",
+          "wa_chats",
+          "wa_templates"
+        ]
       }
     ],
     "routing": {
@@ -492,7 +458,10 @@
       "party_ledger": "PartyLedgerListScreen",
       "outstanding": "PartyLedgerListScreen",
       "analytics_hub": "ReportsHubScreen",
-      "product_performance": "ProductPerformanceScreen"
+      "product_performance": "ProductPerformanceScreen",
+      "wa_connection": "WhatsAppConnectionScreen",
+      "wa_chats": "WhatsAppChatScreen",
+      "wa_templates": "WhatsAppTemplatesScreen"
     }
   },
   "computerShop": {
@@ -548,8 +517,7 @@
           "suppliers",
           "party_ledger",
           "ledger_history",
-          "ledger_abstract",
-          "outstanding"
+          "ledger_abstract"
         ]
       },
       {
@@ -596,7 +564,6 @@
       "party_ledger": "PartyLedgerListScreen",
       "ledger_history": "AllTransactionsScreen",
       "ledger_abstract": "TrialBalanceScreen",
-      "outstanding": "PartyLedgerListScreen",
       "analytics_hub": "ReportsHubScreen",
       "turnover_analysis": "AllTransactionsScreen",
       "product_performance": "ProductPerformanceScreen",
@@ -649,6 +616,14 @@
           "analytics_hub",
           "product_performance"
         ]
+      },
+      {
+        "title": "WhatsApp",
+        "items": [
+          "wa_connection",
+          "wa_chats",
+          "wa_templates"
+        ]
       }
     ],
     "routing": {
@@ -667,121 +642,73 @@
       "party_ledger": "PartyLedgerListScreen",
       "outstanding": "PartyLedgerListScreen",
       "analytics_hub": "ReportsHubScreen",
-      "product_performance": "ProductPerformanceScreen"
+      "product_performance": "ProductPerformanceScreen",
+      "wa_connection": "WhatsAppConnectionScreen",
+      "wa_chats": "WhatsAppChatScreen",
+      "wa_templates": "WhatsAppTemplatesScreen"
     }
   },
   "wholesale": {
     "sections": [
       {
-        "title": "Dashboard & Control",
+        "title": "Orders & Dispatch",
         "items": [
-          "executive_dashboard",
-          "live_health",
-          "alerts",
-          "daily_snapshot"
-        ]
-      },
-      {
-        "title": "Revenue Desk",
-        "items": [
-          "revenue_overview",
           "new_sale",
-          "receipt_entry",
-          "return_inwards",
-          "proforma_bids",
-          "booking_orders",
           "dispatch_notes",
-          "sales_register"
-        ]
-      },
-      {
-        "title": "BuyFlow",
-        "items": [
-          "buyflow_dashboard",
+          "delivery_challans",
           "purchase_orders",
-          "stock_entry",
-          "stock_reversal",
-          "procurement_log",
-          "supplier_bills",
-          "purchase_register"
+          "proforma_invoices"
         ]
       },
       {
-        "title": "Inventory & Stock",
+        "title": "Pricing & Rate Lists",
         "items": [
-          "stock_summary",
-          "item_stock",
-          "batch_tracking",
-          "low_stock",
-          "stock_valuation",
-          "damage_logs"
+          "rate_lists",
+          "price_management"
         ]
       },
       {
-        "title": "Parties & Ledger",
+        "title": "Receivables & Credit",
         "items": [
+          "outstanding",
+          "credit_notes",
           "customers",
-          "suppliers",
-          "party_ledger",
-          "ledger_history",
-          "ledger_abstract",
-          "outstanding"
+          "credit_limit_config"
         ]
       },
       {
-        "title": "Business Intelligence",
+        "title": "Godown / Stock",
         "items": [
-          "analytics_hub",
-          "turnover_analysis",
-          "product_performance",
-          "daily_activity",
-          "procurement_insights",
-          "margin_analysis",
-          "insights",
-          "catalogue"
+          "inventory",
+          "stock_entry",
+          "godowns",
+          "batch_tracking"
+        ]
+      },
+      {
+        "title": "Reports",
+        "items": [
+          "sales_reports"
         ]
       }
     ],
     "routing": {
-      "executive_dashboard": "DashboardController",
-      "live_health": "LiveBusinessHealthScreen",
-      "alerts": "AlertsNotificationsScreen",
-      "daily_snapshot": "DailySnapshotScreen",
-      "revenue_overview": "RevenueOverviewScreen",
       "new_sale": "BillCreationScreenV2",
-      "receipt_entry": "ReceiptEntryScreen",
-      "return_inwards": "ReturnInwardsScreen",
-      "proforma_bids": "ProformaScreen",
-      "booking_orders": "BookingOrderScreen",
       "dispatch_notes": "DispatchNoteScreen",
-      "sales_register": "SalesRegisterScreen",
-      "buyflow_dashboard": "BuyFlowDashboard",
+      "delivery_challans": "VendorRoleGuard",
       "purchase_orders": "BuyOrdersScreen",
-      "stock_entry": "StockEntryScreen",
-      "stock_reversal": "StockReversalScreen",
-      "procurement_log": "ProcurementLogScreen",
-      "supplier_bills": "SupplierBillsScreen",
-      "purchase_register": "ProcurementLogScreen",
-      "stock_summary": "StockSummaryScreen",
-      "item_stock": "InventoryDashboardScreen",
-      "batch_tracking": "BatchTrackingScreen",
-      "low_stock": "LowStockAlertsScreen",
-      "stock_valuation": "StockValuationScreen",
-      "damage_logs": "DamageLogsScreen",
-      "customers": "CustomersListScreen",
-      "suppliers": "PartyLedgerListScreen",
-      "party_ledger": "PartyLedgerListScreen",
-      "ledger_history": "AllTransactionsScreen",
-      "ledger_abstract": "TrialBalanceScreen",
+      "proforma_invoices": "ProformaScreen",
+      "rate_lists": "RateListEditorScreen",
+      "price_management": "RateListEditorScreen",
       "outstanding": "PartyLedgerListScreen",
-      "analytics_hub": "ReportsHubScreen",
-      "turnover_analysis": "AllTransactionsScreen",
-      "product_performance": "ProductPerformanceScreen",
-      "daily_activity": "AllTransactionsScreen",
-      "procurement_insights": "PurchaseReportScreen",
-      "margin_analysis": "BillWiseProfitScreen",
-      "insights": "InsightsScreen",
-      "catalogue": "CatalogueScreen"
+      "credit_notes": "CreditNotesListScreen",
+      "customers": "CustomersListScreen",
+      "credit_limit_config": "CreditLimitConfigScreen",
+      "inventory": "InventoryDashboardScreen",
+      "stock_entry": "StockEntryScreen",
+      "godowns": "GodownManagementScreen",
+      "batch_tracking": "BatchTrackingScreen",
+      "sales_reports": "ReportsHubScreen"
     }
   },
   "petrolPump": {
@@ -828,6 +755,14 @@
           "analytics_hub",
           "product_performance"
         ]
+      },
+      {
+        "title": "WhatsApp",
+        "items": [
+          "wa_connection",
+          "wa_chats",
+          "wa_templates"
+        ]
       }
     ],
     "routing": {
@@ -848,7 +783,10 @@
       "party_ledger": "PartyLedgerListScreen",
       "outstanding": "PartyLedgerListScreen",
       "analytics_hub": "ReportsHubScreen",
-      "product_performance": "ProductPerformanceScreen"
+      "product_performance": "ProductPerformanceScreen",
+      "wa_connection": "WhatsAppConnectionScreen",
+      "wa_chats": "WhatsAppChatScreen",
+      "wa_templates": "WhatsAppTemplatesScreen"
     }
   },
   "vegetablesBroker": {
@@ -969,115 +907,42 @@
   "bookStore": {
     "sections": [
       {
-        "title": "Dashboard & Control",
+        "title": "Book Catalogue",
         "items": [
-          "executive_dashboard",
-          "live_health",
-          "alerts",
-          "daily_snapshot"
+          "book_catalogue"
         ]
       },
       {
-        "title": "Revenue Desk",
+        "title": "Book POS",
         "items": [
-          "revenue_overview",
-          "new_sale",
-          "receipt_entry",
-          "return_inwards",
-          "proforma_bids",
-          "booking_orders",
-          "dispatch_notes",
-          "sales_register"
+          "book_pos"
         ]
       },
       {
-        "title": "BuyFlow",
+        "title": "Consignments",
         "items": [
-          "buyflow_dashboard",
-          "purchase_orders",
-          "stock_entry",
-          "stock_reversal",
-          "procurement_log",
-          "supplier_bills",
-          "purchase_register",
-          "scan_bill"
+          "book_consignments"
         ]
       },
       {
-        "title": "Inventory & Stock",
+        "title": "School / Institution Orders",
         "items": [
-          "stock_summary",
-          "item_stock",
-          "low_stock",
-          "stock_valuation",
-          "damage_logs"
+          "book_school_orders"
         ]
       },
       {
-        "title": "Parties & Ledger",
+        "title": "Publisher Returns",
         "items": [
-          "customers",
-          "suppliers",
-          "party_ledger",
-          "ledger_history",
-          "ledger_abstract",
-          "outstanding"
-        ]
-      },
-      {
-        "title": "Business Intelligence",
-        "items": [
-          "analytics_hub",
-          "turnover_analysis",
-          "product_performance",
-          "daily_activity",
-          "procurement_insights",
-          "margin_analysis",
-          "insights",
-          "catalogue"
+          "book_publisher_returns"
         ]
       }
     ],
     "routing": {
-      "executive_dashboard": "DashboardController",
-      "live_health": "LiveBusinessHealthScreen",
-      "alerts": "AlertsNotificationsScreen",
-      "daily_snapshot": "DailySnapshotScreen",
-      "revenue_overview": "RevenueOverviewScreen",
-      "new_sale": "BillCreationScreenV2",
-      "receipt_entry": "ReceiptEntryScreen",
-      "return_inwards": "ReturnInwardsScreen",
-      "proforma_bids": "ProformaScreen",
-      "booking_orders": "BookingOrderScreen",
-      "dispatch_notes": "DispatchNoteScreen",
-      "sales_register": "SalesRegisterScreen",
-      "buyflow_dashboard": "BuyFlowDashboard",
-      "purchase_orders": "BuyOrdersScreen",
-      "stock_entry": "StockEntryScreen",
-      "stock_reversal": "StockReversalScreen",
-      "procurement_log": "ProcurementLogScreen",
-      "supplier_bills": "SupplierBillsScreen",
-      "purchase_register": "ProcurementLogScreen",
-      "scan_bill": "ScanBillImagePickerScreen",
-      "stock_summary": "StockSummaryScreen",
-      "item_stock": "InventoryDashboardScreen",
-      "low_stock": "LowStockAlertsScreen",
-      "stock_valuation": "StockValuationScreen",
-      "damage_logs": "DamageLogsScreen",
-      "customers": "CustomersListScreen",
-      "suppliers": "PartyLedgerListScreen",
-      "party_ledger": "PartyLedgerListScreen",
-      "ledger_history": "AllTransactionsScreen",
-      "ledger_abstract": "TrialBalanceScreen",
-      "outstanding": "PartyLedgerListScreen",
-      "analytics_hub": "ReportsHubScreen",
-      "turnover_analysis": "AllTransactionsScreen",
-      "product_performance": "ProductPerformanceScreen",
-      "daily_activity": "AllTransactionsScreen",
-      "procurement_insights": "PurchaseReportScreen",
-      "margin_analysis": "BillWiseProfitScreen",
-      "insights": "InsightsScreen",
-      "catalogue": "CatalogueScreen"
+      "book_catalogue": "BookInventoryScreen",
+      "book_pos": "BookPosScreen",
+      "book_consignments": "VendorRoleGuard",
+      "book_school_orders": "VendorRoleGuard",
+      "book_publisher_returns": "BookSupplierReturnsScreen"
     }
   },
   "jewellery": {
@@ -1199,8 +1064,7 @@
           "suppliers",
           "party_ledger",
           "ledger_history",
-          "ledger_abstract",
-          "outstanding"
+          "ledger_abstract"
         ]
       },
       {
@@ -1247,7 +1111,6 @@
       "party_ledger": "PartyLedgerListScreen",
       "ledger_history": "AllTransactionsScreen",
       "ledger_abstract": "TrialBalanceScreen",
-      "outstanding": "PartyLedgerListScreen",
       "analytics_hub": "ReportsHubScreen",
       "turnover_analysis": "AllTransactionsScreen",
       "product_performance": "ProductPerformanceScreen",
@@ -1511,8 +1374,7 @@
           "suppliers",
           "party_ledger",
           "ledger_history",
-          "ledger_abstract",
-          "outstanding"
+          "ledger_abstract"
         ]
       },
       {
@@ -1559,7 +1421,6 @@
       "party_ledger": "PartyLedgerListScreen",
       "ledger_history": "AllTransactionsScreen",
       "ledger_abstract": "TrialBalanceScreen",
-      "outstanding": "PartyLedgerListScreen",
       "analytics_hub": "ReportsHubScreen",
       "turnover_analysis": "AllTransactionsScreen",
       "product_performance": "ProductPerformanceScreen",

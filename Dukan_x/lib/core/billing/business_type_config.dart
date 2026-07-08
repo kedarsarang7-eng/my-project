@@ -421,7 +421,19 @@ class BusinessTypeRegistry {
       itemLabel: 'Item',
       addItemLabel: 'Add Item',
       priceLabel: 'Rate',
-      modules: ['inventory', 'sales', 'returns', 'quotations', 'reports'],
+      modules: [
+        'inventory',
+        'sales',
+        'returns',
+        'quotations',
+        'reports',
+        'purchase',
+        'credit',
+        'delivery_challans',
+        'supplier_management',
+        'projects',
+        'gst',
+      ],
     ),
 
     // =========================================================

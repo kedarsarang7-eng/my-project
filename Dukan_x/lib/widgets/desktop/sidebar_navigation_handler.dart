@@ -87,6 +87,11 @@ import '../../features/backup/screens/backup_screen.dart';
 import '../../features/settings/presentation/screens/error_logs_screen.dart'; // Added
 import '../../features/settings/presentation/screens/device_settings_screen.dart'; // Added
 
+// WhatsApp / OpenWA
+import '../../features/whatsapp/screens/whatsapp_connection_screen.dart';
+import '../../features/whatsapp/screens/whatsapp_chat_screen.dart';
+import '../../features/whatsapp/screens/whatsapp_templates_screen.dart';
+
 // ============================================================
 // HIDDEN FEATURE SCREENS (Made visible per audit)
 // ============================================================
@@ -171,6 +176,8 @@ import '../../features/delivery_challan/presentation/screens/delivery_challan_li
 import '../../features/hardware/presentation/screens/hardware_operations_screen.dart';
 import '../../features/hardware/presentation/screens/hardware_command_center_screen.dart';
 import '../../features/hardware/presentation/screens/hardware_supplier_management_screen.dart';
+import '../../features/hardware/presentation/screens/hardware_grn_screen.dart';
+import '../../features/hardware/presentation/screens/hardware_purchase_bill_screen.dart';
 import '../../features/hardware/presentation/screens/hardware_phase12_workspace_screen.dart';
 import '../../features/hardware/presentation/screens/hardware_credit_control_screen.dart';
 import '../../features/hardware/presentation/screens/hardware_invoice_profile_screen.dart';
@@ -513,6 +520,14 @@ class SidebarNavigationHandler {
       case 'device_settings':
         return const DeviceSettingsScreen();
 
+      // ========== WhatsApp / OpenWA ==========
+      case 'wa_connection':
+        return const WhatsAppConnectionScreen();
+      case 'wa_chats':
+        return const WhatsAppChatScreen();
+      case 'wa_templates':
+        return const WhatsAppTemplatesScreen();
+
       // ========== Petrol Pump ==========
       case 'petrol_dashboard':
         return const PetrolPumpManagementScreen();
@@ -740,6 +755,17 @@ class SidebarNavigationHandler {
         return const VendorRoleGuard(
           requiredPermission: Permissions.systemSettings,
           child: HardwareInvoiceProfileScreen(),
+        );
+      // GRN and Purchase Bills — PO → GRN → Bill pipeline (bugfix.md 2.5, 2.15)
+      case 'hardware_grn':
+        return const VendorRoleGuard(
+          requiredPermission: Permissions.viewReports,
+          child: HardwareGrnScreen(),
+        );
+      case 'hardware_purchase_bills':
+        return const VendorRoleGuard(
+          requiredPermission: Permissions.viewReports,
+          child: HardwarePurchaseBillScreen(),
         );
       // e-Way bill for bulk dispatches > ₹50,000 (bugfix.md 2.14). Hardware
       // path only; additive new id.

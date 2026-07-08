@@ -169,6 +169,12 @@ enum BusinessCapability {
   // General / Shared
   useBatchManagement,
   useStaffManagement,
+
+  // ==============================================================================
+  // WhatsApp / Communication (OpenWA Integration)
+  // ==============================================================================
+  useWhatsApp, // Pro+ — session, messaging, templates, contacts
+  useWhatsAppBulk, // Premium+ — bulk messaging, campaigns
 }
 
 /// Registry that maps Business Types to their allowed Capabilities

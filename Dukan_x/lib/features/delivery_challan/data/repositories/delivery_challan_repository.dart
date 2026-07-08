@@ -176,7 +176,7 @@ class DeliveryChallanRepository {
     );
   }
 
-  /// Queue operations for Firestore sync
+  /// Queue operations for REST/DynamoDB sync via SyncManager
   Future<void> _queueForSync({
     required String userId,
     required SyncOperationType operationType,
@@ -186,7 +186,8 @@ class DeliveryChallanRepository {
     final syncItem = SyncQueueItem.create(
       userId: userId,
       operationType: operationType,
-      targetCollection: 'delivery_challans', // Firestore collection
+      targetCollection:
+          'delivery_challans', // REST/DynamoDB routing key used by SyncTableRegistry
       documentId: documentId,
       payload: payload,
       priority: 1, // High priority

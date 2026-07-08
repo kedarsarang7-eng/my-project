@@ -69,7 +69,7 @@ class _VendorPayoutsScreenState extends ConsumerState<VendorPayoutsScreen> {
           return ListView.separated(
             padding: const EdgeInsets.only(bottom: 24),
             itemCount: vendors.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final vendor = vendors[index];
               return _buildVendorCard(vendor, isDark);
@@ -139,12 +139,15 @@ class _VendorPayoutsScreenState extends ConsumerState<VendorPayoutsScreen> {
               children: [
                 Text(
                   '₹${absBalance.toStringAsFixed(0)}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: responsiveValue<double>(context,
-                    mobile: 14.0,
-                    tablet: 16.0,
-                    desktop: 18.0,  // PRESERVED: Desktop uses exactly 18 as before
-                  ),
+                    fontSize: responsiveValue<double>(
+                      context,
+                      mobile: 14.0,
+                      tablet: 16.0,
+                      desktop: 18.0,
+                    ),
                     fontWeight: FontWeight.bold,
                     color: isPayable ? Colors.redAccent : Colors.green,
                   ),

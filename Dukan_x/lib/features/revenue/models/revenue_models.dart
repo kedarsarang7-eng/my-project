@@ -183,12 +183,23 @@ class ReturnItem {
   final double rate;
   final double amount;
 
+  /// Dimension metadata from the original sale (hardware dimension-billed items).
+  /// Format: "8.0 × 4.0 ft" — stored when the item was sold by area/length.
+  /// Null for non-dimension-billed items.
+  final String? dimensions;
+
+  /// The billing unit of the item (e.g. 'sqft', 'pcs', 'kg').
+  /// Used to determine if this is a dimension-billed return.
+  final String? unit;
+
   ReturnItem({
     required this.itemId,
     required this.itemName,
     required this.quantity,
     required this.rate,
     required this.amount,
+    this.dimensions,
+    this.unit,
   });
 
   factory ReturnItem.fromMap(Map<String, dynamic> map) {
@@ -198,6 +209,8 @@ class ReturnItem {
       quantity: (map['quantity'] ?? 0).toDouble(),
       rate: (map['rate'] ?? 0).toDouble(),
       amount: (map['amount'] ?? 0).toDouble(),
+      dimensions: map['dimensions']?.toString(),
+      unit: map['unit']?.toString(),
     );
   }
 
@@ -208,6 +221,8 @@ class ReturnItem {
       'quantity': quantity,
       'rate': rate,
       'amount': amount,
+      if (dimensions != null) 'dimensions': dimensions,
+      if (unit != null) 'unit': unit,
     };
   }
 }

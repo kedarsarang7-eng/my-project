@@ -2651,6 +2651,32 @@ List<SidebarSection> _getCommonSections({required int startingIndex}) {
     ),
     SidebarSection(
       index: idx++,
+      icon: Icons.chat_rounded,
+      title: 'WhatsApp',
+      accentColor: const Color(0xFF25D366),
+      items: [
+        SidebarMenuItem(
+          id: 'wa_connection',
+          icon: Icons.qr_code_scanner_outlined,
+          label: 'Connection',
+          capability: BusinessCapability.useWhatsApp,
+        ),
+        SidebarMenuItem(
+          id: 'wa_chats',
+          icon: Icons.chat_bubble_outline,
+          label: 'Chats',
+          capability: BusinessCapability.useWhatsApp,
+        ),
+        SidebarMenuItem(
+          id: 'wa_templates',
+          icon: Icons.text_snippet_outlined,
+          label: 'Templates',
+          capability: BusinessCapability.useWhatsApp,
+        ),
+      ],
+    ),
+    SidebarSection(
+      index: idx++,
       icon: Icons.settings_applications_rounded,
       title: 'System',
       accentColor: FuturisticColors.textSecondary,

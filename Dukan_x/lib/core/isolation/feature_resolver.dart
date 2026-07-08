@@ -13,6 +13,12 @@ class FeatureResolver {
   ///   showIMEIField();
   /// }
   static bool canAccess(String businessType, BusinessCapability capability) {
+    // WhatsApp capabilities are universally available to ALL business types.
+    // Access is gated by subscription tier (FeaturePlanMatrix), not by
+    // business-type isolation. This avoids adding useWhatsApp to all 19
+    // registry entries individually.
+    if (_universalCapabilities.contains(capability)) return true;
+
     // Normalize string to match registry keys
     final typeKey = _normalizeType(businessType);
 
@@ -24,6 +30,13 @@ class FeatureResolver {
 
     return capabilities.contains(capability);
   }
+
+  /// Capabilities granted to ALL business types regardless of registry.
+  /// These features are gated by subscription plan, not business isolation.
+  static const Set<BusinessCapability> _universalCapabilities = {
+    BusinessCapability.useWhatsApp,
+    BusinessCapability.useWhatsAppBulk,
+  };
 
   /// Enforce access - Throws SecurityException if access is denied
   ///

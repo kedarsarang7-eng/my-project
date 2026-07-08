@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:dukanx/core/navigation/navigation_controller.dart';
 import '../../../../widgets/desktop/desktop_content_container.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
+import 'hardware_grn_screen.dart';
+import 'hardware_purchase_bill_screen.dart';
 
 class HardwareCommandCenterScreen extends ConsumerWidget {
   const HardwareCommandCenterScreen({super.key});
@@ -70,6 +72,20 @@ class HardwareCommandCenterScreen extends ConsumerWidget {
                     icon: Icons.storefront_outlined,
                     route: '/app/suppliers',
                     navId: 'suppliers',
+                  ),
+                  const _ActionCardData(
+                    title: 'Goods Receipt Notes (GRN)',
+                    subtitle: 'Record goods received against purchase orders',
+                    icon: Icons.inventory_2_outlined,
+                    route: '/hardware/grn',
+                    navId: 'hardware_grn',
+                  ),
+                  const _ActionCardData(
+                    title: 'Purchase Bills',
+                    subtitle: 'Create supplier bills from GRNs',
+                    icon: Icons.receipt_long_outlined,
+                    route: '/hardware/purchase-bills',
+                    navId: 'hardware_purchase_bills',
                   ),
                   const _ActionCardData(
                     title: 'Invoice Formats',
