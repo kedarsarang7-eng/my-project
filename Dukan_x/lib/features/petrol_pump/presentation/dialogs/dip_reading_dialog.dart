@@ -275,7 +275,7 @@ class _DipReadingDialogState extends State<DipReadingDialog> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: \$e'),
+            content: Text('Error: $e'),
             backgroundColor: FuturisticColors.error,
           ),
         );

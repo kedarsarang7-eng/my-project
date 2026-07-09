@@ -104794,6 +104794,633 @@ class DispensersCompanion extends UpdateCompanion<DispenserEntity> {
   }
 }
 
+class $FuelTypesTable extends FuelTypes
+    with TableInfo<$FuelTypesTable, FuelTypeEntity> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FuelTypesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _fuelIdMeta = const VerificationMeta('fuelId');
+  @override
+  late final GeneratedColumn<String> fuelId = GeneratedColumn<String>(
+    'fuel_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fuelNameMeta = const VerificationMeta(
+    'fuelName',
+  );
+  @override
+  late final GeneratedColumn<String> fuelName = GeneratedColumn<String>(
+    'fuel_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currentRatePerLitreMeta =
+      const VerificationMeta('currentRatePerLitre');
+  @override
+  late final GeneratedColumn<double> currentRatePerLitre =
+      GeneratedColumn<double>(
+        'current_rate_per_litre',
+        aliasedName,
+        false,
+        type: DriftSqlType.double,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(0.0),
+      );
+  static const VerificationMeta _rateHistoryJsonMeta = const VerificationMeta(
+    'rateHistoryJson',
+  );
+  @override
+  late final GeneratedColumn<String> rateHistoryJson = GeneratedColumn<String>(
+    'rate_history_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _linkedGSTRateMeta = const VerificationMeta(
+    'linkedGSTRate',
+  );
+  @override
+  late final GeneratedColumn<double> linkedGSTRate = GeneratedColumn<double>(
+    'linked_g_s_t_rate',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0.0),
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _isSyncedMeta = const VerificationMeta(
+    'isSynced',
+  );
+  @override
+  late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
+    'is_synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    fuelId,
+    ownerId,
+    fuelName,
+    currentRatePerLitre,
+    rateHistoryJson,
+    linkedGSTRate,
+    isActive,
+    isSynced,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'fuel_types';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FuelTypeEntity> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('fuel_id')) {
+      context.handle(
+        _fuelIdMeta,
+        fuelId.isAcceptableOrUnknown(data['fuel_id']!, _fuelIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fuelIdMeta);
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
+    if (data.containsKey('fuel_name')) {
+      context.handle(
+        _fuelNameMeta,
+        fuelName.isAcceptableOrUnknown(data['fuel_name']!, _fuelNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fuelNameMeta);
+    }
+    if (data.containsKey('current_rate_per_litre')) {
+      context.handle(
+        _currentRatePerLitreMeta,
+        currentRatePerLitre.isAcceptableOrUnknown(
+          data['current_rate_per_litre']!,
+          _currentRatePerLitreMeta,
+        ),
+      );
+    }
+    if (data.containsKey('rate_history_json')) {
+      context.handle(
+        _rateHistoryJsonMeta,
+        rateHistoryJson.isAcceptableOrUnknown(
+          data['rate_history_json']!,
+          _rateHistoryJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('linked_g_s_t_rate')) {
+      context.handle(
+        _linkedGSTRateMeta,
+        linkedGSTRate.isAcceptableOrUnknown(
+          data['linked_g_s_t_rate']!,
+          _linkedGSTRateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
+    if (data.containsKey('is_synced')) {
+      context.handle(
+        _isSyncedMeta,
+        isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {fuelId};
+  @override
+  FuelTypeEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FuelTypeEntity(
+      fuelId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}fuel_id'],
+      )!,
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
+      fuelName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}fuel_name'],
+      )!,
+      currentRatePerLitre: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}current_rate_per_litre'],
+      )!,
+      rateHistoryJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rate_history_json'],
+      )!,
+      linkedGSTRate: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}linked_g_s_t_rate'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
+      isSynced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_synced'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $FuelTypesTable createAlias(String alias) {
+    return $FuelTypesTable(attachedDatabase, alias);
+  }
+}
+
+class FuelTypeEntity extends DataClass implements Insertable<FuelTypeEntity> {
+  final String fuelId;
+  final String ownerId;
+  final String fuelName;
+  final double currentRatePerLitre;
+  final String rateHistoryJson;
+  final double linkedGSTRate;
+  final bool isActive;
+  final bool isSynced;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const FuelTypeEntity({
+    required this.fuelId,
+    required this.ownerId,
+    required this.fuelName,
+    required this.currentRatePerLitre,
+    required this.rateHistoryJson,
+    required this.linkedGSTRate,
+    required this.isActive,
+    required this.isSynced,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['fuel_id'] = Variable<String>(fuelId);
+    map['owner_id'] = Variable<String>(ownerId);
+    map['fuel_name'] = Variable<String>(fuelName);
+    map['current_rate_per_litre'] = Variable<double>(currentRatePerLitre);
+    map['rate_history_json'] = Variable<String>(rateHistoryJson);
+    map['linked_g_s_t_rate'] = Variable<double>(linkedGSTRate);
+    map['is_active'] = Variable<bool>(isActive);
+    map['is_synced'] = Variable<bool>(isSynced);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  FuelTypesCompanion toCompanion(bool nullToAbsent) {
+    return FuelTypesCompanion(
+      fuelId: Value(fuelId),
+      ownerId: Value(ownerId),
+      fuelName: Value(fuelName),
+      currentRatePerLitre: Value(currentRatePerLitre),
+      rateHistoryJson: Value(rateHistoryJson),
+      linkedGSTRate: Value(linkedGSTRate),
+      isActive: Value(isActive),
+      isSynced: Value(isSynced),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory FuelTypeEntity.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FuelTypeEntity(
+      fuelId: serializer.fromJson<String>(json['fuelId']),
+      ownerId: serializer.fromJson<String>(json['ownerId']),
+      fuelName: serializer.fromJson<String>(json['fuelName']),
+      currentRatePerLitre: serializer.fromJson<double>(
+        json['currentRatePerLitre'],
+      ),
+      rateHistoryJson: serializer.fromJson<String>(json['rateHistoryJson']),
+      linkedGSTRate: serializer.fromJson<double>(json['linkedGSTRate']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
+      isSynced: serializer.fromJson<bool>(json['isSynced']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'fuelId': serializer.toJson<String>(fuelId),
+      'ownerId': serializer.toJson<String>(ownerId),
+      'fuelName': serializer.toJson<String>(fuelName),
+      'currentRatePerLitre': serializer.toJson<double>(currentRatePerLitre),
+      'rateHistoryJson': serializer.toJson<String>(rateHistoryJson),
+      'linkedGSTRate': serializer.toJson<double>(linkedGSTRate),
+      'isActive': serializer.toJson<bool>(isActive),
+      'isSynced': serializer.toJson<bool>(isSynced),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  FuelTypeEntity copyWith({
+    String? fuelId,
+    String? ownerId,
+    String? fuelName,
+    double? currentRatePerLitre,
+    String? rateHistoryJson,
+    double? linkedGSTRate,
+    bool? isActive,
+    bool? isSynced,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => FuelTypeEntity(
+    fuelId: fuelId ?? this.fuelId,
+    ownerId: ownerId ?? this.ownerId,
+    fuelName: fuelName ?? this.fuelName,
+    currentRatePerLitre: currentRatePerLitre ?? this.currentRatePerLitre,
+    rateHistoryJson: rateHistoryJson ?? this.rateHistoryJson,
+    linkedGSTRate: linkedGSTRate ?? this.linkedGSTRate,
+    isActive: isActive ?? this.isActive,
+    isSynced: isSynced ?? this.isSynced,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  FuelTypeEntity copyWithCompanion(FuelTypesCompanion data) {
+    return FuelTypeEntity(
+      fuelId: data.fuelId.present ? data.fuelId.value : this.fuelId,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      fuelName: data.fuelName.present ? data.fuelName.value : this.fuelName,
+      currentRatePerLitre: data.currentRatePerLitre.present
+          ? data.currentRatePerLitre.value
+          : this.currentRatePerLitre,
+      rateHistoryJson: data.rateHistoryJson.present
+          ? data.rateHistoryJson.value
+          : this.rateHistoryJson,
+      linkedGSTRate: data.linkedGSTRate.present
+          ? data.linkedGSTRate.value
+          : this.linkedGSTRate,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FuelTypeEntity(')
+          ..write('fuelId: $fuelId, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('fuelName: $fuelName, ')
+          ..write('currentRatePerLitre: $currentRatePerLitre, ')
+          ..write('rateHistoryJson: $rateHistoryJson, ')
+          ..write('linkedGSTRate: $linkedGSTRate, ')
+          ..write('isActive: $isActive, ')
+          ..write('isSynced: $isSynced, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    fuelId,
+    ownerId,
+    fuelName,
+    currentRatePerLitre,
+    rateHistoryJson,
+    linkedGSTRate,
+    isActive,
+    isSynced,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FuelTypeEntity &&
+          other.fuelId == this.fuelId &&
+          other.ownerId == this.ownerId &&
+          other.fuelName == this.fuelName &&
+          other.currentRatePerLitre == this.currentRatePerLitre &&
+          other.rateHistoryJson == this.rateHistoryJson &&
+          other.linkedGSTRate == this.linkedGSTRate &&
+          other.isActive == this.isActive &&
+          other.isSynced == this.isSynced &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class FuelTypesCompanion extends UpdateCompanion<FuelTypeEntity> {
+  final Value<String> fuelId;
+  final Value<String> ownerId;
+  final Value<String> fuelName;
+  final Value<double> currentRatePerLitre;
+  final Value<String> rateHistoryJson;
+  final Value<double> linkedGSTRate;
+  final Value<bool> isActive;
+  final Value<bool> isSynced;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const FuelTypesCompanion({
+    this.fuelId = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.fuelName = const Value.absent(),
+    this.currentRatePerLitre = const Value.absent(),
+    this.rateHistoryJson = const Value.absent(),
+    this.linkedGSTRate = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.isSynced = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FuelTypesCompanion.insert({
+    required String fuelId,
+    required String ownerId,
+    required String fuelName,
+    this.currentRatePerLitre = const Value.absent(),
+    this.rateHistoryJson = const Value.absent(),
+    this.linkedGSTRate = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.isSynced = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : fuelId = Value(fuelId),
+       ownerId = Value(ownerId),
+       fuelName = Value(fuelName),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<FuelTypeEntity> custom({
+    Expression<String>? fuelId,
+    Expression<String>? ownerId,
+    Expression<String>? fuelName,
+    Expression<double>? currentRatePerLitre,
+    Expression<String>? rateHistoryJson,
+    Expression<double>? linkedGSTRate,
+    Expression<bool>? isActive,
+    Expression<bool>? isSynced,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (fuelId != null) 'fuel_id': fuelId,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (fuelName != null) 'fuel_name': fuelName,
+      if (currentRatePerLitre != null)
+        'current_rate_per_litre': currentRatePerLitre,
+      if (rateHistoryJson != null) 'rate_history_json': rateHistoryJson,
+      if (linkedGSTRate != null) 'linked_g_s_t_rate': linkedGSTRate,
+      if (isActive != null) 'is_active': isActive,
+      if (isSynced != null) 'is_synced': isSynced,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FuelTypesCompanion copyWith({
+    Value<String>? fuelId,
+    Value<String>? ownerId,
+    Value<String>? fuelName,
+    Value<double>? currentRatePerLitre,
+    Value<String>? rateHistoryJson,
+    Value<double>? linkedGSTRate,
+    Value<bool>? isActive,
+    Value<bool>? isSynced,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return FuelTypesCompanion(
+      fuelId: fuelId ?? this.fuelId,
+      ownerId: ownerId ?? this.ownerId,
+      fuelName: fuelName ?? this.fuelName,
+      currentRatePerLitre: currentRatePerLitre ?? this.currentRatePerLitre,
+      rateHistoryJson: rateHistoryJson ?? this.rateHistoryJson,
+      linkedGSTRate: linkedGSTRate ?? this.linkedGSTRate,
+      isActive: isActive ?? this.isActive,
+      isSynced: isSynced ?? this.isSynced,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (fuelId.present) {
+      map['fuel_id'] = Variable<String>(fuelId.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (fuelName.present) {
+      map['fuel_name'] = Variable<String>(fuelName.value);
+    }
+    if (currentRatePerLitre.present) {
+      map['current_rate_per_litre'] = Variable<double>(
+        currentRatePerLitre.value,
+      );
+    }
+    if (rateHistoryJson.present) {
+      map['rate_history_json'] = Variable<String>(rateHistoryJson.value);
+    }
+    if (linkedGSTRate.present) {
+      map['linked_g_s_t_rate'] = Variable<double>(linkedGSTRate.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
+    if (isSynced.present) {
+      map['is_synced'] = Variable<bool>(isSynced.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FuelTypesCompanion(')
+          ..write('fuelId: $fuelId, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('fuelName: $fuelName, ')
+          ..write('currentRatePerLitre: $currentRatePerLitre, ')
+          ..write('rateHistoryJson: $rateHistoryJson, ')
+          ..write('linkedGSTRate: $linkedGSTRate, ')
+          ..write('isActive: $isActive, ')
+          ..write('isSynced: $isSynced, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $StaffNozzleAssignmentsTable extends StaffNozzleAssignments
     with TableInfo<$StaffNozzleAssignmentsTable, StaffNozzleAssignmentEntity> {
   @override
@@ -116326,5435 +116953,6 @@ class EwayRecordsTableCompanion extends UpdateCompanion<EwayRecordEntity> {
   }
 }
 
-class $ComputerJobCardsCacheTable extends ComputerJobCardsCache
-    with TableInfo<$ComputerJobCardsCacheTable, ComputerJobCardCacheEntity> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $ComputerJobCardsCacheTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _tenantIdMeta = const VerificationMeta(
-    'tenantId',
-  );
-  @override
-  late final GeneratedColumn<String> tenantId = GeneratedColumn<String>(
-    'tenant_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
-    'payloadJson',
-  );
-  @override
-  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
-    'payload_json',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [id, tenantId, payloadJson, updatedAt];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'computer_job_cards_cache';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<ComputerJobCardCacheEntity> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('tenant_id')) {
-      context.handle(
-        _tenantIdMeta,
-        tenantId.isAcceptableOrUnknown(data['tenant_id']!, _tenantIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_tenantIdMeta);
-    }
-    if (data.containsKey('payload_json')) {
-      context.handle(
-        _payloadJsonMeta,
-        payloadJson.isAcceptableOrUnknown(
-          data['payload_json']!,
-          _payloadJsonMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_payloadJsonMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  ComputerJobCardCacheEntity map(
-    Map<String, dynamic> data, {
-    String? tablePrefix,
-  }) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ComputerJobCardCacheEntity(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      tenantId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}tenant_id'],
-      )!,
-      payloadJson: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}payload_json'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
-    );
-  }
-
-  @override
-  $ComputerJobCardsCacheTable createAlias(String alias) {
-    return $ComputerJobCardsCacheTable(attachedDatabase, alias);
-  }
-}
-
-class ComputerJobCardCacheEntity extends DataClass
-    implements Insertable<ComputerJobCardCacheEntity> {
-  /// The job card's id (server-assigned), used as the cache key.
-  final String id;
-
-  /// Owning tenant identifier (multi-tenant isolation). NOT nullable — every
-  /// cache row MUST belong to a tenant; reads are filtered by active
-  /// Tenant_Id (= SessionManager.userId).
-  final String tenantId;
-
-  /// Full JSON payload of the job card as returned by the backend, so the
-  /// cache can be replayed through the same `ComputerJobCard.fromJson`
-  /// parsing path used for online reads.
-  final String payloadJson;
-
-  /// When this cache row was last written (used for display/debugging; not
-  /// a TTL — cached data is served as-is while offline).
-  final DateTime updatedAt;
-  const ComputerJobCardCacheEntity({
-    required this.id,
-    required this.tenantId,
-    required this.payloadJson,
-    required this.updatedAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['tenant_id'] = Variable<String>(tenantId);
-    map['payload_json'] = Variable<String>(payloadJson);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
-    return map;
-  }
-
-  ComputerJobCardsCacheCompanion toCompanion(bool nullToAbsent) {
-    return ComputerJobCardsCacheCompanion(
-      id: Value(id),
-      tenantId: Value(tenantId),
-      payloadJson: Value(payloadJson),
-      updatedAt: Value(updatedAt),
-    );
-  }
-
-  factory ComputerJobCardCacheEntity.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ComputerJobCardCacheEntity(
-      id: serializer.fromJson<String>(json['id']),
-      tenantId: serializer.fromJson<String>(json['tenantId']),
-      payloadJson: serializer.fromJson<String>(json['payloadJson']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'tenantId': serializer.toJson<String>(tenantId),
-      'payloadJson': serializer.toJson<String>(payloadJson),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-    };
-  }
-
-  ComputerJobCardCacheEntity copyWith({
-    String? id,
-    String? tenantId,
-    String? payloadJson,
-    DateTime? updatedAt,
-  }) => ComputerJobCardCacheEntity(
-    id: id ?? this.id,
-    tenantId: tenantId ?? this.tenantId,
-    payloadJson: payloadJson ?? this.payloadJson,
-    updatedAt: updatedAt ?? this.updatedAt,
-  );
-  ComputerJobCardCacheEntity copyWithCompanion(
-    ComputerJobCardsCacheCompanion data,
-  ) {
-    return ComputerJobCardCacheEntity(
-      id: data.id.present ? data.id.value : this.id,
-      tenantId: data.tenantId.present ? data.tenantId.value : this.tenantId,
-      payloadJson: data.payloadJson.present
-          ? data.payloadJson.value
-          : this.payloadJson,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ComputerJobCardCacheEntity(')
-          ..write('id: $id, ')
-          ..write('tenantId: $tenantId, ')
-          ..write('payloadJson: $payloadJson, ')
-          ..write('updatedAt: $updatedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, tenantId, payloadJson, updatedAt);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is ComputerJobCardCacheEntity &&
-          other.id == this.id &&
-          other.tenantId == this.tenantId &&
-          other.payloadJson == this.payloadJson &&
-          other.updatedAt == this.updatedAt);
-}
-
-class ComputerJobCardsCacheCompanion
-    extends UpdateCompanion<ComputerJobCardCacheEntity> {
-  final Value<String> id;
-  final Value<String> tenantId;
-  final Value<String> payloadJson;
-  final Value<DateTime> updatedAt;
-  final Value<int> rowid;
-  const ComputerJobCardsCacheCompanion({
-    this.id = const Value.absent(),
-    this.tenantId = const Value.absent(),
-    this.payloadJson = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  ComputerJobCardsCacheCompanion.insert({
-    required String id,
-    required String tenantId,
-    required String payloadJson,
-    required DateTime updatedAt,
-    this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       tenantId = Value(tenantId),
-       payloadJson = Value(payloadJson),
-       updatedAt = Value(updatedAt);
-  static Insertable<ComputerJobCardCacheEntity> custom({
-    Expression<String>? id,
-    Expression<String>? tenantId,
-    Expression<String>? payloadJson,
-    Expression<DateTime>? updatedAt,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (tenantId != null) 'tenant_id': tenantId,
-      if (payloadJson != null) 'payload_json': payloadJson,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  ComputerJobCardsCacheCompanion copyWith({
-    Value<String>? id,
-    Value<String>? tenantId,
-    Value<String>? payloadJson,
-    Value<DateTime>? updatedAt,
-    Value<int>? rowid,
-  }) {
-    return ComputerJobCardsCacheCompanion(
-      id: id ?? this.id,
-      tenantId: tenantId ?? this.tenantId,
-      payloadJson: payloadJson ?? this.payloadJson,
-      updatedAt: updatedAt ?? this.updatedAt,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (tenantId.present) {
-      map['tenant_id'] = Variable<String>(tenantId.value);
-    }
-    if (payloadJson.present) {
-      map['payload_json'] = Variable<String>(payloadJson.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ComputerJobCardsCacheCompanion(')
-          ..write('id: $id, ')
-          ..write('tenantId: $tenantId, ')
-          ..write('payloadJson: $payloadJson, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $ComputerWarrantyCacheTable extends ComputerWarrantyCache
-    with TableInfo<$ComputerWarrantyCacheTable, ComputerWarrantyCacheEntity> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $ComputerWarrantyCacheTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _tenantIdMeta = const VerificationMeta(
-    'tenantId',
-  );
-  @override
-  late final GeneratedColumn<String> tenantId = GeneratedColumn<String>(
-    'tenant_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _serialNumberMeta = const VerificationMeta(
-    'serialNumber',
-  );
-  @override
-  late final GeneratedColumn<String> serialNumber = GeneratedColumn<String>(
-    'serial_number',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
-    'payloadJson',
-  );
-  @override
-  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
-    'payload_json',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _warrantyExpiryDateMeta =
-      const VerificationMeta('warrantyExpiryDate');
-  @override
-  late final GeneratedColumn<DateTime> warrantyExpiryDate =
-      GeneratedColumn<DateTime>(
-        'warranty_expiry_date',
-        aliasedName,
-        true,
-        type: DriftSqlType.dateTime,
-        requiredDuringInsert: false,
-      );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    tenantId,
-    serialNumber,
-    payloadJson,
-    warrantyExpiryDate,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'computer_warranty_cache';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<ComputerWarrantyCacheEntity> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('tenant_id')) {
-      context.handle(
-        _tenantIdMeta,
-        tenantId.isAcceptableOrUnknown(data['tenant_id']!, _tenantIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_tenantIdMeta);
-    }
-    if (data.containsKey('serial_number')) {
-      context.handle(
-        _serialNumberMeta,
-        serialNumber.isAcceptableOrUnknown(
-          data['serial_number']!,
-          _serialNumberMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_serialNumberMeta);
-    }
-    if (data.containsKey('payload_json')) {
-      context.handle(
-        _payloadJsonMeta,
-        payloadJson.isAcceptableOrUnknown(
-          data['payload_json']!,
-          _payloadJsonMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_payloadJsonMeta);
-    }
-    if (data.containsKey('warranty_expiry_date')) {
-      context.handle(
-        _warrantyExpiryDateMeta,
-        warrantyExpiryDate.isAcceptableOrUnknown(
-          data['warranty_expiry_date']!,
-          _warrantyExpiryDateMeta,
-        ),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  ComputerWarrantyCacheEntity map(
-    Map<String, dynamic> data, {
-    String? tablePrefix,
-  }) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ComputerWarrantyCacheEntity(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      tenantId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}tenant_id'],
-      )!,
-      serialNumber: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}serial_number'],
-      )!,
-      payloadJson: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}payload_json'],
-      )!,
-      warrantyExpiryDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}warranty_expiry_date'],
-      ),
-    );
-  }
-
-  @override
-  $ComputerWarrantyCacheTable createAlias(String alias) {
-    return $ComputerWarrantyCacheTable(attachedDatabase, alias);
-  }
-}
-
-class ComputerWarrantyCacheEntity extends DataClass
-    implements Insertable<ComputerWarrantyCacheEntity> {
-  /// Warranty id (server-assigned) — primary cache key.
-  final String id;
-
-  /// Owning tenant identifier (multi-tenant isolation).
-  final String tenantId;
-
-  /// Serial number the warranty is registered against; used to look up a
-  /// warranty by serial while offline (mirrors [ComputerRepository.getWarranty]).
-  final String serialNumber;
-
-  /// Full JSON payload of the warranty as returned by the backend.
-  final String payloadJson;
-
-  /// Warranty expiry date, denormalized from the payload for fast lookups
-  /// (e.g. AMC/expiring-soon indicators while offline).
-  final DateTime? warrantyExpiryDate;
-  const ComputerWarrantyCacheEntity({
-    required this.id,
-    required this.tenantId,
-    required this.serialNumber,
-    required this.payloadJson,
-    this.warrantyExpiryDate,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['tenant_id'] = Variable<String>(tenantId);
-    map['serial_number'] = Variable<String>(serialNumber);
-    map['payload_json'] = Variable<String>(payloadJson);
-    if (!nullToAbsent || warrantyExpiryDate != null) {
-      map['warranty_expiry_date'] = Variable<DateTime>(warrantyExpiryDate);
-    }
-    return map;
-  }
-
-  ComputerWarrantyCacheCompanion toCompanion(bool nullToAbsent) {
-    return ComputerWarrantyCacheCompanion(
-      id: Value(id),
-      tenantId: Value(tenantId),
-      serialNumber: Value(serialNumber),
-      payloadJson: Value(payloadJson),
-      warrantyExpiryDate: warrantyExpiryDate == null && nullToAbsent
-          ? const Value.absent()
-          : Value(warrantyExpiryDate),
-    );
-  }
-
-  factory ComputerWarrantyCacheEntity.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ComputerWarrantyCacheEntity(
-      id: serializer.fromJson<String>(json['id']),
-      tenantId: serializer.fromJson<String>(json['tenantId']),
-      serialNumber: serializer.fromJson<String>(json['serialNumber']),
-      payloadJson: serializer.fromJson<String>(json['payloadJson']),
-      warrantyExpiryDate: serializer.fromJson<DateTime?>(
-        json['warrantyExpiryDate'],
-      ),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'tenantId': serializer.toJson<String>(tenantId),
-      'serialNumber': serializer.toJson<String>(serialNumber),
-      'payloadJson': serializer.toJson<String>(payloadJson),
-      'warrantyExpiryDate': serializer.toJson<DateTime?>(warrantyExpiryDate),
-    };
-  }
-
-  ComputerWarrantyCacheEntity copyWith({
-    String? id,
-    String? tenantId,
-    String? serialNumber,
-    String? payloadJson,
-    Value<DateTime?> warrantyExpiryDate = const Value.absent(),
-  }) => ComputerWarrantyCacheEntity(
-    id: id ?? this.id,
-    tenantId: tenantId ?? this.tenantId,
-    serialNumber: serialNumber ?? this.serialNumber,
-    payloadJson: payloadJson ?? this.payloadJson,
-    warrantyExpiryDate: warrantyExpiryDate.present
-        ? warrantyExpiryDate.value
-        : this.warrantyExpiryDate,
-  );
-  ComputerWarrantyCacheEntity copyWithCompanion(
-    ComputerWarrantyCacheCompanion data,
-  ) {
-    return ComputerWarrantyCacheEntity(
-      id: data.id.present ? data.id.value : this.id,
-      tenantId: data.tenantId.present ? data.tenantId.value : this.tenantId,
-      serialNumber: data.serialNumber.present
-          ? data.serialNumber.value
-          : this.serialNumber,
-      payloadJson: data.payloadJson.present
-          ? data.payloadJson.value
-          : this.payloadJson,
-      warrantyExpiryDate: data.warrantyExpiryDate.present
-          ? data.warrantyExpiryDate.value
-          : this.warrantyExpiryDate,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ComputerWarrantyCacheEntity(')
-          ..write('id: $id, ')
-          ..write('tenantId: $tenantId, ')
-          ..write('serialNumber: $serialNumber, ')
-          ..write('payloadJson: $payloadJson, ')
-          ..write('warrantyExpiryDate: $warrantyExpiryDate')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(id, tenantId, serialNumber, payloadJson, warrantyExpiryDate);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is ComputerWarrantyCacheEntity &&
-          other.id == this.id &&
-          other.tenantId == this.tenantId &&
-          other.serialNumber == this.serialNumber &&
-          other.payloadJson == this.payloadJson &&
-          other.warrantyExpiryDate == this.warrantyExpiryDate);
-}
-
-class ComputerWarrantyCacheCompanion
-    extends UpdateCompanion<ComputerWarrantyCacheEntity> {
-  final Value<String> id;
-  final Value<String> tenantId;
-  final Value<String> serialNumber;
-  final Value<String> payloadJson;
-  final Value<DateTime?> warrantyExpiryDate;
-  final Value<int> rowid;
-  const ComputerWarrantyCacheCompanion({
-    this.id = const Value.absent(),
-    this.tenantId = const Value.absent(),
-    this.serialNumber = const Value.absent(),
-    this.payloadJson = const Value.absent(),
-    this.warrantyExpiryDate = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  ComputerWarrantyCacheCompanion.insert({
-    required String id,
-    required String tenantId,
-    required String serialNumber,
-    required String payloadJson,
-    this.warrantyExpiryDate = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       tenantId = Value(tenantId),
-       serialNumber = Value(serialNumber),
-       payloadJson = Value(payloadJson);
-  static Insertable<ComputerWarrantyCacheEntity> custom({
-    Expression<String>? id,
-    Expression<String>? tenantId,
-    Expression<String>? serialNumber,
-    Expression<String>? payloadJson,
-    Expression<DateTime>? warrantyExpiryDate,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (tenantId != null) 'tenant_id': tenantId,
-      if (serialNumber != null) 'serial_number': serialNumber,
-      if (payloadJson != null) 'payload_json': payloadJson,
-      if (warrantyExpiryDate != null)
-        'warranty_expiry_date': warrantyExpiryDate,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  ComputerWarrantyCacheCompanion copyWith({
-    Value<String>? id,
-    Value<String>? tenantId,
-    Value<String>? serialNumber,
-    Value<String>? payloadJson,
-    Value<DateTime?>? warrantyExpiryDate,
-    Value<int>? rowid,
-  }) {
-    return ComputerWarrantyCacheCompanion(
-      id: id ?? this.id,
-      tenantId: tenantId ?? this.tenantId,
-      serialNumber: serialNumber ?? this.serialNumber,
-      payloadJson: payloadJson ?? this.payloadJson,
-      warrantyExpiryDate: warrantyExpiryDate ?? this.warrantyExpiryDate,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (tenantId.present) {
-      map['tenant_id'] = Variable<String>(tenantId.value);
-    }
-    if (serialNumber.present) {
-      map['serial_number'] = Variable<String>(serialNumber.value);
-    }
-    if (payloadJson.present) {
-      map['payload_json'] = Variable<String>(payloadJson.value);
-    }
-    if (warrantyExpiryDate.present) {
-      map['warranty_expiry_date'] = Variable<DateTime>(
-        warrantyExpiryDate.value,
-      );
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ComputerWarrantyCacheCompanion(')
-          ..write('id: $id, ')
-          ..write('tenantId: $tenantId, ')
-          ..write('serialNumber: $serialNumber, ')
-          ..write('payloadJson: $payloadJson, ')
-          ..write('warrantyExpiryDate: $warrantyExpiryDate, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $ComputerSerialsCacheTable extends ComputerSerialsCache
-    with TableInfo<$ComputerSerialsCacheTable, ComputerSerialCacheEntity> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $ComputerSerialsCacheTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _serialNumberMeta = const VerificationMeta(
-    'serialNumber',
-  );
-  @override
-  late final GeneratedColumn<String> serialNumber = GeneratedColumn<String>(
-    'serial_number',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _tenantIdMeta = const VerificationMeta(
-    'tenantId',
-  );
-  @override
-  late final GeneratedColumn<String> tenantId = GeneratedColumn<String>(
-    'tenant_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
-    'payloadJson',
-  );
-  @override
-  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
-    'payload_json',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [serialNumber, tenantId, payloadJson];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'computer_serials_cache';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<ComputerSerialCacheEntity> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('serial_number')) {
-      context.handle(
-        _serialNumberMeta,
-        serialNumber.isAcceptableOrUnknown(
-          data['serial_number']!,
-          _serialNumberMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_serialNumberMeta);
-    }
-    if (data.containsKey('tenant_id')) {
-      context.handle(
-        _tenantIdMeta,
-        tenantId.isAcceptableOrUnknown(data['tenant_id']!, _tenantIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_tenantIdMeta);
-    }
-    if (data.containsKey('payload_json')) {
-      context.handle(
-        _payloadJsonMeta,
-        payloadJson.isAcceptableOrUnknown(
-          data['payload_json']!,
-          _payloadJsonMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_payloadJsonMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {serialNumber};
-  @override
-  ComputerSerialCacheEntity map(
-    Map<String, dynamic> data, {
-    String? tablePrefix,
-  }) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ComputerSerialCacheEntity(
-      serialNumber: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}serial_number'],
-      )!,
-      tenantId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}tenant_id'],
-      )!,
-      payloadJson: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}payload_json'],
-      )!,
-    );
-  }
-
-  @override
-  $ComputerSerialsCacheTable createAlias(String alias) {
-    return $ComputerSerialsCacheTable(attachedDatabase, alias);
-  }
-}
-
-class ComputerSerialCacheEntity extends DataClass
-    implements Insertable<ComputerSerialCacheEntity> {
-  /// Serial number — primary cache key.
-  final String serialNumber;
-
-  /// Owning tenant identifier (multi-tenant isolation).
-  final String tenantId;
-
-  /// Full JSON payload of the serial record as returned by the backend.
-  final String payloadJson;
-  const ComputerSerialCacheEntity({
-    required this.serialNumber,
-    required this.tenantId,
-    required this.payloadJson,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['serial_number'] = Variable<String>(serialNumber);
-    map['tenant_id'] = Variable<String>(tenantId);
-    map['payload_json'] = Variable<String>(payloadJson);
-    return map;
-  }
-
-  ComputerSerialsCacheCompanion toCompanion(bool nullToAbsent) {
-    return ComputerSerialsCacheCompanion(
-      serialNumber: Value(serialNumber),
-      tenantId: Value(tenantId),
-      payloadJson: Value(payloadJson),
-    );
-  }
-
-  factory ComputerSerialCacheEntity.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ComputerSerialCacheEntity(
-      serialNumber: serializer.fromJson<String>(json['serialNumber']),
-      tenantId: serializer.fromJson<String>(json['tenantId']),
-      payloadJson: serializer.fromJson<String>(json['payloadJson']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'serialNumber': serializer.toJson<String>(serialNumber),
-      'tenantId': serializer.toJson<String>(tenantId),
-      'payloadJson': serializer.toJson<String>(payloadJson),
-    };
-  }
-
-  ComputerSerialCacheEntity copyWith({
-    String? serialNumber,
-    String? tenantId,
-    String? payloadJson,
-  }) => ComputerSerialCacheEntity(
-    serialNumber: serialNumber ?? this.serialNumber,
-    tenantId: tenantId ?? this.tenantId,
-    payloadJson: payloadJson ?? this.payloadJson,
-  );
-  ComputerSerialCacheEntity copyWithCompanion(
-    ComputerSerialsCacheCompanion data,
-  ) {
-    return ComputerSerialCacheEntity(
-      serialNumber: data.serialNumber.present
-          ? data.serialNumber.value
-          : this.serialNumber,
-      tenantId: data.tenantId.present ? data.tenantId.value : this.tenantId,
-      payloadJson: data.payloadJson.present
-          ? data.payloadJson.value
-          : this.payloadJson,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ComputerSerialCacheEntity(')
-          ..write('serialNumber: $serialNumber, ')
-          ..write('tenantId: $tenantId, ')
-          ..write('payloadJson: $payloadJson')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(serialNumber, tenantId, payloadJson);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is ComputerSerialCacheEntity &&
-          other.serialNumber == this.serialNumber &&
-          other.tenantId == this.tenantId &&
-          other.payloadJson == this.payloadJson);
-}
-
-class ComputerSerialsCacheCompanion
-    extends UpdateCompanion<ComputerSerialCacheEntity> {
-  final Value<String> serialNumber;
-  final Value<String> tenantId;
-  final Value<String> payloadJson;
-  final Value<int> rowid;
-  const ComputerSerialsCacheCompanion({
-    this.serialNumber = const Value.absent(),
-    this.tenantId = const Value.absent(),
-    this.payloadJson = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  ComputerSerialsCacheCompanion.insert({
-    required String serialNumber,
-    required String tenantId,
-    required String payloadJson,
-    this.rowid = const Value.absent(),
-  }) : serialNumber = Value(serialNumber),
-       tenantId = Value(tenantId),
-       payloadJson = Value(payloadJson);
-  static Insertable<ComputerSerialCacheEntity> custom({
-    Expression<String>? serialNumber,
-    Expression<String>? tenantId,
-    Expression<String>? payloadJson,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (serialNumber != null) 'serial_number': serialNumber,
-      if (tenantId != null) 'tenant_id': tenantId,
-      if (payloadJson != null) 'payload_json': payloadJson,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  ComputerSerialsCacheCompanion copyWith({
-    Value<String>? serialNumber,
-    Value<String>? tenantId,
-    Value<String>? payloadJson,
-    Value<int>? rowid,
-  }) {
-    return ComputerSerialsCacheCompanion(
-      serialNumber: serialNumber ?? this.serialNumber,
-      tenantId: tenantId ?? this.tenantId,
-      payloadJson: payloadJson ?? this.payloadJson,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (serialNumber.present) {
-      map['serial_number'] = Variable<String>(serialNumber.value);
-    }
-    if (tenantId.present) {
-      map['tenant_id'] = Variable<String>(tenantId.value);
-    }
-    if (payloadJson.present) {
-      map['payload_json'] = Variable<String>(payloadJson.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ComputerSerialsCacheCompanion(')
-          ..write('serialNumber: $serialNumber, ')
-          ..write('tenantId: $tenantId, ')
-          ..write('payloadJson: $payloadJson, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $HardwareProjectsTable extends HardwareProjects
-    with TableInfo<$HardwareProjectsTable, HardwareProjectEntity> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $HardwareProjectsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  @override
-  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
-    'user_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _projectNameMeta = const VerificationMeta(
-    'projectName',
-  );
-  @override
-  late final GeneratedColumn<String> projectName = GeneratedColumn<String>(
-    'project_name',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _contractorNameMeta = const VerificationMeta(
-    'contractorName',
-  );
-  @override
-  late final GeneratedColumn<String> contractorName = GeneratedColumn<String>(
-    'contractor_name',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _siteAddressMeta = const VerificationMeta(
-    'siteAddress',
-  );
-  @override
-  late final GeneratedColumn<String> siteAddress = GeneratedColumn<String>(
-    'site_address',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
-  @override
-  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
-    'notes',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
-  @override
-  late final GeneratedColumn<String> status = GeneratedColumn<String>(
-    'status',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('active'),
-  );
-  static const VerificationMeta _isSyncedMeta = const VerificationMeta(
-    'isSynced',
-  );
-  @override
-  late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
-    'is_synced',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_synced" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
-    'deletedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
-    'deleted_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    userId,
-    projectName,
-    contractorName,
-    siteAddress,
-    notes,
-    status,
-    isSynced,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'hardware_projects';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<HardwareProjectEntity> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('user_id')) {
-      context.handle(
-        _userIdMeta,
-        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_userIdMeta);
-    }
-    if (data.containsKey('project_name')) {
-      context.handle(
-        _projectNameMeta,
-        projectName.isAcceptableOrUnknown(
-          data['project_name']!,
-          _projectNameMeta,
-        ),
-      );
-    }
-    if (data.containsKey('contractor_name')) {
-      context.handle(
-        _contractorNameMeta,
-        contractorName.isAcceptableOrUnknown(
-          data['contractor_name']!,
-          _contractorNameMeta,
-        ),
-      );
-    }
-    if (data.containsKey('site_address')) {
-      context.handle(
-        _siteAddressMeta,
-        siteAddress.isAcceptableOrUnknown(
-          data['site_address']!,
-          _siteAddressMeta,
-        ),
-      );
-    }
-    if (data.containsKey('notes')) {
-      context.handle(
-        _notesMeta,
-        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
-      );
-    }
-    if (data.containsKey('status')) {
-      context.handle(
-        _statusMeta,
-        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
-      );
-    }
-    if (data.containsKey('is_synced')) {
-      context.handle(
-        _isSyncedMeta,
-        isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
-      );
-    }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_createdAtMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    if (data.containsKey('deleted_at')) {
-      context.handle(
-        _deletedAtMeta,
-        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  HardwareProjectEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return HardwareProjectEntity(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      userId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}user_id'],
-      )!,
-      projectName: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}project_name'],
-      ),
-      contractorName: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}contractor_name'],
-      ),
-      siteAddress: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}site_address'],
-      ),
-      notes: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}notes'],
-      ),
-      status: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}status'],
-      )!,
-      isSynced: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_synced'],
-      )!,
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
-      deletedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}deleted_at'],
-      ),
-    );
-  }
-
-  @override
-  $HardwareProjectsTable createAlias(String alias) {
-    return $HardwareProjectsTable(attachedDatabase, alias);
-  }
-}
-
-class HardwareProjectEntity extends DataClass
-    implements Insertable<HardwareProjectEntity> {
-  final String id;
-  final String userId;
-  final String? projectName;
-  final String? contractorName;
-  final String? siteAddress;
-  final String? notes;
-  final String status;
-  final bool isSynced;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final DateTime? deletedAt;
-  const HardwareProjectEntity({
-    required this.id,
-    required this.userId,
-    this.projectName,
-    this.contractorName,
-    this.siteAddress,
-    this.notes,
-    required this.status,
-    required this.isSynced,
-    required this.createdAt,
-    required this.updatedAt,
-    this.deletedAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['user_id'] = Variable<String>(userId);
-    if (!nullToAbsent || projectName != null) {
-      map['project_name'] = Variable<String>(projectName);
-    }
-    if (!nullToAbsent || contractorName != null) {
-      map['contractor_name'] = Variable<String>(contractorName);
-    }
-    if (!nullToAbsent || siteAddress != null) {
-      map['site_address'] = Variable<String>(siteAddress);
-    }
-    if (!nullToAbsent || notes != null) {
-      map['notes'] = Variable<String>(notes);
-    }
-    map['status'] = Variable<String>(status);
-    map['is_synced'] = Variable<bool>(isSynced);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
-    if (!nullToAbsent || deletedAt != null) {
-      map['deleted_at'] = Variable<DateTime>(deletedAt);
-    }
-    return map;
-  }
-
-  HardwareProjectsCompanion toCompanion(bool nullToAbsent) {
-    return HardwareProjectsCompanion(
-      id: Value(id),
-      userId: Value(userId),
-      projectName: projectName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(projectName),
-      contractorName: contractorName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(contractorName),
-      siteAddress: siteAddress == null && nullToAbsent
-          ? const Value.absent()
-          : Value(siteAddress),
-      notes: notes == null && nullToAbsent
-          ? const Value.absent()
-          : Value(notes),
-      status: Value(status),
-      isSynced: Value(isSynced),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
-    );
-  }
-
-  factory HardwareProjectEntity.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return HardwareProjectEntity(
-      id: serializer.fromJson<String>(json['id']),
-      userId: serializer.fromJson<String>(json['userId']),
-      projectName: serializer.fromJson<String?>(json['projectName']),
-      contractorName: serializer.fromJson<String?>(json['contractorName']),
-      siteAddress: serializer.fromJson<String?>(json['siteAddress']),
-      notes: serializer.fromJson<String?>(json['notes']),
-      status: serializer.fromJson<String>(json['status']),
-      isSynced: serializer.fromJson<bool>(json['isSynced']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'userId': serializer.toJson<String>(userId),
-      'projectName': serializer.toJson<String?>(projectName),
-      'contractorName': serializer.toJson<String?>(contractorName),
-      'siteAddress': serializer.toJson<String?>(siteAddress),
-      'notes': serializer.toJson<String?>(notes),
-      'status': serializer.toJson<String>(status),
-      'isSynced': serializer.toJson<bool>(isSynced),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
-    };
-  }
-
-  HardwareProjectEntity copyWith({
-    String? id,
-    String? userId,
-    Value<String?> projectName = const Value.absent(),
-    Value<String?> contractorName = const Value.absent(),
-    Value<String?> siteAddress = const Value.absent(),
-    Value<String?> notes = const Value.absent(),
-    String? status,
-    bool? isSynced,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    Value<DateTime?> deletedAt = const Value.absent(),
-  }) => HardwareProjectEntity(
-    id: id ?? this.id,
-    userId: userId ?? this.userId,
-    projectName: projectName.present ? projectName.value : this.projectName,
-    contractorName: contractorName.present
-        ? contractorName.value
-        : this.contractorName,
-    siteAddress: siteAddress.present ? siteAddress.value : this.siteAddress,
-    notes: notes.present ? notes.value : this.notes,
-    status: status ?? this.status,
-    isSynced: isSynced ?? this.isSynced,
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt ?? this.updatedAt,
-    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-  );
-  HardwareProjectEntity copyWithCompanion(HardwareProjectsCompanion data) {
-    return HardwareProjectEntity(
-      id: data.id.present ? data.id.value : this.id,
-      userId: data.userId.present ? data.userId.value : this.userId,
-      projectName: data.projectName.present
-          ? data.projectName.value
-          : this.projectName,
-      contractorName: data.contractorName.present
-          ? data.contractorName.value
-          : this.contractorName,
-      siteAddress: data.siteAddress.present
-          ? data.siteAddress.value
-          : this.siteAddress,
-      notes: data.notes.present ? data.notes.value : this.notes,
-      status: data.status.present ? data.status.value : this.status,
-      isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HardwareProjectEntity(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('projectName: $projectName, ')
-          ..write('contractorName: $contractorName, ')
-          ..write('siteAddress: $siteAddress, ')
-          ..write('notes: $notes, ')
-          ..write('status: $status, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    userId,
-    projectName,
-    contractorName,
-    siteAddress,
-    notes,
-    status,
-    isSynced,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is HardwareProjectEntity &&
-          other.id == this.id &&
-          other.userId == this.userId &&
-          other.projectName == this.projectName &&
-          other.contractorName == this.contractorName &&
-          other.siteAddress == this.siteAddress &&
-          other.notes == this.notes &&
-          other.status == this.status &&
-          other.isSynced == this.isSynced &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt &&
-          other.deletedAt == this.deletedAt);
-}
-
-class HardwareProjectsCompanion extends UpdateCompanion<HardwareProjectEntity> {
-  final Value<String> id;
-  final Value<String> userId;
-  final Value<String?> projectName;
-  final Value<String?> contractorName;
-  final Value<String?> siteAddress;
-  final Value<String?> notes;
-  final Value<String> status;
-  final Value<bool> isSynced;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
-  final Value<DateTime?> deletedAt;
-  final Value<int> rowid;
-  const HardwareProjectsCompanion({
-    this.id = const Value.absent(),
-    this.userId = const Value.absent(),
-    this.projectName = const Value.absent(),
-    this.contractorName = const Value.absent(),
-    this.siteAddress = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.status = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  HardwareProjectsCompanion.insert({
-    required String id,
-    required String userId,
-    this.projectName = const Value.absent(),
-    this.contractorName = const Value.absent(),
-    this.siteAddress = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.status = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       userId = Value(userId),
-       createdAt = Value(createdAt),
-       updatedAt = Value(updatedAt);
-  static Insertable<HardwareProjectEntity> custom({
-    Expression<String>? id,
-    Expression<String>? userId,
-    Expression<String>? projectName,
-    Expression<String>? contractorName,
-    Expression<String>? siteAddress,
-    Expression<String>? notes,
-    Expression<String>? status,
-    Expression<bool>? isSynced,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
-    Expression<DateTime>? deletedAt,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (userId != null) 'user_id': userId,
-      if (projectName != null) 'project_name': projectName,
-      if (contractorName != null) 'contractor_name': contractorName,
-      if (siteAddress != null) 'site_address': siteAddress,
-      if (notes != null) 'notes': notes,
-      if (status != null) 'status': status,
-      if (isSynced != null) 'is_synced': isSynced,
-      if (createdAt != null) 'created_at': createdAt,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (deletedAt != null) 'deleted_at': deletedAt,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  HardwareProjectsCompanion copyWith({
-    Value<String>? id,
-    Value<String>? userId,
-    Value<String?>? projectName,
-    Value<String?>? contractorName,
-    Value<String?>? siteAddress,
-    Value<String?>? notes,
-    Value<String>? status,
-    Value<bool>? isSynced,
-    Value<DateTime>? createdAt,
-    Value<DateTime>? updatedAt,
-    Value<DateTime?>? deletedAt,
-    Value<int>? rowid,
-  }) {
-    return HardwareProjectsCompanion(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      projectName: projectName ?? this.projectName,
-      contractorName: contractorName ?? this.contractorName,
-      siteAddress: siteAddress ?? this.siteAddress,
-      notes: notes ?? this.notes,
-      status: status ?? this.status,
-      isSynced: isSynced ?? this.isSynced,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      deletedAt: deletedAt ?? this.deletedAt,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (userId.present) {
-      map['user_id'] = Variable<String>(userId.value);
-    }
-    if (projectName.present) {
-      map['project_name'] = Variable<String>(projectName.value);
-    }
-    if (contractorName.present) {
-      map['contractor_name'] = Variable<String>(contractorName.value);
-    }
-    if (siteAddress.present) {
-      map['site_address'] = Variable<String>(siteAddress.value);
-    }
-    if (notes.present) {
-      map['notes'] = Variable<String>(notes.value);
-    }
-    if (status.present) {
-      map['status'] = Variable<String>(status.value);
-    }
-    if (isSynced.present) {
-      map['is_synced'] = Variable<bool>(isSynced.value);
-    }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
-    if (deletedAt.present) {
-      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HardwareProjectsCompanion(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('projectName: $projectName, ')
-          ..write('contractorName: $contractorName, ')
-          ..write('siteAddress: $siteAddress, ')
-          ..write('notes: $notes, ')
-          ..write('status: $status, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $HardwareSiteIndentsTable extends HardwareSiteIndents
-    with TableInfo<$HardwareSiteIndentsTable, HardwareSiteIndentEntity> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $HardwareSiteIndentsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  @override
-  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
-    'user_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _projectIdMeta = const VerificationMeta(
-    'projectId',
-  );
-  @override
-  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
-    'project_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _requestedByMeta = const VerificationMeta(
-    'requestedBy',
-  );
-  @override
-  late final GeneratedColumn<String> requestedBy = GeneratedColumn<String>(
-    'requested_by',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _priorityMeta = const VerificationMeta(
-    'priority',
-  );
-  @override
-  late final GeneratedColumn<String> priority = GeneratedColumn<String>(
-    'priority',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('normal'),
-  );
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
-  @override
-  late final GeneratedColumn<String> status = GeneratedColumn<String>(
-    'status',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('open'),
-  );
-  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
-  @override
-  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
-    'notes',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _itemsJsonMeta = const VerificationMeta(
-    'itemsJson',
-  );
-  @override
-  late final GeneratedColumn<String> itemsJson = GeneratedColumn<String>(
-    'items_json',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('[]'),
-  );
-  static const VerificationMeta _isSyncedMeta = const VerificationMeta(
-    'isSynced',
-  );
-  @override
-  late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
-    'is_synced',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_synced" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
-    'deletedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
-    'deleted_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    userId,
-    projectId,
-    requestedBy,
-    priority,
-    status,
-    notes,
-    itemsJson,
-    isSynced,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'hardware_site_indents';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<HardwareSiteIndentEntity> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('user_id')) {
-      context.handle(
-        _userIdMeta,
-        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_userIdMeta);
-    }
-    if (data.containsKey('project_id')) {
-      context.handle(
-        _projectIdMeta,
-        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
-      );
-    }
-    if (data.containsKey('requested_by')) {
-      context.handle(
-        _requestedByMeta,
-        requestedBy.isAcceptableOrUnknown(
-          data['requested_by']!,
-          _requestedByMeta,
-        ),
-      );
-    }
-    if (data.containsKey('priority')) {
-      context.handle(
-        _priorityMeta,
-        priority.isAcceptableOrUnknown(data['priority']!, _priorityMeta),
-      );
-    }
-    if (data.containsKey('status')) {
-      context.handle(
-        _statusMeta,
-        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
-      );
-    }
-    if (data.containsKey('notes')) {
-      context.handle(
-        _notesMeta,
-        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
-      );
-    }
-    if (data.containsKey('items_json')) {
-      context.handle(
-        _itemsJsonMeta,
-        itemsJson.isAcceptableOrUnknown(data['items_json']!, _itemsJsonMeta),
-      );
-    }
-    if (data.containsKey('is_synced')) {
-      context.handle(
-        _isSyncedMeta,
-        isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
-      );
-    }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_createdAtMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    if (data.containsKey('deleted_at')) {
-      context.handle(
-        _deletedAtMeta,
-        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  HardwareSiteIndentEntity map(
-    Map<String, dynamic> data, {
-    String? tablePrefix,
-  }) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return HardwareSiteIndentEntity(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      userId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}user_id'],
-      )!,
-      projectId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}project_id'],
-      ),
-      requestedBy: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}requested_by'],
-      ),
-      priority: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}priority'],
-      )!,
-      status: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}status'],
-      )!,
-      notes: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}notes'],
-      ),
-      itemsJson: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}items_json'],
-      )!,
-      isSynced: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_synced'],
-      )!,
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
-      deletedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}deleted_at'],
-      ),
-    );
-  }
-
-  @override
-  $HardwareSiteIndentsTable createAlias(String alias) {
-    return $HardwareSiteIndentsTable(attachedDatabase, alias);
-  }
-}
-
-class HardwareSiteIndentEntity extends DataClass
-    implements Insertable<HardwareSiteIndentEntity> {
-  final String id;
-  final String userId;
-  final String? projectId;
-  final String? requestedBy;
-  final String priority;
-  final String status;
-  final String? notes;
-  final String itemsJson;
-  final bool isSynced;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final DateTime? deletedAt;
-  const HardwareSiteIndentEntity({
-    required this.id,
-    required this.userId,
-    this.projectId,
-    this.requestedBy,
-    required this.priority,
-    required this.status,
-    this.notes,
-    required this.itemsJson,
-    required this.isSynced,
-    required this.createdAt,
-    required this.updatedAt,
-    this.deletedAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['user_id'] = Variable<String>(userId);
-    if (!nullToAbsent || projectId != null) {
-      map['project_id'] = Variable<String>(projectId);
-    }
-    if (!nullToAbsent || requestedBy != null) {
-      map['requested_by'] = Variable<String>(requestedBy);
-    }
-    map['priority'] = Variable<String>(priority);
-    map['status'] = Variable<String>(status);
-    if (!nullToAbsent || notes != null) {
-      map['notes'] = Variable<String>(notes);
-    }
-    map['items_json'] = Variable<String>(itemsJson);
-    map['is_synced'] = Variable<bool>(isSynced);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
-    if (!nullToAbsent || deletedAt != null) {
-      map['deleted_at'] = Variable<DateTime>(deletedAt);
-    }
-    return map;
-  }
-
-  HardwareSiteIndentsCompanion toCompanion(bool nullToAbsent) {
-    return HardwareSiteIndentsCompanion(
-      id: Value(id),
-      userId: Value(userId),
-      projectId: projectId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(projectId),
-      requestedBy: requestedBy == null && nullToAbsent
-          ? const Value.absent()
-          : Value(requestedBy),
-      priority: Value(priority),
-      status: Value(status),
-      notes: notes == null && nullToAbsent
-          ? const Value.absent()
-          : Value(notes),
-      itemsJson: Value(itemsJson),
-      isSynced: Value(isSynced),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
-    );
-  }
-
-  factory HardwareSiteIndentEntity.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return HardwareSiteIndentEntity(
-      id: serializer.fromJson<String>(json['id']),
-      userId: serializer.fromJson<String>(json['userId']),
-      projectId: serializer.fromJson<String?>(json['projectId']),
-      requestedBy: serializer.fromJson<String?>(json['requestedBy']),
-      priority: serializer.fromJson<String>(json['priority']),
-      status: serializer.fromJson<String>(json['status']),
-      notes: serializer.fromJson<String?>(json['notes']),
-      itemsJson: serializer.fromJson<String>(json['itemsJson']),
-      isSynced: serializer.fromJson<bool>(json['isSynced']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'userId': serializer.toJson<String>(userId),
-      'projectId': serializer.toJson<String?>(projectId),
-      'requestedBy': serializer.toJson<String?>(requestedBy),
-      'priority': serializer.toJson<String>(priority),
-      'status': serializer.toJson<String>(status),
-      'notes': serializer.toJson<String?>(notes),
-      'itemsJson': serializer.toJson<String>(itemsJson),
-      'isSynced': serializer.toJson<bool>(isSynced),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
-    };
-  }
-
-  HardwareSiteIndentEntity copyWith({
-    String? id,
-    String? userId,
-    Value<String?> projectId = const Value.absent(),
-    Value<String?> requestedBy = const Value.absent(),
-    String? priority,
-    String? status,
-    Value<String?> notes = const Value.absent(),
-    String? itemsJson,
-    bool? isSynced,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    Value<DateTime?> deletedAt = const Value.absent(),
-  }) => HardwareSiteIndentEntity(
-    id: id ?? this.id,
-    userId: userId ?? this.userId,
-    projectId: projectId.present ? projectId.value : this.projectId,
-    requestedBy: requestedBy.present ? requestedBy.value : this.requestedBy,
-    priority: priority ?? this.priority,
-    status: status ?? this.status,
-    notes: notes.present ? notes.value : this.notes,
-    itemsJson: itemsJson ?? this.itemsJson,
-    isSynced: isSynced ?? this.isSynced,
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt ?? this.updatedAt,
-    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-  );
-  HardwareSiteIndentEntity copyWithCompanion(
-    HardwareSiteIndentsCompanion data,
-  ) {
-    return HardwareSiteIndentEntity(
-      id: data.id.present ? data.id.value : this.id,
-      userId: data.userId.present ? data.userId.value : this.userId,
-      projectId: data.projectId.present ? data.projectId.value : this.projectId,
-      requestedBy: data.requestedBy.present
-          ? data.requestedBy.value
-          : this.requestedBy,
-      priority: data.priority.present ? data.priority.value : this.priority,
-      status: data.status.present ? data.status.value : this.status,
-      notes: data.notes.present ? data.notes.value : this.notes,
-      itemsJson: data.itemsJson.present ? data.itemsJson.value : this.itemsJson,
-      isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HardwareSiteIndentEntity(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('projectId: $projectId, ')
-          ..write('requestedBy: $requestedBy, ')
-          ..write('priority: $priority, ')
-          ..write('status: $status, ')
-          ..write('notes: $notes, ')
-          ..write('itemsJson: $itemsJson, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    userId,
-    projectId,
-    requestedBy,
-    priority,
-    status,
-    notes,
-    itemsJson,
-    isSynced,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is HardwareSiteIndentEntity &&
-          other.id == this.id &&
-          other.userId == this.userId &&
-          other.projectId == this.projectId &&
-          other.requestedBy == this.requestedBy &&
-          other.priority == this.priority &&
-          other.status == this.status &&
-          other.notes == this.notes &&
-          other.itemsJson == this.itemsJson &&
-          other.isSynced == this.isSynced &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt &&
-          other.deletedAt == this.deletedAt);
-}
-
-class HardwareSiteIndentsCompanion
-    extends UpdateCompanion<HardwareSiteIndentEntity> {
-  final Value<String> id;
-  final Value<String> userId;
-  final Value<String?> projectId;
-  final Value<String?> requestedBy;
-  final Value<String> priority;
-  final Value<String> status;
-  final Value<String?> notes;
-  final Value<String> itemsJson;
-  final Value<bool> isSynced;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
-  final Value<DateTime?> deletedAt;
-  final Value<int> rowid;
-  const HardwareSiteIndentsCompanion({
-    this.id = const Value.absent(),
-    this.userId = const Value.absent(),
-    this.projectId = const Value.absent(),
-    this.requestedBy = const Value.absent(),
-    this.priority = const Value.absent(),
-    this.status = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.itemsJson = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  HardwareSiteIndentsCompanion.insert({
-    required String id,
-    required String userId,
-    this.projectId = const Value.absent(),
-    this.requestedBy = const Value.absent(),
-    this.priority = const Value.absent(),
-    this.status = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.itemsJson = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       userId = Value(userId),
-       createdAt = Value(createdAt),
-       updatedAt = Value(updatedAt);
-  static Insertable<HardwareSiteIndentEntity> custom({
-    Expression<String>? id,
-    Expression<String>? userId,
-    Expression<String>? projectId,
-    Expression<String>? requestedBy,
-    Expression<String>? priority,
-    Expression<String>? status,
-    Expression<String>? notes,
-    Expression<String>? itemsJson,
-    Expression<bool>? isSynced,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
-    Expression<DateTime>? deletedAt,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (userId != null) 'user_id': userId,
-      if (projectId != null) 'project_id': projectId,
-      if (requestedBy != null) 'requested_by': requestedBy,
-      if (priority != null) 'priority': priority,
-      if (status != null) 'status': status,
-      if (notes != null) 'notes': notes,
-      if (itemsJson != null) 'items_json': itemsJson,
-      if (isSynced != null) 'is_synced': isSynced,
-      if (createdAt != null) 'created_at': createdAt,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (deletedAt != null) 'deleted_at': deletedAt,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  HardwareSiteIndentsCompanion copyWith({
-    Value<String>? id,
-    Value<String>? userId,
-    Value<String?>? projectId,
-    Value<String?>? requestedBy,
-    Value<String>? priority,
-    Value<String>? status,
-    Value<String?>? notes,
-    Value<String>? itemsJson,
-    Value<bool>? isSynced,
-    Value<DateTime>? createdAt,
-    Value<DateTime>? updatedAt,
-    Value<DateTime?>? deletedAt,
-    Value<int>? rowid,
-  }) {
-    return HardwareSiteIndentsCompanion(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      projectId: projectId ?? this.projectId,
-      requestedBy: requestedBy ?? this.requestedBy,
-      priority: priority ?? this.priority,
-      status: status ?? this.status,
-      notes: notes ?? this.notes,
-      itemsJson: itemsJson ?? this.itemsJson,
-      isSynced: isSynced ?? this.isSynced,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      deletedAt: deletedAt ?? this.deletedAt,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (userId.present) {
-      map['user_id'] = Variable<String>(userId.value);
-    }
-    if (projectId.present) {
-      map['project_id'] = Variable<String>(projectId.value);
-    }
-    if (requestedBy.present) {
-      map['requested_by'] = Variable<String>(requestedBy.value);
-    }
-    if (priority.present) {
-      map['priority'] = Variable<String>(priority.value);
-    }
-    if (status.present) {
-      map['status'] = Variable<String>(status.value);
-    }
-    if (notes.present) {
-      map['notes'] = Variable<String>(notes.value);
-    }
-    if (itemsJson.present) {
-      map['items_json'] = Variable<String>(itemsJson.value);
-    }
-    if (isSynced.present) {
-      map['is_synced'] = Variable<bool>(isSynced.value);
-    }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
-    if (deletedAt.present) {
-      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HardwareSiteIndentsCompanion(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('projectId: $projectId, ')
-          ..write('requestedBy: $requestedBy, ')
-          ..write('priority: $priority, ')
-          ..write('status: $status, ')
-          ..write('notes: $notes, ')
-          ..write('itemsJson: $itemsJson, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $HardwareMaterialDepositsTable extends HardwareMaterialDeposits
-    with
-        TableInfo<
-          $HardwareMaterialDepositsTable,
-          HardwareMaterialDepositEntity
-        > {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $HardwareMaterialDepositsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  @override
-  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
-    'user_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _customerIdMeta = const VerificationMeta(
-    'customerId',
-  );
-  @override
-  late final GeneratedColumn<String> customerId = GeneratedColumn<String>(
-    'customer_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _customerNameMeta = const VerificationMeta(
-    'customerName',
-  );
-  @override
-  late final GeneratedColumn<String> customerName = GeneratedColumn<String>(
-    'customer_name',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _itemTypeMeta = const VerificationMeta(
-    'itemType',
-  );
-  @override
-  late final GeneratedColumn<String> itemType = GeneratedColumn<String>(
-    'item_type',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _quantityMeta = const VerificationMeta(
-    'quantity',
-  );
-  @override
-  late final GeneratedColumn<double> quantity = GeneratedColumn<double>(
-    'quantity',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0.0),
-  );
-  static const VerificationMeta _depositAmountCentsMeta =
-      const VerificationMeta('depositAmountCents');
-  @override
-  late final GeneratedColumn<int> depositAmountCents = GeneratedColumn<int>(
-    'deposit_amount_cents',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
-  );
-  static const VerificationMeta _referenceNoMeta = const VerificationMeta(
-    'referenceNo',
-  );
-  @override
-  late final GeneratedColumn<String> referenceNo = GeneratedColumn<String>(
-    'reference_no',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
-  @override
-  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
-    'notes',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
-  @override
-  late final GeneratedColumn<String> status = GeneratedColumn<String>(
-    'status',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('active'),
-  );
-  static const VerificationMeta _isSyncedMeta = const VerificationMeta(
-    'isSynced',
-  );
-  @override
-  late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
-    'is_synced',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_synced" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
-    'deletedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
-    'deleted_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    userId,
-    customerId,
-    customerName,
-    itemType,
-    quantity,
-    depositAmountCents,
-    referenceNo,
-    notes,
-    status,
-    isSynced,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'hardware_material_deposits';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<HardwareMaterialDepositEntity> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('user_id')) {
-      context.handle(
-        _userIdMeta,
-        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_userIdMeta);
-    }
-    if (data.containsKey('customer_id')) {
-      context.handle(
-        _customerIdMeta,
-        customerId.isAcceptableOrUnknown(data['customer_id']!, _customerIdMeta),
-      );
-    }
-    if (data.containsKey('customer_name')) {
-      context.handle(
-        _customerNameMeta,
-        customerName.isAcceptableOrUnknown(
-          data['customer_name']!,
-          _customerNameMeta,
-        ),
-      );
-    }
-    if (data.containsKey('item_type')) {
-      context.handle(
-        _itemTypeMeta,
-        itemType.isAcceptableOrUnknown(data['item_type']!, _itemTypeMeta),
-      );
-    }
-    if (data.containsKey('quantity')) {
-      context.handle(
-        _quantityMeta,
-        quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta),
-      );
-    }
-    if (data.containsKey('deposit_amount_cents')) {
-      context.handle(
-        _depositAmountCentsMeta,
-        depositAmountCents.isAcceptableOrUnknown(
-          data['deposit_amount_cents']!,
-          _depositAmountCentsMeta,
-        ),
-      );
-    }
-    if (data.containsKey('reference_no')) {
-      context.handle(
-        _referenceNoMeta,
-        referenceNo.isAcceptableOrUnknown(
-          data['reference_no']!,
-          _referenceNoMeta,
-        ),
-      );
-    }
-    if (data.containsKey('notes')) {
-      context.handle(
-        _notesMeta,
-        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
-      );
-    }
-    if (data.containsKey('status')) {
-      context.handle(
-        _statusMeta,
-        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
-      );
-    }
-    if (data.containsKey('is_synced')) {
-      context.handle(
-        _isSyncedMeta,
-        isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
-      );
-    }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_createdAtMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    if (data.containsKey('deleted_at')) {
-      context.handle(
-        _deletedAtMeta,
-        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  HardwareMaterialDepositEntity map(
-    Map<String, dynamic> data, {
-    String? tablePrefix,
-  }) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return HardwareMaterialDepositEntity(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      userId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}user_id'],
-      )!,
-      customerId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}customer_id'],
-      ),
-      customerName: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}customer_name'],
-      ),
-      itemType: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}item_type'],
-      ),
-      quantity: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}quantity'],
-      )!,
-      depositAmountCents: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}deposit_amount_cents'],
-      )!,
-      referenceNo: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}reference_no'],
-      ),
-      notes: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}notes'],
-      ),
-      status: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}status'],
-      )!,
-      isSynced: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_synced'],
-      )!,
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
-      deletedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}deleted_at'],
-      ),
-    );
-  }
-
-  @override
-  $HardwareMaterialDepositsTable createAlias(String alias) {
-    return $HardwareMaterialDepositsTable(attachedDatabase, alias);
-  }
-}
-
-class HardwareMaterialDepositEntity extends DataClass
-    implements Insertable<HardwareMaterialDepositEntity> {
-  final String id;
-  final String userId;
-  final String? customerId;
-  final String? customerName;
-  final String? itemType;
-  final double quantity;
-  final int depositAmountCents;
-  final String? referenceNo;
-  final String? notes;
-  final String status;
-  final bool isSynced;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final DateTime? deletedAt;
-  const HardwareMaterialDepositEntity({
-    required this.id,
-    required this.userId,
-    this.customerId,
-    this.customerName,
-    this.itemType,
-    required this.quantity,
-    required this.depositAmountCents,
-    this.referenceNo,
-    this.notes,
-    required this.status,
-    required this.isSynced,
-    required this.createdAt,
-    required this.updatedAt,
-    this.deletedAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['user_id'] = Variable<String>(userId);
-    if (!nullToAbsent || customerId != null) {
-      map['customer_id'] = Variable<String>(customerId);
-    }
-    if (!nullToAbsent || customerName != null) {
-      map['customer_name'] = Variable<String>(customerName);
-    }
-    if (!nullToAbsent || itemType != null) {
-      map['item_type'] = Variable<String>(itemType);
-    }
-    map['quantity'] = Variable<double>(quantity);
-    map['deposit_amount_cents'] = Variable<int>(depositAmountCents);
-    if (!nullToAbsent || referenceNo != null) {
-      map['reference_no'] = Variable<String>(referenceNo);
-    }
-    if (!nullToAbsent || notes != null) {
-      map['notes'] = Variable<String>(notes);
-    }
-    map['status'] = Variable<String>(status);
-    map['is_synced'] = Variable<bool>(isSynced);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
-    if (!nullToAbsent || deletedAt != null) {
-      map['deleted_at'] = Variable<DateTime>(deletedAt);
-    }
-    return map;
-  }
-
-  HardwareMaterialDepositsCompanion toCompanion(bool nullToAbsent) {
-    return HardwareMaterialDepositsCompanion(
-      id: Value(id),
-      userId: Value(userId),
-      customerId: customerId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(customerId),
-      customerName: customerName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(customerName),
-      itemType: itemType == null && nullToAbsent
-          ? const Value.absent()
-          : Value(itemType),
-      quantity: Value(quantity),
-      depositAmountCents: Value(depositAmountCents),
-      referenceNo: referenceNo == null && nullToAbsent
-          ? const Value.absent()
-          : Value(referenceNo),
-      notes: notes == null && nullToAbsent
-          ? const Value.absent()
-          : Value(notes),
-      status: Value(status),
-      isSynced: Value(isSynced),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
-    );
-  }
-
-  factory HardwareMaterialDepositEntity.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return HardwareMaterialDepositEntity(
-      id: serializer.fromJson<String>(json['id']),
-      userId: serializer.fromJson<String>(json['userId']),
-      customerId: serializer.fromJson<String?>(json['customerId']),
-      customerName: serializer.fromJson<String?>(json['customerName']),
-      itemType: serializer.fromJson<String?>(json['itemType']),
-      quantity: serializer.fromJson<double>(json['quantity']),
-      depositAmountCents: serializer.fromJson<int>(json['depositAmountCents']),
-      referenceNo: serializer.fromJson<String?>(json['referenceNo']),
-      notes: serializer.fromJson<String?>(json['notes']),
-      status: serializer.fromJson<String>(json['status']),
-      isSynced: serializer.fromJson<bool>(json['isSynced']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'userId': serializer.toJson<String>(userId),
-      'customerId': serializer.toJson<String?>(customerId),
-      'customerName': serializer.toJson<String?>(customerName),
-      'itemType': serializer.toJson<String?>(itemType),
-      'quantity': serializer.toJson<double>(quantity),
-      'depositAmountCents': serializer.toJson<int>(depositAmountCents),
-      'referenceNo': serializer.toJson<String?>(referenceNo),
-      'notes': serializer.toJson<String?>(notes),
-      'status': serializer.toJson<String>(status),
-      'isSynced': serializer.toJson<bool>(isSynced),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
-    };
-  }
-
-  HardwareMaterialDepositEntity copyWith({
-    String? id,
-    String? userId,
-    Value<String?> customerId = const Value.absent(),
-    Value<String?> customerName = const Value.absent(),
-    Value<String?> itemType = const Value.absent(),
-    double? quantity,
-    int? depositAmountCents,
-    Value<String?> referenceNo = const Value.absent(),
-    Value<String?> notes = const Value.absent(),
-    String? status,
-    bool? isSynced,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    Value<DateTime?> deletedAt = const Value.absent(),
-  }) => HardwareMaterialDepositEntity(
-    id: id ?? this.id,
-    userId: userId ?? this.userId,
-    customerId: customerId.present ? customerId.value : this.customerId,
-    customerName: customerName.present ? customerName.value : this.customerName,
-    itemType: itemType.present ? itemType.value : this.itemType,
-    quantity: quantity ?? this.quantity,
-    depositAmountCents: depositAmountCents ?? this.depositAmountCents,
-    referenceNo: referenceNo.present ? referenceNo.value : this.referenceNo,
-    notes: notes.present ? notes.value : this.notes,
-    status: status ?? this.status,
-    isSynced: isSynced ?? this.isSynced,
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt ?? this.updatedAt,
-    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-  );
-  HardwareMaterialDepositEntity copyWithCompanion(
-    HardwareMaterialDepositsCompanion data,
-  ) {
-    return HardwareMaterialDepositEntity(
-      id: data.id.present ? data.id.value : this.id,
-      userId: data.userId.present ? data.userId.value : this.userId,
-      customerId: data.customerId.present
-          ? data.customerId.value
-          : this.customerId,
-      customerName: data.customerName.present
-          ? data.customerName.value
-          : this.customerName,
-      itemType: data.itemType.present ? data.itemType.value : this.itemType,
-      quantity: data.quantity.present ? data.quantity.value : this.quantity,
-      depositAmountCents: data.depositAmountCents.present
-          ? data.depositAmountCents.value
-          : this.depositAmountCents,
-      referenceNo: data.referenceNo.present
-          ? data.referenceNo.value
-          : this.referenceNo,
-      notes: data.notes.present ? data.notes.value : this.notes,
-      status: data.status.present ? data.status.value : this.status,
-      isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HardwareMaterialDepositEntity(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('customerId: $customerId, ')
-          ..write('customerName: $customerName, ')
-          ..write('itemType: $itemType, ')
-          ..write('quantity: $quantity, ')
-          ..write('depositAmountCents: $depositAmountCents, ')
-          ..write('referenceNo: $referenceNo, ')
-          ..write('notes: $notes, ')
-          ..write('status: $status, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    userId,
-    customerId,
-    customerName,
-    itemType,
-    quantity,
-    depositAmountCents,
-    referenceNo,
-    notes,
-    status,
-    isSynced,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is HardwareMaterialDepositEntity &&
-          other.id == this.id &&
-          other.userId == this.userId &&
-          other.customerId == this.customerId &&
-          other.customerName == this.customerName &&
-          other.itemType == this.itemType &&
-          other.quantity == this.quantity &&
-          other.depositAmountCents == this.depositAmountCents &&
-          other.referenceNo == this.referenceNo &&
-          other.notes == this.notes &&
-          other.status == this.status &&
-          other.isSynced == this.isSynced &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt &&
-          other.deletedAt == this.deletedAt);
-}
-
-class HardwareMaterialDepositsCompanion
-    extends UpdateCompanion<HardwareMaterialDepositEntity> {
-  final Value<String> id;
-  final Value<String> userId;
-  final Value<String?> customerId;
-  final Value<String?> customerName;
-  final Value<String?> itemType;
-  final Value<double> quantity;
-  final Value<int> depositAmountCents;
-  final Value<String?> referenceNo;
-  final Value<String?> notes;
-  final Value<String> status;
-  final Value<bool> isSynced;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
-  final Value<DateTime?> deletedAt;
-  final Value<int> rowid;
-  const HardwareMaterialDepositsCompanion({
-    this.id = const Value.absent(),
-    this.userId = const Value.absent(),
-    this.customerId = const Value.absent(),
-    this.customerName = const Value.absent(),
-    this.itemType = const Value.absent(),
-    this.quantity = const Value.absent(),
-    this.depositAmountCents = const Value.absent(),
-    this.referenceNo = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.status = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  HardwareMaterialDepositsCompanion.insert({
-    required String id,
-    required String userId,
-    this.customerId = const Value.absent(),
-    this.customerName = const Value.absent(),
-    this.itemType = const Value.absent(),
-    this.quantity = const Value.absent(),
-    this.depositAmountCents = const Value.absent(),
-    this.referenceNo = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.status = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       userId = Value(userId),
-       createdAt = Value(createdAt),
-       updatedAt = Value(updatedAt);
-  static Insertable<HardwareMaterialDepositEntity> custom({
-    Expression<String>? id,
-    Expression<String>? userId,
-    Expression<String>? customerId,
-    Expression<String>? customerName,
-    Expression<String>? itemType,
-    Expression<double>? quantity,
-    Expression<int>? depositAmountCents,
-    Expression<String>? referenceNo,
-    Expression<String>? notes,
-    Expression<String>? status,
-    Expression<bool>? isSynced,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
-    Expression<DateTime>? deletedAt,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (userId != null) 'user_id': userId,
-      if (customerId != null) 'customer_id': customerId,
-      if (customerName != null) 'customer_name': customerName,
-      if (itemType != null) 'item_type': itemType,
-      if (quantity != null) 'quantity': quantity,
-      if (depositAmountCents != null)
-        'deposit_amount_cents': depositAmountCents,
-      if (referenceNo != null) 'reference_no': referenceNo,
-      if (notes != null) 'notes': notes,
-      if (status != null) 'status': status,
-      if (isSynced != null) 'is_synced': isSynced,
-      if (createdAt != null) 'created_at': createdAt,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (deletedAt != null) 'deleted_at': deletedAt,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  HardwareMaterialDepositsCompanion copyWith({
-    Value<String>? id,
-    Value<String>? userId,
-    Value<String?>? customerId,
-    Value<String?>? customerName,
-    Value<String?>? itemType,
-    Value<double>? quantity,
-    Value<int>? depositAmountCents,
-    Value<String?>? referenceNo,
-    Value<String?>? notes,
-    Value<String>? status,
-    Value<bool>? isSynced,
-    Value<DateTime>? createdAt,
-    Value<DateTime>? updatedAt,
-    Value<DateTime?>? deletedAt,
-    Value<int>? rowid,
-  }) {
-    return HardwareMaterialDepositsCompanion(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      customerId: customerId ?? this.customerId,
-      customerName: customerName ?? this.customerName,
-      itemType: itemType ?? this.itemType,
-      quantity: quantity ?? this.quantity,
-      depositAmountCents: depositAmountCents ?? this.depositAmountCents,
-      referenceNo: referenceNo ?? this.referenceNo,
-      notes: notes ?? this.notes,
-      status: status ?? this.status,
-      isSynced: isSynced ?? this.isSynced,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      deletedAt: deletedAt ?? this.deletedAt,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (userId.present) {
-      map['user_id'] = Variable<String>(userId.value);
-    }
-    if (customerId.present) {
-      map['customer_id'] = Variable<String>(customerId.value);
-    }
-    if (customerName.present) {
-      map['customer_name'] = Variable<String>(customerName.value);
-    }
-    if (itemType.present) {
-      map['item_type'] = Variable<String>(itemType.value);
-    }
-    if (quantity.present) {
-      map['quantity'] = Variable<double>(quantity.value);
-    }
-    if (depositAmountCents.present) {
-      map['deposit_amount_cents'] = Variable<int>(depositAmountCents.value);
-    }
-    if (referenceNo.present) {
-      map['reference_no'] = Variable<String>(referenceNo.value);
-    }
-    if (notes.present) {
-      map['notes'] = Variable<String>(notes.value);
-    }
-    if (status.present) {
-      map['status'] = Variable<String>(status.value);
-    }
-    if (isSynced.present) {
-      map['is_synced'] = Variable<bool>(isSynced.value);
-    }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
-    if (deletedAt.present) {
-      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HardwareMaterialDepositsCompanion(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('customerId: $customerId, ')
-          ..write('customerName: $customerName, ')
-          ..write('itemType: $itemType, ')
-          ..write('quantity: $quantity, ')
-          ..write('depositAmountCents: $depositAmountCents, ')
-          ..write('referenceNo: $referenceNo, ')
-          ..write('notes: $notes, ')
-          ..write('status: $status, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $HardwarePurchaseOrdersTableTable extends HardwarePurchaseOrdersTable
-    with
-        TableInfo<
-          $HardwarePurchaseOrdersTableTable,
-          HardwarePurchaseOrderEntity
-        > {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $HardwarePurchaseOrdersTableTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  @override
-  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
-    'user_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _supplierIdMeta = const VerificationMeta(
-    'supplierId',
-  );
-  @override
-  late final GeneratedColumn<String> supplierId = GeneratedColumn<String>(
-    'supplier_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _supplierNameMeta = const VerificationMeta(
-    'supplierName',
-  );
-  @override
-  late final GeneratedColumn<String> supplierName = GeneratedColumn<String>(
-    'supplier_name',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
-  @override
-  late final GeneratedColumn<String> status = GeneratedColumn<String>(
-    'status',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('pending'),
-  );
-  static const VerificationMeta _expectedDeliveryDateMeta =
-      const VerificationMeta('expectedDeliveryDate');
-  @override
-  late final GeneratedColumn<String> expectedDeliveryDate =
-      GeneratedColumn<String>(
-        'expected_delivery_date',
-        aliasedName,
-        true,
-        type: DriftSqlType.string,
-        requiredDuringInsert: false,
-      );
-  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
-  @override
-  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
-    'notes',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _itemsJsonMeta = const VerificationMeta(
-    'itemsJson',
-  );
-  @override
-  late final GeneratedColumn<String> itemsJson = GeneratedColumn<String>(
-    'items_json',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('[]'),
-  );
-  static const VerificationMeta _isSyncedMeta = const VerificationMeta(
-    'isSynced',
-  );
-  @override
-  late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
-    'is_synced',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_synced" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
-    'deletedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
-    'deleted_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    userId,
-    supplierId,
-    supplierName,
-    status,
-    expectedDeliveryDate,
-    notes,
-    itemsJson,
-    isSynced,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'hardware_purchase_orders';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<HardwarePurchaseOrderEntity> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('user_id')) {
-      context.handle(
-        _userIdMeta,
-        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_userIdMeta);
-    }
-    if (data.containsKey('supplier_id')) {
-      context.handle(
-        _supplierIdMeta,
-        supplierId.isAcceptableOrUnknown(data['supplier_id']!, _supplierIdMeta),
-      );
-    }
-    if (data.containsKey('supplier_name')) {
-      context.handle(
-        _supplierNameMeta,
-        supplierName.isAcceptableOrUnknown(
-          data['supplier_name']!,
-          _supplierNameMeta,
-        ),
-      );
-    }
-    if (data.containsKey('status')) {
-      context.handle(
-        _statusMeta,
-        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
-      );
-    }
-    if (data.containsKey('expected_delivery_date')) {
-      context.handle(
-        _expectedDeliveryDateMeta,
-        expectedDeliveryDate.isAcceptableOrUnknown(
-          data['expected_delivery_date']!,
-          _expectedDeliveryDateMeta,
-        ),
-      );
-    }
-    if (data.containsKey('notes')) {
-      context.handle(
-        _notesMeta,
-        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
-      );
-    }
-    if (data.containsKey('items_json')) {
-      context.handle(
-        _itemsJsonMeta,
-        itemsJson.isAcceptableOrUnknown(data['items_json']!, _itemsJsonMeta),
-      );
-    }
-    if (data.containsKey('is_synced')) {
-      context.handle(
-        _isSyncedMeta,
-        isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
-      );
-    }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_createdAtMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    if (data.containsKey('deleted_at')) {
-      context.handle(
-        _deletedAtMeta,
-        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  HardwarePurchaseOrderEntity map(
-    Map<String, dynamic> data, {
-    String? tablePrefix,
-  }) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return HardwarePurchaseOrderEntity(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      userId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}user_id'],
-      )!,
-      supplierId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}supplier_id'],
-      ),
-      supplierName: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}supplier_name'],
-      ),
-      status: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}status'],
-      )!,
-      expectedDeliveryDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}expected_delivery_date'],
-      ),
-      notes: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}notes'],
-      ),
-      itemsJson: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}items_json'],
-      )!,
-      isSynced: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_synced'],
-      )!,
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
-      deletedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}deleted_at'],
-      ),
-    );
-  }
-
-  @override
-  $HardwarePurchaseOrdersTableTable createAlias(String alias) {
-    return $HardwarePurchaseOrdersTableTable(attachedDatabase, alias);
-  }
-}
-
-class HardwarePurchaseOrderEntity extends DataClass
-    implements Insertable<HardwarePurchaseOrderEntity> {
-  final String id;
-  final String userId;
-  final String? supplierId;
-  final String? supplierName;
-  final String status;
-  final String? expectedDeliveryDate;
-  final String? notes;
-  final String itemsJson;
-  final bool isSynced;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final DateTime? deletedAt;
-  const HardwarePurchaseOrderEntity({
-    required this.id,
-    required this.userId,
-    this.supplierId,
-    this.supplierName,
-    required this.status,
-    this.expectedDeliveryDate,
-    this.notes,
-    required this.itemsJson,
-    required this.isSynced,
-    required this.createdAt,
-    required this.updatedAt,
-    this.deletedAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['user_id'] = Variable<String>(userId);
-    if (!nullToAbsent || supplierId != null) {
-      map['supplier_id'] = Variable<String>(supplierId);
-    }
-    if (!nullToAbsent || supplierName != null) {
-      map['supplier_name'] = Variable<String>(supplierName);
-    }
-    map['status'] = Variable<String>(status);
-    if (!nullToAbsent || expectedDeliveryDate != null) {
-      map['expected_delivery_date'] = Variable<String>(expectedDeliveryDate);
-    }
-    if (!nullToAbsent || notes != null) {
-      map['notes'] = Variable<String>(notes);
-    }
-    map['items_json'] = Variable<String>(itemsJson);
-    map['is_synced'] = Variable<bool>(isSynced);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
-    if (!nullToAbsent || deletedAt != null) {
-      map['deleted_at'] = Variable<DateTime>(deletedAt);
-    }
-    return map;
-  }
-
-  HardwarePurchaseOrdersTableCompanion toCompanion(bool nullToAbsent) {
-    return HardwarePurchaseOrdersTableCompanion(
-      id: Value(id),
-      userId: Value(userId),
-      supplierId: supplierId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(supplierId),
-      supplierName: supplierName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(supplierName),
-      status: Value(status),
-      expectedDeliveryDate: expectedDeliveryDate == null && nullToAbsent
-          ? const Value.absent()
-          : Value(expectedDeliveryDate),
-      notes: notes == null && nullToAbsent
-          ? const Value.absent()
-          : Value(notes),
-      itemsJson: Value(itemsJson),
-      isSynced: Value(isSynced),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
-    );
-  }
-
-  factory HardwarePurchaseOrderEntity.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return HardwarePurchaseOrderEntity(
-      id: serializer.fromJson<String>(json['id']),
-      userId: serializer.fromJson<String>(json['userId']),
-      supplierId: serializer.fromJson<String?>(json['supplierId']),
-      supplierName: serializer.fromJson<String?>(json['supplierName']),
-      status: serializer.fromJson<String>(json['status']),
-      expectedDeliveryDate: serializer.fromJson<String?>(
-        json['expectedDeliveryDate'],
-      ),
-      notes: serializer.fromJson<String?>(json['notes']),
-      itemsJson: serializer.fromJson<String>(json['itemsJson']),
-      isSynced: serializer.fromJson<bool>(json['isSynced']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'userId': serializer.toJson<String>(userId),
-      'supplierId': serializer.toJson<String?>(supplierId),
-      'supplierName': serializer.toJson<String?>(supplierName),
-      'status': serializer.toJson<String>(status),
-      'expectedDeliveryDate': serializer.toJson<String?>(expectedDeliveryDate),
-      'notes': serializer.toJson<String?>(notes),
-      'itemsJson': serializer.toJson<String>(itemsJson),
-      'isSynced': serializer.toJson<bool>(isSynced),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
-    };
-  }
-
-  HardwarePurchaseOrderEntity copyWith({
-    String? id,
-    String? userId,
-    Value<String?> supplierId = const Value.absent(),
-    Value<String?> supplierName = const Value.absent(),
-    String? status,
-    Value<String?> expectedDeliveryDate = const Value.absent(),
-    Value<String?> notes = const Value.absent(),
-    String? itemsJson,
-    bool? isSynced,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    Value<DateTime?> deletedAt = const Value.absent(),
-  }) => HardwarePurchaseOrderEntity(
-    id: id ?? this.id,
-    userId: userId ?? this.userId,
-    supplierId: supplierId.present ? supplierId.value : this.supplierId,
-    supplierName: supplierName.present ? supplierName.value : this.supplierName,
-    status: status ?? this.status,
-    expectedDeliveryDate: expectedDeliveryDate.present
-        ? expectedDeliveryDate.value
-        : this.expectedDeliveryDate,
-    notes: notes.present ? notes.value : this.notes,
-    itemsJson: itemsJson ?? this.itemsJson,
-    isSynced: isSynced ?? this.isSynced,
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt ?? this.updatedAt,
-    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-  );
-  HardwarePurchaseOrderEntity copyWithCompanion(
-    HardwarePurchaseOrdersTableCompanion data,
-  ) {
-    return HardwarePurchaseOrderEntity(
-      id: data.id.present ? data.id.value : this.id,
-      userId: data.userId.present ? data.userId.value : this.userId,
-      supplierId: data.supplierId.present
-          ? data.supplierId.value
-          : this.supplierId,
-      supplierName: data.supplierName.present
-          ? data.supplierName.value
-          : this.supplierName,
-      status: data.status.present ? data.status.value : this.status,
-      expectedDeliveryDate: data.expectedDeliveryDate.present
-          ? data.expectedDeliveryDate.value
-          : this.expectedDeliveryDate,
-      notes: data.notes.present ? data.notes.value : this.notes,
-      itemsJson: data.itemsJson.present ? data.itemsJson.value : this.itemsJson,
-      isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HardwarePurchaseOrderEntity(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('supplierId: $supplierId, ')
-          ..write('supplierName: $supplierName, ')
-          ..write('status: $status, ')
-          ..write('expectedDeliveryDate: $expectedDeliveryDate, ')
-          ..write('notes: $notes, ')
-          ..write('itemsJson: $itemsJson, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    userId,
-    supplierId,
-    supplierName,
-    status,
-    expectedDeliveryDate,
-    notes,
-    itemsJson,
-    isSynced,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is HardwarePurchaseOrderEntity &&
-          other.id == this.id &&
-          other.userId == this.userId &&
-          other.supplierId == this.supplierId &&
-          other.supplierName == this.supplierName &&
-          other.status == this.status &&
-          other.expectedDeliveryDate == this.expectedDeliveryDate &&
-          other.notes == this.notes &&
-          other.itemsJson == this.itemsJson &&
-          other.isSynced == this.isSynced &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt &&
-          other.deletedAt == this.deletedAt);
-}
-
-class HardwarePurchaseOrdersTableCompanion
-    extends UpdateCompanion<HardwarePurchaseOrderEntity> {
-  final Value<String> id;
-  final Value<String> userId;
-  final Value<String?> supplierId;
-  final Value<String?> supplierName;
-  final Value<String> status;
-  final Value<String?> expectedDeliveryDate;
-  final Value<String?> notes;
-  final Value<String> itemsJson;
-  final Value<bool> isSynced;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
-  final Value<DateTime?> deletedAt;
-  final Value<int> rowid;
-  const HardwarePurchaseOrdersTableCompanion({
-    this.id = const Value.absent(),
-    this.userId = const Value.absent(),
-    this.supplierId = const Value.absent(),
-    this.supplierName = const Value.absent(),
-    this.status = const Value.absent(),
-    this.expectedDeliveryDate = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.itemsJson = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  HardwarePurchaseOrdersTableCompanion.insert({
-    required String id,
-    required String userId,
-    this.supplierId = const Value.absent(),
-    this.supplierName = const Value.absent(),
-    this.status = const Value.absent(),
-    this.expectedDeliveryDate = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.itemsJson = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       userId = Value(userId),
-       createdAt = Value(createdAt),
-       updatedAt = Value(updatedAt);
-  static Insertable<HardwarePurchaseOrderEntity> custom({
-    Expression<String>? id,
-    Expression<String>? userId,
-    Expression<String>? supplierId,
-    Expression<String>? supplierName,
-    Expression<String>? status,
-    Expression<String>? expectedDeliveryDate,
-    Expression<String>? notes,
-    Expression<String>? itemsJson,
-    Expression<bool>? isSynced,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
-    Expression<DateTime>? deletedAt,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (userId != null) 'user_id': userId,
-      if (supplierId != null) 'supplier_id': supplierId,
-      if (supplierName != null) 'supplier_name': supplierName,
-      if (status != null) 'status': status,
-      if (expectedDeliveryDate != null)
-        'expected_delivery_date': expectedDeliveryDate,
-      if (notes != null) 'notes': notes,
-      if (itemsJson != null) 'items_json': itemsJson,
-      if (isSynced != null) 'is_synced': isSynced,
-      if (createdAt != null) 'created_at': createdAt,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (deletedAt != null) 'deleted_at': deletedAt,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  HardwarePurchaseOrdersTableCompanion copyWith({
-    Value<String>? id,
-    Value<String>? userId,
-    Value<String?>? supplierId,
-    Value<String?>? supplierName,
-    Value<String>? status,
-    Value<String?>? expectedDeliveryDate,
-    Value<String?>? notes,
-    Value<String>? itemsJson,
-    Value<bool>? isSynced,
-    Value<DateTime>? createdAt,
-    Value<DateTime>? updatedAt,
-    Value<DateTime?>? deletedAt,
-    Value<int>? rowid,
-  }) {
-    return HardwarePurchaseOrdersTableCompanion(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      supplierId: supplierId ?? this.supplierId,
-      supplierName: supplierName ?? this.supplierName,
-      status: status ?? this.status,
-      expectedDeliveryDate: expectedDeliveryDate ?? this.expectedDeliveryDate,
-      notes: notes ?? this.notes,
-      itemsJson: itemsJson ?? this.itemsJson,
-      isSynced: isSynced ?? this.isSynced,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      deletedAt: deletedAt ?? this.deletedAt,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (userId.present) {
-      map['user_id'] = Variable<String>(userId.value);
-    }
-    if (supplierId.present) {
-      map['supplier_id'] = Variable<String>(supplierId.value);
-    }
-    if (supplierName.present) {
-      map['supplier_name'] = Variable<String>(supplierName.value);
-    }
-    if (status.present) {
-      map['status'] = Variable<String>(status.value);
-    }
-    if (expectedDeliveryDate.present) {
-      map['expected_delivery_date'] = Variable<String>(
-        expectedDeliveryDate.value,
-      );
-    }
-    if (notes.present) {
-      map['notes'] = Variable<String>(notes.value);
-    }
-    if (itemsJson.present) {
-      map['items_json'] = Variable<String>(itemsJson.value);
-    }
-    if (isSynced.present) {
-      map['is_synced'] = Variable<bool>(isSynced.value);
-    }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
-    if (deletedAt.present) {
-      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HardwarePurchaseOrdersTableCompanion(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('supplierId: $supplierId, ')
-          ..write('supplierName: $supplierName, ')
-          ..write('status: $status, ')
-          ..write('expectedDeliveryDate: $expectedDeliveryDate, ')
-          ..write('notes: $notes, ')
-          ..write('itemsJson: $itemsJson, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $HardwarePartiesTableTable extends HardwarePartiesTable
-    with TableInfo<$HardwarePartiesTableTable, HardwarePartyEntity> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $HardwarePartiesTableTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  @override
-  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
-    'user_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-    'name',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _typeMeta = const VerificationMeta('type');
-  @override
-  late final GeneratedColumn<String> type = GeneratedColumn<String>(
-    'type',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
-  @override
-  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
-    'phone',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _gstinMeta = const VerificationMeta('gstin');
-  @override
-  late final GeneratedColumn<String> gstin = GeneratedColumn<String>(
-    'gstin',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _addressMeta = const VerificationMeta(
-    'address',
-  );
-  @override
-  late final GeneratedColumn<String> address = GeneratedColumn<String>(
-    'address',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _creditLimitMeta = const VerificationMeta(
-    'creditLimit',
-  );
-  @override
-  late final GeneratedColumn<int> creditLimit = GeneratedColumn<int>(
-    'credit_limit',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(0),
-  );
-  static const VerificationMeta _creditDaysMeta = const VerificationMeta(
-    'creditDays',
-  );
-  @override
-  late final GeneratedColumn<int> creditDays = GeneratedColumn<int>(
-    'credit_days',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(30),
-  );
-  static const VerificationMeta _priceCategoryMeta = const VerificationMeta(
-    'priceCategory',
-  );
-  @override
-  late final GeneratedColumn<String> priceCategory = GeneratedColumn<String>(
-    'price_category',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('retail'),
-  );
-  static const VerificationMeta _isSyncedMeta = const VerificationMeta(
-    'isSynced',
-  );
-  @override
-  late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
-    'is_synced',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_synced" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
-    'deletedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
-    'deleted_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    userId,
-    name,
-    type,
-    phone,
-    gstin,
-    address,
-    creditLimit,
-    creditDays,
-    priceCategory,
-    isSynced,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'hardware_parties';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<HardwarePartyEntity> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('user_id')) {
-      context.handle(
-        _userIdMeta,
-        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_userIdMeta);
-    }
-    if (data.containsKey('name')) {
-      context.handle(
-        _nameMeta,
-        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
-      );
-    }
-    if (data.containsKey('type')) {
-      context.handle(
-        _typeMeta,
-        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
-      );
-    }
-    if (data.containsKey('phone')) {
-      context.handle(
-        _phoneMeta,
-        phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
-      );
-    }
-    if (data.containsKey('gstin')) {
-      context.handle(
-        _gstinMeta,
-        gstin.isAcceptableOrUnknown(data['gstin']!, _gstinMeta),
-      );
-    }
-    if (data.containsKey('address')) {
-      context.handle(
-        _addressMeta,
-        address.isAcceptableOrUnknown(data['address']!, _addressMeta),
-      );
-    }
-    if (data.containsKey('credit_limit')) {
-      context.handle(
-        _creditLimitMeta,
-        creditLimit.isAcceptableOrUnknown(
-          data['credit_limit']!,
-          _creditLimitMeta,
-        ),
-      );
-    }
-    if (data.containsKey('credit_days')) {
-      context.handle(
-        _creditDaysMeta,
-        creditDays.isAcceptableOrUnknown(data['credit_days']!, _creditDaysMeta),
-      );
-    }
-    if (data.containsKey('price_category')) {
-      context.handle(
-        _priceCategoryMeta,
-        priceCategory.isAcceptableOrUnknown(
-          data['price_category']!,
-          _priceCategoryMeta,
-        ),
-      );
-    }
-    if (data.containsKey('is_synced')) {
-      context.handle(
-        _isSyncedMeta,
-        isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
-      );
-    }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_createdAtMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    if (data.containsKey('deleted_at')) {
-      context.handle(
-        _deletedAtMeta,
-        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  HardwarePartyEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return HardwarePartyEntity(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      userId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}user_id'],
-      )!,
-      name: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}name'],
-      ),
-      type: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}type'],
-      ),
-      phone: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}phone'],
-      ),
-      gstin: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}gstin'],
-      ),
-      address: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}address'],
-      ),
-      creditLimit: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}credit_limit'],
-      )!,
-      creditDays: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}credit_days'],
-      )!,
-      priceCategory: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}price_category'],
-      )!,
-      isSynced: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_synced'],
-      )!,
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
-      deletedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}deleted_at'],
-      ),
-    );
-  }
-
-  @override
-  $HardwarePartiesTableTable createAlias(String alias) {
-    return $HardwarePartiesTableTable(attachedDatabase, alias);
-  }
-}
-
-class HardwarePartyEntity extends DataClass
-    implements Insertable<HardwarePartyEntity> {
-  final String id;
-  final String userId;
-  final String? name;
-  final String? type;
-  final String? phone;
-  final String? gstin;
-  final String? address;
-  final int creditLimit;
-  final int creditDays;
-  final String priceCategory;
-  final bool isSynced;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final DateTime? deletedAt;
-  const HardwarePartyEntity({
-    required this.id,
-    required this.userId,
-    this.name,
-    this.type,
-    this.phone,
-    this.gstin,
-    this.address,
-    required this.creditLimit,
-    required this.creditDays,
-    required this.priceCategory,
-    required this.isSynced,
-    required this.createdAt,
-    required this.updatedAt,
-    this.deletedAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['user_id'] = Variable<String>(userId);
-    if (!nullToAbsent || name != null) {
-      map['name'] = Variable<String>(name);
-    }
-    if (!nullToAbsent || type != null) {
-      map['type'] = Variable<String>(type);
-    }
-    if (!nullToAbsent || phone != null) {
-      map['phone'] = Variable<String>(phone);
-    }
-    if (!nullToAbsent || gstin != null) {
-      map['gstin'] = Variable<String>(gstin);
-    }
-    if (!nullToAbsent || address != null) {
-      map['address'] = Variable<String>(address);
-    }
-    map['credit_limit'] = Variable<int>(creditLimit);
-    map['credit_days'] = Variable<int>(creditDays);
-    map['price_category'] = Variable<String>(priceCategory);
-    map['is_synced'] = Variable<bool>(isSynced);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
-    if (!nullToAbsent || deletedAt != null) {
-      map['deleted_at'] = Variable<DateTime>(deletedAt);
-    }
-    return map;
-  }
-
-  HardwarePartiesTableCompanion toCompanion(bool nullToAbsent) {
-    return HardwarePartiesTableCompanion(
-      id: Value(id),
-      userId: Value(userId),
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
-      phone: phone == null && nullToAbsent
-          ? const Value.absent()
-          : Value(phone),
-      gstin: gstin == null && nullToAbsent
-          ? const Value.absent()
-          : Value(gstin),
-      address: address == null && nullToAbsent
-          ? const Value.absent()
-          : Value(address),
-      creditLimit: Value(creditLimit),
-      creditDays: Value(creditDays),
-      priceCategory: Value(priceCategory),
-      isSynced: Value(isSynced),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
-    );
-  }
-
-  factory HardwarePartyEntity.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return HardwarePartyEntity(
-      id: serializer.fromJson<String>(json['id']),
-      userId: serializer.fromJson<String>(json['userId']),
-      name: serializer.fromJson<String?>(json['name']),
-      type: serializer.fromJson<String?>(json['type']),
-      phone: serializer.fromJson<String?>(json['phone']),
-      gstin: serializer.fromJson<String?>(json['gstin']),
-      address: serializer.fromJson<String?>(json['address']),
-      creditLimit: serializer.fromJson<int>(json['creditLimit']),
-      creditDays: serializer.fromJson<int>(json['creditDays']),
-      priceCategory: serializer.fromJson<String>(json['priceCategory']),
-      isSynced: serializer.fromJson<bool>(json['isSynced']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'userId': serializer.toJson<String>(userId),
-      'name': serializer.toJson<String?>(name),
-      'type': serializer.toJson<String?>(type),
-      'phone': serializer.toJson<String?>(phone),
-      'gstin': serializer.toJson<String?>(gstin),
-      'address': serializer.toJson<String?>(address),
-      'creditLimit': serializer.toJson<int>(creditLimit),
-      'creditDays': serializer.toJson<int>(creditDays),
-      'priceCategory': serializer.toJson<String>(priceCategory),
-      'isSynced': serializer.toJson<bool>(isSynced),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
-    };
-  }
-
-  HardwarePartyEntity copyWith({
-    String? id,
-    String? userId,
-    Value<String?> name = const Value.absent(),
-    Value<String?> type = const Value.absent(),
-    Value<String?> phone = const Value.absent(),
-    Value<String?> gstin = const Value.absent(),
-    Value<String?> address = const Value.absent(),
-    int? creditLimit,
-    int? creditDays,
-    String? priceCategory,
-    bool? isSynced,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    Value<DateTime?> deletedAt = const Value.absent(),
-  }) => HardwarePartyEntity(
-    id: id ?? this.id,
-    userId: userId ?? this.userId,
-    name: name.present ? name.value : this.name,
-    type: type.present ? type.value : this.type,
-    phone: phone.present ? phone.value : this.phone,
-    gstin: gstin.present ? gstin.value : this.gstin,
-    address: address.present ? address.value : this.address,
-    creditLimit: creditLimit ?? this.creditLimit,
-    creditDays: creditDays ?? this.creditDays,
-    priceCategory: priceCategory ?? this.priceCategory,
-    isSynced: isSynced ?? this.isSynced,
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt ?? this.updatedAt,
-    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-  );
-  HardwarePartyEntity copyWithCompanion(HardwarePartiesTableCompanion data) {
-    return HardwarePartyEntity(
-      id: data.id.present ? data.id.value : this.id,
-      userId: data.userId.present ? data.userId.value : this.userId,
-      name: data.name.present ? data.name.value : this.name,
-      type: data.type.present ? data.type.value : this.type,
-      phone: data.phone.present ? data.phone.value : this.phone,
-      gstin: data.gstin.present ? data.gstin.value : this.gstin,
-      address: data.address.present ? data.address.value : this.address,
-      creditLimit: data.creditLimit.present
-          ? data.creditLimit.value
-          : this.creditLimit,
-      creditDays: data.creditDays.present
-          ? data.creditDays.value
-          : this.creditDays,
-      priceCategory: data.priceCategory.present
-          ? data.priceCategory.value
-          : this.priceCategory,
-      isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HardwarePartyEntity(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('name: $name, ')
-          ..write('type: $type, ')
-          ..write('phone: $phone, ')
-          ..write('gstin: $gstin, ')
-          ..write('address: $address, ')
-          ..write('creditLimit: $creditLimit, ')
-          ..write('creditDays: $creditDays, ')
-          ..write('priceCategory: $priceCategory, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    userId,
-    name,
-    type,
-    phone,
-    gstin,
-    address,
-    creditLimit,
-    creditDays,
-    priceCategory,
-    isSynced,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is HardwarePartyEntity &&
-          other.id == this.id &&
-          other.userId == this.userId &&
-          other.name == this.name &&
-          other.type == this.type &&
-          other.phone == this.phone &&
-          other.gstin == this.gstin &&
-          other.address == this.address &&
-          other.creditLimit == this.creditLimit &&
-          other.creditDays == this.creditDays &&
-          other.priceCategory == this.priceCategory &&
-          other.isSynced == this.isSynced &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt &&
-          other.deletedAt == this.deletedAt);
-}
-
-class HardwarePartiesTableCompanion
-    extends UpdateCompanion<HardwarePartyEntity> {
-  final Value<String> id;
-  final Value<String> userId;
-  final Value<String?> name;
-  final Value<String?> type;
-  final Value<String?> phone;
-  final Value<String?> gstin;
-  final Value<String?> address;
-  final Value<int> creditLimit;
-  final Value<int> creditDays;
-  final Value<String> priceCategory;
-  final Value<bool> isSynced;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
-  final Value<DateTime?> deletedAt;
-  final Value<int> rowid;
-  const HardwarePartiesTableCompanion({
-    this.id = const Value.absent(),
-    this.userId = const Value.absent(),
-    this.name = const Value.absent(),
-    this.type = const Value.absent(),
-    this.phone = const Value.absent(),
-    this.gstin = const Value.absent(),
-    this.address = const Value.absent(),
-    this.creditLimit = const Value.absent(),
-    this.creditDays = const Value.absent(),
-    this.priceCategory = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  HardwarePartiesTableCompanion.insert({
-    required String id,
-    required String userId,
-    this.name = const Value.absent(),
-    this.type = const Value.absent(),
-    this.phone = const Value.absent(),
-    this.gstin = const Value.absent(),
-    this.address = const Value.absent(),
-    this.creditLimit = const Value.absent(),
-    this.creditDays = const Value.absent(),
-    this.priceCategory = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       userId = Value(userId),
-       createdAt = Value(createdAt),
-       updatedAt = Value(updatedAt);
-  static Insertable<HardwarePartyEntity> custom({
-    Expression<String>? id,
-    Expression<String>? userId,
-    Expression<String>? name,
-    Expression<String>? type,
-    Expression<String>? phone,
-    Expression<String>? gstin,
-    Expression<String>? address,
-    Expression<int>? creditLimit,
-    Expression<int>? creditDays,
-    Expression<String>? priceCategory,
-    Expression<bool>? isSynced,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
-    Expression<DateTime>? deletedAt,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (userId != null) 'user_id': userId,
-      if (name != null) 'name': name,
-      if (type != null) 'type': type,
-      if (phone != null) 'phone': phone,
-      if (gstin != null) 'gstin': gstin,
-      if (address != null) 'address': address,
-      if (creditLimit != null) 'credit_limit': creditLimit,
-      if (creditDays != null) 'credit_days': creditDays,
-      if (priceCategory != null) 'price_category': priceCategory,
-      if (isSynced != null) 'is_synced': isSynced,
-      if (createdAt != null) 'created_at': createdAt,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (deletedAt != null) 'deleted_at': deletedAt,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  HardwarePartiesTableCompanion copyWith({
-    Value<String>? id,
-    Value<String>? userId,
-    Value<String?>? name,
-    Value<String?>? type,
-    Value<String?>? phone,
-    Value<String?>? gstin,
-    Value<String?>? address,
-    Value<int>? creditLimit,
-    Value<int>? creditDays,
-    Value<String>? priceCategory,
-    Value<bool>? isSynced,
-    Value<DateTime>? createdAt,
-    Value<DateTime>? updatedAt,
-    Value<DateTime?>? deletedAt,
-    Value<int>? rowid,
-  }) {
-    return HardwarePartiesTableCompanion(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      name: name ?? this.name,
-      type: type ?? this.type,
-      phone: phone ?? this.phone,
-      gstin: gstin ?? this.gstin,
-      address: address ?? this.address,
-      creditLimit: creditLimit ?? this.creditLimit,
-      creditDays: creditDays ?? this.creditDays,
-      priceCategory: priceCategory ?? this.priceCategory,
-      isSynced: isSynced ?? this.isSynced,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      deletedAt: deletedAt ?? this.deletedAt,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (userId.present) {
-      map['user_id'] = Variable<String>(userId.value);
-    }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
-    }
-    if (type.present) {
-      map['type'] = Variable<String>(type.value);
-    }
-    if (phone.present) {
-      map['phone'] = Variable<String>(phone.value);
-    }
-    if (gstin.present) {
-      map['gstin'] = Variable<String>(gstin.value);
-    }
-    if (address.present) {
-      map['address'] = Variable<String>(address.value);
-    }
-    if (creditLimit.present) {
-      map['credit_limit'] = Variable<int>(creditLimit.value);
-    }
-    if (creditDays.present) {
-      map['credit_days'] = Variable<int>(creditDays.value);
-    }
-    if (priceCategory.present) {
-      map['price_category'] = Variable<String>(priceCategory.value);
-    }
-    if (isSynced.present) {
-      map['is_synced'] = Variable<bool>(isSynced.value);
-    }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
-    if (deletedAt.present) {
-      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HardwarePartiesTableCompanion(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('name: $name, ')
-          ..write('type: $type, ')
-          ..write('phone: $phone, ')
-          ..write('gstin: $gstin, ')
-          ..write('address: $address, ')
-          ..write('creditLimit: $creditLimit, ')
-          ..write('creditDays: $creditDays, ')
-          ..write('priceCategory: $priceCategory, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $HardwareSalesOrdersTableTable extends HardwareSalesOrdersTable
-    with TableInfo<$HardwareSalesOrdersTableTable, HardwareSalesOrderEntity> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $HardwareSalesOrdersTableTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  @override
-  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
-    'user_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _customerIdMeta = const VerificationMeta(
-    'customerId',
-  );
-  @override
-  late final GeneratedColumn<String> customerId = GeneratedColumn<String>(
-    'customer_id',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _customerNameMeta = const VerificationMeta(
-    'customerName',
-  );
-  @override
-  late final GeneratedColumn<String> customerName = GeneratedColumn<String>(
-    'customer_name',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _statusMeta = const VerificationMeta('status');
-  @override
-  late final GeneratedColumn<String> status = GeneratedColumn<String>(
-    'status',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('pending'),
-  );
-  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
-  @override
-  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
-    'notes',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _itemsJsonMeta = const VerificationMeta(
-    'itemsJson',
-  );
-  @override
-  late final GeneratedColumn<String> itemsJson = GeneratedColumn<String>(
-    'items_json',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('[]'),
-  );
-  static const VerificationMeta _isSyncedMeta = const VerificationMeta(
-    'isSynced',
-  );
-  @override
-  late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
-    'is_synced',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("is_synced" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
-    'deletedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
-    'deleted_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    userId,
-    customerId,
-    customerName,
-    status,
-    notes,
-    itemsJson,
-    isSynced,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'hardware_sales_orders';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<HardwareSalesOrderEntity> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('user_id')) {
-      context.handle(
-        _userIdMeta,
-        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_userIdMeta);
-    }
-    if (data.containsKey('customer_id')) {
-      context.handle(
-        _customerIdMeta,
-        customerId.isAcceptableOrUnknown(data['customer_id']!, _customerIdMeta),
-      );
-    }
-    if (data.containsKey('customer_name')) {
-      context.handle(
-        _customerNameMeta,
-        customerName.isAcceptableOrUnknown(
-          data['customer_name']!,
-          _customerNameMeta,
-        ),
-      );
-    }
-    if (data.containsKey('status')) {
-      context.handle(
-        _statusMeta,
-        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
-      );
-    }
-    if (data.containsKey('notes')) {
-      context.handle(
-        _notesMeta,
-        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
-      );
-    }
-    if (data.containsKey('items_json')) {
-      context.handle(
-        _itemsJsonMeta,
-        itemsJson.isAcceptableOrUnknown(data['items_json']!, _itemsJsonMeta),
-      );
-    }
-    if (data.containsKey('is_synced')) {
-      context.handle(
-        _isSyncedMeta,
-        isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
-      );
-    }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_createdAtMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    if (data.containsKey('deleted_at')) {
-      context.handle(
-        _deletedAtMeta,
-        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  HardwareSalesOrderEntity map(
-    Map<String, dynamic> data, {
-    String? tablePrefix,
-  }) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return HardwareSalesOrderEntity(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      userId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}user_id'],
-      )!,
-      customerId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}customer_id'],
-      ),
-      customerName: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}customer_name'],
-      ),
-      status: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}status'],
-      )!,
-      notes: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}notes'],
-      ),
-      itemsJson: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}items_json'],
-      )!,
-      isSynced: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}is_synced'],
-      )!,
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
-      deletedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}deleted_at'],
-      ),
-    );
-  }
-
-  @override
-  $HardwareSalesOrdersTableTable createAlias(String alias) {
-    return $HardwareSalesOrdersTableTable(attachedDatabase, alias);
-  }
-}
-
-class HardwareSalesOrderEntity extends DataClass
-    implements Insertable<HardwareSalesOrderEntity> {
-  final String id;
-  final String userId;
-  final String? customerId;
-  final String? customerName;
-  final String status;
-  final String? notes;
-  final String itemsJson;
-  final bool isSynced;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final DateTime? deletedAt;
-  const HardwareSalesOrderEntity({
-    required this.id,
-    required this.userId,
-    this.customerId,
-    this.customerName,
-    required this.status,
-    this.notes,
-    required this.itemsJson,
-    required this.isSynced,
-    required this.createdAt,
-    required this.updatedAt,
-    this.deletedAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['user_id'] = Variable<String>(userId);
-    if (!nullToAbsent || customerId != null) {
-      map['customer_id'] = Variable<String>(customerId);
-    }
-    if (!nullToAbsent || customerName != null) {
-      map['customer_name'] = Variable<String>(customerName);
-    }
-    map['status'] = Variable<String>(status);
-    if (!nullToAbsent || notes != null) {
-      map['notes'] = Variable<String>(notes);
-    }
-    map['items_json'] = Variable<String>(itemsJson);
-    map['is_synced'] = Variable<bool>(isSynced);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
-    if (!nullToAbsent || deletedAt != null) {
-      map['deleted_at'] = Variable<DateTime>(deletedAt);
-    }
-    return map;
-  }
-
-  HardwareSalesOrdersTableCompanion toCompanion(bool nullToAbsent) {
-    return HardwareSalesOrdersTableCompanion(
-      id: Value(id),
-      userId: Value(userId),
-      customerId: customerId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(customerId),
-      customerName: customerName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(customerName),
-      status: Value(status),
-      notes: notes == null && nullToAbsent
-          ? const Value.absent()
-          : Value(notes),
-      itemsJson: Value(itemsJson),
-      isSynced: Value(isSynced),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
-    );
-  }
-
-  factory HardwareSalesOrderEntity.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return HardwareSalesOrderEntity(
-      id: serializer.fromJson<String>(json['id']),
-      userId: serializer.fromJson<String>(json['userId']),
-      customerId: serializer.fromJson<String?>(json['customerId']),
-      customerName: serializer.fromJson<String?>(json['customerName']),
-      status: serializer.fromJson<String>(json['status']),
-      notes: serializer.fromJson<String?>(json['notes']),
-      itemsJson: serializer.fromJson<String>(json['itemsJson']),
-      isSynced: serializer.fromJson<bool>(json['isSynced']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'userId': serializer.toJson<String>(userId),
-      'customerId': serializer.toJson<String?>(customerId),
-      'customerName': serializer.toJson<String?>(customerName),
-      'status': serializer.toJson<String>(status),
-      'notes': serializer.toJson<String?>(notes),
-      'itemsJson': serializer.toJson<String>(itemsJson),
-      'isSynced': serializer.toJson<bool>(isSynced),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
-    };
-  }
-
-  HardwareSalesOrderEntity copyWith({
-    String? id,
-    String? userId,
-    Value<String?> customerId = const Value.absent(),
-    Value<String?> customerName = const Value.absent(),
-    String? status,
-    Value<String?> notes = const Value.absent(),
-    String? itemsJson,
-    bool? isSynced,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    Value<DateTime?> deletedAt = const Value.absent(),
-  }) => HardwareSalesOrderEntity(
-    id: id ?? this.id,
-    userId: userId ?? this.userId,
-    customerId: customerId.present ? customerId.value : this.customerId,
-    customerName: customerName.present ? customerName.value : this.customerName,
-    status: status ?? this.status,
-    notes: notes.present ? notes.value : this.notes,
-    itemsJson: itemsJson ?? this.itemsJson,
-    isSynced: isSynced ?? this.isSynced,
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt ?? this.updatedAt,
-    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-  );
-  HardwareSalesOrderEntity copyWithCompanion(
-    HardwareSalesOrdersTableCompanion data,
-  ) {
-    return HardwareSalesOrderEntity(
-      id: data.id.present ? data.id.value : this.id,
-      userId: data.userId.present ? data.userId.value : this.userId,
-      customerId: data.customerId.present
-          ? data.customerId.value
-          : this.customerId,
-      customerName: data.customerName.present
-          ? data.customerName.value
-          : this.customerName,
-      status: data.status.present ? data.status.value : this.status,
-      notes: data.notes.present ? data.notes.value : this.notes,
-      itemsJson: data.itemsJson.present ? data.itemsJson.value : this.itemsJson,
-      isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HardwareSalesOrderEntity(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('customerId: $customerId, ')
-          ..write('customerName: $customerName, ')
-          ..write('status: $status, ')
-          ..write('notes: $notes, ')
-          ..write('itemsJson: $itemsJson, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    userId,
-    customerId,
-    customerName,
-    status,
-    notes,
-    itemsJson,
-    isSynced,
-    createdAt,
-    updatedAt,
-    deletedAt,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is HardwareSalesOrderEntity &&
-          other.id == this.id &&
-          other.userId == this.userId &&
-          other.customerId == this.customerId &&
-          other.customerName == this.customerName &&
-          other.status == this.status &&
-          other.notes == this.notes &&
-          other.itemsJson == this.itemsJson &&
-          other.isSynced == this.isSynced &&
-          other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt &&
-          other.deletedAt == this.deletedAt);
-}
-
-class HardwareSalesOrdersTableCompanion
-    extends UpdateCompanion<HardwareSalesOrderEntity> {
-  final Value<String> id;
-  final Value<String> userId;
-  final Value<String?> customerId;
-  final Value<String?> customerName;
-  final Value<String> status;
-  final Value<String?> notes;
-  final Value<String> itemsJson;
-  final Value<bool> isSynced;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
-  final Value<DateTime?> deletedAt;
-  final Value<int> rowid;
-  const HardwareSalesOrdersTableCompanion({
-    this.id = const Value.absent(),
-    this.userId = const Value.absent(),
-    this.customerId = const Value.absent(),
-    this.customerName = const Value.absent(),
-    this.status = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.itemsJson = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    this.createdAt = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  HardwareSalesOrdersTableCompanion.insert({
-    required String id,
-    required String userId,
-    this.customerId = const Value.absent(),
-    this.customerName = const Value.absent(),
-    this.status = const Value.absent(),
-    this.notes = const Value.absent(),
-    this.itemsJson = const Value.absent(),
-    this.isSynced = const Value.absent(),
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    this.deletedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       userId = Value(userId),
-       createdAt = Value(createdAt),
-       updatedAt = Value(updatedAt);
-  static Insertable<HardwareSalesOrderEntity> custom({
-    Expression<String>? id,
-    Expression<String>? userId,
-    Expression<String>? customerId,
-    Expression<String>? customerName,
-    Expression<String>? status,
-    Expression<String>? notes,
-    Expression<String>? itemsJson,
-    Expression<bool>? isSynced,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
-    Expression<DateTime>? deletedAt,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (userId != null) 'user_id': userId,
-      if (customerId != null) 'customer_id': customerId,
-      if (customerName != null) 'customer_name': customerName,
-      if (status != null) 'status': status,
-      if (notes != null) 'notes': notes,
-      if (itemsJson != null) 'items_json': itemsJson,
-      if (isSynced != null) 'is_synced': isSynced,
-      if (createdAt != null) 'created_at': createdAt,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (deletedAt != null) 'deleted_at': deletedAt,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  HardwareSalesOrdersTableCompanion copyWith({
-    Value<String>? id,
-    Value<String>? userId,
-    Value<String?>? customerId,
-    Value<String?>? customerName,
-    Value<String>? status,
-    Value<String?>? notes,
-    Value<String>? itemsJson,
-    Value<bool>? isSynced,
-    Value<DateTime>? createdAt,
-    Value<DateTime>? updatedAt,
-    Value<DateTime?>? deletedAt,
-    Value<int>? rowid,
-  }) {
-    return HardwareSalesOrdersTableCompanion(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      customerId: customerId ?? this.customerId,
-      customerName: customerName ?? this.customerName,
-      status: status ?? this.status,
-      notes: notes ?? this.notes,
-      itemsJson: itemsJson ?? this.itemsJson,
-      isSynced: isSynced ?? this.isSynced,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      deletedAt: deletedAt ?? this.deletedAt,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (userId.present) {
-      map['user_id'] = Variable<String>(userId.value);
-    }
-    if (customerId.present) {
-      map['customer_id'] = Variable<String>(customerId.value);
-    }
-    if (customerName.present) {
-      map['customer_name'] = Variable<String>(customerName.value);
-    }
-    if (status.present) {
-      map['status'] = Variable<String>(status.value);
-    }
-    if (notes.present) {
-      map['notes'] = Variable<String>(notes.value);
-    }
-    if (itemsJson.present) {
-      map['items_json'] = Variable<String>(itemsJson.value);
-    }
-    if (isSynced.present) {
-      map['is_synced'] = Variable<bool>(isSynced.value);
-    }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
-    if (deletedAt.present) {
-      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HardwareSalesOrdersTableCompanion(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('customerId: $customerId, ')
-          ..write('customerName: $customerName, ')
-          ..write('status: $status, ')
-          ..write('notes: $notes, ')
-          ..write('itemsJson: $itemsJson, ')
-          ..write('isSynced: $isSynced, ')
-          ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $RolesTable extends Roles with TableInfo<$RolesTable, RoleEntity> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -127162,6 +122360,1007 @@ class TaxRatesCompanion extends UpdateCompanion<TaxRateEntity> {
   }
 }
 
+class $ComputerJobCardsCacheTable extends ComputerJobCardsCache
+    with TableInfo<$ComputerJobCardsCacheTable, ComputerJobCardCacheEntity> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ComputerJobCardsCacheTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tenantIdMeta = const VerificationMeta(
+    'tenantId',
+  );
+  @override
+  late final GeneratedColumn<String> tenantId = GeneratedColumn<String>(
+    'tenant_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, tenantId, payloadJson, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'computer_job_cards_cache';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ComputerJobCardCacheEntity> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('tenant_id')) {
+      context.handle(
+        _tenantIdMeta,
+        tenantId.isAcceptableOrUnknown(data['tenant_id']!, _tenantIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tenantIdMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ComputerJobCardCacheEntity map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ComputerJobCardCacheEntity(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      tenantId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tenant_id'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ComputerJobCardsCacheTable createAlias(String alias) {
+    return $ComputerJobCardsCacheTable(attachedDatabase, alias);
+  }
+}
+
+class ComputerJobCardCacheEntity extends DataClass
+    implements Insertable<ComputerJobCardCacheEntity> {
+  final String id;
+  final String tenantId;
+  final String payloadJson;
+  final DateTime updatedAt;
+  const ComputerJobCardCacheEntity({
+    required this.id,
+    required this.tenantId,
+    required this.payloadJson,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['tenant_id'] = Variable<String>(tenantId);
+    map['payload_json'] = Variable<String>(payloadJson);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ComputerJobCardsCacheCompanion toCompanion(bool nullToAbsent) {
+    return ComputerJobCardsCacheCompanion(
+      id: Value(id),
+      tenantId: Value(tenantId),
+      payloadJson: Value(payloadJson),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory ComputerJobCardCacheEntity.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ComputerJobCardCacheEntity(
+      id: serializer.fromJson<String>(json['id']),
+      tenantId: serializer.fromJson<String>(json['tenantId']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'tenantId': serializer.toJson<String>(tenantId),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  ComputerJobCardCacheEntity copyWith({
+    String? id,
+    String? tenantId,
+    String? payloadJson,
+    DateTime? updatedAt,
+  }) => ComputerJobCardCacheEntity(
+    id: id ?? this.id,
+    tenantId: tenantId ?? this.tenantId,
+    payloadJson: payloadJson ?? this.payloadJson,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  ComputerJobCardCacheEntity copyWithCompanion(
+    ComputerJobCardsCacheCompanion data,
+  ) {
+    return ComputerJobCardCacheEntity(
+      id: data.id.present ? data.id.value : this.id,
+      tenantId: data.tenantId.present ? data.tenantId.value : this.tenantId,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComputerJobCardCacheEntity(')
+          ..write('id: $id, ')
+          ..write('tenantId: $tenantId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, tenantId, payloadJson, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ComputerJobCardCacheEntity &&
+          other.id == this.id &&
+          other.tenantId == this.tenantId &&
+          other.payloadJson == this.payloadJson &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ComputerJobCardsCacheCompanion
+    extends UpdateCompanion<ComputerJobCardCacheEntity> {
+  final Value<String> id;
+  final Value<String> tenantId;
+  final Value<String> payloadJson;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const ComputerJobCardsCacheCompanion({
+    this.id = const Value.absent(),
+    this.tenantId = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ComputerJobCardsCacheCompanion.insert({
+    required String id,
+    required String tenantId,
+    required String payloadJson,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       tenantId = Value(tenantId),
+       payloadJson = Value(payloadJson),
+       updatedAt = Value(updatedAt);
+  static Insertable<ComputerJobCardCacheEntity> custom({
+    Expression<String>? id,
+    Expression<String>? tenantId,
+    Expression<String>? payloadJson,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (tenantId != null) 'tenant_id': tenantId,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ComputerJobCardsCacheCompanion copyWith({
+    Value<String>? id,
+    Value<String>? tenantId,
+    Value<String>? payloadJson,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return ComputerJobCardsCacheCompanion(
+      id: id ?? this.id,
+      tenantId: tenantId ?? this.tenantId,
+      payloadJson: payloadJson ?? this.payloadJson,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (tenantId.present) {
+      map['tenant_id'] = Variable<String>(tenantId.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComputerJobCardsCacheCompanion(')
+          ..write('id: $id, ')
+          ..write('tenantId: $tenantId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ComputerWarrantyCacheTable extends ComputerWarrantyCache
+    with TableInfo<$ComputerWarrantyCacheTable, ComputerWarrantyCacheEntity> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ComputerWarrantyCacheTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tenantIdMeta = const VerificationMeta(
+    'tenantId',
+  );
+  @override
+  late final GeneratedColumn<String> tenantId = GeneratedColumn<String>(
+    'tenant_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _serialNumberMeta = const VerificationMeta(
+    'serialNumber',
+  );
+  @override
+  late final GeneratedColumn<String> serialNumber = GeneratedColumn<String>(
+    'serial_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _warrantyExpiryDateMeta =
+      const VerificationMeta('warrantyExpiryDate');
+  @override
+  late final GeneratedColumn<DateTime> warrantyExpiryDate =
+      GeneratedColumn<DateTime>(
+        'warranty_expiry_date',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    tenantId,
+    serialNumber,
+    payloadJson,
+    warrantyExpiryDate,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'computer_warranty_cache';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ComputerWarrantyCacheEntity> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('tenant_id')) {
+      context.handle(
+        _tenantIdMeta,
+        tenantId.isAcceptableOrUnknown(data['tenant_id']!, _tenantIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tenantIdMeta);
+    }
+    if (data.containsKey('serial_number')) {
+      context.handle(
+        _serialNumberMeta,
+        serialNumber.isAcceptableOrUnknown(
+          data['serial_number']!,
+          _serialNumberMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_serialNumberMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    if (data.containsKey('warranty_expiry_date')) {
+      context.handle(
+        _warrantyExpiryDateMeta,
+        warrantyExpiryDate.isAcceptableOrUnknown(
+          data['warranty_expiry_date']!,
+          _warrantyExpiryDateMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ComputerWarrantyCacheEntity map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ComputerWarrantyCacheEntity(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      tenantId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tenant_id'],
+      )!,
+      serialNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}serial_number'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+      warrantyExpiryDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}warranty_expiry_date'],
+      ),
+    );
+  }
+
+  @override
+  $ComputerWarrantyCacheTable createAlias(String alias) {
+    return $ComputerWarrantyCacheTable(attachedDatabase, alias);
+  }
+}
+
+class ComputerWarrantyCacheEntity extends DataClass
+    implements Insertable<ComputerWarrantyCacheEntity> {
+  final String id;
+  final String tenantId;
+  final String serialNumber;
+  final String payloadJson;
+  final DateTime? warrantyExpiryDate;
+  const ComputerWarrantyCacheEntity({
+    required this.id,
+    required this.tenantId,
+    required this.serialNumber,
+    required this.payloadJson,
+    this.warrantyExpiryDate,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['tenant_id'] = Variable<String>(tenantId);
+    map['serial_number'] = Variable<String>(serialNumber);
+    map['payload_json'] = Variable<String>(payloadJson);
+    if (!nullToAbsent || warrantyExpiryDate != null) {
+      map['warranty_expiry_date'] = Variable<DateTime>(warrantyExpiryDate);
+    }
+    return map;
+  }
+
+  ComputerWarrantyCacheCompanion toCompanion(bool nullToAbsent) {
+    return ComputerWarrantyCacheCompanion(
+      id: Value(id),
+      tenantId: Value(tenantId),
+      serialNumber: Value(serialNumber),
+      payloadJson: Value(payloadJson),
+      warrantyExpiryDate: warrantyExpiryDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(warrantyExpiryDate),
+    );
+  }
+
+  factory ComputerWarrantyCacheEntity.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ComputerWarrantyCacheEntity(
+      id: serializer.fromJson<String>(json['id']),
+      tenantId: serializer.fromJson<String>(json['tenantId']),
+      serialNumber: serializer.fromJson<String>(json['serialNumber']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+      warrantyExpiryDate: serializer.fromJson<DateTime?>(
+        json['warrantyExpiryDate'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'tenantId': serializer.toJson<String>(tenantId),
+      'serialNumber': serializer.toJson<String>(serialNumber),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+      'warrantyExpiryDate': serializer.toJson<DateTime?>(warrantyExpiryDate),
+    };
+  }
+
+  ComputerWarrantyCacheEntity copyWith({
+    String? id,
+    String? tenantId,
+    String? serialNumber,
+    String? payloadJson,
+    Value<DateTime?> warrantyExpiryDate = const Value.absent(),
+  }) => ComputerWarrantyCacheEntity(
+    id: id ?? this.id,
+    tenantId: tenantId ?? this.tenantId,
+    serialNumber: serialNumber ?? this.serialNumber,
+    payloadJson: payloadJson ?? this.payloadJson,
+    warrantyExpiryDate: warrantyExpiryDate.present
+        ? warrantyExpiryDate.value
+        : this.warrantyExpiryDate,
+  );
+  ComputerWarrantyCacheEntity copyWithCompanion(
+    ComputerWarrantyCacheCompanion data,
+  ) {
+    return ComputerWarrantyCacheEntity(
+      id: data.id.present ? data.id.value : this.id,
+      tenantId: data.tenantId.present ? data.tenantId.value : this.tenantId,
+      serialNumber: data.serialNumber.present
+          ? data.serialNumber.value
+          : this.serialNumber,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+      warrantyExpiryDate: data.warrantyExpiryDate.present
+          ? data.warrantyExpiryDate.value
+          : this.warrantyExpiryDate,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComputerWarrantyCacheEntity(')
+          ..write('id: $id, ')
+          ..write('tenantId: $tenantId, ')
+          ..write('serialNumber: $serialNumber, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('warrantyExpiryDate: $warrantyExpiryDate')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, tenantId, serialNumber, payloadJson, warrantyExpiryDate);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ComputerWarrantyCacheEntity &&
+          other.id == this.id &&
+          other.tenantId == this.tenantId &&
+          other.serialNumber == this.serialNumber &&
+          other.payloadJson == this.payloadJson &&
+          other.warrantyExpiryDate == this.warrantyExpiryDate);
+}
+
+class ComputerWarrantyCacheCompanion
+    extends UpdateCompanion<ComputerWarrantyCacheEntity> {
+  final Value<String> id;
+  final Value<String> tenantId;
+  final Value<String> serialNumber;
+  final Value<String> payloadJson;
+  final Value<DateTime?> warrantyExpiryDate;
+  final Value<int> rowid;
+  const ComputerWarrantyCacheCompanion({
+    this.id = const Value.absent(),
+    this.tenantId = const Value.absent(),
+    this.serialNumber = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.warrantyExpiryDate = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ComputerWarrantyCacheCompanion.insert({
+    required String id,
+    required String tenantId,
+    required String serialNumber,
+    required String payloadJson,
+    this.warrantyExpiryDate = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       tenantId = Value(tenantId),
+       serialNumber = Value(serialNumber),
+       payloadJson = Value(payloadJson);
+  static Insertable<ComputerWarrantyCacheEntity> custom({
+    Expression<String>? id,
+    Expression<String>? tenantId,
+    Expression<String>? serialNumber,
+    Expression<String>? payloadJson,
+    Expression<DateTime>? warrantyExpiryDate,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (tenantId != null) 'tenant_id': tenantId,
+      if (serialNumber != null) 'serial_number': serialNumber,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (warrantyExpiryDate != null)
+        'warranty_expiry_date': warrantyExpiryDate,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ComputerWarrantyCacheCompanion copyWith({
+    Value<String>? id,
+    Value<String>? tenantId,
+    Value<String>? serialNumber,
+    Value<String>? payloadJson,
+    Value<DateTime?>? warrantyExpiryDate,
+    Value<int>? rowid,
+  }) {
+    return ComputerWarrantyCacheCompanion(
+      id: id ?? this.id,
+      tenantId: tenantId ?? this.tenantId,
+      serialNumber: serialNumber ?? this.serialNumber,
+      payloadJson: payloadJson ?? this.payloadJson,
+      warrantyExpiryDate: warrantyExpiryDate ?? this.warrantyExpiryDate,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (tenantId.present) {
+      map['tenant_id'] = Variable<String>(tenantId.value);
+    }
+    if (serialNumber.present) {
+      map['serial_number'] = Variable<String>(serialNumber.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (warrantyExpiryDate.present) {
+      map['warranty_expiry_date'] = Variable<DateTime>(
+        warrantyExpiryDate.value,
+      );
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComputerWarrantyCacheCompanion(')
+          ..write('id: $id, ')
+          ..write('tenantId: $tenantId, ')
+          ..write('serialNumber: $serialNumber, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('warrantyExpiryDate: $warrantyExpiryDate, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ComputerSerialsCacheTable extends ComputerSerialsCache
+    with TableInfo<$ComputerSerialsCacheTable, ComputerSerialCacheEntity> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ComputerSerialsCacheTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _serialNumberMeta = const VerificationMeta(
+    'serialNumber',
+  );
+  @override
+  late final GeneratedColumn<String> serialNumber = GeneratedColumn<String>(
+    'serial_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tenantIdMeta = const VerificationMeta(
+    'tenantId',
+  );
+  @override
+  late final GeneratedColumn<String> tenantId = GeneratedColumn<String>(
+    'tenant_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [serialNumber, tenantId, payloadJson];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'computer_serials_cache';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ComputerSerialCacheEntity> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('serial_number')) {
+      context.handle(
+        _serialNumberMeta,
+        serialNumber.isAcceptableOrUnknown(
+          data['serial_number']!,
+          _serialNumberMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_serialNumberMeta);
+    }
+    if (data.containsKey('tenant_id')) {
+      context.handle(
+        _tenantIdMeta,
+        tenantId.isAcceptableOrUnknown(data['tenant_id']!, _tenantIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tenantIdMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {serialNumber};
+  @override
+  ComputerSerialCacheEntity map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ComputerSerialCacheEntity(
+      serialNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}serial_number'],
+      )!,
+      tenantId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tenant_id'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+    );
+  }
+
+  @override
+  $ComputerSerialsCacheTable createAlias(String alias) {
+    return $ComputerSerialsCacheTable(attachedDatabase, alias);
+  }
+}
+
+class ComputerSerialCacheEntity extends DataClass
+    implements Insertable<ComputerSerialCacheEntity> {
+  final String serialNumber;
+  final String tenantId;
+  final String payloadJson;
+  const ComputerSerialCacheEntity({
+    required this.serialNumber,
+    required this.tenantId,
+    required this.payloadJson,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['serial_number'] = Variable<String>(serialNumber);
+    map['tenant_id'] = Variable<String>(tenantId);
+    map['payload_json'] = Variable<String>(payloadJson);
+    return map;
+  }
+
+  ComputerSerialsCacheCompanion toCompanion(bool nullToAbsent) {
+    return ComputerSerialsCacheCompanion(
+      serialNumber: Value(serialNumber),
+      tenantId: Value(tenantId),
+      payloadJson: Value(payloadJson),
+    );
+  }
+
+  factory ComputerSerialCacheEntity.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ComputerSerialCacheEntity(
+      serialNumber: serializer.fromJson<String>(json['serialNumber']),
+      tenantId: serializer.fromJson<String>(json['tenantId']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'serialNumber': serializer.toJson<String>(serialNumber),
+      'tenantId': serializer.toJson<String>(tenantId),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+    };
+  }
+
+  ComputerSerialCacheEntity copyWith({
+    String? serialNumber,
+    String? tenantId,
+    String? payloadJson,
+  }) => ComputerSerialCacheEntity(
+    serialNumber: serialNumber ?? this.serialNumber,
+    tenantId: tenantId ?? this.tenantId,
+    payloadJson: payloadJson ?? this.payloadJson,
+  );
+  ComputerSerialCacheEntity copyWithCompanion(
+    ComputerSerialsCacheCompanion data,
+  ) {
+    return ComputerSerialCacheEntity(
+      serialNumber: data.serialNumber.present
+          ? data.serialNumber.value
+          : this.serialNumber,
+      tenantId: data.tenantId.present ? data.tenantId.value : this.tenantId,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComputerSerialCacheEntity(')
+          ..write('serialNumber: $serialNumber, ')
+          ..write('tenantId: $tenantId, ')
+          ..write('payloadJson: $payloadJson')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(serialNumber, tenantId, payloadJson);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ComputerSerialCacheEntity &&
+          other.serialNumber == this.serialNumber &&
+          other.tenantId == this.tenantId &&
+          other.payloadJson == this.payloadJson);
+}
+
+class ComputerSerialsCacheCompanion
+    extends UpdateCompanion<ComputerSerialCacheEntity> {
+  final Value<String> serialNumber;
+  final Value<String> tenantId;
+  final Value<String> payloadJson;
+  final Value<int> rowid;
+  const ComputerSerialsCacheCompanion({
+    this.serialNumber = const Value.absent(),
+    this.tenantId = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ComputerSerialsCacheCompanion.insert({
+    required String serialNumber,
+    required String tenantId,
+    required String payloadJson,
+    this.rowid = const Value.absent(),
+  }) : serialNumber = Value(serialNumber),
+       tenantId = Value(tenantId),
+       payloadJson = Value(payloadJson);
+  static Insertable<ComputerSerialCacheEntity> custom({
+    Expression<String>? serialNumber,
+    Expression<String>? tenantId,
+    Expression<String>? payloadJson,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (serialNumber != null) 'serial_number': serialNumber,
+      if (tenantId != null) 'tenant_id': tenantId,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ComputerSerialsCacheCompanion copyWith({
+    Value<String>? serialNumber,
+    Value<String>? tenantId,
+    Value<String>? payloadJson,
+    Value<int>? rowid,
+  }) {
+    return ComputerSerialsCacheCompanion(
+      serialNumber: serialNumber ?? this.serialNumber,
+      tenantId: tenantId ?? this.tenantId,
+      payloadJson: payloadJson ?? this.payloadJson,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (serialNumber.present) {
+      map['serial_number'] = Variable<String>(serialNumber.value);
+    }
+    if (tenantId.present) {
+      map['tenant_id'] = Variable<String>(tenantId.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComputerSerialsCacheCompanion(')
+          ..write('serialNumber: $serialNumber, ')
+          ..write('tenantId: $tenantId, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -127332,6 +123531,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TanksTable tanks = $TanksTable(this);
   late final $NozzlesTable nozzles = $NozzlesTable(this);
   late final $DispensersTable dispensers = $DispensersTable(this);
+  late final $FuelTypesTable fuelTypes = $FuelTypesTable(this);
   late final $StaffNozzleAssignmentsTable staffNozzleAssignments =
       $StaffNozzleAssignmentsTable(this);
   late final $StaffSalesDetailsTable staffSalesDetails =
@@ -127363,25 +123563,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $EwayRecordsTableTable ewayRecordsTable = $EwayRecordsTableTable(
     this,
   );
-  late final $ComputerJobCardsCacheTable computerJobCardsCache =
-      $ComputerJobCardsCacheTable(this);
-  late final $ComputerWarrantyCacheTable computerWarrantyCache =
-      $ComputerWarrantyCacheTable(this);
-  late final $ComputerSerialsCacheTable computerSerialsCache =
-      $ComputerSerialsCacheTable(this);
-  late final $HardwareProjectsTable hardwareProjects = $HardwareProjectsTable(
-    this,
-  );
-  late final $HardwareSiteIndentsTable hardwareSiteIndents =
-      $HardwareSiteIndentsTable(this);
-  late final $HardwareMaterialDepositsTable hardwareMaterialDeposits =
-      $HardwareMaterialDepositsTable(this);
-  late final $HardwarePurchaseOrdersTableTable hardwarePurchaseOrdersTable =
-      $HardwarePurchaseOrdersTableTable(this);
-  late final $HardwarePartiesTableTable hardwarePartiesTable =
-      $HardwarePartiesTableTable(this);
-  late final $HardwareSalesOrdersTableTable hardwareSalesOrdersTable =
-      $HardwareSalesOrdersTableTable(this);
   late final $RolesTable roles = $RolesTable(this);
   late final $PermissionsTable permissions = $PermissionsTable(this);
   late final $CategoriesTable categories = $CategoriesTable(this);
@@ -127391,6 +123572,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $TaxRatesTable taxRates = $TaxRatesTable(this);
+  late final $ComputerJobCardsCacheTable computerJobCardsCache =
+      $ComputerJobCardsCacheTable(this);
+  late final $ComputerWarrantyCacheTable computerWarrantyCache =
+      $ComputerWarrantyCacheTable(this);
+  late final $ComputerSerialsCacheTable computerSerialsCache =
+      $ComputerSerialsCacheTable(this);
   late final Index idxBillsUserId = Index(
     'idx_bills_user_id',
     'CREATE INDEX idx_bills_user_id ON bills (user_id)',
@@ -127735,6 +123922,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     tanks,
     nozzles,
     dispensers,
+    fuelTypes,
     staffNozzleAssignments,
     staffSalesDetails,
     staffCashSettlements,
@@ -127753,15 +123941,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     stockByLocationTable,
     rateListsTable,
     ewayRecordsTable,
-    computerJobCardsCache,
-    computerWarrantyCache,
-    computerSerialsCache,
-    hardwareProjects,
-    hardwareSiteIndents,
-    hardwareMaterialDeposits,
-    hardwarePurchaseOrdersTable,
-    hardwarePartiesTable,
-    hardwareSalesOrdersTable,
     roles,
     permissions,
     categories,
@@ -127769,6 +123948,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     inventory,
     businessSettings,
     taxRates,
+    computerJobCardsCache,
+    computerWarrantyCache,
+    computerSerialsCache,
     idxBillsUserId,
     idxBillsBillDate,
     idxBillsCustomerId,
@@ -176921,6 +173103,307 @@ typedef $$DispensersTableProcessedTableManager =
       DispenserEntity,
       PrefetchHooks Function()
     >;
+typedef $$FuelTypesTableCreateCompanionBuilder =
+    FuelTypesCompanion Function({
+      required String fuelId,
+      required String ownerId,
+      required String fuelName,
+      Value<double> currentRatePerLitre,
+      Value<String> rateHistoryJson,
+      Value<double> linkedGSTRate,
+      Value<bool> isActive,
+      Value<bool> isSynced,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$FuelTypesTableUpdateCompanionBuilder =
+    FuelTypesCompanion Function({
+      Value<String> fuelId,
+      Value<String> ownerId,
+      Value<String> fuelName,
+      Value<double> currentRatePerLitre,
+      Value<String> rateHistoryJson,
+      Value<double> linkedGSTRate,
+      Value<bool> isActive,
+      Value<bool> isSynced,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$FuelTypesTableFilterComposer
+    extends Composer<_$AppDatabase, $FuelTypesTable> {
+  $$FuelTypesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get fuelId => $composableBuilder(
+    column: $table.fuelId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get fuelName => $composableBuilder(
+    column: $table.fuelName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get currentRatePerLitre => $composableBuilder(
+    column: $table.currentRatePerLitre,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rateHistoryJson => $composableBuilder(
+    column: $table.rateHistoryJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get linkedGSTRate => $composableBuilder(
+    column: $table.linkedGSTRate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isSynced => $composableBuilder(
+    column: $table.isSynced,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$FuelTypesTableOrderingComposer
+    extends Composer<_$AppDatabase, $FuelTypesTable> {
+  $$FuelTypesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get fuelId => $composableBuilder(
+    column: $table.fuelId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get fuelName => $composableBuilder(
+    column: $table.fuelName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get currentRatePerLitre => $composableBuilder(
+    column: $table.currentRatePerLitre,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rateHistoryJson => $composableBuilder(
+    column: $table.rateHistoryJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get linkedGSTRate => $composableBuilder(
+    column: $table.linkedGSTRate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isSynced => $composableBuilder(
+    column: $table.isSynced,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$FuelTypesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FuelTypesTable> {
+  $$FuelTypesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get fuelId =>
+      $composableBuilder(column: $table.fuelId, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
+  GeneratedColumn<String> get fuelName =>
+      $composableBuilder(column: $table.fuelName, builder: (column) => column);
+
+  GeneratedColumn<double> get currentRatePerLitre => $composableBuilder(
+    column: $table.currentRatePerLitre,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get rateHistoryJson => $composableBuilder(
+    column: $table.rateHistoryJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get linkedGSTRate => $composableBuilder(
+    column: $table.linkedGSTRate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+
+  GeneratedColumn<bool> get isSynced =>
+      $composableBuilder(column: $table.isSynced, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$FuelTypesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FuelTypesTable,
+          FuelTypeEntity,
+          $$FuelTypesTableFilterComposer,
+          $$FuelTypesTableOrderingComposer,
+          $$FuelTypesTableAnnotationComposer,
+          $$FuelTypesTableCreateCompanionBuilder,
+          $$FuelTypesTableUpdateCompanionBuilder,
+          (
+            FuelTypeEntity,
+            BaseReferences<_$AppDatabase, $FuelTypesTable, FuelTypeEntity>,
+          ),
+          FuelTypeEntity,
+          PrefetchHooks Function()
+        > {
+  $$FuelTypesTableTableManager(_$AppDatabase db, $FuelTypesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FuelTypesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FuelTypesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FuelTypesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> fuelId = const Value.absent(),
+                Value<String> ownerId = const Value.absent(),
+                Value<String> fuelName = const Value.absent(),
+                Value<double> currentRatePerLitre = const Value.absent(),
+                Value<String> rateHistoryJson = const Value.absent(),
+                Value<double> linkedGSTRate = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<bool> isSynced = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FuelTypesCompanion(
+                fuelId: fuelId,
+                ownerId: ownerId,
+                fuelName: fuelName,
+                currentRatePerLitre: currentRatePerLitre,
+                rateHistoryJson: rateHistoryJson,
+                linkedGSTRate: linkedGSTRate,
+                isActive: isActive,
+                isSynced: isSynced,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String fuelId,
+                required String ownerId,
+                required String fuelName,
+                Value<double> currentRatePerLitre = const Value.absent(),
+                Value<String> rateHistoryJson = const Value.absent(),
+                Value<double> linkedGSTRate = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<bool> isSynced = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => FuelTypesCompanion.insert(
+                fuelId: fuelId,
+                ownerId: ownerId,
+                fuelName: fuelName,
+                currentRatePerLitre: currentRatePerLitre,
+                rateHistoryJson: rateHistoryJson,
+                linkedGSTRate: linkedGSTRate,
+                isActive: isActive,
+                isSynced: isSynced,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$FuelTypesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FuelTypesTable,
+      FuelTypeEntity,
+      $$FuelTypesTableFilterComposer,
+      $$FuelTypesTableOrderingComposer,
+      $$FuelTypesTableAnnotationComposer,
+      $$FuelTypesTableCreateCompanionBuilder,
+      $$FuelTypesTableUpdateCompanionBuilder,
+      (
+        FuelTypeEntity,
+        BaseReferences<_$AppDatabase, $FuelTypesTable, FuelTypeEntity>,
+      ),
+      FuelTypeEntity,
+      PrefetchHooks Function()
+    >;
 typedef $$StaffNozzleAssignmentsTableCreateCompanionBuilder =
     StaffNozzleAssignmentsCompanion Function({
       required String id,
@@ -182597,2782 +179080,6 @@ typedef $$EwayRecordsTableTableProcessedTableManager =
       EwayRecordEntity,
       PrefetchHooks Function()
     >;
-typedef $$ComputerJobCardsCacheTableCreateCompanionBuilder =
-    ComputerJobCardsCacheCompanion Function({
-      required String id,
-      required String tenantId,
-      required String payloadJson,
-      required DateTime updatedAt,
-      Value<int> rowid,
-    });
-typedef $$ComputerJobCardsCacheTableUpdateCompanionBuilder =
-    ComputerJobCardsCacheCompanion Function({
-      Value<String> id,
-      Value<String> tenantId,
-      Value<String> payloadJson,
-      Value<DateTime> updatedAt,
-      Value<int> rowid,
-    });
-
-class $$ComputerJobCardsCacheTableFilterComposer
-    extends Composer<_$AppDatabase, $ComputerJobCardsCacheTable> {
-  $$ComputerJobCardsCacheTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get tenantId => $composableBuilder(
-    column: $table.tenantId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get payloadJson => $composableBuilder(
-    column: $table.payloadJson,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$ComputerJobCardsCacheTableOrderingComposer
-    extends Composer<_$AppDatabase, $ComputerJobCardsCacheTable> {
-  $$ComputerJobCardsCacheTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get tenantId => $composableBuilder(
-    column: $table.tenantId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get payloadJson => $composableBuilder(
-    column: $table.payloadJson,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$ComputerJobCardsCacheTableAnnotationComposer
-    extends Composer<_$AppDatabase, $ComputerJobCardsCacheTable> {
-  $$ComputerJobCardsCacheTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get tenantId =>
-      $composableBuilder(column: $table.tenantId, builder: (column) => column);
-
-  GeneratedColumn<String> get payloadJson => $composableBuilder(
-    column: $table.payloadJson,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-}
-
-class $$ComputerJobCardsCacheTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $ComputerJobCardsCacheTable,
-          ComputerJobCardCacheEntity,
-          $$ComputerJobCardsCacheTableFilterComposer,
-          $$ComputerJobCardsCacheTableOrderingComposer,
-          $$ComputerJobCardsCacheTableAnnotationComposer,
-          $$ComputerJobCardsCacheTableCreateCompanionBuilder,
-          $$ComputerJobCardsCacheTableUpdateCompanionBuilder,
-          (
-            ComputerJobCardCacheEntity,
-            BaseReferences<
-              _$AppDatabase,
-              $ComputerJobCardsCacheTable,
-              ComputerJobCardCacheEntity
-            >,
-          ),
-          ComputerJobCardCacheEntity,
-          PrefetchHooks Function()
-        > {
-  $$ComputerJobCardsCacheTableTableManager(
-    _$AppDatabase db,
-    $ComputerJobCardsCacheTable table,
-  ) : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$ComputerJobCardsCacheTableFilterComposer(
-                $db: db,
-                $table: table,
-              ),
-          createOrderingComposer: () =>
-              $$ComputerJobCardsCacheTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer: () =>
-              $$ComputerJobCardsCacheTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> tenantId = const Value.absent(),
-                Value<String> payloadJson = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => ComputerJobCardsCacheCompanion(
-                id: id,
-                tenantId: tenantId,
-                payloadJson: payloadJson,
-                updatedAt: updatedAt,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String id,
-                required String tenantId,
-                required String payloadJson,
-                required DateTime updatedAt,
-                Value<int> rowid = const Value.absent(),
-              }) => ComputerJobCardsCacheCompanion.insert(
-                id: id,
-                tenantId: tenantId,
-                payloadJson: payloadJson,
-                updatedAt: updatedAt,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$ComputerJobCardsCacheTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $ComputerJobCardsCacheTable,
-      ComputerJobCardCacheEntity,
-      $$ComputerJobCardsCacheTableFilterComposer,
-      $$ComputerJobCardsCacheTableOrderingComposer,
-      $$ComputerJobCardsCacheTableAnnotationComposer,
-      $$ComputerJobCardsCacheTableCreateCompanionBuilder,
-      $$ComputerJobCardsCacheTableUpdateCompanionBuilder,
-      (
-        ComputerJobCardCacheEntity,
-        BaseReferences<
-          _$AppDatabase,
-          $ComputerJobCardsCacheTable,
-          ComputerJobCardCacheEntity
-        >,
-      ),
-      ComputerJobCardCacheEntity,
-      PrefetchHooks Function()
-    >;
-typedef $$ComputerWarrantyCacheTableCreateCompanionBuilder =
-    ComputerWarrantyCacheCompanion Function({
-      required String id,
-      required String tenantId,
-      required String serialNumber,
-      required String payloadJson,
-      Value<DateTime?> warrantyExpiryDate,
-      Value<int> rowid,
-    });
-typedef $$ComputerWarrantyCacheTableUpdateCompanionBuilder =
-    ComputerWarrantyCacheCompanion Function({
-      Value<String> id,
-      Value<String> tenantId,
-      Value<String> serialNumber,
-      Value<String> payloadJson,
-      Value<DateTime?> warrantyExpiryDate,
-      Value<int> rowid,
-    });
-
-class $$ComputerWarrantyCacheTableFilterComposer
-    extends Composer<_$AppDatabase, $ComputerWarrantyCacheTable> {
-  $$ComputerWarrantyCacheTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get tenantId => $composableBuilder(
-    column: $table.tenantId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get serialNumber => $composableBuilder(
-    column: $table.serialNumber,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get payloadJson => $composableBuilder(
-    column: $table.payloadJson,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get warrantyExpiryDate => $composableBuilder(
-    column: $table.warrantyExpiryDate,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$ComputerWarrantyCacheTableOrderingComposer
-    extends Composer<_$AppDatabase, $ComputerWarrantyCacheTable> {
-  $$ComputerWarrantyCacheTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get tenantId => $composableBuilder(
-    column: $table.tenantId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get serialNumber => $composableBuilder(
-    column: $table.serialNumber,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get payloadJson => $composableBuilder(
-    column: $table.payloadJson,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get warrantyExpiryDate => $composableBuilder(
-    column: $table.warrantyExpiryDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$ComputerWarrantyCacheTableAnnotationComposer
-    extends Composer<_$AppDatabase, $ComputerWarrantyCacheTable> {
-  $$ComputerWarrantyCacheTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get tenantId =>
-      $composableBuilder(column: $table.tenantId, builder: (column) => column);
-
-  GeneratedColumn<String> get serialNumber => $composableBuilder(
-    column: $table.serialNumber,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get payloadJson => $composableBuilder(
-    column: $table.payloadJson,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<DateTime> get warrantyExpiryDate => $composableBuilder(
-    column: $table.warrantyExpiryDate,
-    builder: (column) => column,
-  );
-}
-
-class $$ComputerWarrantyCacheTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $ComputerWarrantyCacheTable,
-          ComputerWarrantyCacheEntity,
-          $$ComputerWarrantyCacheTableFilterComposer,
-          $$ComputerWarrantyCacheTableOrderingComposer,
-          $$ComputerWarrantyCacheTableAnnotationComposer,
-          $$ComputerWarrantyCacheTableCreateCompanionBuilder,
-          $$ComputerWarrantyCacheTableUpdateCompanionBuilder,
-          (
-            ComputerWarrantyCacheEntity,
-            BaseReferences<
-              _$AppDatabase,
-              $ComputerWarrantyCacheTable,
-              ComputerWarrantyCacheEntity
-            >,
-          ),
-          ComputerWarrantyCacheEntity,
-          PrefetchHooks Function()
-        > {
-  $$ComputerWarrantyCacheTableTableManager(
-    _$AppDatabase db,
-    $ComputerWarrantyCacheTable table,
-  ) : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$ComputerWarrantyCacheTableFilterComposer(
-                $db: db,
-                $table: table,
-              ),
-          createOrderingComposer: () =>
-              $$ComputerWarrantyCacheTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer: () =>
-              $$ComputerWarrantyCacheTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> tenantId = const Value.absent(),
-                Value<String> serialNumber = const Value.absent(),
-                Value<String> payloadJson = const Value.absent(),
-                Value<DateTime?> warrantyExpiryDate = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => ComputerWarrantyCacheCompanion(
-                id: id,
-                tenantId: tenantId,
-                serialNumber: serialNumber,
-                payloadJson: payloadJson,
-                warrantyExpiryDate: warrantyExpiryDate,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String id,
-                required String tenantId,
-                required String serialNumber,
-                required String payloadJson,
-                Value<DateTime?> warrantyExpiryDate = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => ComputerWarrantyCacheCompanion.insert(
-                id: id,
-                tenantId: tenantId,
-                serialNumber: serialNumber,
-                payloadJson: payloadJson,
-                warrantyExpiryDate: warrantyExpiryDate,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$ComputerWarrantyCacheTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $ComputerWarrantyCacheTable,
-      ComputerWarrantyCacheEntity,
-      $$ComputerWarrantyCacheTableFilterComposer,
-      $$ComputerWarrantyCacheTableOrderingComposer,
-      $$ComputerWarrantyCacheTableAnnotationComposer,
-      $$ComputerWarrantyCacheTableCreateCompanionBuilder,
-      $$ComputerWarrantyCacheTableUpdateCompanionBuilder,
-      (
-        ComputerWarrantyCacheEntity,
-        BaseReferences<
-          _$AppDatabase,
-          $ComputerWarrantyCacheTable,
-          ComputerWarrantyCacheEntity
-        >,
-      ),
-      ComputerWarrantyCacheEntity,
-      PrefetchHooks Function()
-    >;
-typedef $$ComputerSerialsCacheTableCreateCompanionBuilder =
-    ComputerSerialsCacheCompanion Function({
-      required String serialNumber,
-      required String tenantId,
-      required String payloadJson,
-      Value<int> rowid,
-    });
-typedef $$ComputerSerialsCacheTableUpdateCompanionBuilder =
-    ComputerSerialsCacheCompanion Function({
-      Value<String> serialNumber,
-      Value<String> tenantId,
-      Value<String> payloadJson,
-      Value<int> rowid,
-    });
-
-class $$ComputerSerialsCacheTableFilterComposer
-    extends Composer<_$AppDatabase, $ComputerSerialsCacheTable> {
-  $$ComputerSerialsCacheTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get serialNumber => $composableBuilder(
-    column: $table.serialNumber,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get tenantId => $composableBuilder(
-    column: $table.tenantId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get payloadJson => $composableBuilder(
-    column: $table.payloadJson,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$ComputerSerialsCacheTableOrderingComposer
-    extends Composer<_$AppDatabase, $ComputerSerialsCacheTable> {
-  $$ComputerSerialsCacheTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get serialNumber => $composableBuilder(
-    column: $table.serialNumber,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get tenantId => $composableBuilder(
-    column: $table.tenantId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get payloadJson => $composableBuilder(
-    column: $table.payloadJson,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$ComputerSerialsCacheTableAnnotationComposer
-    extends Composer<_$AppDatabase, $ComputerSerialsCacheTable> {
-  $$ComputerSerialsCacheTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get serialNumber => $composableBuilder(
-    column: $table.serialNumber,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get tenantId =>
-      $composableBuilder(column: $table.tenantId, builder: (column) => column);
-
-  GeneratedColumn<String> get payloadJson => $composableBuilder(
-    column: $table.payloadJson,
-    builder: (column) => column,
-  );
-}
-
-class $$ComputerSerialsCacheTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $ComputerSerialsCacheTable,
-          ComputerSerialCacheEntity,
-          $$ComputerSerialsCacheTableFilterComposer,
-          $$ComputerSerialsCacheTableOrderingComposer,
-          $$ComputerSerialsCacheTableAnnotationComposer,
-          $$ComputerSerialsCacheTableCreateCompanionBuilder,
-          $$ComputerSerialsCacheTableUpdateCompanionBuilder,
-          (
-            ComputerSerialCacheEntity,
-            BaseReferences<
-              _$AppDatabase,
-              $ComputerSerialsCacheTable,
-              ComputerSerialCacheEntity
-            >,
-          ),
-          ComputerSerialCacheEntity,
-          PrefetchHooks Function()
-        > {
-  $$ComputerSerialsCacheTableTableManager(
-    _$AppDatabase db,
-    $ComputerSerialsCacheTable table,
-  ) : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$ComputerSerialsCacheTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$ComputerSerialsCacheTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer: () =>
-              $$ComputerSerialsCacheTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
-          updateCompanionCallback:
-              ({
-                Value<String> serialNumber = const Value.absent(),
-                Value<String> tenantId = const Value.absent(),
-                Value<String> payloadJson = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => ComputerSerialsCacheCompanion(
-                serialNumber: serialNumber,
-                tenantId: tenantId,
-                payloadJson: payloadJson,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String serialNumber,
-                required String tenantId,
-                required String payloadJson,
-                Value<int> rowid = const Value.absent(),
-              }) => ComputerSerialsCacheCompanion.insert(
-                serialNumber: serialNumber,
-                tenantId: tenantId,
-                payloadJson: payloadJson,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$ComputerSerialsCacheTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $ComputerSerialsCacheTable,
-      ComputerSerialCacheEntity,
-      $$ComputerSerialsCacheTableFilterComposer,
-      $$ComputerSerialsCacheTableOrderingComposer,
-      $$ComputerSerialsCacheTableAnnotationComposer,
-      $$ComputerSerialsCacheTableCreateCompanionBuilder,
-      $$ComputerSerialsCacheTableUpdateCompanionBuilder,
-      (
-        ComputerSerialCacheEntity,
-        BaseReferences<
-          _$AppDatabase,
-          $ComputerSerialsCacheTable,
-          ComputerSerialCacheEntity
-        >,
-      ),
-      ComputerSerialCacheEntity,
-      PrefetchHooks Function()
-    >;
-typedef $$HardwareProjectsTableCreateCompanionBuilder =
-    HardwareProjectsCompanion Function({
-      required String id,
-      required String userId,
-      Value<String?> projectName,
-      Value<String?> contractorName,
-      Value<String?> siteAddress,
-      Value<String?> notes,
-      Value<String> status,
-      Value<bool> isSynced,
-      required DateTime createdAt,
-      required DateTime updatedAt,
-      Value<DateTime?> deletedAt,
-      Value<int> rowid,
-    });
-typedef $$HardwareProjectsTableUpdateCompanionBuilder =
-    HardwareProjectsCompanion Function({
-      Value<String> id,
-      Value<String> userId,
-      Value<String?> projectName,
-      Value<String?> contractorName,
-      Value<String?> siteAddress,
-      Value<String?> notes,
-      Value<String> status,
-      Value<bool> isSynced,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
-      Value<DateTime?> deletedAt,
-      Value<int> rowid,
-    });
-
-class $$HardwareProjectsTableFilterComposer
-    extends Composer<_$AppDatabase, $HardwareProjectsTable> {
-  $$HardwareProjectsTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get projectName => $composableBuilder(
-    column: $table.projectName,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get contractorName => $composableBuilder(
-    column: $table.contractorName,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get siteAddress => $composableBuilder(
-    column: $table.siteAddress,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$HardwareProjectsTableOrderingComposer
-    extends Composer<_$AppDatabase, $HardwareProjectsTable> {
-  $$HardwareProjectsTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get projectName => $composableBuilder(
-    column: $table.projectName,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get contractorName => $composableBuilder(
-    column: $table.contractorName,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get siteAddress => $composableBuilder(
-    column: $table.siteAddress,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$HardwareProjectsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $HardwareProjectsTable> {
-  $$HardwareProjectsTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
-
-  GeneratedColumn<String> get projectName => $composableBuilder(
-    column: $table.projectName,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get contractorName => $composableBuilder(
-    column: $table.contractorName,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get siteAddress => $composableBuilder(
-    column: $table.siteAddress,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get notes =>
-      $composableBuilder(column: $table.notes, builder: (column) => column);
-
-  GeneratedColumn<String> get status =>
-      $composableBuilder(column: $table.status, builder: (column) => column);
-
-  GeneratedColumn<bool> get isSynced =>
-      $composableBuilder(column: $table.isSynced, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get deletedAt =>
-      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
-}
-
-class $$HardwareProjectsTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $HardwareProjectsTable,
-          HardwareProjectEntity,
-          $$HardwareProjectsTableFilterComposer,
-          $$HardwareProjectsTableOrderingComposer,
-          $$HardwareProjectsTableAnnotationComposer,
-          $$HardwareProjectsTableCreateCompanionBuilder,
-          $$HardwareProjectsTableUpdateCompanionBuilder,
-          (
-            HardwareProjectEntity,
-            BaseReferences<
-              _$AppDatabase,
-              $HardwareProjectsTable,
-              HardwareProjectEntity
-            >,
-          ),
-          HardwareProjectEntity,
-          PrefetchHooks Function()
-        > {
-  $$HardwareProjectsTableTableManager(
-    _$AppDatabase db,
-    $HardwareProjectsTable table,
-  ) : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$HardwareProjectsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$HardwareProjectsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$HardwareProjectsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> userId = const Value.absent(),
-                Value<String?> projectName = const Value.absent(),
-                Value<String?> contractorName = const Value.absent(),
-                Value<String?> siteAddress = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
-                Value<String> status = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
-                Value<DateTime?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => HardwareProjectsCompanion(
-                id: id,
-                userId: userId,
-                projectName: projectName,
-                contractorName: contractorName,
-                siteAddress: siteAddress,
-                notes: notes,
-                status: status,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String id,
-                required String userId,
-                Value<String?> projectName = const Value.absent(),
-                Value<String?> contractorName = const Value.absent(),
-                Value<String?> siteAddress = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
-                Value<String> status = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                required DateTime createdAt,
-                required DateTime updatedAt,
-                Value<DateTime?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => HardwareProjectsCompanion.insert(
-                id: id,
-                userId: userId,
-                projectName: projectName,
-                contractorName: contractorName,
-                siteAddress: siteAddress,
-                notes: notes,
-                status: status,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$HardwareProjectsTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $HardwareProjectsTable,
-      HardwareProjectEntity,
-      $$HardwareProjectsTableFilterComposer,
-      $$HardwareProjectsTableOrderingComposer,
-      $$HardwareProjectsTableAnnotationComposer,
-      $$HardwareProjectsTableCreateCompanionBuilder,
-      $$HardwareProjectsTableUpdateCompanionBuilder,
-      (
-        HardwareProjectEntity,
-        BaseReferences<
-          _$AppDatabase,
-          $HardwareProjectsTable,
-          HardwareProjectEntity
-        >,
-      ),
-      HardwareProjectEntity,
-      PrefetchHooks Function()
-    >;
-typedef $$HardwareSiteIndentsTableCreateCompanionBuilder =
-    HardwareSiteIndentsCompanion Function({
-      required String id,
-      required String userId,
-      Value<String?> projectId,
-      Value<String?> requestedBy,
-      Value<String> priority,
-      Value<String> status,
-      Value<String?> notes,
-      Value<String> itemsJson,
-      Value<bool> isSynced,
-      required DateTime createdAt,
-      required DateTime updatedAt,
-      Value<DateTime?> deletedAt,
-      Value<int> rowid,
-    });
-typedef $$HardwareSiteIndentsTableUpdateCompanionBuilder =
-    HardwareSiteIndentsCompanion Function({
-      Value<String> id,
-      Value<String> userId,
-      Value<String?> projectId,
-      Value<String?> requestedBy,
-      Value<String> priority,
-      Value<String> status,
-      Value<String?> notes,
-      Value<String> itemsJson,
-      Value<bool> isSynced,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
-      Value<DateTime?> deletedAt,
-      Value<int> rowid,
-    });
-
-class $$HardwareSiteIndentsTableFilterComposer
-    extends Composer<_$AppDatabase, $HardwareSiteIndentsTable> {
-  $$HardwareSiteIndentsTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get projectId => $composableBuilder(
-    column: $table.projectId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get requestedBy => $composableBuilder(
-    column: $table.requestedBy,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get priority => $composableBuilder(
-    column: $table.priority,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get itemsJson => $composableBuilder(
-    column: $table.itemsJson,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$HardwareSiteIndentsTableOrderingComposer
-    extends Composer<_$AppDatabase, $HardwareSiteIndentsTable> {
-  $$HardwareSiteIndentsTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get projectId => $composableBuilder(
-    column: $table.projectId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get requestedBy => $composableBuilder(
-    column: $table.requestedBy,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get priority => $composableBuilder(
-    column: $table.priority,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get itemsJson => $composableBuilder(
-    column: $table.itemsJson,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$HardwareSiteIndentsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $HardwareSiteIndentsTable> {
-  $$HardwareSiteIndentsTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
-
-  GeneratedColumn<String> get projectId =>
-      $composableBuilder(column: $table.projectId, builder: (column) => column);
-
-  GeneratedColumn<String> get requestedBy => $composableBuilder(
-    column: $table.requestedBy,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get priority =>
-      $composableBuilder(column: $table.priority, builder: (column) => column);
-
-  GeneratedColumn<String> get status =>
-      $composableBuilder(column: $table.status, builder: (column) => column);
-
-  GeneratedColumn<String> get notes =>
-      $composableBuilder(column: $table.notes, builder: (column) => column);
-
-  GeneratedColumn<String> get itemsJson =>
-      $composableBuilder(column: $table.itemsJson, builder: (column) => column);
-
-  GeneratedColumn<bool> get isSynced =>
-      $composableBuilder(column: $table.isSynced, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get deletedAt =>
-      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
-}
-
-class $$HardwareSiteIndentsTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $HardwareSiteIndentsTable,
-          HardwareSiteIndentEntity,
-          $$HardwareSiteIndentsTableFilterComposer,
-          $$HardwareSiteIndentsTableOrderingComposer,
-          $$HardwareSiteIndentsTableAnnotationComposer,
-          $$HardwareSiteIndentsTableCreateCompanionBuilder,
-          $$HardwareSiteIndentsTableUpdateCompanionBuilder,
-          (
-            HardwareSiteIndentEntity,
-            BaseReferences<
-              _$AppDatabase,
-              $HardwareSiteIndentsTable,
-              HardwareSiteIndentEntity
-            >,
-          ),
-          HardwareSiteIndentEntity,
-          PrefetchHooks Function()
-        > {
-  $$HardwareSiteIndentsTableTableManager(
-    _$AppDatabase db,
-    $HardwareSiteIndentsTable table,
-  ) : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$HardwareSiteIndentsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$HardwareSiteIndentsTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer: () =>
-              $$HardwareSiteIndentsTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> userId = const Value.absent(),
-                Value<String?> projectId = const Value.absent(),
-                Value<String?> requestedBy = const Value.absent(),
-                Value<String> priority = const Value.absent(),
-                Value<String> status = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
-                Value<String> itemsJson = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
-                Value<DateTime?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => HardwareSiteIndentsCompanion(
-                id: id,
-                userId: userId,
-                projectId: projectId,
-                requestedBy: requestedBy,
-                priority: priority,
-                status: status,
-                notes: notes,
-                itemsJson: itemsJson,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String id,
-                required String userId,
-                Value<String?> projectId = const Value.absent(),
-                Value<String?> requestedBy = const Value.absent(),
-                Value<String> priority = const Value.absent(),
-                Value<String> status = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
-                Value<String> itemsJson = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                required DateTime createdAt,
-                required DateTime updatedAt,
-                Value<DateTime?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => HardwareSiteIndentsCompanion.insert(
-                id: id,
-                userId: userId,
-                projectId: projectId,
-                requestedBy: requestedBy,
-                priority: priority,
-                status: status,
-                notes: notes,
-                itemsJson: itemsJson,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$HardwareSiteIndentsTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $HardwareSiteIndentsTable,
-      HardwareSiteIndentEntity,
-      $$HardwareSiteIndentsTableFilterComposer,
-      $$HardwareSiteIndentsTableOrderingComposer,
-      $$HardwareSiteIndentsTableAnnotationComposer,
-      $$HardwareSiteIndentsTableCreateCompanionBuilder,
-      $$HardwareSiteIndentsTableUpdateCompanionBuilder,
-      (
-        HardwareSiteIndentEntity,
-        BaseReferences<
-          _$AppDatabase,
-          $HardwareSiteIndentsTable,
-          HardwareSiteIndentEntity
-        >,
-      ),
-      HardwareSiteIndentEntity,
-      PrefetchHooks Function()
-    >;
-typedef $$HardwareMaterialDepositsTableCreateCompanionBuilder =
-    HardwareMaterialDepositsCompanion Function({
-      required String id,
-      required String userId,
-      Value<String?> customerId,
-      Value<String?> customerName,
-      Value<String?> itemType,
-      Value<double> quantity,
-      Value<int> depositAmountCents,
-      Value<String?> referenceNo,
-      Value<String?> notes,
-      Value<String> status,
-      Value<bool> isSynced,
-      required DateTime createdAt,
-      required DateTime updatedAt,
-      Value<DateTime?> deletedAt,
-      Value<int> rowid,
-    });
-typedef $$HardwareMaterialDepositsTableUpdateCompanionBuilder =
-    HardwareMaterialDepositsCompanion Function({
-      Value<String> id,
-      Value<String> userId,
-      Value<String?> customerId,
-      Value<String?> customerName,
-      Value<String?> itemType,
-      Value<double> quantity,
-      Value<int> depositAmountCents,
-      Value<String?> referenceNo,
-      Value<String?> notes,
-      Value<String> status,
-      Value<bool> isSynced,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
-      Value<DateTime?> deletedAt,
-      Value<int> rowid,
-    });
-
-class $$HardwareMaterialDepositsTableFilterComposer
-    extends Composer<_$AppDatabase, $HardwareMaterialDepositsTable> {
-  $$HardwareMaterialDepositsTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get customerId => $composableBuilder(
-    column: $table.customerId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get customerName => $composableBuilder(
-    column: $table.customerName,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get itemType => $composableBuilder(
-    column: $table.itemType,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get quantity => $composableBuilder(
-    column: $table.quantity,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get depositAmountCents => $composableBuilder(
-    column: $table.depositAmountCents,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get referenceNo => $composableBuilder(
-    column: $table.referenceNo,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$HardwareMaterialDepositsTableOrderingComposer
-    extends Composer<_$AppDatabase, $HardwareMaterialDepositsTable> {
-  $$HardwareMaterialDepositsTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get customerId => $composableBuilder(
-    column: $table.customerId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get customerName => $composableBuilder(
-    column: $table.customerName,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get itemType => $composableBuilder(
-    column: $table.itemType,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get quantity => $composableBuilder(
-    column: $table.quantity,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get depositAmountCents => $composableBuilder(
-    column: $table.depositAmountCents,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get referenceNo => $composableBuilder(
-    column: $table.referenceNo,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$HardwareMaterialDepositsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $HardwareMaterialDepositsTable> {
-  $$HardwareMaterialDepositsTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
-
-  GeneratedColumn<String> get customerId => $composableBuilder(
-    column: $table.customerId,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get customerName => $composableBuilder(
-    column: $table.customerName,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get itemType =>
-      $composableBuilder(column: $table.itemType, builder: (column) => column);
-
-  GeneratedColumn<double> get quantity =>
-      $composableBuilder(column: $table.quantity, builder: (column) => column);
-
-  GeneratedColumn<int> get depositAmountCents => $composableBuilder(
-    column: $table.depositAmountCents,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get referenceNo => $composableBuilder(
-    column: $table.referenceNo,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get notes =>
-      $composableBuilder(column: $table.notes, builder: (column) => column);
-
-  GeneratedColumn<String> get status =>
-      $composableBuilder(column: $table.status, builder: (column) => column);
-
-  GeneratedColumn<bool> get isSynced =>
-      $composableBuilder(column: $table.isSynced, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get deletedAt =>
-      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
-}
-
-class $$HardwareMaterialDepositsTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $HardwareMaterialDepositsTable,
-          HardwareMaterialDepositEntity,
-          $$HardwareMaterialDepositsTableFilterComposer,
-          $$HardwareMaterialDepositsTableOrderingComposer,
-          $$HardwareMaterialDepositsTableAnnotationComposer,
-          $$HardwareMaterialDepositsTableCreateCompanionBuilder,
-          $$HardwareMaterialDepositsTableUpdateCompanionBuilder,
-          (
-            HardwareMaterialDepositEntity,
-            BaseReferences<
-              _$AppDatabase,
-              $HardwareMaterialDepositsTable,
-              HardwareMaterialDepositEntity
-            >,
-          ),
-          HardwareMaterialDepositEntity,
-          PrefetchHooks Function()
-        > {
-  $$HardwareMaterialDepositsTableTableManager(
-    _$AppDatabase db,
-    $HardwareMaterialDepositsTable table,
-  ) : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$HardwareMaterialDepositsTableFilterComposer(
-                $db: db,
-                $table: table,
-              ),
-          createOrderingComposer: () =>
-              $$HardwareMaterialDepositsTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer: () =>
-              $$HardwareMaterialDepositsTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> userId = const Value.absent(),
-                Value<String?> customerId = const Value.absent(),
-                Value<String?> customerName = const Value.absent(),
-                Value<String?> itemType = const Value.absent(),
-                Value<double> quantity = const Value.absent(),
-                Value<int> depositAmountCents = const Value.absent(),
-                Value<String?> referenceNo = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
-                Value<String> status = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
-                Value<DateTime?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => HardwareMaterialDepositsCompanion(
-                id: id,
-                userId: userId,
-                customerId: customerId,
-                customerName: customerName,
-                itemType: itemType,
-                quantity: quantity,
-                depositAmountCents: depositAmountCents,
-                referenceNo: referenceNo,
-                notes: notes,
-                status: status,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String id,
-                required String userId,
-                Value<String?> customerId = const Value.absent(),
-                Value<String?> customerName = const Value.absent(),
-                Value<String?> itemType = const Value.absent(),
-                Value<double> quantity = const Value.absent(),
-                Value<int> depositAmountCents = const Value.absent(),
-                Value<String?> referenceNo = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
-                Value<String> status = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                required DateTime createdAt,
-                required DateTime updatedAt,
-                Value<DateTime?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => HardwareMaterialDepositsCompanion.insert(
-                id: id,
-                userId: userId,
-                customerId: customerId,
-                customerName: customerName,
-                itemType: itemType,
-                quantity: quantity,
-                depositAmountCents: depositAmountCents,
-                referenceNo: referenceNo,
-                notes: notes,
-                status: status,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$HardwareMaterialDepositsTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $HardwareMaterialDepositsTable,
-      HardwareMaterialDepositEntity,
-      $$HardwareMaterialDepositsTableFilterComposer,
-      $$HardwareMaterialDepositsTableOrderingComposer,
-      $$HardwareMaterialDepositsTableAnnotationComposer,
-      $$HardwareMaterialDepositsTableCreateCompanionBuilder,
-      $$HardwareMaterialDepositsTableUpdateCompanionBuilder,
-      (
-        HardwareMaterialDepositEntity,
-        BaseReferences<
-          _$AppDatabase,
-          $HardwareMaterialDepositsTable,
-          HardwareMaterialDepositEntity
-        >,
-      ),
-      HardwareMaterialDepositEntity,
-      PrefetchHooks Function()
-    >;
-typedef $$HardwarePurchaseOrdersTableTableCreateCompanionBuilder =
-    HardwarePurchaseOrdersTableCompanion Function({
-      required String id,
-      required String userId,
-      Value<String?> supplierId,
-      Value<String?> supplierName,
-      Value<String> status,
-      Value<String?> expectedDeliveryDate,
-      Value<String?> notes,
-      Value<String> itemsJson,
-      Value<bool> isSynced,
-      required DateTime createdAt,
-      required DateTime updatedAt,
-      Value<DateTime?> deletedAt,
-      Value<int> rowid,
-    });
-typedef $$HardwarePurchaseOrdersTableTableUpdateCompanionBuilder =
-    HardwarePurchaseOrdersTableCompanion Function({
-      Value<String> id,
-      Value<String> userId,
-      Value<String?> supplierId,
-      Value<String?> supplierName,
-      Value<String> status,
-      Value<String?> expectedDeliveryDate,
-      Value<String?> notes,
-      Value<String> itemsJson,
-      Value<bool> isSynced,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
-      Value<DateTime?> deletedAt,
-      Value<int> rowid,
-    });
-
-class $$HardwarePurchaseOrdersTableTableFilterComposer
-    extends Composer<_$AppDatabase, $HardwarePurchaseOrdersTableTable> {
-  $$HardwarePurchaseOrdersTableTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get supplierId => $composableBuilder(
-    column: $table.supplierId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get supplierName => $composableBuilder(
-    column: $table.supplierName,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get expectedDeliveryDate => $composableBuilder(
-    column: $table.expectedDeliveryDate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get itemsJson => $composableBuilder(
-    column: $table.itemsJson,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$HardwarePurchaseOrdersTableTableOrderingComposer
-    extends Composer<_$AppDatabase, $HardwarePurchaseOrdersTableTable> {
-  $$HardwarePurchaseOrdersTableTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get supplierId => $composableBuilder(
-    column: $table.supplierId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get supplierName => $composableBuilder(
-    column: $table.supplierName,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get expectedDeliveryDate => $composableBuilder(
-    column: $table.expectedDeliveryDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get itemsJson => $composableBuilder(
-    column: $table.itemsJson,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$HardwarePurchaseOrdersTableTableAnnotationComposer
-    extends Composer<_$AppDatabase, $HardwarePurchaseOrdersTableTable> {
-  $$HardwarePurchaseOrdersTableTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
-
-  GeneratedColumn<String> get supplierId => $composableBuilder(
-    column: $table.supplierId,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get supplierName => $composableBuilder(
-    column: $table.supplierName,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get status =>
-      $composableBuilder(column: $table.status, builder: (column) => column);
-
-  GeneratedColumn<String> get expectedDeliveryDate => $composableBuilder(
-    column: $table.expectedDeliveryDate,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get notes =>
-      $composableBuilder(column: $table.notes, builder: (column) => column);
-
-  GeneratedColumn<String> get itemsJson =>
-      $composableBuilder(column: $table.itemsJson, builder: (column) => column);
-
-  GeneratedColumn<bool> get isSynced =>
-      $composableBuilder(column: $table.isSynced, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get deletedAt =>
-      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
-}
-
-class $$HardwarePurchaseOrdersTableTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $HardwarePurchaseOrdersTableTable,
-          HardwarePurchaseOrderEntity,
-          $$HardwarePurchaseOrdersTableTableFilterComposer,
-          $$HardwarePurchaseOrdersTableTableOrderingComposer,
-          $$HardwarePurchaseOrdersTableTableAnnotationComposer,
-          $$HardwarePurchaseOrdersTableTableCreateCompanionBuilder,
-          $$HardwarePurchaseOrdersTableTableUpdateCompanionBuilder,
-          (
-            HardwarePurchaseOrderEntity,
-            BaseReferences<
-              _$AppDatabase,
-              $HardwarePurchaseOrdersTableTable,
-              HardwarePurchaseOrderEntity
-            >,
-          ),
-          HardwarePurchaseOrderEntity,
-          PrefetchHooks Function()
-        > {
-  $$HardwarePurchaseOrdersTableTableTableManager(
-    _$AppDatabase db,
-    $HardwarePurchaseOrdersTableTable table,
-  ) : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$HardwarePurchaseOrdersTableTableFilterComposer(
-                $db: db,
-                $table: table,
-              ),
-          createOrderingComposer: () =>
-              $$HardwarePurchaseOrdersTableTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer: () =>
-              $$HardwarePurchaseOrdersTableTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> userId = const Value.absent(),
-                Value<String?> supplierId = const Value.absent(),
-                Value<String?> supplierName = const Value.absent(),
-                Value<String> status = const Value.absent(),
-                Value<String?> expectedDeliveryDate = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
-                Value<String> itemsJson = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
-                Value<DateTime?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => HardwarePurchaseOrdersTableCompanion(
-                id: id,
-                userId: userId,
-                supplierId: supplierId,
-                supplierName: supplierName,
-                status: status,
-                expectedDeliveryDate: expectedDeliveryDate,
-                notes: notes,
-                itemsJson: itemsJson,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String id,
-                required String userId,
-                Value<String?> supplierId = const Value.absent(),
-                Value<String?> supplierName = const Value.absent(),
-                Value<String> status = const Value.absent(),
-                Value<String?> expectedDeliveryDate = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
-                Value<String> itemsJson = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                required DateTime createdAt,
-                required DateTime updatedAt,
-                Value<DateTime?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => HardwarePurchaseOrdersTableCompanion.insert(
-                id: id,
-                userId: userId,
-                supplierId: supplierId,
-                supplierName: supplierName,
-                status: status,
-                expectedDeliveryDate: expectedDeliveryDate,
-                notes: notes,
-                itemsJson: itemsJson,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$HardwarePurchaseOrdersTableTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $HardwarePurchaseOrdersTableTable,
-      HardwarePurchaseOrderEntity,
-      $$HardwarePurchaseOrdersTableTableFilterComposer,
-      $$HardwarePurchaseOrdersTableTableOrderingComposer,
-      $$HardwarePurchaseOrdersTableTableAnnotationComposer,
-      $$HardwarePurchaseOrdersTableTableCreateCompanionBuilder,
-      $$HardwarePurchaseOrdersTableTableUpdateCompanionBuilder,
-      (
-        HardwarePurchaseOrderEntity,
-        BaseReferences<
-          _$AppDatabase,
-          $HardwarePurchaseOrdersTableTable,
-          HardwarePurchaseOrderEntity
-        >,
-      ),
-      HardwarePurchaseOrderEntity,
-      PrefetchHooks Function()
-    >;
-typedef $$HardwarePartiesTableTableCreateCompanionBuilder =
-    HardwarePartiesTableCompanion Function({
-      required String id,
-      required String userId,
-      Value<String?> name,
-      Value<String?> type,
-      Value<String?> phone,
-      Value<String?> gstin,
-      Value<String?> address,
-      Value<int> creditLimit,
-      Value<int> creditDays,
-      Value<String> priceCategory,
-      Value<bool> isSynced,
-      required DateTime createdAt,
-      required DateTime updatedAt,
-      Value<DateTime?> deletedAt,
-      Value<int> rowid,
-    });
-typedef $$HardwarePartiesTableTableUpdateCompanionBuilder =
-    HardwarePartiesTableCompanion Function({
-      Value<String> id,
-      Value<String> userId,
-      Value<String?> name,
-      Value<String?> type,
-      Value<String?> phone,
-      Value<String?> gstin,
-      Value<String?> address,
-      Value<int> creditLimit,
-      Value<int> creditDays,
-      Value<String> priceCategory,
-      Value<bool> isSynced,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
-      Value<DateTime?> deletedAt,
-      Value<int> rowid,
-    });
-
-class $$HardwarePartiesTableTableFilterComposer
-    extends Composer<_$AppDatabase, $HardwarePartiesTableTable> {
-  $$HardwarePartiesTableTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get type => $composableBuilder(
-    column: $table.type,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get phone => $composableBuilder(
-    column: $table.phone,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get gstin => $composableBuilder(
-    column: $table.gstin,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get address => $composableBuilder(
-    column: $table.address,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get creditLimit => $composableBuilder(
-    column: $table.creditLimit,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get creditDays => $composableBuilder(
-    column: $table.creditDays,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get priceCategory => $composableBuilder(
-    column: $table.priceCategory,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$HardwarePartiesTableTableOrderingComposer
-    extends Composer<_$AppDatabase, $HardwarePartiesTableTable> {
-  $$HardwarePartiesTableTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get type => $composableBuilder(
-    column: $table.type,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get phone => $composableBuilder(
-    column: $table.phone,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get gstin => $composableBuilder(
-    column: $table.gstin,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get address => $composableBuilder(
-    column: $table.address,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get creditLimit => $composableBuilder(
-    column: $table.creditLimit,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get creditDays => $composableBuilder(
-    column: $table.creditDays,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get priceCategory => $composableBuilder(
-    column: $table.priceCategory,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$HardwarePartiesTableTableAnnotationComposer
-    extends Composer<_$AppDatabase, $HardwarePartiesTableTable> {
-  $$HardwarePartiesTableTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
-
-  GeneratedColumn<String> get name =>
-      $composableBuilder(column: $table.name, builder: (column) => column);
-
-  GeneratedColumn<String> get type =>
-      $composableBuilder(column: $table.type, builder: (column) => column);
-
-  GeneratedColumn<String> get phone =>
-      $composableBuilder(column: $table.phone, builder: (column) => column);
-
-  GeneratedColumn<String> get gstin =>
-      $composableBuilder(column: $table.gstin, builder: (column) => column);
-
-  GeneratedColumn<String> get address =>
-      $composableBuilder(column: $table.address, builder: (column) => column);
-
-  GeneratedColumn<int> get creditLimit => $composableBuilder(
-    column: $table.creditLimit,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get creditDays => $composableBuilder(
-    column: $table.creditDays,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get priceCategory => $composableBuilder(
-    column: $table.priceCategory,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<bool> get isSynced =>
-      $composableBuilder(column: $table.isSynced, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get deletedAt =>
-      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
-}
-
-class $$HardwarePartiesTableTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $HardwarePartiesTableTable,
-          HardwarePartyEntity,
-          $$HardwarePartiesTableTableFilterComposer,
-          $$HardwarePartiesTableTableOrderingComposer,
-          $$HardwarePartiesTableTableAnnotationComposer,
-          $$HardwarePartiesTableTableCreateCompanionBuilder,
-          $$HardwarePartiesTableTableUpdateCompanionBuilder,
-          (
-            HardwarePartyEntity,
-            BaseReferences<
-              _$AppDatabase,
-              $HardwarePartiesTableTable,
-              HardwarePartyEntity
-            >,
-          ),
-          HardwarePartyEntity,
-          PrefetchHooks Function()
-        > {
-  $$HardwarePartiesTableTableTableManager(
-    _$AppDatabase db,
-    $HardwarePartiesTableTable table,
-  ) : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$HardwarePartiesTableTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$HardwarePartiesTableTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer: () =>
-              $$HardwarePartiesTableTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> userId = const Value.absent(),
-                Value<String?> name = const Value.absent(),
-                Value<String?> type = const Value.absent(),
-                Value<String?> phone = const Value.absent(),
-                Value<String?> gstin = const Value.absent(),
-                Value<String?> address = const Value.absent(),
-                Value<int> creditLimit = const Value.absent(),
-                Value<int> creditDays = const Value.absent(),
-                Value<String> priceCategory = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
-                Value<DateTime?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => HardwarePartiesTableCompanion(
-                id: id,
-                userId: userId,
-                name: name,
-                type: type,
-                phone: phone,
-                gstin: gstin,
-                address: address,
-                creditLimit: creditLimit,
-                creditDays: creditDays,
-                priceCategory: priceCategory,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String id,
-                required String userId,
-                Value<String?> name = const Value.absent(),
-                Value<String?> type = const Value.absent(),
-                Value<String?> phone = const Value.absent(),
-                Value<String?> gstin = const Value.absent(),
-                Value<String?> address = const Value.absent(),
-                Value<int> creditLimit = const Value.absent(),
-                Value<int> creditDays = const Value.absent(),
-                Value<String> priceCategory = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                required DateTime createdAt,
-                required DateTime updatedAt,
-                Value<DateTime?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => HardwarePartiesTableCompanion.insert(
-                id: id,
-                userId: userId,
-                name: name,
-                type: type,
-                phone: phone,
-                gstin: gstin,
-                address: address,
-                creditLimit: creditLimit,
-                creditDays: creditDays,
-                priceCategory: priceCategory,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$HardwarePartiesTableTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $HardwarePartiesTableTable,
-      HardwarePartyEntity,
-      $$HardwarePartiesTableTableFilterComposer,
-      $$HardwarePartiesTableTableOrderingComposer,
-      $$HardwarePartiesTableTableAnnotationComposer,
-      $$HardwarePartiesTableTableCreateCompanionBuilder,
-      $$HardwarePartiesTableTableUpdateCompanionBuilder,
-      (
-        HardwarePartyEntity,
-        BaseReferences<
-          _$AppDatabase,
-          $HardwarePartiesTableTable,
-          HardwarePartyEntity
-        >,
-      ),
-      HardwarePartyEntity,
-      PrefetchHooks Function()
-    >;
-typedef $$HardwareSalesOrdersTableTableCreateCompanionBuilder =
-    HardwareSalesOrdersTableCompanion Function({
-      required String id,
-      required String userId,
-      Value<String?> customerId,
-      Value<String?> customerName,
-      Value<String> status,
-      Value<String?> notes,
-      Value<String> itemsJson,
-      Value<bool> isSynced,
-      required DateTime createdAt,
-      required DateTime updatedAt,
-      Value<DateTime?> deletedAt,
-      Value<int> rowid,
-    });
-typedef $$HardwareSalesOrdersTableTableUpdateCompanionBuilder =
-    HardwareSalesOrdersTableCompanion Function({
-      Value<String> id,
-      Value<String> userId,
-      Value<String?> customerId,
-      Value<String?> customerName,
-      Value<String> status,
-      Value<String?> notes,
-      Value<String> itemsJson,
-      Value<bool> isSynced,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
-      Value<DateTime?> deletedAt,
-      Value<int> rowid,
-    });
-
-class $$HardwareSalesOrdersTableTableFilterComposer
-    extends Composer<_$AppDatabase, $HardwareSalesOrdersTableTable> {
-  $$HardwareSalesOrdersTableTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get customerId => $composableBuilder(
-    column: $table.customerId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get customerName => $composableBuilder(
-    column: $table.customerName,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get itemsJson => $composableBuilder(
-    column: $table.itemsJson,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$HardwareSalesOrdersTableTableOrderingComposer
-    extends Composer<_$AppDatabase, $HardwareSalesOrdersTableTable> {
-  $$HardwareSalesOrdersTableTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get customerId => $composableBuilder(
-    column: $table.customerId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get customerName => $composableBuilder(
-    column: $table.customerName,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get status => $composableBuilder(
-    column: $table.status,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get notes => $composableBuilder(
-    column: $table.notes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get itemsJson => $composableBuilder(
-    column: $table.itemsJson,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get isSynced => $composableBuilder(
-    column: $table.isSynced,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$HardwareSalesOrdersTableTableAnnotationComposer
-    extends Composer<_$AppDatabase, $HardwareSalesOrdersTableTable> {
-  $$HardwareSalesOrdersTableTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
-
-  GeneratedColumn<String> get customerId => $composableBuilder(
-    column: $table.customerId,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get customerName => $composableBuilder(
-    column: $table.customerName,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get status =>
-      $composableBuilder(column: $table.status, builder: (column) => column);
-
-  GeneratedColumn<String> get notes =>
-      $composableBuilder(column: $table.notes, builder: (column) => column);
-
-  GeneratedColumn<String> get itemsJson =>
-      $composableBuilder(column: $table.itemsJson, builder: (column) => column);
-
-  GeneratedColumn<bool> get isSynced =>
-      $composableBuilder(column: $table.isSynced, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get deletedAt =>
-      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
-}
-
-class $$HardwareSalesOrdersTableTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $HardwareSalesOrdersTableTable,
-          HardwareSalesOrderEntity,
-          $$HardwareSalesOrdersTableTableFilterComposer,
-          $$HardwareSalesOrdersTableTableOrderingComposer,
-          $$HardwareSalesOrdersTableTableAnnotationComposer,
-          $$HardwareSalesOrdersTableTableCreateCompanionBuilder,
-          $$HardwareSalesOrdersTableTableUpdateCompanionBuilder,
-          (
-            HardwareSalesOrderEntity,
-            BaseReferences<
-              _$AppDatabase,
-              $HardwareSalesOrdersTableTable,
-              HardwareSalesOrderEntity
-            >,
-          ),
-          HardwareSalesOrderEntity,
-          PrefetchHooks Function()
-        > {
-  $$HardwareSalesOrdersTableTableTableManager(
-    _$AppDatabase db,
-    $HardwareSalesOrdersTableTable table,
-  ) : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$HardwareSalesOrdersTableTableFilterComposer(
-                $db: db,
-                $table: table,
-              ),
-          createOrderingComposer: () =>
-              $$HardwareSalesOrdersTableTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
-          createComputedFieldComposer: () =>
-              $$HardwareSalesOrdersTableTableAnnotationComposer(
-                $db: db,
-                $table: table,
-              ),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> userId = const Value.absent(),
-                Value<String?> customerId = const Value.absent(),
-                Value<String?> customerName = const Value.absent(),
-                Value<String> status = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
-                Value<String> itemsJson = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
-                Value<DateTime?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => HardwareSalesOrdersTableCompanion(
-                id: id,
-                userId: userId,
-                customerId: customerId,
-                customerName: customerName,
-                status: status,
-                notes: notes,
-                itemsJson: itemsJson,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String id,
-                required String userId,
-                Value<String?> customerId = const Value.absent(),
-                Value<String?> customerName = const Value.absent(),
-                Value<String> status = const Value.absent(),
-                Value<String?> notes = const Value.absent(),
-                Value<String> itemsJson = const Value.absent(),
-                Value<bool> isSynced = const Value.absent(),
-                required DateTime createdAt,
-                required DateTime updatedAt,
-                Value<DateTime?> deletedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => HardwareSalesOrdersTableCompanion.insert(
-                id: id,
-                userId: userId,
-                customerId: customerId,
-                customerName: customerName,
-                status: status,
-                notes: notes,
-                itemsJson: itemsJson,
-                isSynced: isSynced,
-                createdAt: createdAt,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$HardwareSalesOrdersTableTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $HardwareSalesOrdersTableTable,
-      HardwareSalesOrderEntity,
-      $$HardwareSalesOrdersTableTableFilterComposer,
-      $$HardwareSalesOrdersTableTableOrderingComposer,
-      $$HardwareSalesOrdersTableTableAnnotationComposer,
-      $$HardwareSalesOrdersTableTableCreateCompanionBuilder,
-      $$HardwareSalesOrdersTableTableUpdateCompanionBuilder,
-      (
-        HardwareSalesOrderEntity,
-        BaseReferences<
-          _$AppDatabase,
-          $HardwareSalesOrdersTableTable,
-          HardwareSalesOrderEntity
-        >,
-      ),
-      HardwareSalesOrderEntity,
-      PrefetchHooks Function()
-    >;
 typedef $$RolesTableCreateCompanionBuilder =
     RolesCompanion Function({
       Value<String?> tenantId,
@@ -187858,6 +181565,615 @@ typedef $$TaxRatesTableProcessedTableManager =
       TaxRateEntity,
       PrefetchHooks Function()
     >;
+typedef $$ComputerJobCardsCacheTableCreateCompanionBuilder =
+    ComputerJobCardsCacheCompanion Function({
+      required String id,
+      required String tenantId,
+      required String payloadJson,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$ComputerJobCardsCacheTableUpdateCompanionBuilder =
+    ComputerJobCardsCacheCompanion Function({
+      Value<String> id,
+      Value<String> tenantId,
+      Value<String> payloadJson,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$ComputerJobCardsCacheTableFilterComposer
+    extends Composer<_$AppDatabase, $ComputerJobCardsCacheTable> {
+  $$ComputerJobCardsCacheTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ComputerJobCardsCacheTableOrderingComposer
+    extends Composer<_$AppDatabase, $ComputerJobCardsCacheTable> {
+  $$ComputerJobCardsCacheTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ComputerJobCardsCacheTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ComputerJobCardsCacheTable> {
+  $$ComputerJobCardsCacheTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get tenantId =>
+      $composableBuilder(column: $table.tenantId, builder: (column) => column);
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$ComputerJobCardsCacheTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ComputerJobCardsCacheTable,
+          ComputerJobCardCacheEntity,
+          $$ComputerJobCardsCacheTableFilterComposer,
+          $$ComputerJobCardsCacheTableOrderingComposer,
+          $$ComputerJobCardsCacheTableAnnotationComposer,
+          $$ComputerJobCardsCacheTableCreateCompanionBuilder,
+          $$ComputerJobCardsCacheTableUpdateCompanionBuilder,
+          (
+            ComputerJobCardCacheEntity,
+            BaseReferences<
+              _$AppDatabase,
+              $ComputerJobCardsCacheTable,
+              ComputerJobCardCacheEntity
+            >,
+          ),
+          ComputerJobCardCacheEntity,
+          PrefetchHooks Function()
+        > {
+  $$ComputerJobCardsCacheTableTableManager(
+    _$AppDatabase db,
+    $ComputerJobCardsCacheTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ComputerJobCardsCacheTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$ComputerJobCardsCacheTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ComputerJobCardsCacheTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> tenantId = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ComputerJobCardsCacheCompanion(
+                id: id,
+                tenantId: tenantId,
+                payloadJson: payloadJson,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String tenantId,
+                required String payloadJson,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ComputerJobCardsCacheCompanion.insert(
+                id: id,
+                tenantId: tenantId,
+                payloadJson: payloadJson,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ComputerJobCardsCacheTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ComputerJobCardsCacheTable,
+      ComputerJobCardCacheEntity,
+      $$ComputerJobCardsCacheTableFilterComposer,
+      $$ComputerJobCardsCacheTableOrderingComposer,
+      $$ComputerJobCardsCacheTableAnnotationComposer,
+      $$ComputerJobCardsCacheTableCreateCompanionBuilder,
+      $$ComputerJobCardsCacheTableUpdateCompanionBuilder,
+      (
+        ComputerJobCardCacheEntity,
+        BaseReferences<
+          _$AppDatabase,
+          $ComputerJobCardsCacheTable,
+          ComputerJobCardCacheEntity
+        >,
+      ),
+      ComputerJobCardCacheEntity,
+      PrefetchHooks Function()
+    >;
+typedef $$ComputerWarrantyCacheTableCreateCompanionBuilder =
+    ComputerWarrantyCacheCompanion Function({
+      required String id,
+      required String tenantId,
+      required String serialNumber,
+      required String payloadJson,
+      Value<DateTime?> warrantyExpiryDate,
+      Value<int> rowid,
+    });
+typedef $$ComputerWarrantyCacheTableUpdateCompanionBuilder =
+    ComputerWarrantyCacheCompanion Function({
+      Value<String> id,
+      Value<String> tenantId,
+      Value<String> serialNumber,
+      Value<String> payloadJson,
+      Value<DateTime?> warrantyExpiryDate,
+      Value<int> rowid,
+    });
+
+class $$ComputerWarrantyCacheTableFilterComposer
+    extends Composer<_$AppDatabase, $ComputerWarrantyCacheTable> {
+  $$ComputerWarrantyCacheTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get serialNumber => $composableBuilder(
+    column: $table.serialNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get warrantyExpiryDate => $composableBuilder(
+    column: $table.warrantyExpiryDate,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ComputerWarrantyCacheTableOrderingComposer
+    extends Composer<_$AppDatabase, $ComputerWarrantyCacheTable> {
+  $$ComputerWarrantyCacheTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get serialNumber => $composableBuilder(
+    column: $table.serialNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get warrantyExpiryDate => $composableBuilder(
+    column: $table.warrantyExpiryDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ComputerWarrantyCacheTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ComputerWarrantyCacheTable> {
+  $$ComputerWarrantyCacheTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get tenantId =>
+      $composableBuilder(column: $table.tenantId, builder: (column) => column);
+
+  GeneratedColumn<String> get serialNumber => $composableBuilder(
+    column: $table.serialNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get warrantyExpiryDate => $composableBuilder(
+    column: $table.warrantyExpiryDate,
+    builder: (column) => column,
+  );
+}
+
+class $$ComputerWarrantyCacheTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ComputerWarrantyCacheTable,
+          ComputerWarrantyCacheEntity,
+          $$ComputerWarrantyCacheTableFilterComposer,
+          $$ComputerWarrantyCacheTableOrderingComposer,
+          $$ComputerWarrantyCacheTableAnnotationComposer,
+          $$ComputerWarrantyCacheTableCreateCompanionBuilder,
+          $$ComputerWarrantyCacheTableUpdateCompanionBuilder,
+          (
+            ComputerWarrantyCacheEntity,
+            BaseReferences<
+              _$AppDatabase,
+              $ComputerWarrantyCacheTable,
+              ComputerWarrantyCacheEntity
+            >,
+          ),
+          ComputerWarrantyCacheEntity,
+          PrefetchHooks Function()
+        > {
+  $$ComputerWarrantyCacheTableTableManager(
+    _$AppDatabase db,
+    $ComputerWarrantyCacheTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ComputerWarrantyCacheTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$ComputerWarrantyCacheTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ComputerWarrantyCacheTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> tenantId = const Value.absent(),
+                Value<String> serialNumber = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<DateTime?> warrantyExpiryDate = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ComputerWarrantyCacheCompanion(
+                id: id,
+                tenantId: tenantId,
+                serialNumber: serialNumber,
+                payloadJson: payloadJson,
+                warrantyExpiryDate: warrantyExpiryDate,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String tenantId,
+                required String serialNumber,
+                required String payloadJson,
+                Value<DateTime?> warrantyExpiryDate = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ComputerWarrantyCacheCompanion.insert(
+                id: id,
+                tenantId: tenantId,
+                serialNumber: serialNumber,
+                payloadJson: payloadJson,
+                warrantyExpiryDate: warrantyExpiryDate,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ComputerWarrantyCacheTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ComputerWarrantyCacheTable,
+      ComputerWarrantyCacheEntity,
+      $$ComputerWarrantyCacheTableFilterComposer,
+      $$ComputerWarrantyCacheTableOrderingComposer,
+      $$ComputerWarrantyCacheTableAnnotationComposer,
+      $$ComputerWarrantyCacheTableCreateCompanionBuilder,
+      $$ComputerWarrantyCacheTableUpdateCompanionBuilder,
+      (
+        ComputerWarrantyCacheEntity,
+        BaseReferences<
+          _$AppDatabase,
+          $ComputerWarrantyCacheTable,
+          ComputerWarrantyCacheEntity
+        >,
+      ),
+      ComputerWarrantyCacheEntity,
+      PrefetchHooks Function()
+    >;
+typedef $$ComputerSerialsCacheTableCreateCompanionBuilder =
+    ComputerSerialsCacheCompanion Function({
+      required String serialNumber,
+      required String tenantId,
+      required String payloadJson,
+      Value<int> rowid,
+    });
+typedef $$ComputerSerialsCacheTableUpdateCompanionBuilder =
+    ComputerSerialsCacheCompanion Function({
+      Value<String> serialNumber,
+      Value<String> tenantId,
+      Value<String> payloadJson,
+      Value<int> rowid,
+    });
+
+class $$ComputerSerialsCacheTableFilterComposer
+    extends Composer<_$AppDatabase, $ComputerSerialsCacheTable> {
+  $$ComputerSerialsCacheTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get serialNumber => $composableBuilder(
+    column: $table.serialNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ComputerSerialsCacheTableOrderingComposer
+    extends Composer<_$AppDatabase, $ComputerSerialsCacheTable> {
+  $$ComputerSerialsCacheTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get serialNumber => $composableBuilder(
+    column: $table.serialNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ComputerSerialsCacheTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ComputerSerialsCacheTable> {
+  $$ComputerSerialsCacheTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get serialNumber => $composableBuilder(
+    column: $table.serialNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get tenantId =>
+      $composableBuilder(column: $table.tenantId, builder: (column) => column);
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+}
+
+class $$ComputerSerialsCacheTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ComputerSerialsCacheTable,
+          ComputerSerialCacheEntity,
+          $$ComputerSerialsCacheTableFilterComposer,
+          $$ComputerSerialsCacheTableOrderingComposer,
+          $$ComputerSerialsCacheTableAnnotationComposer,
+          $$ComputerSerialsCacheTableCreateCompanionBuilder,
+          $$ComputerSerialsCacheTableUpdateCompanionBuilder,
+          (
+            ComputerSerialCacheEntity,
+            BaseReferences<
+              _$AppDatabase,
+              $ComputerSerialsCacheTable,
+              ComputerSerialCacheEntity
+            >,
+          ),
+          ComputerSerialCacheEntity,
+          PrefetchHooks Function()
+        > {
+  $$ComputerSerialsCacheTableTableManager(
+    _$AppDatabase db,
+    $ComputerSerialsCacheTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ComputerSerialsCacheTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ComputerSerialsCacheTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ComputerSerialsCacheTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> serialNumber = const Value.absent(),
+                Value<String> tenantId = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ComputerSerialsCacheCompanion(
+                serialNumber: serialNumber,
+                tenantId: tenantId,
+                payloadJson: payloadJson,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String serialNumber,
+                required String tenantId,
+                required String payloadJson,
+                Value<int> rowid = const Value.absent(),
+              }) => ComputerSerialsCacheCompanion.insert(
+                serialNumber: serialNumber,
+                tenantId: tenantId,
+                payloadJson: payloadJson,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ComputerSerialsCacheTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ComputerSerialsCacheTable,
+      ComputerSerialCacheEntity,
+      $$ComputerSerialsCacheTableFilterComposer,
+      $$ComputerSerialsCacheTableOrderingComposer,
+      $$ComputerSerialsCacheTableAnnotationComposer,
+      $$ComputerSerialsCacheTableCreateCompanionBuilder,
+      $$ComputerSerialsCacheTableUpdateCompanionBuilder,
+      (
+        ComputerSerialCacheEntity,
+        BaseReferences<
+          _$AppDatabase,
+          $ComputerSerialsCacheTable,
+          ComputerSerialCacheEntity
+        >,
+      ),
+      ComputerSerialCacheEntity,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -188090,6 +182406,8 @@ class $AppDatabaseManager {
       $$NozzlesTableTableManager(_db, _db.nozzles);
   $$DispensersTableTableManager get dispensers =>
       $$DispensersTableTableManager(_db, _db.dispensers);
+  $$FuelTypesTableTableManager get fuelTypes =>
+      $$FuelTypesTableTableManager(_db, _db.fuelTypes);
   $$StaffNozzleAssignmentsTableTableManager get staffNozzleAssignments =>
       $$StaffNozzleAssignmentsTableTableManager(
         _db,
@@ -188129,34 +182447,6 @@ class $AppDatabaseManager {
       $$RateListsTableTableTableManager(_db, _db.rateListsTable);
   $$EwayRecordsTableTableTableManager get ewayRecordsTable =>
       $$EwayRecordsTableTableTableManager(_db, _db.ewayRecordsTable);
-  $$ComputerJobCardsCacheTableTableManager get computerJobCardsCache =>
-      $$ComputerJobCardsCacheTableTableManager(_db, _db.computerJobCardsCache);
-  $$ComputerWarrantyCacheTableTableManager get computerWarrantyCache =>
-      $$ComputerWarrantyCacheTableTableManager(_db, _db.computerWarrantyCache);
-  $$ComputerSerialsCacheTableTableManager get computerSerialsCache =>
-      $$ComputerSerialsCacheTableTableManager(_db, _db.computerSerialsCache);
-  $$HardwareProjectsTableTableManager get hardwareProjects =>
-      $$HardwareProjectsTableTableManager(_db, _db.hardwareProjects);
-  $$HardwareSiteIndentsTableTableManager get hardwareSiteIndents =>
-      $$HardwareSiteIndentsTableTableManager(_db, _db.hardwareSiteIndents);
-  $$HardwareMaterialDepositsTableTableManager get hardwareMaterialDeposits =>
-      $$HardwareMaterialDepositsTableTableManager(
-        _db,
-        _db.hardwareMaterialDeposits,
-      );
-  $$HardwarePurchaseOrdersTableTableTableManager
-  get hardwarePurchaseOrdersTable =>
-      $$HardwarePurchaseOrdersTableTableTableManager(
-        _db,
-        _db.hardwarePurchaseOrdersTable,
-      );
-  $$HardwarePartiesTableTableTableManager get hardwarePartiesTable =>
-      $$HardwarePartiesTableTableTableManager(_db, _db.hardwarePartiesTable);
-  $$HardwareSalesOrdersTableTableTableManager get hardwareSalesOrdersTable =>
-      $$HardwareSalesOrdersTableTableTableManager(
-        _db,
-        _db.hardwareSalesOrdersTable,
-      );
   $$RolesTableTableManager get roles =>
       $$RolesTableTableManager(_db, _db.roles);
   $$PermissionsTableTableManager get permissions =>
@@ -188171,4 +182461,10 @@ class $AppDatabaseManager {
       $$BusinessSettingsTableTableManager(_db, _db.businessSettings);
   $$TaxRatesTableTableManager get taxRates =>
       $$TaxRatesTableTableManager(_db, _db.taxRates);
+  $$ComputerJobCardsCacheTableTableManager get computerJobCardsCache =>
+      $$ComputerJobCardsCacheTableTableManager(_db, _db.computerJobCardsCache);
+  $$ComputerWarrantyCacheTableTableManager get computerWarrantyCache =>
+      $$ComputerWarrantyCacheTableTableManager(_db, _db.computerWarrantyCache);
+  $$ComputerSerialsCacheTableTableManager get computerSerialsCache =>
+      $$ComputerSerialsCacheTableTableManager(_db, _db.computerSerialsCache);
 }

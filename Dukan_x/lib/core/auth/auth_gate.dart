@@ -121,6 +121,7 @@ class _AuthGateState extends State<AuthGate> {
           case UserRole.doctor:
           case UserRole.receptionist:
           case UserRole.nurse:
+          case UserRole.attendant:
             return _buildVendorFlow(session);
 
           case UserRole.unknown:

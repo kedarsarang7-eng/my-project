@@ -280,6 +280,651 @@ class OpenWAClient {
     return WAHealthStatus.fromJson(data);
   }
 
+  // ── Contacts (extended) ──────────────────────────────────────────────────
+
+  /// Get all contacts for a session.
+  Future<List<Map<String, dynamic>>> getContacts(
+    String sessionId, {
+    int? limit,
+    int? offset,
+  }) async {
+    final params = <String>[];
+    if (limit != null) params.add('limit=$limit');
+    if (offset != null) params.add('offset=$offset');
+    final query = params.isNotEmpty ? '?${params.join('&')}' : '';
+    final data = await _get<List<dynamic>>(
+      '/sessions/$sessionId/contacts$query',
+    );
+    return data.cast<Map<String, dynamic>>();
+  }
+
+  /// Get a specific contact by ID.
+  Future<Map<String, dynamic>> getContact(
+    String sessionId,
+    String contactId,
+  ) async {
+    return _get<Map<String, dynamic>>(
+      '/sessions/$sessionId/contacts/${Uri.encodeComponent(contactId)}',
+    );
+  }
+
+  /// Get profile picture URL for a contact.
+  Future<String?> getProfilePicture(
+    String sessionId,
+    String contactId,
+  ) async {
+    final data = await _get<Map<String, dynamic>>(
+      '/sessions/$sessionId/contacts/${Uri.encodeComponent(contactId)}/profile-picture',
+    );
+    return data['url'] as String?;
+  }
+
+  /// Resolve a contact ID to a phone number.
+  Future<String?> resolveContactPhone(
+    String sessionId,
+    String contactId,
+  ) async {
+    final data = await _get<Map<String, dynamic>>(
+      '/sessions/$sessionId/contacts/${Uri.encodeComponent(contactId)}/phone',
+    );
+    return data['phone'] as String?;
+  }
+
+  /// Block a contact.
+  Future<void> blockContact(String sessionId, String contactId) async {
+    await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/contacts/${Uri.encodeComponent(contactId)}/block',
+    );
+  }
+
+  /// Unblock a contact.
+  Future<void> unblockContact(String sessionId, String contactId) async {
+    await _delete(
+      '/sessions/$sessionId/contacts/${Uri.encodeComponent(contactId)}/block',
+    );
+  }
+
+  // ── Groups ───────────────────────────────────────────────────────────────
+
+  /// List all groups for a session.
+  Future<List<Map<String, dynamic>>> getGroups(
+    String sessionId, {
+    int? limit,
+    int? offset,
+  }) async {
+    final params = <String>[];
+    if (limit != null) params.add('limit=$limit');
+    if (offset != null) params.add('offset=$offset');
+    final query = params.isNotEmpty ? '?${params.join('&')}' : '';
+    final data = await _get<List<dynamic>>(
+      '/sessions/$sessionId/groups$query',
+    );
+    return data.cast<Map<String, dynamic>>();
+  }
+
+  /// Get detailed info for a group.
+  Future<Map<String, dynamic>> getGroupInfo(
+    String sessionId,
+    String groupId,
+  ) async {
+    return _get<Map<String, dynamic>>(
+      '/sessions/$sessionId/groups/${Uri.encodeComponent(groupId)}',
+    );
+  }
+
+  /// Create a new group.
+  Future<Map<String, dynamic>> createGroup(
+    String sessionId,
+    String name,
+    List<String> participants,
+  ) async {
+    return _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/groups',
+      body: {'name': name, 'participants': participants},
+    );
+  }
+
+  /// Add participants to a group.
+  Future<void> addGroupParticipants(
+    String sessionId,
+    String groupId,
+    List<String> participants,
+  ) async {
+    await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/groups/${Uri.encodeComponent(groupId)}/participants',
+      body: {'participants': participants},
+    );
+  }
+
+  /// Remove participants from a group.
+  Future<void> removeGroupParticipants(
+    String sessionId,
+    String groupId,
+    List<String> participants,
+  ) async {
+    await _request('DELETE',
+      '/sessions/$sessionId/groups/${Uri.encodeComponent(groupId)}/participants',
+      body: {'participants': participants},
+    );
+  }
+
+  /// Leave a group.
+  Future<void> leaveGroup(String sessionId, String groupId) async {
+    await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/groups/${Uri.encodeComponent(groupId)}/leave',
+    );
+  }
+
+  /// Get group invite code/link.
+  Future<Map<String, dynamic>> getGroupInviteCode(
+    String sessionId,
+    String groupId,
+  ) async {
+    return _get<Map<String, dynamic>>(
+      '/sessions/$sessionId/groups/${Uri.encodeComponent(groupId)}/invite-code',
+    );
+  }
+
+  // ── Labels ───────────────────────────────────────────────────────────────
+
+  /// Get all labels (WhatsApp Business only).
+  Future<List<Map<String, dynamic>>> getLabels(String sessionId) async {
+    final data = await _get<List<dynamic>>(
+      '/sessions/$sessionId/labels',
+    );
+    return data.cast<Map<String, dynamic>>();
+  }
+
+  /// Get labels for a specific chat.
+  Future<List<Map<String, dynamic>>> getChatLabels(
+    String sessionId,
+    String chatId,
+  ) async {
+    final data = await _get<List<dynamic>>(
+      '/sessions/$sessionId/labels/chat/${Uri.encodeComponent(chatId)}',
+    );
+    return data.cast<Map<String, dynamic>>();
+  }
+
+  /// Add a label to a chat.
+  Future<void> addLabelToChat(
+    String sessionId,
+    String chatId,
+    String labelId,
+  ) async {
+    await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/labels/chat/${Uri.encodeComponent(chatId)}',
+      body: {'labelId': labelId},
+    );
+  }
+
+  /// Remove a label from a chat.
+  Future<void> removeLabelFromChat(
+    String sessionId,
+    String chatId,
+    String labelId,
+  ) async {
+    await _delete(
+      '/sessions/$sessionId/labels/chat/${Uri.encodeComponent(chatId)}/$labelId',
+    );
+  }
+
+  // ── Messages (extended) ──────────────────────────────────────────────────
+
+  /// Send a video message.
+  Future<WAMessageResponse> sendVideo(
+    String sessionId,
+    String chatId, {
+    String? url,
+    String? base64Data,
+    String? caption,
+  }) async {
+    final body = <String, dynamic>{'chatId': chatId};
+    if (url != null) body['url'] = url;
+    if (base64Data != null) body['base64'] = base64Data;
+    if (caption != null) body['caption'] = caption;
+
+    final data = await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/messages/send-video',
+      body: body,
+    );
+    return WAMessageResponse.fromJson(data);
+  }
+
+  /// Send an audio message.
+  Future<WAMessageResponse> sendAudio(
+    String sessionId,
+    String chatId, {
+    String? url,
+    String? base64Data,
+  }) async {
+    final body = <String, dynamic>{'chatId': chatId};
+    if (url != null) body['url'] = url;
+    if (base64Data != null) body['base64'] = base64Data;
+
+    final data = await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/messages/send-audio',
+      body: body,
+    );
+    return WAMessageResponse.fromJson(data);
+  }
+
+  /// Send a location message.
+  Future<WAMessageResponse> sendLocation(
+    String sessionId,
+    String chatId, {
+    required double latitude,
+    required double longitude,
+    String? name,
+    String? address,
+  }) async {
+    final body = <String, dynamic>{
+      'chatId': chatId,
+      'latitude': latitude,
+      'longitude': longitude,
+    };
+    if (name != null) body['name'] = name;
+    if (address != null) body['address'] = address;
+
+    final data = await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/messages/send-location',
+      body: body,
+    );
+    return WAMessageResponse.fromJson(data);
+  }
+
+  /// Send a contact card message.
+  Future<WAMessageResponse> sendContactCard(
+    String sessionId,
+    String chatId, {
+    required String contactName,
+    required String contactPhone,
+  }) async {
+    final data = await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/messages/send-contact',
+      body: {
+        'chatId': chatId,
+        'name': contactName,
+        'phone': contactPhone,
+      },
+    );
+    return WAMessageResponse.fromJson(data);
+  }
+
+  /// Reply to a message.
+  Future<WAMessageResponse> replyToMessage(
+    String sessionId,
+    String chatId,
+    String quotedMessageId,
+    String text,
+  ) async {
+    final data = await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/messages/reply',
+      body: {
+        'chatId': chatId,
+        'quotedMessageId': quotedMessageId,
+        'text': text,
+      },
+    );
+    return WAMessageResponse.fromJson(data);
+  }
+
+  /// React to a message.
+  Future<void> reactToMessage(
+    String sessionId,
+    String chatId,
+    String messageId,
+    String emoji,
+  ) async {
+    await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/messages/react',
+      body: {
+        'chatId': chatId,
+        'messageId': messageId,
+        'emoji': emoji,
+      },
+    );
+  }
+
+  /// Forward a message.
+  Future<void> forwardMessage(
+    String sessionId,
+    String chatId,
+    String messageId,
+    String toChatId,
+  ) async {
+    await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/messages/forward',
+      body: {
+        'chatId': chatId,
+        'messageId': messageId,
+        'toChatId': toChatId,
+      },
+    );
+  }
+
+  /// Delete a message (for everyone).
+  Future<void> deleteMessage(
+    String sessionId,
+    String chatId,
+    String messageId,
+  ) async {
+    await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/messages/delete',
+      body: {'chatId': chatId, 'messageId': messageId},
+    );
+  }
+
+  /// Send bulk messages.
+  Future<Map<String, dynamic>> sendBulk(
+    String sessionId,
+    List<Map<String, dynamic>> messages, {
+    Map<String, dynamic>? options,
+  }) async {
+    return _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/messages/send-bulk',
+      body: {'messages': messages, if (options != null) 'options': options},
+    );
+  }
+
+  /// Get batch send status.
+  Future<Map<String, dynamic>> getBatchStatus(
+    String sessionId,
+    String batchId,
+  ) async {
+    return _get<Map<String, dynamic>>(
+      '/sessions/$sessionId/messages/batch/$batchId',
+    );
+  }
+
+  /// Cancel a running batch.
+  Future<void> cancelBatch(String sessionId, String batchId) async {
+    await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/messages/batch/$batchId/cancel',
+    );
+  }
+
+  /// Mark a chat as read.
+  Future<void> markChatRead(String sessionId, String chatId) async {
+    await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/chats/read',
+      body: {'chatId': chatId},
+    );
+  }
+
+  /// Mark a chat as unread.
+  Future<void> markChatUnread(String sessionId, String chatId) async {
+    await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/chats/unread',
+      body: {'chatId': chatId},
+    );
+  }
+
+  /// Send typing indicator.
+  Future<void> sendTyping(String sessionId, String chatId) async {
+    await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/chats/typing',
+      body: {'chatId': chatId},
+    );
+  }
+
+  /// Force-kill a stuck session.
+  Future<void> forceKillSession(String sessionId) async {
+    await _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/force-kill',
+    );
+  }
+
+  /// Get session status.
+  Future<Map<String, dynamic>> getSessionStatus(String sessionId) async {
+    return _get<Map<String, dynamic>>('/sessions/$sessionId/status');
+  }
+
+  // ── Webhooks ─────────────────────────────────────────────────────────────
+
+  /// List all webhooks for a session.
+  Future<List<Map<String, dynamic>>> listWebhooks(String sessionId) async {
+    final data = await _get<List<dynamic>>(
+      '/sessions/$sessionId/webhooks',
+    );
+    return data.cast<Map<String, dynamic>>();
+  }
+
+  /// Get a specific webhook.
+  Future<Map<String, dynamic>> getWebhook(
+    String sessionId,
+    String webhookId,
+  ) async {
+    return _get<Map<String, dynamic>>(
+      '/sessions/$sessionId/webhooks/$webhookId',
+    );
+  }
+
+  /// Create a webhook.
+  Future<Map<String, dynamic>> createWebhook(
+    String sessionId, {
+    required String url,
+    required List<String> events,
+    String? secret,
+    Map<String, String>? headers,
+    Map<String, dynamic>? filters,
+  }) async {
+    final body = <String, dynamic>{'url': url, 'events': events};
+    if (secret != null) body['secret'] = secret;
+    if (headers != null) body['headers'] = headers;
+    if (filters != null) body['filters'] = filters;
+
+    return _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/webhooks',
+      body: body,
+    );
+  }
+
+  /// Update a webhook.
+  Future<Map<String, dynamic>> updateWebhook(
+    String sessionId,
+    String webhookId,
+    Map<String, dynamic> data,
+  ) async {
+    return _put<Map<String, dynamic>>(
+      '/sessions/$sessionId/webhooks/$webhookId',
+      body: data,
+    );
+  }
+
+  /// Delete a webhook.
+  Future<void> deleteWebhook(String sessionId, String webhookId) async {
+    await _delete('/sessions/$sessionId/webhooks/$webhookId');
+  }
+
+  /// Test a webhook.
+  Future<Map<String, dynamic>> testWebhook(
+    String sessionId,
+    String webhookId,
+  ) async {
+    return _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/webhooks/$webhookId/test',
+    );
+  }
+
+  // ── Auth / API Keys ──────────────────────────────────────────────────────
+
+  /// List all API keys (admin only).
+  Future<List<Map<String, dynamic>>> listApiKeys() async {
+    final data = await _get<List<dynamic>>('/auth/api-keys');
+    return data.cast<Map<String, dynamic>>();
+  }
+
+  /// Create a new API key.
+  Future<Map<String, dynamic>> createApiKey({
+    required String name,
+    required String role,
+    List<String>? allowedIps,
+    List<String>? allowedSessions,
+    String? expiresAt,
+  }) async {
+    final body = <String, dynamic>{'name': name, 'role': role};
+    if (allowedIps != null) body['allowedIps'] = allowedIps;
+    if (allowedSessions != null) body['allowedSessions'] = allowedSessions;
+    if (expiresAt != null) body['expiresAt'] = expiresAt;
+
+    return _post<Map<String, dynamic>>('/auth/api-keys', body: body);
+  }
+
+  /// Update an API key.
+  Future<Map<String, dynamic>> updateApiKey(
+    String keyId,
+    Map<String, dynamic> data,
+  ) async {
+    return _put<Map<String, dynamic>>('/auth/api-keys/$keyId', body: data);
+  }
+
+  /// Delete an API key.
+  Future<void> deleteApiKey(String keyId) async {
+    await _delete('/auth/api-keys/$keyId');
+  }
+
+  /// Revoke an API key.
+  Future<Map<String, dynamic>> revokeApiKey(String keyId) async {
+    return _post<Map<String, dynamic>>('/auth/api-keys/$keyId/revoke');
+  }
+
+  // ── Audit Logs ───────────────────────────────────────────────────────────
+
+  /// Get audit logs.
+  Future<Map<String, dynamic>> getAuditLogs({
+    String? action,
+    String? severity,
+    int? limit,
+    int? offset,
+  }) async {
+    final params = <String>[];
+    if (action != null) params.add('action=$action');
+    if (severity != null) params.add('severity=$severity');
+    if (limit != null) params.add('limit=$limit');
+    if (offset != null) params.add('offset=$offset');
+    final query = params.isNotEmpty ? '?${params.join('&')}' : '';
+    return _get<Map<String, dynamic>>('/audit$query');
+  }
+
+  // ── Stats ────────────────────────────────────────────────────────────────
+
+  /// Get overview statistics.
+  Future<Map<String, dynamic>> getOverviewStats() async {
+    return _get<Map<String, dynamic>>('/stats/overview');
+  }
+
+  /// Get message statistics for a period.
+  Future<Map<String, dynamic>> getMessageStats({String? period}) async {
+    final query = period != null ? '?period=$period' : '';
+    return _get<Map<String, dynamic>>('/stats/messages$query');
+  }
+
+  // ── Infrastructure ───────────────────────────────────────────────────────
+
+  /// Get infrastructure status.
+  Future<Map<String, dynamic>> getInfraStatus() async {
+    return _get<Map<String, dynamic>>('/infra/status');
+  }
+
+  /// Get saved infrastructure config.
+  Future<Map<String, dynamic>> getInfraConfig() async {
+    return _get<Map<String, dynamic>>('/infra/config');
+  }
+
+  /// Save infrastructure configuration.
+  Future<Map<String, dynamic>> saveInfraConfig(
+    Map<String, dynamic> config,
+  ) async {
+    return _put<Map<String, dynamic>>('/infra/config', body: config);
+  }
+
+  /// Request server restart.
+  Future<Map<String, dynamic>> requestRestart({
+    List<String>? profiles,
+    List<String>? profilesToRemove,
+  }) async {
+    return _post<Map<String, dynamic>>('/infra/restart', body: {
+      if (profiles != null) 'profiles': profiles,
+      if (profilesToRemove != null) 'profilesToRemove': profilesToRemove,
+    });
+  }
+
+  /// Get available engines.
+  Future<List<Map<String, dynamic>>> getEngines() async {
+    final data = await _get<List<dynamic>>('/infra/engines');
+    return data.cast<Map<String, dynamic>>();
+  }
+
+  // ── Channels ─────────────────────────────────────────────────────────────
+
+  /// Get subscribed channels/newsletters.
+  Future<List<Map<String, dynamic>>> getChannels(String sessionId) async {
+    final data = await _get<List<dynamic>>(
+      '/sessions/$sessionId/channels',
+    );
+    return data.cast<Map<String, dynamic>>();
+  }
+
+  /// Get channel messages.
+  Future<List<Map<String, dynamic>>> getChannelMessages(
+    String sessionId,
+    String channelId, {
+    int? limit,
+  }) async {
+    final query = limit != null ? '?limit=$limit' : '';
+    final data = await _get<List<dynamic>>(
+      '/sessions/$sessionId/channels/${Uri.encodeComponent(channelId)}/messages$query',
+    );
+    return data.cast<Map<String, dynamic>>();
+  }
+
+  // ── Catalog ──────────────────────────────────────────────────────────────
+
+  /// Get business catalog.
+  Future<Map<String, dynamic>> getCatalog(String sessionId) async {
+    return _get<Map<String, dynamic>>('/sessions/$sessionId/catalog');
+  }
+
+  /// Get catalog products.
+  Future<List<Map<String, dynamic>>> getCatalogProducts(
+    String sessionId, {
+    int? page,
+    int? limit,
+  }) async {
+    final params = <String>[];
+    if (page != null) params.add('page=$page');
+    if (limit != null) params.add('limit=$limit');
+    final query = params.isNotEmpty ? '?${params.join('&')}' : '';
+    final data = await _get<List<dynamic>>(
+      '/sessions/$sessionId/catalog/products$query',
+    );
+    return data.cast<Map<String, dynamic>>();
+  }
+
+  // ── Status Updates ───────────────────────────────────────────────────────
+
+  /// Get all status updates.
+  Future<Map<String, dynamic>> getStatuses(String sessionId) async {
+    return _get<Map<String, dynamic>>('/sessions/$sessionId/status');
+  }
+
+  /// Post a text status.
+  Future<Map<String, dynamic>> postTextStatus(
+    String sessionId,
+    String text, {
+    String? backgroundColor,
+    int? font,
+  }) async {
+    final body = <String, dynamic>{'text': text};
+    if (backgroundColor != null) body['backgroundColor'] = backgroundColor;
+    if (font != null) body['font'] = font;
+    return _post<Map<String, dynamic>>(
+      '/sessions/$sessionId/status/send-text',
+      body: body,
+    );
+  }
+
   // ── HTTP Internals ────────────────────────────────────────────────────────
 
   Future<T> _get<T>(String endpoint) async {

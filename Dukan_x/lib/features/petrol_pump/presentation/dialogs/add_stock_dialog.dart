@@ -225,7 +225,13 @@ class _AddStockDialogState extends State<AddStockDialog> {
 
     try {
       final quantity = double.parse(_quantityController.text);
-      await sl<TankService>().addPurchase(widget.tank.tankId, quantity);
+      await sl<TankService>().addPurchase(
+        widget.tank.tankId,
+        quantity,
+        pricePerLitre: _priceController.text.isNotEmpty
+            ? double.tryParse(_priceController.text)
+            : null,
+      );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

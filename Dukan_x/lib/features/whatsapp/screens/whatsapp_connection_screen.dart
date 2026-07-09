@@ -484,6 +484,16 @@ class _WhatsAppConnectionScreenState
               icon: const Icon(Icons.refresh_rounded),
               label: const Text('Refresh QR Code'),
             ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => _showPairingCodeDialog(context),
+              icon: const Icon(Icons.pin_outlined),
+              label: const Text('Use Pairing Code Instead'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF25D366),
+                side: const BorderSide(color: Color(0xFF25D366)),
+              ),
+            ),
           ],
         ),
       ),
@@ -575,8 +585,166 @@ class _WhatsAppConnectionScreenState
               loading: () => const CircularProgressIndicator(),
               error: (_, __) => const SizedBox.shrink(),
             ),
+
+            // ── Force-Kill (stuck session recovery) ──────────────
+            const SizedBox(height: 20),
+            OutlinedButton.icon(
+              onPressed: () => _showForceKillDialog(context),
+              icon: const Icon(Icons.power_settings_new_rounded,
+                  color: Colors.orange),
+              label: const Text('Force Restart Session'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.orange,
+                side: const BorderSide(color: Colors.orange),
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Pairing code dialog — alternative to QR scanning.
+  void _showPairingCodeDialog(BuildContext context) {
+    final phoneCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Enter Phone Number'),
+        content: SizedBox(
+          width: 360,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Enter your WhatsApp phone number to receive a pairing code.',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: phoneCtrl,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  labelText: 'Phone Number',
+                  hintText: '+91 98765 43210',
+                  prefixIcon: const Icon(Icons.phone_outlined),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final phone = phoneCtrl.text.trim();
+              if (phone.isEmpty) return;
+              try {
+                final tenantService = ref.read(openWATenantServiceProvider);
+                final config = await tenantService.getBusinessConfig();
+                final client = await tenantService.getClient();
+                final result =
+                    await client.requestPairingCode(config.sessionId!, phone);
+                if (mounted) {
+                  final code = result.code;
+                  showDialog(
+                    context: context,
+                    builder: (ctx2) => AlertDialog(
+                      title: const Text('Pairing Code'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Enter this code in WhatsApp:'),
+                          const SizedBox(height: 16),
+                          SelectableText(
+                            code,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 4,
+                                ),
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        FilledButton(
+                          onPressed: () => Navigator.pop(ctx2),
+                          child: const Text('Done'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Pairing failed: $e')),
+                  );
+                }
+              }
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF25D366),
+            ),
+            child: const Text('Get Code'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Force-kill dialog — for recovering stuck sessions.
+  void _showForceKillDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Force Restart Session?'),
+        content: const Text(
+          'This will forcefully terminate the current WhatsApp session '
+          'and start a fresh connection. Use this only if the session is '
+          'stuck or unresponsive.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              try {
+                final tenantService = ref.read(openWATenantServiceProvider);
+                final config = await tenantService.getBusinessConfig();
+                final client = await tenantService.getClient();
+                await client.forceKillSession(config.sessionId!);
+                ref.read(waConnectionProvider.notifier).refresh();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Session killed. Reconnecting...')),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Force kill failed: $e')),
+                  );
+                }
+              }
+            },
+            style: FilledButton.styleFrom(backgroundColor: Colors.orange),
+            child: const Text('Force Restart'),
+          ),
+        ],
       ),
     );
   }

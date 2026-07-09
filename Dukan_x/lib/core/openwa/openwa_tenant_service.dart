@@ -5,7 +5,8 @@
 // API key. Ensures strict data isolation: Business A can never access
 // Business B's WhatsApp data.
 //
-// Storage: per-business config in Firestore `owners/{ownerId}/openwa_config`
+// Storage: per-business config via API Gateway → Lambda → DynamoDB
+//          (settings endpoint: /api/v1/settings/{openwa_config})
 // API key: stored encrypted in Flutter Secure Storage (never in plain text)
 // ============================================================================
 
@@ -14,7 +15,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../core/compat/firestore_compat.dart';
+import '../../core/api/api_client.dart';
 import '../../core/di/service_locator.dart';
 import '../../core/session/session_manager.dart';
 import 'openwa_client.dart';
@@ -27,9 +28,11 @@ import 'openwa_models.dart';
 /// - A unique OpenWA session (1 WhatsApp number per business)
 /// - A scoped API key with `allowedSessions: [sessionId]`
 /// - Encrypted key storage in Flutter Secure Storage
+///
+/// All persistence flows through [ApiClient] → API Gateway → Lambda → DynamoDB.
 class OpenWATenantService {
   final SessionManager _sessionManager;
-  final FirebaseFirestore _firestore;
+  final ApiClient _apiClient;
   final FlutterSecureStorage _secureStorage;
 
   /// Cached client per business — avoids re-creating on every call.
@@ -38,10 +41,10 @@ class OpenWATenantService {
 
   OpenWATenantService({
     SessionManager? sessionManager,
-    FirebaseFirestore? firestore,
+    ApiClient? apiClient,
     FlutterSecureStorage? secureStorage,
   })  : _sessionManager = sessionManager ?? sl<SessionManager>(),
-        _firestore = firestore ?? sl<FirebaseFirestore>(),
+        _apiClient = apiClient ?? sl<ApiClient>(),
         _secureStorage = secureStorage ?? const FlutterSecureStorage();
 
   // ── Public API ────────────────────────────────────────────────────────────
@@ -96,22 +99,25 @@ class OpenWATenantService {
     return config.sessionId;
   }
 
-  /// Get the per-business WhatsApp configuration.
+  /// Get the per-business WhatsApp configuration from DynamoDB via API Gateway.
   Future<WABusinessConfig> getBusinessConfig() async {
     final businessId = _businessId;
     try {
-      final doc = await _firestore
-          .collection('owners')
-          .doc(businessId)
-          .collection('settings')
-          .doc('openwa_config')
-          .get();
+      final res = await _apiClient.get(
+        '/api/v1/settings/openwa_config',
+      );
 
-      if (doc.exists && doc.data() != null) {
-        return WABusinessConfig.fromJson({
-          ...doc.data()!,
-          'businessId': businessId,
-        });
+      if (res.isSuccess && res.data != null) {
+        // Extract the config data from the API response
+        final data = res.data!;
+        final configData = data['setting'] ?? data['item'] ?? data;
+        if (configData is Map<String, dynamic> &&
+            configData.containsKey('sessionId')) {
+          return WABusinessConfig.fromJson({
+            ...configData,
+            'businessId': businessId,
+          });
+        }
       }
     } catch (e) {
       debugPrint('[OpenWATenantService] Config load error: $e');
@@ -120,15 +126,13 @@ class OpenWATenantService {
     return WABusinessConfig(businessId: businessId);
   }
 
-  /// Save the per-business WhatsApp configuration to Firestore.
+  /// Save the per-business WhatsApp configuration to DynamoDB via API Gateway.
   Future<void> saveBusinessConfig(WABusinessConfig config) async {
     try {
-      await _firestore
-          .collection('owners')
-          .doc(config.businessId)
-          .collection('settings')
-          .doc('openwa_config')
-          .set(config.toJson());
+      await _apiClient.put(
+        '/api/v1/settings/openwa_config',
+        body: config.toJson(),
+      );
     } catch (e) {
       debugPrint('[OpenWATenantService] Config save error: $e');
       rethrow;
@@ -159,7 +163,7 @@ class OpenWATenantService {
       final session = await adminClient.createSession(sessionName);
       debugPrint('[OpenWATenantService] Session created: ${session.id}');
 
-      // 3. Store config in Firestore
+      // 3. Store config in DynamoDB via API Gateway
       final config = WABusinessConfig(
         businessId: businessId,
         sessionId: session.id,
@@ -212,6 +216,9 @@ class OpenWATenantService {
   }
 
   /// Check if WhatsApp is connected for the current business.
+  ///
+  /// Queries the live OpenWA gateway status and syncs it back to DynamoDB
+  /// so that [WABusinessConfig.isConnected] reflects reality.
   Future<bool> isConnected() async {
     try {
       final config = await getBusinessConfig();
@@ -219,9 +226,33 @@ class OpenWATenantService {
 
       final client = await getClient();
       final session = await client.getSession(config.sessionId!);
+
+      // Sync live status to DynamoDB so WABusinessConfig.isConnected
+      // reflects reality (fixes the always-false bug).
+      await updateSessionStatus(session.status);
+
       return session.status.isConnected;
     } catch (_) {
       return false;
+    }
+  }
+
+  /// Sync the live session status to DynamoDB via API Gateway.
+  ///
+  /// Called by [WAConnectionNotifier] after every status check so that
+  /// [WABusinessConfig.lastKnownStatus] is never stale. This is the
+  /// primary fix for the `isConnected` always-false bug.
+  Future<void> updateSessionStatus(WASessionStatus status) async {
+    try {
+      await _apiClient.put(
+        '/api/v1/settings/openwa_config',
+        body: {
+          'lastKnownStatus': status.name,
+          'updatedAt': DateTime.now().toIso8601String(),
+        },
+      );
+    } catch (e) {
+      debugPrint('[OpenWATenantService] Status sync error: $e');
     }
   }
 

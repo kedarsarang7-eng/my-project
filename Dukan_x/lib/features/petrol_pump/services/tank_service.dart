@@ -1,7 +1,10 @@
-import 'package:dukanx/core/compat/firestore_compat.dart';
+import 'dart:convert';
+import 'package:drift/drift.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/session/session_manager.dart';
 import '../../../../core/repository/audit_repository.dart';
+import '../../../../core/database/app_database.dart';
+import '../../../../core/sync/sync_queue_state_machine.dart';
 import '../models/tank.dart';
 
 /// TankService - Manages fuel tank stock with AUDIT TRAIL
@@ -9,37 +12,66 @@ import '../models/tank.dart';
 /// FRAUD PREVENTION (Gap #4 FIX):
 /// All stock modifications are audit-logged with before/after values.
 /// Manual adjustments require a reason and are flagged for review.
+///
+/// Refactored for Offline-First using Drift (SQLite).
+/// Single Source of Truth: Local Database.
 class TankService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late final AppDatabase _db;
+  late final AuditRepository _auditRepo;
+  late final SessionManager _sessionManager;
 
-  String get _ownerId => sl<SessionManager>().ownerId ?? '';
+  TankService({
+    AppDatabase? db,
+    AuditRepository? auditRepo,
+    SessionManager? sessionManager,
+  }) {
+    _db = db ?? sl<AppDatabase>();
+    _auditRepo = auditRepo ?? sl<AuditRepository>();
+    _sessionManager = sessionManager ?? sl<SessionManager>();
+  }
 
-  CollectionReference get _tankCollection =>
-      _firestore.collection('owners').doc(_ownerId).collection('tanks');
+  String get _ownerId => _sessionManager.ownerId ?? '';
 
-  /// Get all tanks
+  /// Get all tanks as a stream (Drift .watch() for StreamBuilder compatibility)
   Stream<List<Tank>> getTanks() {
-    return _tankCollection.snapshots().map((snapshot) {
-      return snapshot.docs
-          .map(
-            (doc) => Tank.fromMap(doc.id, doc.data() as Map<String, dynamic>),
-          )
-          .toList();
-    });
+    return (_db.select(_db.tanks)..where((t) => t.ownerId.equals(_ownerId)))
+        .watch()
+        .map((entities) => entities.map(_mapEntityToDomain).toList());
   }
 
   /// Get single tank by ID
   Future<Tank?> getTankById(String tankId) async {
-    final doc = await _tankCollection.doc(tankId).get();
-    if (!doc.exists) return null;
-    return Tank.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+    final entity = await (_db.select(
+      _db.tanks,
+    )..where((t) => t.tankId.equals(tankId))).getSingleOrNull();
+    if (entity == null) return null;
+    return _mapEntityToDomain(entity);
   }
 
   /// Create or update tank (with audit)
   Future<void> saveTank(Tank tank, {String? employeeId}) async {
-    await _tankCollection
-        .doc(tank.tankId)
-        .set(tank.toMap(), SetOptions(merge: true));
+    final now = DateTime.now();
+    final companion = TanksCompanion(
+      tankId: Value(tank.tankId),
+      ownerId: Value(_ownerId),
+      name: Value(tank.tankName),
+      fuelTypeId: Value(tank.fuelTypeId),
+      capacity: Value(tank.capacity),
+      currentStock: Value(tank.currentStock),
+      isActive: Value(tank.isActive),
+      isSynced: const Value(false),
+      createdAt: Value(tank.createdAt),
+      updatedAt: Value(now),
+    );
+
+    await _db.into(_db.tanks).insert(companion, mode: InsertMode.insertOrReplace);
+
+    await _enqueueSync(
+      operationType: SyncOperationType.create,
+      targetCollection: 'tanks',
+      documentId: tank.tankId,
+      payload: tank.toMap(),
+    );
 
     await _logStockEvent(
       tankId: tank.tankId,
@@ -56,21 +88,25 @@ class TankService {
     double quantity, {
     String? employeeId,
     String? invoiceNumber,
+    double? pricePerLitre,
   }) async {
-    final docRef = _tankCollection.doc(tankId);
+    await _db.transaction(() async {
+      final entity = await (_db.select(
+        _db.tanks,
+      )..where((t) => t.tankId.equals(tankId))).getSingleOrNull();
+      if (entity == null) throw Exception('Tank not found');
 
-    await _firestore.runTransaction((transaction) async {
-      final snapshot = await transaction.get(docRef);
-      if (!snapshot.exists) throw Exception('Tank not found');
-
-      final tank = Tank.fromMap(
-        snapshot.id,
-        snapshot.data() as Map<String, dynamic>,
-      );
+      final tank = _mapEntityToDomain(entity);
       final oldStock = tank.currentStock;
       final updatedTank = tank.addPurchase(quantity);
 
-      transaction.update(docRef, updatedTank.toMap());
+      await (_db.update(_db.tanks)..where((t) => t.tankId.equals(tankId))).write(
+        TanksCompanion(
+          currentStock: Value(updatedTank.currentStock),
+          isSynced: const Value(false),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
 
       // AUDIT: Log purchase with before/after stock
       await _logStockEvent(
@@ -84,9 +120,23 @@ class TankService {
           'stockBefore': oldStock,
           'stockAfter': updatedTank.currentStock,
           'invoiceNumber': invoiceNumber,
+          'pricePerLitre': ?pricePerLitre,
+          if (pricePerLitre != null) 'totalCost': quantity * pricePerLitre,
         },
       );
     });
+
+    await _enqueueSync(
+      operationType: SyncOperationType.update,
+      targetCollection: 'tanks',
+      documentId: tankId,
+      payload: {
+        'tankId': tankId,
+        'quantityAdded': quantity,
+        'invoiceNumber': invoiceNumber,
+        'employeeId': employeeId,
+      },
+    );
   }
 
   /// Record dip reading (manual check) with AUDIT TRAIL
@@ -97,21 +147,24 @@ class TankService {
     String? employeeId,
     String? reason,
   }) async {
-    final docRef = _tankCollection.doc(tankId);
+    await _db.transaction(() async {
+      final entity = await (_db.select(
+        _db.tanks,
+      )..where((t) => t.tankId.equals(tankId))).getSingleOrNull();
+      if (entity == null) throw Exception('Tank not found');
 
-    await _firestore.runTransaction((transaction) async {
-      final snapshot = await transaction.get(docRef);
-      if (!snapshot.exists) throw Exception('Tank not found');
-
-      final tank = Tank.fromMap(
-        snapshot.id,
-        snapshot.data() as Map<String, dynamic>,
-      );
+      final tank = _mapEntityToDomain(entity);
       final oldStock = tank.currentStock;
       final variance = actualStock - tank.calculatedStock;
       final updatedTank = tank.updateWithDipReading(actualStock);
 
-      transaction.update(docRef, updatedTank.toMap());
+      await (_db.update(_db.tanks)..where((t) => t.tankId.equals(tankId))).write(
+        TanksCompanion(
+          currentStock: Value(updatedTank.currentStock),
+          isSynced: const Value(false),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
 
       // AUDIT: Log dip reading with variance
       await _logStockEvent(
@@ -141,6 +194,18 @@ class TankService {
         );
       }
     });
+
+    await _enqueueSync(
+      operationType: SyncOperationType.update,
+      targetCollection: 'tanks',
+      documentId: tankId,
+      payload: {
+        'tankId': tankId,
+        'dipReading': actualStock,
+        'employeeId': employeeId,
+        'reason': reason,
+      },
+    );
   }
 
   /// Manual stock adjustment (requires reason) with AUDIT TRAIL
@@ -151,23 +216,24 @@ class TankService {
     required String reason,
     required String employeeId,
   }) async {
-    final docRef = _tankCollection.doc(tankId);
+    await _db.transaction(() async {
+      final entity = await (_db.select(
+        _db.tanks,
+      )..where((t) => t.tankId.equals(tankId))).getSingleOrNull();
+      if (entity == null) throw Exception('Tank not found');
 
-    await _firestore.runTransaction((transaction) async {
-      final snapshot = await transaction.get(docRef);
-      if (!snapshot.exists) throw Exception('Tank not found');
-
-      final tank = Tank.fromMap(
-        snapshot.id,
-        snapshot.data() as Map<String, dynamic>,
-      );
+      final tank = _mapEntityToDomain(entity);
       final oldStock = tank.currentStock;
       final adjustment = newStock - oldStock;
+      final clampedStock = newStock.clamp(0.0, tank.capacity);
 
-      transaction.update(docRef, {
-        'currentStock': newStock.clamp(0, tank.capacity),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+      await (_db.update(_db.tanks)..where((t) => t.tankId.equals(tankId))).write(
+        TanksCompanion(
+          currentStock: Value(clampedStock),
+          isSynced: const Value(false),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
 
       // AUDIT: Log manual adjustment with flag for review
       await _logStockEvent(
@@ -185,24 +251,92 @@ class TankService {
         },
       );
     });
+
+    await _enqueueSync(
+      operationType: SyncOperationType.update,
+      targetCollection: 'tanks',
+      documentId: tankId,
+      payload: {
+        'tankId': tankId,
+        'currentStock': newStock,
+        'reason': reason,
+        'employeeId': employeeId,
+      },
+    );
   }
 
   /// Deduct stock based on sales (called when Shift Closes)
   Future<void> deductSales(String tankId, double quantity) async {
-    final docRef = _tankCollection.doc(tankId);
+    await _db.transaction(() async {
+      final entity = await (_db.select(
+        _db.tanks,
+      )..where((t) => t.tankId.equals(tankId))).getSingleOrNull();
+      if (entity == null) return; // Silent fail if tank deleted
 
-    await _firestore.runTransaction((transaction) async {
-      final snapshot = await transaction.get(docRef);
-      if (!snapshot.exists) return; // Silent fail if tank deleted
-
-      final tank = Tank.fromMap(
-        snapshot.id,
-        snapshot.data() as Map<String, dynamic>,
-      );
+      final tank = _mapEntityToDomain(entity);
       final updatedTank = tank.deductSales(quantity);
 
-      transaction.update(docRef, updatedTank.toMap());
+      await (_db.update(_db.tanks)..where((t) => t.tankId.equals(tankId))).write(
+        TanksCompanion(
+          currentStock: Value(updatedTank.currentStock),
+          isSynced: const Value(false),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
     });
+
+    await _enqueueSync(
+      operationType: SyncOperationType.update,
+      targetCollection: 'tanks',
+      documentId: tankId,
+      payload: {'tankId': tankId, 'deductedQuantity': quantity},
+    );
+  }
+
+  // --- Helpers ---
+
+  /// Map Drift TankEntity to domain Tank model
+  Tank _mapEntityToDomain(TankEntity entity) {
+    return Tank(
+      tankId: entity.tankId,
+      tankName: entity.name,
+      fuelTypeId: entity.fuelTypeId,
+      capacity: entity.capacity,
+      currentStock: entity.currentStock,
+      ownerId: entity.ownerId,
+      isActive: entity.isActive,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    );
+  }
+
+  /// Enqueue a sync operation for offline-first sync
+  Future<void> _enqueueSync({
+    required SyncOperationType operationType,
+    required String targetCollection,
+    required String documentId,
+    required Map<String, dynamic> payload,
+  }) async {
+    final safeDocId = documentId.length >= 4
+        ? documentId.substring(0, 4)
+        : documentId;
+    final opId = '${DateTime.now().microsecondsSinceEpoch}_$safeDocId';
+
+    final syncItem = SyncQueueCompanion(
+      operationId: Value(opId),
+      operationType: Value(operationType.name),
+      targetCollection: Value(targetCollection),
+      documentId: Value(documentId),
+      payload: Value(jsonEncode(payload)),
+      status: const Value('PENDING'),
+      createdAt: Value(DateTime.now()),
+      retryCount: const Value(0),
+      ownerId: Value(_ownerId),
+      userId: Value(_ownerId),
+      priority: const Value(1),
+    );
+
+    await _db.into(_db.syncQueue).insert(syncItem);
   }
 
   /// Log stock-related events to audit trail
@@ -214,8 +348,7 @@ class TankService {
     Map<String, dynamic>? metadata,
   }) async {
     try {
-      final auditRepo = sl<AuditRepository>();
-      await auditRepo.logAction(
+      await _auditRepo.logAction(
         userId: _ownerId,
         targetTableName: 'tanks',
         recordId: tankId,

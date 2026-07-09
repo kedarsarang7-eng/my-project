@@ -1103,6 +1103,112 @@ final bookStoreAlertCountsProvider =
       );
     });
 
+/// Petrol Pump dashboard alert snapshot — two independently fetched metrics
+/// sourced exclusively from [AppDatabase] Drift queries:
+///   1. Low tank count — tanks where currentStock/capacity < 0.20 (isLowStock)
+///   2. Pending settlement count — StaffCashSettlements with status == 'PENDING'
+///
+/// Each metric is fetched independently. On retrieval failure that metric is
+/// marked unavailable so the widget displays a `...`/`!` indicator rather than
+/// a stale/default value. No hardcoded count — every count derives from a live
+/// query result.
+///
+/// Requirements: 1.5, 2.5
+class PetrolPumpAlertSnapshot {
+  const PetrolPumpAlertSnapshot({
+    required this.lowTankCount,
+    required this.lowTankAvailable,
+    required this.pendingSettlementCount,
+    required this.pendingSettlementAvailable,
+  });
+
+  /// Count of tanks where stock% < 20 (currentStock / capacity < 0.20).
+  final int lowTankCount;
+
+  /// Whether the low-tank count was successfully retrieved.
+  final bool lowTankAvailable;
+
+  /// Count of StaffCashSettlements with status == 'PENDING'.
+  final int pendingSettlementCount;
+
+  /// Whether the pending-settlement count was successfully retrieved.
+  final bool pendingSettlementAvailable;
+}
+
+/// Provider that fetches real petrol pump alert metrics from [AppDatabase].
+/// - Low tank count = active tanks where currentStock / capacity < 0.20.
+/// - Pending settlement count = StaffCashSettlements with status 'PENDING'.
+///
+/// Each metric is fetched independently — a single failing query marks that
+/// metric as unavailable without blanking the other. All queries are
+/// tenant-scoped via `SessionManager.userId`.
+///
+/// Requirements: 1.5, 2.5
+final petrolPumpAlertCountsProvider =
+    FutureProvider.autoDispose<PetrolPumpAlertSnapshot>((ref) async {
+      final session = sl<SessionManager>();
+      final userId = session.userId;
+      if (userId == null) {
+        return const PetrolPumpAlertSnapshot(
+          lowTankCount: 0,
+          lowTankAvailable: false,
+          pendingSettlementCount: 0,
+          pendingSettlementAvailable: false,
+        );
+      }
+
+      AppDatabase db;
+      try {
+        db = sl<AppDatabase>();
+      } catch (_) {
+        return const PetrolPumpAlertSnapshot(
+          lowTankCount: 0,
+          lowTankAvailable: false,
+          pendingSettlementCount: 0,
+          pendingSettlementAvailable: false,
+        );
+      }
+
+      // --- Low tank count (tanks where currentStock/capacity < 0.20) ---
+      int lowTankCount = 0;
+      bool lowTankOk = true;
+      try {
+        final tanks =
+            await (db.select(db.tanks)..where(
+                  (t) => t.ownerId.equals(userId) & t.isActive.equals(true),
+                ))
+                .get();
+        lowTankCount = tanks
+            .where(
+              (t) => t.capacity > 0 && (t.currentStock / t.capacity) < 0.20,
+            )
+            .length;
+      } catch (_) {
+        lowTankOk = false;
+      }
+
+      // --- Pending settlement count (status == 'PENDING') ---
+      int pendingSettlementCount = 0;
+      bool settlementOk = true;
+      try {
+        pendingSettlementCount =
+            await (db.selectOnly(db.staffCashSettlements)
+                  ..addColumns([db.staffCashSettlements.id.count()])
+                  ..where(db.staffCashSettlements.status.equals('PENDING')))
+                .map((row) => row.read(db.staffCashSettlements.id.count()) ?? 0)
+                .getSingle();
+      } catch (_) {
+        settlementOk = false;
+      }
+
+      return PetrolPumpAlertSnapshot(
+        lowTankCount: lowTankCount,
+        lowTankAvailable: lowTankOk,
+        pendingSettlementCount: pendingSettlementCount,
+        pendingSettlementAvailable: settlementOk,
+      );
+    });
+
 /// Business-specific alerts widget for Dashboard V2.
 /// Shows relevant alerts based on business type:
 /// - Grocery/Pharmacy: Expiry alerts, low stock
@@ -1232,6 +1338,11 @@ class BusinessAlertsWidget extends ConsumerWidget {
                             .watch(wholesaleCreditAlertCountsProvider)
                             .maybeWhen(data: (s) => s, orElse: () => null)
                       : null,
+                  petrolSnapshot: businessType == BusinessType.petrolPump
+                      ? ref
+                            .watch(petrolPumpAlertCountsProvider)
+                            .maybeWhen(data: (s) => s, orElse: () => null)
+                      : null,
                 ),
               ),
               loading: () => const Center(
@@ -1280,6 +1391,11 @@ class BusinessAlertsWidget extends ConsumerWidget {
                       businessType == BusinessType.wholesale
                       ? ref
                             .watch(wholesaleCreditAlertCountsProvider)
+                            .maybeWhen(data: (s) => s, orElse: () => null)
+                      : null,
+                  petrolSnapshot: businessType == BusinessType.petrolPump
+                      ? ref
+                            .watch(petrolPumpAlertCountsProvider)
                             .maybeWhen(data: (s) => s, orElse: () => null)
                       : null,
                 ),
@@ -1379,6 +1495,7 @@ class BusinessAlertsWidget extends ConsumerWidget {
     ElectronicsAlertSnapshot? electronicsSnapshot,
     BookStoreAlertSnapshot? bookStoreSnapshot,
     WholesaleCreditSnapshot? wholesaleCreditSnapshot,
+    PetrolPumpAlertSnapshot? petrolSnapshot,
   }) {
     final alerts = <Widget>[];
 
@@ -1654,13 +1771,20 @@ class BusinessAlertsWidget extends ConsumerWidget {
         break;
 
       case BusinessType.petrolPump:
+        // Real counts from the tenant-scoped petrolPumpAlertCountsProvider
+        // (R1.5, R2.5). Shows '...' while loading (petrolSnapshot == null),
+        // '!' when data cannot be retrieved, and the live count otherwise.
         alerts.add(
           _buildAlertItem(
             icon: Icons.water_drop_outlined,
             color: FuturisticColors.warning,
             title: 'Tank Levels Low',
             subtitle: 'Plan tanker delivery',
-            count: '2',
+            count: petrolSnapshot == null
+                ? '...'
+                : petrolSnapshot.lowTankAvailable
+                ? _displayCount(petrolSnapshot.lowTankCount)
+                : '!',
           ),
         );
         alerts.add(
@@ -1669,7 +1793,11 @@ class BusinessAlertsWidget extends ConsumerWidget {
             color: FuturisticColors.accent1,
             title: 'Shift Settlement Pending',
             subtitle: 'Staff shift close',
-            count: '1',
+            count: petrolSnapshot == null
+                ? '...'
+                : petrolSnapshot.pendingSettlementAvailable
+                ? _displayCount(petrolSnapshot.pendingSettlementCount)
+                : '!',
           ),
         );
         break;

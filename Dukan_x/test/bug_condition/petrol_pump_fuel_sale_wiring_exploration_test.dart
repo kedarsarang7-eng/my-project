@@ -131,10 +131,11 @@ void main() {
         reason: '_addItem method must exist in bill_creation_screen_v2.dart',
       );
 
-      // Extract the _addItem body
+      // Extract the _addItem body (use 7000 chars to cover the full method
+      // including pharmacy, petrolPump, and generic GST branches).
       final addItemSlice = billScreenSrc.substring(
         addItemStart,
-        (addItemStart + 5000).clamp(0, billScreenSrc.length),
+        (addItemStart + 7000).clamp(0, billScreenSrc.length),
       );
 
       // On unfixed code: `newItemGstRate = product.taxRate;`

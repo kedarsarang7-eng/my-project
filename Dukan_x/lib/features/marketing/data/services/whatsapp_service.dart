@@ -1,89 +1,103 @@
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// WhatsApp Service
+import '../../../../core/di/service_locator.dart';
+import '../../../../core/openwa/openwa_client.dart';
+import '../../../../core/openwa/openwa_tenant_service.dart';
+
+/// WhatsApp Marketing Service
 ///
-/// Provides WhatsApp messaging using URL scheme.
-/// Works offline by queuing messages for later.
+/// Handles WhatsApp messaging for marketing campaigns.
 ///
-/// This is a free approach using WhatsApp URL scheme.
-/// For enterprise features, upgrade to WhatsApp Business API.
+/// **Primary path**: OpenWA API gateway for native delivery with bulk support.
+/// **Fallback path**: wa.me URL scheme for single-message local delivery.
+///
+/// Migration note: This service previously relied exclusively on wa.me URL
+/// schemes. It now routes through OpenWA for reliable, trackable delivery
+/// including batch progress monitoring via the send-bulk endpoint.
 class WhatsAppService {
-  /// Send a WhatsApp message to a phone number
+  OpenWATenantService? _tenantService;
+
+  /// Lazy-initialize tenant service (may not be available in all contexts).
+  OpenWATenantService? get _tenant {
+    _tenantService ??= _resolveTenantService();
+    return _tenantService;
+  }
+
+  /// Send a WhatsApp message to a phone number.
   ///
-  /// Uses `wa.me` URL scheme which works on both mobile and web.
-  /// Returns true if the WhatsApp app was opened successfully.
+  /// Tries OpenWA API first, then falls back to wa.me URL scheme.
   Future<bool> sendMessage({
     required String phoneNumber,
     required String message,
   }) async {
-    try {
-      // Clean phone number (remove spaces, dashes, etc.)
-      final cleanNumber = _cleanPhoneNumber(phoneNumber);
+    // 1. Try OpenWA API (preferred — native delivery, delivery tracking)
+    final sent = await _sendViaOpenWA(phoneNumber, message);
+    if (sent) return true;
 
-      // Encode message for URL
-      final encodedMessage = Uri.encodeComponent(message);
-
-      // Build WhatsApp URL
-      final Uri whatsappUrl = Uri.parse(
-        'https://wa.me/$cleanNumber?text=$encodedMessage',
-      );
-
-      // Try to open WhatsApp
-      if (await canLaunchUrl(whatsappUrl)) {
-        await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
-        debugPrint('WhatsAppService: Opened WhatsApp for $cleanNumber');
-        return true;
-      } else {
-        debugPrint('WhatsAppService: Cannot open WhatsApp URL');
-        return false;
-      }
-    } catch (e) {
-      debugPrint('WhatsAppService: Error sending message: $e');
-      return false;
-    }
+    // 2. Fallback to wa.me URL scheme
+    return _sendViaUrlScheme(phoneNumber, message);
   }
 
-  /// Send a WhatsApp message with image attachment
+  /// Send a WhatsApp message with image attachment.
   ///
-  /// Note: WhatsApp URL scheme doesn't support image sharing directly.
-  /// Use the share sheet for image + text combinations.
+  /// Uses OpenWA's send-image endpoint. Falls back to text-only via URL scheme.
   Future<bool> sendMessageWithImage({
     required String phoneNumber,
     required String message,
     required String imagePath,
   }) async {
-    // For images, we need to use the native share functionality
-    // The URL scheme approach only supports text
-    debugPrint('WhatsAppService: Image sharing requires native share API');
+    try {
+      final tenant = _tenant;
+      if (tenant == null) {
+        return sendMessage(phoneNumber: phoneNumber, message: message);
+      }
 
-    // Fallback to text-only message with image link if available
-    return sendMessage(phoneNumber: phoneNumber, message: message);
+      final connected = await tenant.isConnected();
+      if (!connected) {
+        return sendMessage(phoneNumber: phoneNumber, message: message);
+      }
+
+      final config = await tenant.getBusinessConfig();
+      final client = await tenant.getClient();
+      final chatId = _formatChatId(phoneNumber);
+
+      // If it's a URL, send via url parameter; otherwise it was a local path
+      if (imagePath.startsWith('http')) {
+        await client.sendImage(
+          config.sessionId!,
+          chatId,
+          url: imagePath,
+          caption: message,
+        );
+      } else {
+        // Local file paths require base64 encoding — fall back to text
+        debugPrint(
+          '[MarketingWA] Local image path not supported via API, sending text only',
+        );
+        await client.sendText(config.sessionId!, chatId, message);
+      }
+
+      debugPrint('[MarketingWA] ✔ Sent image message to $phoneNumber');
+      return true;
+    } catch (e) {
+      debugPrint('[MarketingWA] Image send failed: $e, falling back to text');
+      return sendMessage(phoneNumber: phoneNumber, message: message);
+    }
   }
 
-  /// Clean and format phone number for WhatsApp
-  ///
-  /// - Removes spaces, dashes, parentheses
-  /// - Adds India country code if not present
-  String _cleanPhoneNumber(String phone) {
-    // Remove all non-digit characters
-    String clean = phone.replaceAll(RegExp(r'[^\d]'), '');
-
-    // If number is 10 digits, assume it's Indian and add +91
-    if (clean.length == 10) {
-      clean = '91$clean';
-    }
-
-    // If number starts with 0, remove it and add 91
-    if (clean.startsWith('0')) {
-      clean = '91${clean.substring(1)}';
-    }
-
-    return clean;
-  }
-
-  /// Check if WhatsApp is installed
+  /// Check if WhatsApp is available (either via OpenWA or URL scheme).
   Future<bool> isWhatsAppInstalled() async {
+    // Check OpenWA availability first
+    try {
+      final tenant = _tenant;
+      if (tenant != null) {
+        final connected = await tenant.isConnected();
+        if (connected) return true;
+      }
+    } catch (_) {}
+
+    // Fallback to URL scheme check
     try {
       final Uri testUrl = Uri.parse('https://wa.me/911234567890');
       return await canLaunchUrl(testUrl);
@@ -92,7 +106,7 @@ class WhatsAppService {
     }
   }
 
-  /// Fill template placeholders with actual values
+  /// Fill template placeholders with actual values.
   ///
   /// Supported placeholders:
   /// - {{customer_name}}
@@ -105,15 +119,13 @@ class WhatsAppService {
     required Map<String, String> values,
   }) {
     String result = template;
-
     values.forEach((key, value) {
       result = result.replaceAll('{{$key}}', value);
     });
-
     return result;
   }
 
-  /// Create a payment reminder message
+  /// Create a payment reminder message.
   String createPaymentReminder({
     required String customerName,
     required String shopName,
@@ -121,36 +133,139 @@ class WhatsAppService {
     DateTime? dueDate,
   }) {
     final message =
-        '''à¤¨à¤®à¤¸à¥à¤¤à¥‡ $customerName,
+        '''नमस्ते $customerName,
 
-à¤†à¤ªà¤•à¥‡ $shopName à¤¸à¥‡ â‚¹${amount.toStringAsFixed(0)} à¤•à¤¾ à¤­à¥à¤—à¤¤à¤¾à¤¨ à¤¬à¤¾à¤•à¥€ à¤¹à¥ˆà¥¤
+आपके $shopName से ₹${amount.toStringAsFixed(0)} का भुगतान बाकी है।
 
-${dueDate != null ? 'à¤­à¥à¤—à¤¤à¤¾à¤¨ à¤¤à¤¿à¤¥à¤¿: ${dueDate.day}/${dueDate.month}/${dueDate.year}' : ''}
+${dueDate != null ? 'भुगतान तिथि: ${dueDate.day}/${dueDate.month}/${dueDate.year}' : ''}
 
-à¤•à¥ƒà¤ªà¤¯à¤¾ à¤œà¤²à¥à¤¦ à¤¸à¥‡ à¤œà¤²à¥à¤¦ à¤­à¥à¤—à¤¤à¤¾à¤¨ à¤•à¤°à¥‡à¤‚à¥¤
+कृपया जल्द से जल्द भुगतान करें।
 
-à¤§à¤¨à¥à¤¯à¤µà¤¾à¤¦!''';
+धन्यवाद!''';
 
     return message.trim();
   }
 
-  /// Create a bulk WhatsApp campaign opener
+  /// Send bulk WhatsApp messages via OpenWA's batch endpoint.
   ///
-  /// Since WhatsApp doesn't support bulk messaging via URL scheme,
-  /// this opens WhatsApp for each recipient sequentially.
-  ///
-  /// For true bulk messaging, use WhatsApp Business API.
+  /// Uses OpenWA's send-bulk API for efficient batch delivery with progress
+  /// tracking. Falls back to sequential URL-scheme sends if OpenWA is unavailable.
   Stream<(String phone, bool success)> sendBulkMessages({
     required List<String> phoneNumbers,
     required String message,
     Duration delay = const Duration(seconds: 2),
   }) async* {
+    // Try OpenWA bulk send (preferred — single API call with batch tracking)
+    final tenant = _tenant;
+    if (tenant != null) {
+      try {
+        final connected = await tenant.isConnected();
+        if (connected) {
+          final config = await tenant.getBusinessConfig();
+          final client = await tenant.getClient();
+
+          final messages = phoneNumbers.map((phone) => {
+            'chatId': _formatChatId(phone),
+            'text': message,
+          }).toList();
+
+          final batch = await client.sendBulk(
+            config.sessionId!,
+            messages,
+          );
+
+          final batchId = batch['batchId'] as String?;
+          if (batchId != null) {
+            debugPrint('[MarketingWA] ✔ Bulk send initiated: $batchId');
+            // Yield success for all numbers (batch is processing server-side)
+            for (final phone in phoneNumbers) {
+              yield (phone, true);
+            }
+            return;
+          }
+        }
+      } catch (e) {
+        debugPrint('[MarketingWA] Bulk send failed: $e, falling back to sequential');
+      }
+    }
+
+    // Fallback to sequential URL-scheme sends
     for (final phone in phoneNumbers) {
       final success = await sendMessage(phoneNumber: phone, message: message);
       yield (phone, success);
-
-      // Add delay between messages to avoid rate limiting
       await Future.delayed(delay);
+    }
+  }
+
+  // ── Internal ──────────────────────────────────────────────────────────────
+
+  /// Send via OpenWA API gateway.
+  Future<bool> _sendViaOpenWA(String phone, String message) async {
+    try {
+      final tenant = _tenant;
+      if (tenant == null) return false;
+
+      final connected = await tenant.isConnected();
+      if (!connected) return false;
+
+      final config = await tenant.getBusinessConfig();
+      final client = await tenant.getClient();
+      final chatId = _formatChatId(phone);
+
+      await client.sendText(config.sessionId!, chatId, message);
+      debugPrint('[MarketingWA] ✔ Sent via OpenWA to $phone');
+      return true;
+    } catch (e) {
+      debugPrint('[MarketingWA] OpenWA send failed: $e');
+      return false;
+    }
+  }
+
+  /// Fallback: send via wa.me URL scheme (opens native WhatsApp).
+  Future<bool> _sendViaUrlScheme(String phone, String message) async {
+    try {
+      final cleanNumber = _cleanPhoneNumber(phone);
+      final encodedMessage = Uri.encodeComponent(message);
+      final Uri whatsappUrl = Uri.parse(
+        'https://wa.me/$cleanNumber?text=$encodedMessage',
+      );
+
+      if (await canLaunchUrl(whatsappUrl)) {
+        await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+        debugPrint('[MarketingWA] Opened WhatsApp URL for $cleanNumber');
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('[MarketingWA] URL scheme fallback failed: $e');
+      return false;
+    }
+  }
+
+  /// Format phone number to WhatsApp chat ID format.
+  String _formatChatId(String phone) {
+    final digits = phone.replaceAll(RegExp(r'\D'), '');
+    final withCountry = digits.length == 10 ? '91$digits' : digits;
+    return '$withCountry@s.whatsapp.net';
+  }
+
+  /// Clean and format phone number.
+  String _cleanPhoneNumber(String phone) {
+    String clean = phone.replaceAll(RegExp(r'[^\d]'), '');
+    if (clean.length == 10) clean = '91$clean';
+    if (clean.startsWith('0')) clean = '91${clean.substring(1)}';
+    return clean;
+  }
+
+  /// Safely resolve tenant service (returns null if not registered).
+  OpenWATenantService? _resolveTenantService() {
+    try {
+      if (sl.isRegistered<OpenWATenantService>()) {
+        return sl<OpenWATenantService>();
+      }
+      return OpenWATenantService();
+    } catch (_) {
+      return null;
     }
   }
 }

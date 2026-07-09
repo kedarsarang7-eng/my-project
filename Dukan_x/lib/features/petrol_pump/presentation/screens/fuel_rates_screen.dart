@@ -12,6 +12,9 @@ class FuelRatesScreen extends StatefulWidget {
 }
 
 class _FuelRatesScreenState extends State<FuelRatesScreen> {
+  static const double _minRate = 1.0;
+  static const double _maxRate = 500.0;
+
   final _fuelService = sl<FuelService>();
 
   @override
@@ -66,11 +69,12 @@ class _FuelRatesScreenState extends State<FuelRatesScreen> {
                               Text(
                                 '₹${fuel.currentRatePerLitre.toStringAsFixed(2)}',
                                 style: TextStyle(
-                                  fontSize: responsiveValue<double>(context,
-                        mobile: 14.0,
-                        tablet: 16.0,
-                        desktop: 18.0,
-                      ),
+                                  fontSize: responsiveValue<double>(
+                                    context,
+                                    mobile: 14.0,
+                                    tablet: 16.0,
+                                    desktop: 18.0,
+                                  ),
                                   fontWeight: FontWeight.bold,
                                   color: Colors.green,
                                 ),
@@ -84,7 +88,8 @@ class _FuelRatesScreenState extends State<FuelRatesScreen> {
                           const SizedBox(width: 16),
                           IconButton(
                             icon: const Icon(Icons.edit),
-                            onPressed: () => _showUpdateRateDialog(context, fuel),
+                            onPressed: () =>
+                                _showUpdateRateDialog(context, fuel),
                           ),
                         ],
                       ),
@@ -97,9 +102,7 @@ class _FuelRatesScreenState extends State<FuelRatesScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add custom fuel type logic
-        },
+        onPressed: () => _showAddFuelTypeDialog(context),
         child: const Icon(Icons.add),
       ),
     );
@@ -133,12 +136,105 @@ class _FuelRatesScreenState extends State<FuelRatesScreen> {
           ElevatedButton(
             onPressed: () async {
               final newRate = double.tryParse(controller.text);
-              if (newRate != null) {
-                await _fuelService.updateFuelRate(fuel.fuelId, newRate);
-                if (context.mounted) Navigator.pop(context);
+              if (newRate == null || newRate < _minRate || newRate > _maxRate) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Rate must be between $_minRate and $_maxRate ₹/litre',
+                    ),
+                  ),
+                );
+                return;
               }
+              await _fuelService.updateFuelRate(fuel.fuelId, newRate);
+              if (context.mounted) Navigator.pop(context);
             },
             child: const Text('Update'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showAddFuelTypeDialog(BuildContext context) async {
+    final nameController = TextEditingController();
+    final rateController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Custom Fuel Type'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                labelText: 'Fuel Name',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: rateController,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: const InputDecoration(
+                labelText: 'Initial Rate (₹/litre)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'GST: 0% (fuel is outside GST regime)',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final name = nameController.text.trim();
+              if (name.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Fuel name is required')),
+                );
+                return;
+              }
+
+              final rate = double.tryParse(rateController.text);
+              if (rate == null || rate < _minRate || rate > _maxRate) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Rate must be between $_minRate and $_maxRate ₹/litre',
+                    ),
+                  ),
+                );
+                return;
+              }
+
+              final fuelId = name.toLowerCase().replaceAll(
+                RegExp(r'[^a-z0-9]'),
+                '_',
+              );
+              final fuel = FuelType(
+                fuelId: fuelId,
+                fuelName: name,
+                currentRatePerLitre: rate,
+                linkedGSTRate: 0.0, // Fixed at 0 per compliance
+                ownerId: '', // Service uses session ownerId
+              );
+
+              await sl<FuelService>().addFuelType(fuel);
+              if (context.mounted) Navigator.pop(context);
+            },
+            child: const Text('Add'),
           ),
         ],
       ),

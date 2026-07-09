@@ -263,7 +263,7 @@ class _AddTankDialogState extends State<AddTankDialog> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: \$e'),
+            content: Text('Error: $e'),
             backgroundColor: FuturisticColors.error,
           ),
         );

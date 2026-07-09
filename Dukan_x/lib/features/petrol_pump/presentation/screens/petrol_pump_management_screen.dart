@@ -7,6 +7,7 @@ import 'dispenser_list_screen.dart';
 import 'shift_history_screen.dart';
 import 'tank_list_screen.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
+import '../widgets/petrol_pump_dashboard_widgets.dart';
 
 class PetrolPumpManagementScreen extends ConsumerWidget {
   const PetrolPumpManagementScreen({super.key});
@@ -30,6 +31,8 @@ class PetrolPumpManagementScreen extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              const PetrolPumpDashboardWidgets(),
+              const SizedBox(height: 16),
               _buildMenuTile(
                 context,
                 'Fuel Configuration',
@@ -50,7 +53,9 @@ class PetrolPumpManagementScreen extends ConsumerWidget {
                 Colors.blue,
                 () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const DispenserListScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => const DispenserListScreen(),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),

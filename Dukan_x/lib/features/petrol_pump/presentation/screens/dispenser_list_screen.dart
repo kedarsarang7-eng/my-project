@@ -3,6 +3,9 @@ import '../../../../core/di/service_locator.dart';
 import '../../models/dispenser.dart';
 import '../../models/nozzle.dart';
 import '../../services/dispenser_service.dart';
+import '../dialogs/add_dispenser_dialog.dart';
+import '../dialogs/add_nozzle_dialog.dart';
+import '../dialogs/nozzle_reading_dialog.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
 
 class DispenserListScreen extends StatefulWidget {
@@ -46,7 +49,31 @@ class _DispenserListScreenState extends State<DispenserListScreen> {
           );
         },
       ),
-      // FAB removed until Add Dispenser is fully implemented
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddDispenserDialog(context),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  void _showAddDispenserDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const AddDispenserDialog(),
+    );
+  }
+
+  void _showAddNozzleDialog(BuildContext context, Dispenser dispenser) {
+    showDialog(
+      context: context,
+      builder: (context) => AddNozzleDialog(dispenser: dispenser),
+    );
+  }
+
+  void _showNozzleReadingDialog(BuildContext context, Nozzle nozzle) {
+    showDialog(
+      context: context,
+      builder: (context) => NozzleReadingDialog(nozzle: nozzle),
     );
   }
 
@@ -65,7 +92,11 @@ class _DispenserListScreenState extends State<DispenserListScreen> {
               dispenser.name,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            // Add Nozzle button removed until fully implemented
+            trailing: IconButton(
+              icon: const Icon(Icons.add_circle_outline),
+              onPressed: () => _showAddNozzleDialog(context, dispenser),
+              tooltip: 'Add Nozzle',
+            ),
           ),
           const Divider(),
           // Nozzles List
@@ -99,6 +130,12 @@ class _DispenserListScreenState extends State<DispenserListScreen> {
                     title: Text('Nozzle: ${nozzle.fuelTypeName ?? "Fuel"}'),
                     subtitle: Text(
                       'Current Reading: ${nozzle.closingReading.toStringAsFixed(2)}',
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.speed, size: 20),
+                      onPressed: () =>
+                          _showNozzleReadingDialog(context, nozzle),
+                      tooltip: 'Update Reading',
                     ),
                   );
                 },

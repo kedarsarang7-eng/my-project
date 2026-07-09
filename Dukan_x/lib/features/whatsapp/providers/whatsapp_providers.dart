@@ -6,9 +6,11 @@
 // ============================================================================
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:dukanx/core/openwa/openwa_client.dart';
 import 'package:dukanx/core/openwa/openwa_config.dart';
+import 'package:dukanx/core/openwa/openwa_event_service.dart';
 import 'package:dukanx/core/openwa/openwa_models.dart';
 import 'package:dukanx/core/openwa/openwa_tenant_service.dart';
 
@@ -93,6 +95,10 @@ class WAConnectionNotifier extends Notifier<WAConnectionState> {
 
       final client = await _tenantService.getClient();
       final session = await client.getSession(config.sessionId!);
+
+      // Sync live status to DynamoDB so WABusinessConfig.isConnected
+      // reflects reality (fixes the always-false bug).
+      await _tenantService.updateSessionStatus(session.status);
 
       if (session.status.isConnected) {
         state = WAConnectionState.connected;
@@ -253,3 +259,173 @@ final waStatsProvider = FutureProvider<WASessionStats?>((ref) async {
     return null;
   }
 });
+
+// ── Chat Messages ───────────────────────────────────────────────────────────
+
+/// Messages for a specific chat (parameterized by chatId).
+final waChatMessagesProvider =
+    FutureProvider.family<WAMessageList, String>((ref, chatId) async {
+  final tenantService = ref.watch(openWATenantServiceProvider);
+  try {
+    final config = await tenantService.getBusinessConfig();
+    if (!config.isProvisioned) return const WAMessageList(messages: [], total: 0);
+
+    final client = await tenantService.getClient();
+    return await client.getChatMessages(config.sessionId!, chatId);
+  } catch (_) {
+    return const WAMessageList(messages: [], total: 0);
+  }
+});
+
+// ── Contacts ────────────────────────────────────────────────────────────────
+
+/// Contact list for the current session.
+final waContactListProvider =
+    FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final tenantService = ref.watch(openWATenantServiceProvider);
+  try {
+    final config = await tenantService.getBusinessConfig();
+    if (!config.isProvisioned) return [];
+
+    final client = await tenantService.getClient();
+    return await client.getContacts(config.sessionId!);
+  } catch (_) {
+    return [];
+  }
+});
+
+// ── Webhooks ────────────────────────────────────────────────────────────────
+
+/// Webhook list for the current session.
+final waWebhookListProvider =
+    FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final tenantService = ref.watch(openWATenantServiceProvider);
+  try {
+    final config = await tenantService.getBusinessConfig();
+    if (!config.isProvisioned) return [];
+
+    final client = await tenantService.getClient();
+    return await client.listWebhooks(config.sessionId!);
+  } catch (_) {
+    return [];
+  }
+});
+
+// ── Audit Logs ──────────────────────────────────────────────────────────────
+
+/// Audit logs (parameterized by filter string: "action:severity:limit").
+final waAuditLogsProvider =
+    FutureProvider.family<Map<String, dynamic>, String?>((ref, filter) async {
+  final tenantService = ref.watch(openWATenantServiceProvider);
+  try {
+    final client = await tenantService.getClient();
+
+    String? action;
+    String? severity;
+    int? limit;
+    if (filter != null && filter.isNotEmpty) {
+      final parts = filter.split(':');
+      if (parts.isNotEmpty && parts[0].isNotEmpty) action = parts[0];
+      if (parts.length > 1 && parts[1].isNotEmpty) severity = parts[1];
+      if (parts.length > 2) limit = int.tryParse(parts[2]);
+    }
+
+    return await client.getAuditLogs(
+      action: action,
+      severity: severity,
+      limit: limit ?? 50,
+    );
+  } catch (_) {
+    return {'logs': [], 'total': 0};
+  }
+});
+
+// ── Overview Stats ──────────────────────────────────────────────────────────
+
+/// Dashboard overview statistics.
+final waOverviewStatsProvider =
+    FutureProvider<Map<String, dynamic>?>((ref) async {
+  final tenantService = ref.watch(openWATenantServiceProvider);
+  try {
+    final client = await tenantService.getClient();
+    return await client.getOverviewStats();
+  } catch (_) {
+    return null;
+  }
+});
+
+// ── Message Stats ───────────────────────────────────────────────────────────
+
+/// Message statistics (parameterized by period: 'day', 'week', 'month').
+final waMessageStatsProvider =
+    FutureProvider.family<Map<String, dynamic>?, String>((ref, period) async {
+  final tenantService = ref.watch(openWATenantServiceProvider);
+  try {
+    final client = await tenantService.getClient();
+    return await client.getMessageStats(period: period);
+  } catch (_) {
+    return null;
+  }
+});
+
+// ── API Keys ────────────────────────────────────────────────────────────────
+
+/// API key list (admin only).
+final waApiKeyListProvider =
+    FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  final tenantService = ref.watch(openWATenantServiceProvider);
+  try {
+    final client = await tenantService.getClient();
+    return await client.listApiKeys();
+  } catch (_) {
+    return [];
+  }
+});
+
+// ── Infrastructure Status ───────────────────────────────────────────────────
+
+/// Infrastructure status.
+final waInfraStatusProvider =
+    FutureProvider<Map<String, dynamic>?>((ref) async {
+  final tenantService = ref.watch(openWATenantServiceProvider);
+  try {
+    final client = await tenantService.getClient();
+    return await client.getInfraStatus();
+  } catch (_) {
+    return null;
+  }
+});
+
+// ── Event Service ───────────────────────────────────────────────────────────
+
+/// Real-time event service provider.
+/// Creates and manages the WebSocket/polling connection for live events.
+final waEventServiceProvider =
+    FutureProvider<OpenWAEventService?>((ref) async {
+  final tenantService = ref.watch(openWATenantServiceProvider);
+  try {
+    final config = await tenantService.getBusinessConfig();
+    if (!config.isProvisioned) return null;
+
+    final apiKey = await _loadApiKeyForEvents(config.businessId);
+    if (apiKey == null) return null;
+
+    final service = OpenWAEventService(apiKey: apiKey);
+    service.subscribe(config.sessionId!);
+
+    ref.onDispose(() => service.dispose());
+    return service;
+  } catch (_) {
+    return null;
+  }
+});
+
+/// Load API key from secure storage for the event service.
+Future<String?> _loadApiKeyForEvents(String businessId) async {
+  try {
+    const secureStorage = FlutterSecureStorage();
+    return await secureStorage.read(key: 'openwa_apikey_$businessId');
+  } catch (_) {
+    return null;
+  }
+}

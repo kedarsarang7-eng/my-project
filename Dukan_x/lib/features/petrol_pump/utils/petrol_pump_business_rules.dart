@@ -1,4 +1,4 @@
-// Petrol pump â€” domain rules (clause 2.16 of `bugfix.md`).
+// Petrol pump — domain rules (clause 2.16 of `bugfix.md`).
 //
 // Owns nozzle totalizer math, shift settlement, and the
 // dispensed-volume formula used at the bowser.
@@ -28,7 +28,7 @@ class PetrolPumpBusinessRules {
     return _round3(totalizerRolloverLitres - startReading + endReading);
   }
 
-  /// Sale value for a nozzle = dispensedLitres Ã— pricePerLitre. Rounded
+  /// Sale value for a nozzle = dispensedLitres × pricePerLitre. Rounded
   /// half-up to paise via `MoneyMath`.
   static double saleValue({
     required double dispensedLitres,
@@ -41,7 +41,7 @@ class PetrolPumpBusinessRules {
     return MoneyMath.roundTo2(value).toDouble();
   }
 
-  /// Shift cash variance = expectedCash âˆ’ reportedCash. Positive variance
+  /// Shift cash variance = expectedCash − reportedCash. Positive variance
   /// means the cashier is short; negative means surplus.
   static double cashVariance({
     required double expectedCash,

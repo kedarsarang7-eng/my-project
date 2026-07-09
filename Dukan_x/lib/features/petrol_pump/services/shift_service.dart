@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/session/session_manager.dart';
 import '../../../../core/repository/audit_repository.dart';
@@ -8,6 +9,7 @@ import '../models/shift.dart';
 
 import '../../../../core/sync/sync_queue_state_machine.dart';
 import '../models/shift_reconciliation.dart';
+import '../utils/petrol_pump_business_rules.dart';
 
 /// ShiftService - Manages petrol pump shift lifecycle with FRAUD PREVENTION
 ///
@@ -76,17 +78,14 @@ class ShiftService {
     // Create assignments if provided (backward compatibility)
     // New code should use assignNozzleToStaff() explicitly
 
-    print('DEBUG: Insert Shift Companion');
     try {
       await _db.into(_db.shifts).insert(companion);
     } catch (e, stack) {
-      print('DEBUG: Shift Insert Failed: $e');
-      print(stack);
+      debugPrint('Shift Insert Failed: $e\n$stack');
       rethrow;
     }
 
     // Sync Queue: Shift Open
-    print('DEBUG: Enqueue Shift Sync');
     await _enqueueSync(
       operationType: SyncOperationType.create,
       targetCollection: 'shifts',
@@ -102,7 +101,6 @@ class ShiftService {
     );
 
     // 3. Reset all nozzles for new shift (carry over closing reading to opening)
-    print('DEBUG: Resetting Nozzles');
     await _resetNozzlesForShift(newShiftId);
 
     // 4. Audit log: Shift opened
@@ -321,16 +319,39 @@ class ShiftService {
       _db.nozzles,
     )..where((t) => t.linkedShiftId.equals(shiftId))).get();
 
+    // 2. Get all bills for this shift (fetched early for per-nozzle billed litres)
+    final billsList = await (_db.select(
+      _db.bills,
+    )..where((t) => t.shiftId.equals(shiftId))).get();
+
+    // Build per-nozzle billed litres map from bill items
+    final Map<String, double> billedLitresByNozzle = {};
+    for (final bill in billsList) {
+      final items = jsonDecode(bill.itemsJson) as List<dynamic>;
+      for (final item in items) {
+        if (item is Map) {
+          final nozzleId = item['nozzleId'] as String?;
+          if (nozzleId != null) {
+            final qty = (item['qty'] as num?)?.toDouble() ?? 0;
+            billedLitresByNozzle[nozzleId] =
+                (billedLitresByNozzle[nozzleId] ?? 0) + qty;
+          }
+        }
+      }
+    }
+
     double totalNozzleLitres = 0;
     final nozzleBreakdown = <NozzleReconciliation>[];
 
     for (final nozzleEntity in nozzlesList) {
-      // Calculate litres sold based on entity logic
-      // Assuming closingReading is updated continuously during billing
-      // Logic copied from Nozzle model: closing - opening
-      final litresSold =
-          nozzleEntity.closingReading - nozzleEntity.openingReading;
+      // Use rollover-aware dispensed litres calculation
+      final litresSold = PetrolPumpBusinessRules.dispensedLitres(
+        startReading: nozzleEntity.openingReading,
+        endReading: nozzleEntity.closingReading,
+      );
       totalNozzleLitres += litresSold;
+
+      final nozzleBilled = billedLitresByNozzle[nozzleEntity.nozzleId] ?? 0;
 
       nozzleBreakdown.add(
         NozzleReconciliation(
@@ -339,16 +360,11 @@ class ShiftService {
           openingReading: nozzleEntity.openingReading,
           closingReading: nozzleEntity.closingReading,
           litresSold: litresSold,
-          billedLitres: 0, // Simplified: Not tracking per-nozzle billing yet
-          variance: 0,
+          billedLitres: nozzleBilled,
+          variance: litresSold - nozzleBilled,
         ),
       );
     }
-
-    // 2. Get all bills for this shift
-    final billsList = await (_db.select(
-      _db.bills,
-    )..where((t) => t.shiftId.equals(shiftId))).get();
 
     double totalBilledLitres = 0;
     double cashAmount = 0;

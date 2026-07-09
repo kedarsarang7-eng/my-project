@@ -1,7 +1,10 @@
-import 'package:dukanx/core/compat/firestore_compat.dart';
+import 'dart:convert';
+import 'package:drift/drift.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/session/session_manager.dart';
 import '../../../../core/repository/audit_repository.dart';
+import '../../../../core/database/app_database.dart';
+import '../../../../core/sync/sync_queue_state_machine.dart';
 import '../../accounting/services/locking_service.dart'; // Sync with Global Lock
 
 /// PeriodLockService - Protects historical data (Gap #7)
@@ -9,24 +12,36 @@ import '../../accounting/services/locking_service.dart'; // Sync with Global Loc
 /// Manages accounting periods by setting a "Lock Date".
 /// Any transaction attempts before this date are blocked.
 /// Used for finalizing monthly/yearly accounts.
+///
+/// Refactored for Offline-First using Drift (SQLite).
+/// Reuses the existing LockingService / PeriodLocks Drift table pattern.
 class PeriodLockService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late final AppDatabase _db;
+  late final AuditRepository _auditRepo;
+  late final SessionManager _sessionManager;
 
-  String get _ownerId => sl<SessionManager>().ownerId ?? '';
+  PeriodLockService({
+    AppDatabase? db,
+    AuditRepository? auditRepo,
+    SessionManager? sessionManager,
+  }) {
+    _db = db ?? sl<AppDatabase>();
+    _auditRepo = auditRepo ?? sl<AuditRepository>();
+    _sessionManager = sessionManager ?? sl<SessionManager>();
+  }
 
-  CollectionReference get _settingsCollection =>
-      _firestore.collection('owners').doc(_ownerId).collection('settings');
+  String get _ownerId => _sessionManager.ownerId ?? '';
 
   /// Get the current period lock date (if any)
   Future<DateTime?> getLockDate() async {
     try {
-      final doc = await _settingsCollection.doc('period_lock').get();
-      if (doc.exists && doc.data() != null) {
-        final data = doc.data() as Map<String, dynamic>;
-        final timestamp = data['lockedUntil'] as Timestamp?;
-        return timestamp?.toDate();
-      }
-      return null;
+      final lock =
+          await (_db.select(_db.periodLocks)..where(
+                (t) =>
+                    t.id.equals('petrol_pump_lock') & t.userId.equals(_ownerId),
+              ))
+              .getSingleOrNull();
+      return lock?.lockDate;
     } catch (e) {
       return null;
     }
@@ -52,12 +67,29 @@ class PeriodLockService {
     // 1. Audit log before action
     final currentLock = await getLockDate();
 
-    // 2. Set new lock date in Firestore (Petrol Pump)
-    await _settingsCollection.doc('period_lock').set({
-      'lockedUntil': Timestamp.fromDate(newLockDate),
-      'updatedAt': FieldValue.serverTimestamp(),
-      'updatedBy': userId,
-    });
+    // 2. Set new lock date in Drift PeriodLocks table
+    await _db
+        .into(_db.periodLocks)
+        .insert(
+          PeriodLockEntity(
+            id: 'petrol_pump_lock',
+            userId: _ownerId,
+            lockDate: newLockDate,
+            updatedAt: DateTime.now(),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+
+    // Sync Queue: Period lock update
+    await _enqueueSync(
+      operationType: SyncOperationType.update,
+      targetCollection: 'settings',
+      documentId: 'period_lock',
+      payload: {
+        'lockedUntil': newLockDate.toIso8601String(),
+        'updatedBy': userId,
+      },
+    );
 
     // 3. Gap #7 FIX COMPLETE: Sync with Global Accounting Lock (Drift/SQL)
     // This ensures BillsRepository and other localized features also respect this lock.
@@ -68,13 +100,11 @@ class PeriodLockService {
       }
     } catch (e) {
       // Log error but don't fail the primary lock
-      // debugPrint('Failed to sync global lock: $e');
     }
 
     // 4. Audit log after action
     try {
-      final auditRepo = sl<AuditRepository>();
-      await auditRepo.logAction(
+      await _auditRepo.logAction(
         userId: _ownerId,
         targetTableName: 'settings',
         recordId: 'period_lock',
@@ -83,6 +113,37 @@ class PeriodLockService {
             '{"previousLock": "${currentLock?.toIso8601String()}", "newLock": "${newLockDate.toIso8601String()}", "updatedBy": "$userId"}',
       );
     } catch (_) {}
+  }
+
+  // --- Helpers ---
+
+  /// Enqueue a sync operation for offline-first sync
+  Future<void> _enqueueSync({
+    required SyncOperationType operationType,
+    required String targetCollection,
+    required String documentId,
+    required Map<String, dynamic> payload,
+  }) async {
+    final safeDocId = documentId.length >= 4
+        ? documentId.substring(0, 4)
+        : documentId;
+    final opId = '${DateTime.now().microsecondsSinceEpoch}_$safeDocId';
+
+    final syncItem = SyncQueueCompanion(
+      operationId: Value(opId),
+      operationType: Value(operationType.name),
+      targetCollection: Value(targetCollection),
+      documentId: Value(documentId),
+      payload: Value(jsonEncode(payload)),
+      status: const Value('PENDING'),
+      createdAt: Value(DateTime.now()),
+      retryCount: const Value(0),
+      ownerId: Value(_ownerId),
+      userId: Value(_ownerId),
+      priority: const Value(1),
+    );
+
+    await _db.into(_db.syncQueue).insert(syncItem);
   }
 }
 

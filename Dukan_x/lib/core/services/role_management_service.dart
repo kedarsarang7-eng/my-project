@@ -222,6 +222,15 @@ class RolePermissions {
       Permission.createCustomer, // register patients in emergencies
       Permission.viewCustomerBalance,
     },
+    // Attendant: petrol pump attendant — least-privilege dispensing role.
+    // GRANTS exactly: billing (createBill+printBill) and stock view (viewStock).
+    // DENIES (by omission): reports (viewReports), settings (manageSettings),
+    // financial operations, user management, and every other permission.
+    UserRole.attendant: {
+      Permission.createBill, // create fuel bills
+      Permission.printBill, // print fuel bills
+      Permission.viewStock, // view fuel stock levels
+    },
   };
 
   /// Check if a role has a specific permission.

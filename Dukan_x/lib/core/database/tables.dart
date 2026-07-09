@@ -985,6 +985,26 @@ class Tanks extends Table {
   Set<Column> get primaryKey => {tankId};
 }
 
+/// FuelTypes - Fuel type configuration for petrol pump
+@DataClassName('FuelTypeEntity')
+class FuelTypes extends Table {
+  TextColumn get fuelId => text()();
+  TextColumn get ownerId => text()();
+  TextColumn get fuelName => text()();
+  RealColumn get currentRatePerLitre =>
+      real().withDefault(const Constant(0.0))();
+  TextColumn get rateHistoryJson =>
+      text().withDefault(const Constant('[]'))(); // JSON array of rate history
+  RealColumn get linkedGSTRate => real().withDefault(const Constant(0.0))();
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
+  BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {fuelId};
+}
+
 // ============================================================================
 // ACCOUNTING & LEDGER (CORE FINANCIALS)
 // ============================================================================

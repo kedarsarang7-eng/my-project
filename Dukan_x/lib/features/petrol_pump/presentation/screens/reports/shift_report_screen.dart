@@ -92,7 +92,7 @@ class ShiftReportScreen extends StatelessWidget {
                         children: [
                           _buildStat(
                             'Total Sales',
-                            'â‚¹${shift.totalSaleAmount.toStringAsFixed(2)}',
+                            '₹${shift.totalSaleAmount.toStringAsFixed(2)}',
                           ),
                           _buildStat(
                             'Litres Sold',
@@ -117,20 +117,44 @@ class ShiftReportScreen extends StatelessWidget {
                                 spacing: 8,
                                 runSpacing: 8,
                                 children: [
-                                  _buildMiniStat('Cash', shift.paymentBreakup.cash),
-                                  _buildMiniStat('Online', shift.paymentBreakup.upi),
-                                  _buildMiniStat('Card', shift.paymentBreakup.card),
-                                  _buildMiniStat('Credit', shift.paymentBreakup.credit),
+                                  _buildMiniStat(
+                                    'Cash',
+                                    shift.paymentBreakup.cash,
+                                  ),
+                                  _buildMiniStat(
+                                    'Online',
+                                    shift.paymentBreakup.upi,
+                                  ),
+                                  _buildMiniStat(
+                                    'Card',
+                                    shift.paymentBreakup.card,
+                                  ),
+                                  _buildMiniStat(
+                                    'Credit',
+                                    shift.paymentBreakup.credit,
+                                  ),
                                 ],
                               ),
                             )
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                _buildMiniStat('Cash', shift.paymentBreakup.cash),
-                                _buildMiniStat('Online', shift.paymentBreakup.upi),
-                                _buildMiniStat('Card', shift.paymentBreakup.card),
-                                _buildMiniStat('Credit', shift.paymentBreakup.credit),
+                                _buildMiniStat(
+                                  'Cash',
+                                  shift.paymentBreakup.cash,
+                                ),
+                                _buildMiniStat(
+                                  'Online',
+                                  shift.paymentBreakup.upi,
+                                ),
+                                _buildMiniStat(
+                                  'Card',
+                                  shift.paymentBreakup.card,
+                                ),
+                                _buildMiniStat(
+                                  'Credit',
+                                  shift.paymentBreakup.credit,
+                                ),
                               ],
                             ),
                     ],
@@ -162,7 +186,7 @@ class ShiftReportScreen extends StatelessWidget {
       children: [
         Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
         Text(
-          'â‚¹${val.toStringAsFixed(0)}',
+          '₹${val.toStringAsFixed(0)}',
           style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
       ],

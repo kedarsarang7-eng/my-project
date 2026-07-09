@@ -168,6 +168,7 @@ part 'app_database.g.dart';
     Tanks,
     Nozzles,
     Dispensers,
+    FuelTypes,
     // Phase 12+: Enhanced Staff Management
     StaffNozzleAssignments,
     StaffSalesDetails,

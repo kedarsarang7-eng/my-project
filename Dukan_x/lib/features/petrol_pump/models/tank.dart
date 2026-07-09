@@ -55,6 +55,10 @@ class Tank {
   /// Check if tank is empty
   bool get isEmpty => currentStock <= 0;
 
+  /// Whether the unclamped calculated stock would exceed capacity
+  bool get hasOverfillAnomaly =>
+      (openingStock + purchaseQuantity - salesDeduction) > capacity;
+
   /// Available capacity for purchase
   double get availableCapacity => capacity - currentStock;
 

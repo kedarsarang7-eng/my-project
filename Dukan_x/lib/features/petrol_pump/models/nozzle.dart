@@ -40,6 +40,9 @@ class Nozzle {
     return sale >= 0 ? sale : 0;
   }
 
+  /// Whether a totalizer rollover has occurred (closing < opening)
+  bool get hasRolloverAnomaly => closingReading - openingReading < 0;
+
   /// Validate that closing reading is not less than opening
   bool get isValidReading => closingReading >= openingReading;
 

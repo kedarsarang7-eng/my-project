@@ -701,6 +701,7 @@ class SessionManager extends ChangeNotifier {
       case UserRole.doctor:
       case UserRole.receptionist:
       case UserRole.nurse:
+      case UserRole.attendant:
         // Last-known staff role — preserve, do NOT escalate.
         return cachedRole!;
       case UserRole.owner:
@@ -731,6 +732,7 @@ class SessionManager extends ChangeNotifier {
       case UserRole.doctor:
       case UserRole.receptionist:
       case UserRole.nurse:
+      case UserRole.attendant:
         return true;
       case UserRole.owner:
       case UserRole.unknown:

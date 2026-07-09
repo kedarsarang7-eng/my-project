@@ -147,9 +147,13 @@ class WhatsAppService {
       final tenant = _tenant;
       if (tenant == null) return false;
 
-      final config = await tenant.getBusinessConfig();
-      if (!config.isProvisioned || !config.isConnected) return false;
+      // Use live gateway status check instead of stale config.isConnected.
+      // tenant.isConnected() queries the actual OpenWA session and syncs
+      // the status back to DynamoDB — fixing the always-false bug.
+      final connected = await tenant.isConnected();
+      if (!connected) return false;
 
+      final config = await tenant.getBusinessConfig();
       final client = await tenant.getClient();
       final chatId = _formatChatId(phone);
 
@@ -174,9 +178,10 @@ class WhatsAppService {
       final tenant = _tenant;
       if (tenant == null) return false;
 
-      final config = await tenant.getBusinessConfig();
-      if (!config.isProvisioned || !config.isConnected) return false;
+      final connected = await tenant.isConnected();
+      if (!connected) return false;
 
+      final config = await tenant.getBusinessConfig();
       final client = await tenant.getClient();
       final chatId = _formatChatId(customerPhone);
 

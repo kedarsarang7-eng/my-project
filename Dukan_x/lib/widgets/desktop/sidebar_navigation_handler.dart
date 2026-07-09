@@ -53,6 +53,7 @@ import '../../features/inventory/presentation/screens/damage_logs_screen.dart';
 
 // Petrol Pump
 import '../../features/petrol_pump/presentation/screens/petrol_pump_management_screen.dart';
+import '../../features/petrol_pump/presentation/screens/revenue_dashboard_screen.dart';
 import '../../features/petrol_pump/presentation/screens/shift_history_screen.dart';
 import '../../features/petrol_pump/presentation/screens/tank_list_screen.dart';
 import '../../features/petrol_pump/presentation/screens/dispenser_list_screen.dart';
@@ -91,6 +92,11 @@ import '../../features/settings/presentation/screens/device_settings_screen.dart
 import '../../features/whatsapp/screens/whatsapp_connection_screen.dart';
 import '../../features/whatsapp/screens/whatsapp_chat_screen.dart';
 import '../../features/whatsapp/screens/whatsapp_templates_screen.dart';
+import '../../features/whatsapp/screens/whatsapp_dashboard_screen.dart';
+import '../../features/whatsapp/screens/whatsapp_tester_screen.dart';
+import '../../features/whatsapp/screens/whatsapp_webhooks_screen.dart';
+import '../../features/whatsapp/screens/whatsapp_logs_screen.dart';
+import '../../features/whatsapp/screens/whatsapp_settings_screen.dart';
 
 // ============================================================
 // HIDDEN FEATURE SCREENS (Made visible per audit)
@@ -521,16 +527,26 @@ class SidebarNavigationHandler {
         return const DeviceSettingsScreen();
 
       // ========== WhatsApp / OpenWA ==========
+      case 'wa_dashboard':
+        return const WhatsAppDashboardScreen();
       case 'wa_connection':
         return const WhatsAppConnectionScreen();
       case 'wa_chats':
         return const WhatsAppChatScreen();
       case 'wa_templates':
         return const WhatsAppTemplatesScreen();
+      case 'wa_tester':
+        return const WhatsAppTesterScreen();
+      case 'wa_webhooks':
+        return const WhatsAppWebhooksScreen();
+      case 'wa_logs':
+        return const WhatsAppLogsScreen();
+      case 'wa_settings':
+        return const WhatsAppSettingsScreen();
 
       // ========== Petrol Pump ==========
       case 'petrol_dashboard':
-        return const PetrolPumpManagementScreen();
+        return const RevenueDashboardScreen();
       case 'shift_management':
         return const ShiftHistoryScreen();
       case 'tank_management':

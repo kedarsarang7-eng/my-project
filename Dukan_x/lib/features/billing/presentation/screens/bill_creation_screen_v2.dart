@@ -64,6 +64,11 @@ import '../../../../core/pharmacy/paise.dart';
 import '../../../../core/pharmacy/pharmacy_gst_resolver.dart';
 // Pharmacy salt/substitute search embedded in billing (Requirement 25).
 import '../../../pharmacy/screens/salt_search_screen.dart';
+// Petrol Pump: shift resolution & fuel billing (Surface 1: billing.fuelSaleWiring)
+import '../../../petrol_pump/services/shift_service.dart';
+import '../../../petrol_pump/services/petrol_pump_billing_service.dart';
+import '../../../petrol_pump/models/nozzle.dart';
+import '../../../petrol_pump/models/fuel_type.dart';
 
 import '../../../../widgets/desktop/desktop_content_container.dart';
 // Keyboard Architecture - Tally-Style Shortcuts
@@ -561,6 +566,12 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
           newItemGstRate = ratePercent.toDouble();
           newItemCgst = gstAmountRupees / 2;
           newItemSgst = gstAmountRupees / 2;
+        } else if (businessType == BusinessType.petrolPump) {
+          // Petrol Pump: fuel is outside GST (state VAT / central excise).
+          // Force GST to 0 defensively so no non-zero GST persists on fuel items.
+          newItemGstRate = 0.0;
+          newItemCgst = 0.0;
+          newItemSgst = 0.0;
         } else {
           newItemGstRate = product.taxRate;
           newItemCgst = taxablePrice * (product.taxRate / 200);
@@ -711,6 +722,12 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
           newItemGstRate = ratePercent.toDouble();
           newItemCgst = gstAmountRupees / 2;
           newItemSgst = gstAmountRupees / 2;
+        } else if (businessType == BusinessType.petrolPump) {
+          // Petrol Pump: fuel is outside GST (state VAT / central excise).
+          // Force GST to 0 defensively so no non-zero GST persists on fuel items.
+          newItemGstRate = 0.0;
+          newItemCgst = 0.0;
+          newItemSgst = 0.0;
         } else {
           newItemGstRate = product.taxRate;
           newItemCgst = taxablePrice * (product.taxRate / 200);
@@ -2655,6 +2672,32 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
       }
     }
 
+    // Petrol Pump: resolve active shift (Surface 1: billing.fuelSaleWiring).
+    // Mirroring the pharmacy prescription gate pattern — block save if no shift.
+    String? activeShiftId;
+    String? resolvedAttendantId;
+    if (saveBusinessType == BusinessType.petrolPump) {
+      final activeShift = await sl<ShiftService>().getActiveShift();
+      if (activeShift == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Open a shift before billing fuel sales'),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 4),
+            ),
+          );
+        }
+        return;
+      }
+      activeShiftId = activeShift.shiftId;
+      // Resolve attendant identity: use the header's attendantId if set,
+      // otherwise fall back to the session owner so the field is never null.
+      resolvedAttendantId = _headerBill.attendantId?.isNotEmpty == true
+          ? _headerBill.attendantId
+          : _session.ownerId;
+    }
+
     // Stock availability check
     final ownerId = _session.ownerId;
     if (ownerId != null) {
@@ -2949,6 +2992,13 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
         vehicleNumber: _headerBill.vehicleNumber,
         driverName: _headerBill.driverName,
         fuelType: _headerBill.fuelType,
+        // Petrol Pump: shift & attendant wiring (Surface 1: billing.fuelSaleWiring)
+        shiftId: saveBusinessType == BusinessType.petrolPump
+            ? activeShiftId
+            : _headerBill.shiftId,
+        attendantId: saveBusinessType == BusinessType.petrolPump
+            ? resolvedAttendantId
+            : null,
         // Hardware Transport Details
         // Note: lrNumber, transporterName, ewayBillNumber, transportMode
         // stored in header metadata, not directly on Bill
@@ -2967,6 +3017,42 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
       );
 
       await _billsRepo.createBill(newBill);
+
+      // Petrol Pump: route through PetrolPumpBillingService for nozzle/tank
+      // stock effects when the bill has a fuel/nozzle selection (Surface 1).
+      if (saveBusinessType == BusinessType.petrolPump) {
+        // Check if any bill item has a nozzleId (fuel sale from a nozzle)
+        final fuelItems = _items.where(
+          (i) => i.nozzleId != null && i.nozzleId!.isNotEmpty,
+        );
+        if (fuelItems.isNotEmpty && _headerBill.fuelType != null) {
+          try {
+            await sl<PetrolPumpBillingService>().createFuelBill(
+              nozzle: Nozzle(
+                nozzleId: fuelItems.first.nozzleId!,
+                dispenserId: fuelItems.first.dispenserId ?? '',
+                fuelTypeId: fuelItems.first.productId,
+                ownerId: ownerId,
+              ),
+              fuelType: FuelType(
+                fuelId: fuelItems.first.productId,
+                fuelName: fuelItems.first.productName,
+                currentRatePerLitre: fuelItems.first.price,
+                ownerId: ownerId,
+              ),
+              litres: fuelItems.fold(0.0, (sum, i) => sum + i.qty),
+              rate: fuelItems.first.price,
+              customerId: newBill.customerId,
+              paymentType: _paymentMode,
+              vehicleNumber: _headerBill.vehicleNumber,
+              employeeId: resolvedAttendantId,
+            );
+          } catch (e) {
+            debugPrint('[PetrolPump] createFuelBill side-effect failed: $e');
+            // Non-blocking: the generic bill was already persisted
+          }
+        }
+      }
 
       // Invalidate dashboard KPI providers so revenue/sales update immediately
       ref.invalidate(dashboardV2SummaryProvider);

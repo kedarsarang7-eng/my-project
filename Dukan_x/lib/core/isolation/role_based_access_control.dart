@@ -36,6 +36,8 @@ extension IsolationUserRoleExtension on UserRole {
         return 'RECEPTIONIST';
       case UserRole.nurse:
         return 'NURSE';
+      case UserRole.attendant:
+        return 'ATTENDANT';
       case UserRole.unknown:
         return 'UNKNOWN';
     }
@@ -71,6 +73,9 @@ extension IsolationUserRoleExtension on UserRole {
         return UserRole.receptionist;
       case 'NURSE':
         return UserRole.nurse;
+      case 'ATTENDANT':
+      case 'PUMP_ATTENDANT':
+        return UserRole.attendant;
       case 'VIEWER':
       case 'READONLY':
       case 'TECHNICIAN':

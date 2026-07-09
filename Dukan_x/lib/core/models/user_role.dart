@@ -27,6 +27,8 @@
 ///   manage queue. CANNOT access diagnosis or private clinical notes.
 /// - [nurse]: Clinic clinical support — vitals capture, patient prep,
 ///   medication administration. Cannot write diagnosis/private notes.
+/// - [attendant]: Petrol pump attendant — least-privilege: create/print bills,
+///   view stock. Cannot access reports, settings, or financial operations.
 /// - [unknown]: Unauthenticated / unresolved state (NEVER after signup)
 enum UserRole {
   owner,
@@ -40,5 +42,6 @@ enum UserRole {
   doctor,
   receptionist,
   nurse,
+  attendant,
   unknown,
 }

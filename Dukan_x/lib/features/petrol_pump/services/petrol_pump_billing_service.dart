@@ -136,10 +136,8 @@ class PetrolPumpBillingService {
     // STEP 4: Transactional Execution
     // We execute the DB operations in a transaction for atomicity.
     // Audit logging is done AFTER the transaction ensures success.
-    print('DEBUG: Starting transaction for bill');
     final Bill? createdBill = await _db.transaction(() async {
       // A. Create Bill Record
-      print('DEBUG: Generating ID');
       final billId = _generateId();
       // COMPLIANCE: Petrol and diesel are outside India's GST regime (taxed via
       // state VAT / central excise, handled in the merchant's own accounting).
@@ -163,8 +161,6 @@ class PetrolPumpBillingService {
         'vehicleNumber': vehicleNumber,
       };
 
-      print('DEBUG: Preparing BillCompanion for $billId');
-
       final subtotal = totalAmount - gstAmount;
 
       final billCompanion = BillsCompanion(
@@ -187,11 +183,9 @@ class PetrolPumpBillingService {
         isSynced: const Value(false),
       );
 
-      print('DEBUG: Inserting Bill');
       await _db.into(_db.bills).insert(billCompanion);
 
       // Sync Queue: Bill
-      print('DEBUG: Enqueuing Bill Sync');
       await _enqueueSync(
         operationType: SyncOperationType.create,
         targetCollection: 'bills',
@@ -215,7 +209,6 @@ class PetrolPumpBillingService {
 
       // B. Deduct Tank Stock
       if (tankId != null) {
-        print('DEBUG: Updating Tank Stock for $tankId');
         // Optimistic locking or direct decrement
         // For SQLite, simple update is usually safe enough if single writer
         // But we are in a transaction, so it's safe.
@@ -229,7 +222,6 @@ class PetrolPumpBillingService {
           _db.tanks,
         )..where((t) => t.tankId.equals(tankId))).getSingle();
 
-        print('DEBUG: Enqueuing Tank Sync');
         await _enqueueSync(
           operationType: SyncOperationType.update,
           targetCollection: 'tanks',
@@ -241,7 +233,6 @@ class PetrolPumpBillingService {
         );
 
         // AUDIT FIX: Log to StockMovements
-        print('DEBUG: Logging Stock Movement');
         final movementId = _generateId();
         final stockAfter = updatedTank.currentStock;
         final stockBefore = stockAfter + litres;
@@ -288,8 +279,6 @@ class PetrolPumpBillingService {
       }
 
       // C. Update Nozzle Reading
-      // We explicitly UPDATE the Closing Reading
-      print('DEBUG: Updating Nozzle Reading for ${nozzle.nozzleId}');
       await _db.customStatement(
         'UPDATE nozzles SET closing_reading = closing_reading + ? WHERE nozzle_id = ?',
         [litres, nozzle.nozzleId],
