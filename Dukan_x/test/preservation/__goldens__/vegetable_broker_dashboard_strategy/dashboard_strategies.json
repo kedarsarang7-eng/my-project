@@ -1,0 +1,555 @@
+{
+  "grocery": {
+    "addItemLabel": "Add Item",
+    "addItemIcon": 57434,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Bill",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Stock In",
+        "icon": 58185,
+        "route": "/purchase"
+      },
+      {
+        "label": "Expiring",
+        "icon": 62537,
+        "route": "/expiry"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "lowStockAlert",
+      "expiringSoon",
+      "recentBills"
+    ]
+  },
+  "pharmacy": {
+    "addItemLabel": "Add Medicine",
+    "addItemIcon": 58329,
+    "customerLabel": "Patients",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Sale",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Upload Rx",
+        "icon": 59030,
+        "route": "/prescription"
+      },
+      {
+        "label": "Shortage",
+        "icon": 983712,
+        "route": "/shortage"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "expiringSoon",
+      "lowStockAlert",
+      "recentBills"
+    ]
+  },
+  "restaurant": {
+    "addItemLabel": "Add Dish",
+    "addItemIcon": 58675,
+    "customerLabel": "Guests",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "Table View",
+        "icon": 984453,
+        "route": "/tables"
+      },
+      {
+        "label": "KOT",
+        "icon": 58206,
+        "route": "/kot"
+      },
+      {
+        "label": "Online Orders",
+        "icon": 57789,
+        "route": "/orders"
+      }
+    ],
+    "widgets": [
+      "activeTables",
+      "kotStatus",
+      "salesSummary",
+      "recentBills"
+    ]
+  },
+  "clothing": {
+    "addItemLabel": "Add Apparel",
+    "addItemIcon": 57693,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Sale",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Variants",
+        "icon": 58899,
+        "route": "/variants"
+      },
+      {
+        "label": "Stock Check",
+        "icon": 58613,
+        "route": "/stock_check"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "fastMovingItems",
+      "lowStockAlert"
+    ]
+  },
+  "electronics": {
+    "addItemLabel": "Add Product",
+    "addItemIcon": 57803,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Bill",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Add IMEI",
+        "icon": 58615,
+        "route": "/purchase"
+      },
+      {
+        "label": "Warranty Check",
+        "icon": 59034,
+        "route": "/warranty"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "lowStockAlert",
+      "recentBills"
+    ]
+  },
+  "mobileShop": {
+    "addItemLabel": "Add Product",
+    "addItemIcon": 57803,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Bill",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Add IMEI",
+        "icon": 58615,
+        "route": "/purchase"
+      },
+      {
+        "label": "Warranty Check",
+        "icon": 59034,
+        "route": "/warranty"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "lowStockAlert",
+      "recentBills"
+    ]
+  },
+  "computerShop": {
+    "addItemLabel": "New Job",
+    "addItemIcon": 57622,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "Create Job",
+        "icon": 58442,
+        "route": "/job/create"
+      },
+      {
+        "label": "Update Status",
+        "icon": 59026,
+        "route": "/job/status"
+      },
+      {
+        "label": "Deliver",
+        "icon": 57847,
+        "route": "/job/deliver"
+      }
+    ],
+    "widgets": [
+      "pendingJobs",
+      "salesSummary",
+      "recentBills"
+    ]
+  },
+  "hardware": {
+    "addItemLabel": "Add Item",
+    "addItemIcon": 58099,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Invoice",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Estimates",
+        "icon": 57633,
+        "route": "/estimates"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "lowStockAlert",
+      "recentBills"
+    ]
+  },
+  "service": {
+    "addItemLabel": "New Job",
+    "addItemIcon": 57622,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "Create Job",
+        "icon": 58442,
+        "route": "/job/create"
+      },
+      {
+        "label": "Update Status",
+        "icon": 59026,
+        "route": "/job/status"
+      },
+      {
+        "label": "Deliver",
+        "icon": 57847,
+        "route": "/job/deliver"
+      }
+    ],
+    "widgets": [
+      "pendingJobs",
+      "salesSummary",
+      "recentBills"
+    ]
+  },
+  "wholesale": {
+    "addItemLabel": "Add Bulk Item",
+    "addItemIcon": 58221,
+    "customerLabel": "Retailers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Invoice",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Credit Ledger",
+        "icon": 57409,
+        "route": "/ledger"
+      },
+      {
+        "label": "Challan",
+        "icon": 58278,
+        "route": "/challan"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "lowStockAlert",
+      "fastMovingItems"
+    ]
+  },
+  "petrolPump": {
+    "addItemLabel": "Add Fuel",
+    "addItemIcon": 58260,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Sale",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Reading",
+        "icon": 58848,
+        "route": "/pump/reading"
+      },
+      {
+        "label": "Density",
+        "icon": 58714,
+        "route": "/pump/density"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "lowStockAlert"
+    ]
+  },
+  "vegetablesBroker": {
+    "addItemLabel": "New Entry",
+    "addItemIcon": 57879,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Farmers",
+    "quickActions": [
+      {
+        "label": "New Entry",
+        "icon": 57423,
+        "route": "/mandi/entry"
+      },
+      {
+        "label": "Farmer Ledger",
+        "icon": 58520,
+        "route": "/mandi/farmers"
+      },
+      {
+        "label": "Daily Rates",
+        "icon": 984289,
+        "route": "/mandi/rates"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "recentBills"
+    ]
+  },
+  "clinic": {
+    "addItemLabel": "Add Patient",
+    "addItemIcon": 58514,
+    "customerLabel": "Patients",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Appt",
+        "icon": 57634,
+        "route": "/clinic/appointment"
+      },
+      {
+        "label": "Prescription",
+        "icon": 57791,
+        "route": "/clinic/prescription"
+      },
+      {
+        "label": "Queue",
+        "icon": 58504,
+        "route": "/clinic/queue"
+      }
+    ],
+    "widgets": [
+      "todaysAppointments",
+      "recentBills",
+      "salesSummary"
+    ]
+  },
+  "bookStore": {
+    "addItemLabel": "Add Item",
+    "addItemIcon": 57434,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Bill",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Stock In",
+        "icon": 58185,
+        "route": "/purchase"
+      },
+      {
+        "label": "Expiring",
+        "icon": 62537,
+        "route": "/expiry"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "lowStockAlert",
+      "expiringSoon",
+      "recentBills"
+    ]
+  },
+  "jewellery": {
+    "addItemLabel": "Add Item",
+    "addItemIcon": 57434,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Bill",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Stock In",
+        "icon": 58185,
+        "route": "/purchase"
+      },
+      {
+        "label": "Expiring",
+        "icon": 62537,
+        "route": "/expiry"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "lowStockAlert",
+      "expiringSoon",
+      "recentBills"
+    ]
+  },
+  "autoParts": {
+    "addItemLabel": "Add Item",
+    "addItemIcon": 57434,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Bill",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Stock In",
+        "icon": 58185,
+        "route": "/purchase"
+      },
+      {
+        "label": "Expiring",
+        "icon": 62537,
+        "route": "/expiry"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "lowStockAlert",
+      "expiringSoon",
+      "recentBills"
+    ]
+  },
+  "decorationCatering": {
+    "addItemLabel": "Add Item",
+    "addItemIcon": 57434,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Bill",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Stock In",
+        "icon": 58185,
+        "route": "/purchase"
+      },
+      {
+        "label": "Expiring",
+        "icon": 62537,
+        "route": "/expiry"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "lowStockAlert",
+      "expiringSoon",
+      "recentBills"
+    ]
+  },
+  "schoolErp": {
+    "addItemLabel": "Add Item",
+    "addItemIcon": 57434,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Bill",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Stock In",
+        "icon": 58185,
+        "route": "/purchase"
+      },
+      {
+        "label": "Expiring",
+        "icon": 62537,
+        "route": "/expiry"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "lowStockAlert",
+      "expiringSoon",
+      "recentBills"
+    ]
+  },
+  "other": {
+    "addItemLabel": "Add Item",
+    "addItemIcon": 57434,
+    "customerLabel": "Customers",
+    "customerIcon": 62058,
+    "supplierLabel": "Suppliers",
+    "quickActions": [
+      {
+        "label": "New Bill",
+        "icon": 58637,
+        "route": "/billing"
+      },
+      {
+        "label": "Stock In",
+        "icon": 58185,
+        "route": "/purchase"
+      },
+      {
+        "label": "Expiring",
+        "icon": 62537,
+        "route": "/expiry"
+      }
+    ],
+    "widgets": [
+      "salesSummary",
+      "lowStockAlert",
+      "expiringSoon",
+      "recentBills"
+    ]
+  }
+}

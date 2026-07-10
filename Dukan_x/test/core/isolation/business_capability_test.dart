@@ -388,10 +388,13 @@ void main() {
 
     test('broker-specific capabilities enabled', () {
       _allowed(t, BusinessCapability.useCommission);
-      _allowed(t, BusinessCapability.useCrateManagement);
       _allowed(t, BusinessCapability.useFarmerLinking);
       _allowed(t, BusinessCapability.useDailyRates);
       _allowed(t, BusinessCapability.useCreditManagement);
+    });
+
+    test('useCrateManagement NOT granted (no consumer exists)', () {
+      _denied(t, BusinessCapability.useCrateManagement);
     });
 
     test('product tax denied (mandi typically no tax)', () {
@@ -665,10 +668,24 @@ void main() {
     test('KOT is exclusive to restaurant', () {
       _allowed('restaurant', BusinessCapability.useKOT);
       for (final t in [
-        'grocery', 'pharmacy', 'clothing', 'electronics', 'mobileShop',
-        'computerShop', 'hardware', 'service', 'wholesale', 'petrolPump',
-        'vegetablesBroker', 'clinic', 'bookStore', 'jewellery', 'autoParts',
-        'decorationCatering', 'academicCoaching', 'other',
+        'grocery',
+        'pharmacy',
+        'clothing',
+        'electronics',
+        'mobileShop',
+        'computerShop',
+        'hardware',
+        'service',
+        'wholesale',
+        'petrolPump',
+        'vegetablesBroker',
+        'clinic',
+        'bookStore',
+        'jewellery',
+        'autoParts',
+        'decorationCatering',
+        'academicCoaching',
+        'other',
       ]) {
         _denied(t, BusinessCapability.useKOT);
       }
@@ -678,10 +695,23 @@ void main() {
       _allowed('pharmacy', BusinessCapability.usePrescription);
       _allowed('clinic', BusinessCapability.usePrescription);
       for (final t in [
-        'grocery', 'restaurant', 'clothing', 'electronics', 'mobileShop',
-        'computerShop', 'hardware', 'service', 'wholesale', 'petrolPump',
-        'vegetablesBroker', 'bookStore', 'jewellery', 'autoParts',
-        'decorationCatering', 'academicCoaching', 'other',
+        'grocery',
+        'restaurant',
+        'clothing',
+        'electronics',
+        'mobileShop',
+        'computerShop',
+        'hardware',
+        'service',
+        'wholesale',
+        'petrolPump',
+        'vegetablesBroker',
+        'bookStore',
+        'jewellery',
+        'autoParts',
+        'decorationCatering',
+        'academicCoaching',
+        'other',
       ]) {
         _denied(t, BusinessCapability.usePrescription);
       }
@@ -690,10 +720,24 @@ void main() {
     test('student registry exclusive to academicCoaching', () {
       _allowed('academicCoaching', BusinessCapability.useStudentRegistry);
       for (final t in [
-        'grocery', 'pharmacy', 'restaurant', 'clothing', 'electronics',
-        'mobileShop', 'computerShop', 'hardware', 'service', 'wholesale',
-        'petrolPump', 'vegetablesBroker', 'clinic', 'bookStore', 'jewellery',
-        'autoParts', 'decorationCatering', 'other',
+        'grocery',
+        'pharmacy',
+        'restaurant',
+        'clothing',
+        'electronics',
+        'mobileShop',
+        'computerShop',
+        'hardware',
+        'service',
+        'wholesale',
+        'petrolPump',
+        'vegetablesBroker',
+        'clinic',
+        'bookStore',
+        'jewellery',
+        'autoParts',
+        'decorationCatering',
+        'other',
       ]) {
         _denied(t, BusinessCapability.useStudentRegistry);
       }
@@ -702,10 +746,24 @@ void main() {
     test('fuel management exclusive to petrolPump', () {
       _allowed('petrolPump', BusinessCapability.useFuelManagement);
       for (final t in [
-        'grocery', 'pharmacy', 'restaurant', 'clothing', 'electronics',
-        'mobileShop', 'computerShop', 'hardware', 'service', 'wholesale',
-        'vegetablesBroker', 'clinic', 'bookStore', 'jewellery', 'autoParts',
-        'decorationCatering', 'academicCoaching', 'other',
+        'grocery',
+        'pharmacy',
+        'restaurant',
+        'clothing',
+        'electronics',
+        'mobileShop',
+        'computerShop',
+        'hardware',
+        'service',
+        'wholesale',
+        'vegetablesBroker',
+        'clinic',
+        'bookStore',
+        'jewellery',
+        'autoParts',
+        'decorationCatering',
+        'academicCoaching',
+        'other',
       ]) {
         _denied(t, BusinessCapability.useFuelManagement);
       }
@@ -714,10 +772,24 @@ void main() {
     test('event booking exclusive to decorationCatering', () {
       _allowed('decorationCatering', BusinessCapability.useEventBooking);
       for (final t in [
-        'grocery', 'pharmacy', 'restaurant', 'clothing', 'electronics',
-        'mobileShop', 'computerShop', 'hardware', 'service', 'wholesale',
-        'petrolPump', 'vegetablesBroker', 'clinic', 'bookStore', 'jewellery',
-        'autoParts', 'academicCoaching', 'other',
+        'grocery',
+        'pharmacy',
+        'restaurant',
+        'clothing',
+        'electronics',
+        'mobileShop',
+        'computerShop',
+        'hardware',
+        'service',
+        'wholesale',
+        'petrolPump',
+        'vegetablesBroker',
+        'clinic',
+        'bookStore',
+        'jewellery',
+        'autoParts',
+        'academicCoaching',
+        'other',
       ]) {
         _denied(t, BusinessCapability.useEventBooking);
       }
@@ -726,10 +798,24 @@ void main() {
     test('commission exclusive to vegetablesBroker', () {
       _allowed('vegetablesBroker', BusinessCapability.useCommission);
       for (final t in [
-        'grocery', 'pharmacy', 'restaurant', 'clothing', 'electronics',
-        'mobileShop', 'computerShop', 'hardware', 'service', 'wholesale',
-        'petrolPump', 'clinic', 'bookStore', 'jewellery', 'autoParts',
-        'decorationCatering', 'academicCoaching', 'other',
+        'grocery',
+        'pharmacy',
+        'restaurant',
+        'clothing',
+        'electronics',
+        'mobileShop',
+        'computerShop',
+        'hardware',
+        'service',
+        'wholesale',
+        'petrolPump',
+        'clinic',
+        'bookStore',
+        'jewellery',
+        'autoParts',
+        'decorationCatering',
+        'academicCoaching',
+        'other',
       ]) {
         _denied(t, BusinessCapability.useCommission);
       }
@@ -740,10 +826,22 @@ void main() {
       _allowed('mobileShop', BusinessCapability.useIMEI);
       _allowed('computerShop', BusinessCapability.useIMEI);
       for (final t in [
-        'grocery', 'pharmacy', 'restaurant', 'clothing', 'hardware',
-        'service', 'wholesale', 'petrolPump', 'vegetablesBroker', 'clinic',
-        'bookStore', 'jewellery', 'autoParts', 'decorationCatering',
-        'academicCoaching', 'other',
+        'grocery',
+        'pharmacy',
+        'restaurant',
+        'clothing',
+        'hardware',
+        'service',
+        'wholesale',
+        'petrolPump',
+        'vegetablesBroker',
+        'clinic',
+        'bookStore',
+        'jewellery',
+        'autoParts',
+        'decorationCatering',
+        'academicCoaching',
+        'other',
       ]) {
         _denied(t, BusinessCapability.useIMEI);
       }
@@ -767,11 +865,17 @@ void main() {
     test('enum.toString format is normalized correctly', () {
       // FeatureResolver normalizes 'BusinessType.grocery' → 'grocery'
       expect(
-        FeatureResolver.canAccess('BusinessType.grocery', BusinessCapability.useProductAdd),
+        FeatureResolver.canAccess(
+          'BusinessType.grocery',
+          BusinessCapability.useProductAdd,
+        ),
         isTrue,
       );
       expect(
-        FeatureResolver.canAccess('BusinessType.academicCoaching', BusinessCapability.useStudentRegistry),
+        FeatureResolver.canAccess(
+          'BusinessType.academicCoaching',
+          BusinessCapability.useStudentRegistry,
+        ),
         isTrue,
       );
     });
@@ -783,14 +887,18 @@ void main() {
   group('SecurityException enforcement', () {
     test('enforceAccess throws for denied capability', () {
       expect(
-        () => FeatureResolver.enforceAccess('grocery', BusinessCapability.useKOT),
+        () =>
+            FeatureResolver.enforceAccess('grocery', BusinessCapability.useKOT),
         throwsA(isA<SecurityException>()),
       );
     });
 
     test('enforceAccess does not throw for allowed capability', () {
       expect(
-        () => FeatureResolver.enforceAccess('grocery', BusinessCapability.useProductAdd),
+        () => FeatureResolver.enforceAccess(
+          'grocery',
+          BusinessCapability.useProductAdd,
+        ),
         returnsNormally,
       );
     });
@@ -807,7 +915,10 @@ void main() {
 
     test('enforceAccess throws for unknown business type', () {
       expect(
-        () => FeatureResolver.enforceAccess('hackerType', BusinessCapability.useProductAdd),
+        () => FeatureResolver.enforceAccess(
+          'hackerType',
+          BusinessCapability.useProductAdd,
+        ),
         throwsA(isA<SecurityException>()),
       );
     });

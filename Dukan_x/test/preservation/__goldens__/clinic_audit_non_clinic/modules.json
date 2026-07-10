@@ -1,0 +1,128 @@
+{
+  "grocery": [
+    "inventory",
+    "sales",
+    "returns",
+    "expenses",
+    "reports"
+  ],
+  "pharmacy": [
+    "inventory",
+    "prescriptions",
+    "sales",
+    "returns",
+    "suppliers",
+    "reports"
+  ],
+  "restaurant": [
+    "menu",
+    "sales",
+    "kot",
+    "tables",
+    "reports"
+  ],
+  "clothing": [
+    "inventory",
+    "sales",
+    "returns",
+    "reports"
+  ],
+  "electronics": [
+    "inventory",
+    "sales",
+    "returns",
+    "warranty",
+    "reports"
+  ],
+  "mobileShop": [
+    "inventory",
+    "sales",
+    "repairs",
+    "second_hand",
+    "reports"
+  ],
+  "computerShop": [
+    "inventory",
+    "sales",
+    "repairs",
+    "custom_builds",
+    "reports"
+  ],
+  "hardware": [
+    "inventory",
+    "sales",
+    "returns",
+    "quotations",
+    "reports",
+    "purchase",
+    "credit",
+    "delivery_challans",
+    "supplier_management",
+    "projects",
+    "gst"
+  ],
+  "service": [
+    "jobs",
+    "invoices",
+    "customers",
+    "reports"
+  ],
+  "wholesale": [
+    "inventory",
+    "sales",
+    "bulk_orders",
+    "customers",
+    "reports"
+  ],
+  "petrolPump": [
+    "inventory",
+    "sales",
+    "shifts",
+    "reading",
+    "reports"
+  ],
+  "vegetablesBroker": [
+    "auction",
+    "sales",
+    "farmers",
+    "buyers",
+    "reports"
+  ],
+  "bookStore": [
+    "inventory",
+    "sales",
+    "school_orders",
+    "reports"
+  ],
+  "jewellery": [
+    "inventory",
+    "sales",
+    "custom_orders",
+    "reports"
+  ],
+  "autoParts": [
+    "inventory",
+    "sales",
+    "returns",
+    "reports"
+  ],
+  "decorationCatering": [
+    "events",
+    "sales",
+    "caterers",
+    "inventory",
+    "reports"
+  ],
+  "schoolErp": [
+    "students",
+    "fees",
+    "attendance",
+    "exams",
+    "reports"
+  ],
+  "other": [
+    "inventory",
+    "sales",
+    "reports"
+  ]
+}

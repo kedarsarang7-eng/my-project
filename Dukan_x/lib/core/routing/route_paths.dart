@@ -488,6 +488,9 @@ abstract final class RoutePaths {
   /// `scan_qr` -> `QrScannerScreen()`
   static const String scanQr = '/app/scan-qr';
 
+  /// `patient_management` -> `PatientManagementScreen()`
+  static const String patientManagement = '/app/patient-management';
+
   // ------------------------- Petrol Pump reports (hidden) --------------------
 
   /// `fuel_rates` -> `FuelRatesScreen()`
@@ -635,6 +638,7 @@ abstract final class RoutePaths {
     // Hidden — doctor / QR
     'doctor_revenue': doctorRevenue,
     'scan_qr': scanQr,
+    'patient_management': patientManagement,
     // Hidden — petrol pump reports
     'fuel_rates': fuelRates,
     'fuel_profit_report': fuelProfitReport,

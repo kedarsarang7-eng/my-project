@@ -203,7 +203,6 @@ class PlanMappingBuilder {
     BusinessCapability.useLooseQuantities,
     // Broker / mandi
     BusinessCapability.useCommission,
-    BusinessCapability.useCrateManagement,
     BusinessCapability.useFarmerLinking,
     BusinessCapability.useDailyRates,
     // Wholesale / B2B

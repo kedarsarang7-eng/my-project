@@ -115,10 +115,10 @@ class PrescriptionRepository {
   Future<List<PrescriptionModel>> getRecentPrescriptions(
     String doctorId,
   ) async {
-    // If doctorId is SYSTEM/Admin, might return all, otherwise filter
-    // For now, simpler query
+    // Tenant isolation: only this doctor's/owner's prescriptions.
     final rows =
         await (_db.select(_db.prescriptions)
+              ..where((t) => t.userId.equals(doctorId))
               ..orderBy([(t) => OrderingTerm.desc(t.date)])
               ..limit(50))
             .get();

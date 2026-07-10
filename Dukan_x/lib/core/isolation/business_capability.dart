@@ -761,7 +761,9 @@ final Map<String, Set<BusinessCapability>> businessCapabilityRegistry = {
 
     // Specialized
     BusinessCapability.useCommission,
-    BusinessCapability.useCrateManagement,
+    // useCrateManagement removed — no crate table/screen/consumer exists
+    // anywhere in the codebase (bugfix.md 2.13). Re-add only alongside a
+    // real crate-tracking implementation.
     BusinessCapability.useFarmerLinking,
     BusinessCapability.useDailyRates,
     BusinessCapability.useCreditManagement,
@@ -772,8 +774,17 @@ final Map<String, Set<BusinessCapability>> businessCapabilityRegistry = {
     // Item Name: ❌
     // ... All ❌ for Product ??
     // Checklist: Clinic -> ❌ for all Product features.
-    // 2. Inventory
-    // All ❌
+    // 2. Inventory — minimal read-visibility + stock-in grant (bugfix.md 2.2).
+    // Resolves the three-way contradiction: business_type_config.dart's clinic
+    // `modules` already advertises 'inventory', and ClinicBillingService already
+    // deducts real stock via InventoryService when a prescribed medicine has a
+    // linked productId. Granting these three (not the full retail inventory
+    // set — no useDeadStock/useInventoryExport/usePurchaseOrder/etc.) makes
+    // that deduction visible and correctable without turning clinic into a
+    // full retail-inventory vertical.
+    BusinessCapability.useInventoryList,
+    BusinessCapability.useVisibleStock,
+    BusinessCapability.useStockEntry,
     // 3. Invoice
     // Invoice List: ⚠️
     // Search: ⚠️

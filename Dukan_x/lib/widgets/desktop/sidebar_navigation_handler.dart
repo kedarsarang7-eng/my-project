@@ -21,6 +21,7 @@ import '../../features/doctor/presentation/screens/patient_history_picker_screen
 // primary but these screens have no doctor-stack equivalent).
 import '../../features/clinic/presentation/screens/patient_queue_screen.dart';
 import '../../features/clinic/presentation/screens/clinic_calendar_screen.dart';
+import '../../features/clinic/presentation/screens/patient_management_screen.dart';
 
 // Billing
 import '../../features/billing/presentation/screens/bill_creation_screen_v2.dart';
@@ -396,6 +397,10 @@ class SidebarNavigationHandler {
         return const PatientQueueScreen();
       case 'clinic_calendar':
         return const ClinicCalendarScreen();
+      case 'clinic_inventory':
+        return const InventoryDashboardScreen();
+      case 'patient_management':
+        return const PatientManagementScreen();
 
       // ========== Revenue Desk ==========
       case 'revenue_overview':

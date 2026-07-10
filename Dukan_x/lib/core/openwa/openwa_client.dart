@@ -623,7 +623,7 @@ class OpenWAClient {
   }) async {
     return _post<Map<String, dynamic>>(
       '/sessions/$sessionId/messages/send-bulk',
-      body: {'messages': messages, if (options != null) 'options': options},
+      body: {'messages': messages, 'options': ?options},
     );
   }
 
@@ -845,8 +845,8 @@ class OpenWAClient {
     List<String>? profilesToRemove,
   }) async {
     return _post<Map<String, dynamic>>('/infra/restart', body: {
-      if (profiles != null) 'profiles': profiles,
-      if (profilesToRemove != null) 'profilesToRemove': profilesToRemove,
+      'profiles': ?profiles,
+      'profilesToRemove': ?profilesToRemove,
     });
   }
 

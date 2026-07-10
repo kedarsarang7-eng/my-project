@@ -9,6 +9,8 @@ import '../../../../core/di/service_locator.dart';
 import '../../../../core/session/session_manager.dart';
 import '../../models/appointment_model.dart';
 import '../../data/repositories/appointment_repository.dart';
+import '../../data/repositories/patient_repository.dart';
+import '../../../marketing/data/services/whatsapp_service.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
@@ -360,20 +362,39 @@ class _AppointmentScreenState extends ConsumerState<AppointmentScreen> {
 
                   await sl<AppointmentRepository>().createAppointment(appt);
 
-                  // TODO: backend dispatch out of scope this pass — wire SMS/WhatsApp
-                  // service here. When `sendReminder` is true, dispatch a reminder
-                  // notification to the patient's phone (SMS) or WhatsApp number.
-                  // Integration requirements:
-                  // - Respect patient opt-in preference (stored per-patient)
-                  // - Schedule reminder for configurable offset before appointment
-                  // - Support both SMS and WhatsApp channels
-                  // - Handle delivery failures gracefully (retry / fallback)
                   if (sendReminder) {
-                    debugPrint(
-                      'Reminder opt-in: patient reminder requested for '
-                      'appointment ${appt.id} at $scheduledTime '
-                      '— backend dispatch not yet wired',
-                    );
+                    final patient = appt.patientId != 'GUEST'
+                        ? await sl<PatientRepository>().getPatientById(
+                            appt.patientId,
+                          )
+                        : null;
+                    final phone = patient?.phone;
+                    if (phone != null && phone.isNotEmpty) {
+                      final sent = await sl<WhatsAppService>().sendMessage(
+                        phoneNumber: phone,
+                        message:
+                            'Reminder: you have an appointment '
+                            '${purposeController.text.isNotEmpty ? "for ${purposeController.text} " : ""}'
+                            'on ${DateFormat('dd MMM yyyy, HH:mm').format(scheduledTime)}.',
+                      );
+                      if (!sent && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Appointment saved, but reminder could not be sent',
+                            ),
+                          ),
+                        );
+                      }
+                    } else if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Appointment saved. No phone number on file — reminder not sent.',
+                          ),
+                        ),
+                      );
+                    }
                   }
 
                   if (context.mounted) Navigator.pop(context);

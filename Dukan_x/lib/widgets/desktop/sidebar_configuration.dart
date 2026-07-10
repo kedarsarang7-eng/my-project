@@ -1026,6 +1026,12 @@ List<SidebarSection> _getClinicSections() {
           label: 'Scan Patient QR',
           capability: BusinessCapability.usePatientRegistry,
         ),
+        SidebarMenuItem(
+          id: 'patient_management',
+          icon: Icons.folder_shared_outlined,
+          label: 'Manage Patients',
+          capability: BusinessCapability.usePatientRegistry,
+        ),
       ],
     ),
     SidebarSection(
@@ -1065,14 +1071,22 @@ List<SidebarSection> _getClinicSections() {
           capability: BusinessCapability.usePrescription,
         ),
         SidebarMenuItem(
+          id: 'clinic_inventory',
+          icon: Icons.inventory_2_outlined,
+          label: 'Medicine Stock',
+          capability: BusinessCapability.useInventoryList,
+        ),
+        SidebarMenuItem(
           id: 'lab_reports',
           icon: Icons.science_outlined,
           label: 'Lab Reports',
+          capability: BusinessCapability.usePrescription,
         ),
         SidebarMenuItem(
           id: 'doctor_revenue',
           icon: Icons.monetization_on_outlined,
           label: 'Revenue Analytics',
+          capability: BusinessCapability.useRevenueOverview,
         ),
       ],
     ),

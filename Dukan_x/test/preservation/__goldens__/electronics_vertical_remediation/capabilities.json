@@ -281,7 +281,6 @@
   ],
   "vegetablesBroker": [
     "useCommission",
-    "useCrateManagement",
     "useCreditManagement",
     "useDailyRates",
     "useDailySnapshot",

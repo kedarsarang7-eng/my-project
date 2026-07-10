@@ -1,0 +1,21 @@
+[
+  "98:case BusinessType.grocery:",
+  "152:case BusinessType.pharmacy:",
+  "187:case BusinessType.restaurant:",
+  "216:case BusinessType.clothing:",
+  "237:case BusinessType.electronics:",
+  "263:type == BusinessType.electronics",
+  "238:case BusinessType.mobileShop:",
+  "271:if (type == BusinessType.mobileShop) {",
+  "239:case BusinessType.computerShop:",
+  "284:case BusinessType.hardware:",
+  "515:case BusinessType.service:",
+  "386:case BusinessType.wholesale:",
+  "311:case BusinessType.petrolPump:",
+  "465:case BusinessType.vegetablesBroker:",
+  "338:case BusinessType.bookStore:",
+  "494:case BusinessType.jewellery:",
+  "367:case BusinessType.autoParts:",
+  "424:case BusinessType.decorationCatering:",
+  "534:case BusinessType.schoolErp:"
+]
