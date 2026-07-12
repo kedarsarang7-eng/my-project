@@ -16,6 +16,7 @@ export 'data/models/restaurant_bill_model.dart';
 // Repositories
 export 'data/repositories/food_menu_repository.dart';
 export 'data/repositories/food_order_repository.dart';
+export 'data/repositories/food_item_variation_repository.dart';
 export 'data/repositories/restaurant_table_repository.dart';
 export 'data/repositories/restaurant_bill_repository.dart';
 
@@ -42,3 +43,4 @@ export 'presentation/screens/customer/rate_review_screen.dart';
 
 // Widgets
 export 'presentation/widgets/table_qr_code_widget.dart';
+export 'presentation/widgets/modifier_picker_sheet.dart';

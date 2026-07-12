@@ -72,23 +72,30 @@ class RestaurantOpsRepository {
     required String reservationAt,
     String? notes,
   }) async {
-    final res = await _api.post('/resto/reservations', body: {
-      'guestName': guestName,
-      'phone': phone,
-      'peopleCount': peopleCount,
-      'reservationAt': reservationAt,
-      if (notes != null && notes.trim().isNotEmpty) 'notes': notes.trim(),
-    });
+    final res = await _api.post(
+      '/resto/reservations',
+      body: {
+        'guestName': guestName,
+        'phone': phone,
+        'peopleCount': peopleCount,
+        'reservationAt': reservationAt,
+        if (notes != null && notes.trim().isNotEmpty) 'notes': notes.trim(),
+      },
+    );
     return res.isSuccess;
   }
 
   Future<bool> updateReservationStatus({
     required String reservationId,
     required String status,
+    String? reason,
   }) async {
     final res = await _api.put(
       '/resto/reservations/$reservationId/status',
-      body: {'status': status},
+      body: {
+        'status': status,
+        'cancellationReason': ?reason,
+      },
     );
     return res.isSuccess;
   }
@@ -105,12 +112,15 @@ class RestaurantOpsRepository {
     required int peopleCount,
     String? notes,
   }) async {
-    final res = await _api.post('/resto/waitlist', body: {
-      'guestName': guestName,
-      'phone': phone,
-      'peopleCount': peopleCount,
-      if (notes != null && notes.trim().isNotEmpty) 'notes': notes.trim(),
-    });
+    final res = await _api.post(
+      '/resto/waitlist',
+      body: {
+        'guestName': guestName,
+        'phone': phone,
+        'peopleCount': peopleCount,
+        if (notes != null && notes.trim().isNotEmpty) 'notes': notes.trim(),
+      },
+    );
     return res.isSuccess;
   }
 
@@ -129,10 +139,10 @@ class RestaurantOpsRepository {
     required String fromTableId,
     required String toTableId,
   }) async {
-    final res = await _api.post('/resto/tables/transfer', body: {
-      'fromTableId': fromTableId,
-      'toTableId': toTableId,
-    });
+    final res = await _api.post(
+      '/resto/tables/transfer',
+      body: {'fromTableId': fromTableId, 'toTableId': toTableId},
+    );
     return res.isSuccess;
   }
 
@@ -140,10 +150,10 @@ class RestaurantOpsRepository {
     required List<String> sourceTableIds,
     required String targetTableId,
   }) async {
-    final res = await _api.post('/resto/tables/merge', body: {
-      'sourceTableIds': sourceTableIds,
-      'targetTableId': targetTableId,
-    });
+    final res = await _api.post(
+      '/resto/tables/merge',
+      body: {'sourceTableIds': sourceTableIds, 'targetTableId': targetTableId},
+    );
     return res.isSuccess;
   }
 
@@ -151,10 +161,10 @@ class RestaurantOpsRepository {
     required String tableId,
     required int splitCount,
   }) async {
-    final res = await _api.post('/resto/tables/split', body: {
-      'tableId': tableId,
-      'splitCount': splitCount,
-    });
+    final res = await _api.post(
+      '/resto/tables/split',
+      body: {'tableId': tableId, 'splitCount': splitCount},
+    );
     return res.isSuccess;
   }
 
@@ -168,10 +178,10 @@ class RestaurantOpsRepository {
       'peopleCount': peopleCount,
       'itemSplits': itemSplits,
     }..removeWhere((_, value) => value == null);
-    final res = await _api.put('/resto/bills/$billId/split', body: {
-      'mode': mode,
-      ...optionalFields,
-    });
+    final res = await _api.put(
+      '/resto/bills/$billId/split',
+      body: {'mode': mode, ...optionalFields},
+    );
     if (!res.isSuccess) return null;
     return res.data?['data'] is Map
         ? Map<String, dynamic>.from(res.data!['data'] as Map)
@@ -192,13 +202,16 @@ class RestaurantOpsRepository {
     String? riderName,
     String? riderPhone,
   }) async {
-    final res = await _api.post('/resto/bills/$billId/delivery/assign', body: {
-      'riderId': riderId,
-      if (riderName != null && riderName.trim().isNotEmpty)
-        'riderName': riderName.trim(),
-      if (riderPhone != null && riderPhone.trim().isNotEmpty)
-        'riderPhone': riderPhone.trim(),
-    });
+    final res = await _api.post(
+      '/resto/bills/$billId/delivery/assign',
+      body: {
+        'riderId': riderId,
+        if (riderName != null && riderName.trim().isNotEmpty)
+          'riderName': riderName.trim(),
+        if (riderPhone != null && riderPhone.trim().isNotEmpty)
+          'riderPhone': riderPhone.trim(),
+      },
+    );
     return res.isSuccess;
   }
 
@@ -207,10 +220,13 @@ class RestaurantOpsRepository {
     required String status,
     String? note,
   }) async {
-    final res = await _api.post('/resto/bills/$billId/delivery/status', body: {
-      'status': status,
-      if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
-    });
+    final res = await _api.post(
+      '/resto/bills/$billId/delivery/status',
+      body: {
+        'status': status,
+        if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
+      },
+    );
     return res.isSuccess;
   }
 
@@ -245,11 +261,14 @@ class RestaurantOpsRepository {
     String? email,
     String? phone,
   }) async {
-    final res = await _api.post('/resto/bills/$billId/receipt/send', body: {
-      'channels': channels,
-      if (email != null && email.trim().isNotEmpty) 'email': email.trim(),
-      if (phone != null && phone.trim().isNotEmpty) 'phone': phone.trim(),
-    });
+    final res = await _api.post(
+      '/resto/bills/$billId/receipt/send',
+      body: {
+        'channels': channels,
+        if (email != null && email.trim().isNotEmpty) 'email': email.trim(),
+        if (phone != null && phone.trim().isNotEmpty) 'phone': phone.trim(),
+      },
+    );
     return res.isSuccess;
   }
 
@@ -270,11 +289,14 @@ class RestaurantOpsRepository {
     required int bundlePriceCents,
     required List<Map<String, dynamic>> items,
   }) async {
-    final res = await _api.post('/resto/combos', body: {
-      'name': name,
-      'bundlePriceCents': bundlePriceCents,
-      'items': items,
-    });
+    final res = await _api.post(
+      '/resto/combos',
+      body: {
+        'name': name,
+        'bundlePriceCents': bundlePriceCents,
+        'items': items,
+      },
+    );
     return res.isSuccess;
   }
 
@@ -284,11 +306,14 @@ class RestaurantOpsRepository {
     required int bundlePriceCents,
     required List<Map<String, dynamic>> items,
   }) async {
-    final res = await _api.put('/resto/combos/$comboId', body: {
-      'name': name,
-      'bundlePriceCents': bundlePriceCents,
-      'items': items,
-    });
+    final res = await _api.put(
+      '/resto/combos/$comboId',
+      body: {
+        'name': name,
+        'bundlePriceCents': bundlePriceCents,
+        'items': items,
+      },
+    );
     return res.isSuccess;
   }
 
@@ -312,15 +337,18 @@ class RestaurantOpsRepository {
     required String startTime,
     required String endTime,
   }) async {
-    final res = await _api.post('/resto/happy-hours', body: {
-      'name': name,
-      'discountType': discountType,
-      'discountValue': discountValue,
-      'menuItemIds': menuItemIds,
-      'daysOfWeek': daysOfWeek,
-      'startTime': startTime,
-      'endTime': endTime,
-    });
+    final res = await _api.post(
+      '/resto/happy-hours',
+      body: {
+        'name': name,
+        'discountType': discountType,
+        'discountValue': discountValue,
+        'menuItemIds': menuItemIds,
+        'daysOfWeek': daysOfWeek,
+        'startTime': startTime,
+        'endTime': endTime,
+      },
+    );
     return res.isSuccess;
   }
 
@@ -334,15 +362,18 @@ class RestaurantOpsRepository {
     required String startTime,
     required String endTime,
   }) async {
-    final res = await _api.put('/resto/happy-hours/$happyHourId', body: {
-      'name': name,
-      'discountType': discountType,
-      'discountValue': discountValue,
-      'menuItemIds': menuItemIds,
-      'daysOfWeek': daysOfWeek,
-      'startTime': startTime,
-      'endTime': endTime,
-    });
+    final res = await _api.put(
+      '/resto/happy-hours/$happyHourId',
+      body: {
+        'name': name,
+        'discountType': discountType,
+        'discountValue': discountValue,
+        'menuItemIds': menuItemIds,
+        'daysOfWeek': daysOfWeek,
+        'startTime': startTime,
+        'endTime': endTime,
+      },
+    );
     return res.isSuccess;
   }
 

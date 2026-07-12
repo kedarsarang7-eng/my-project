@@ -11,6 +11,10 @@ import '../../../../core/billing/business_type_config.dart';
 import '../../../../models/bill.dart';
 
 /// Adaptive Item Card that shows fields based on business type
+///
+/// For restaurant business type, the card delegates to [RestaurantStrategy]
+/// which includes a modifier picker (modifierIds / modifierPriceDelta) and
+/// variation selection via [FoodItemVariation] model.
 class AdaptiveItemCard extends StatefulWidget {
   final BillItem item;
   final int index;

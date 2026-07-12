@@ -15,6 +15,7 @@ import * as response from '../utils/response';
 import { logger } from '../utils/logger';
 import { logAudit } from '../middleware/audit';
 import { Keys, TABLE_NAME, queryItems, putItem, updateItem, getItem, transactWrite, batchGetItems, batchWrite } from '../config/dynamodb.config';
+import { RestaurantSkPrefix } from '../config/restaurant-keys';
 import { getCached, invalidateCacheByPrefix } from '../utils/cache';
 import * as invoiceService from '../services/invoice.service';
 import * as wsService from '../services/websocket.service';
@@ -211,12 +212,12 @@ async function validateBomStockForBill(
         // Fetch all menu items to get their linked products
         const menuKeys = Array.from(menuItemQty.keys()).map(id => ({
             PK: pk,
-            SK: `FOODMENUITEM#${id}`,
+            SK: `${RestaurantSkPrefix.MENU_ITEM}${id}`,
         }));
         const menuItems = await batchGetItems<Record<string, any>>(menuKeys);
         const menuToProduct = new Map<string, string>();
         for (const m of menuItems) {
-            const menuId = m.id || String(m.SK || '').replace('FOODMENUITEM#', '');
+            const menuId = m.id || String(m.SK || '').replace(RestaurantSkPrefix.MENU_ITEM, '');
             if (m.productId) menuToProduct.set(menuId, m.productId);
         }
 
@@ -310,14 +311,14 @@ export const getTables = authorizedHandler([], async (event: APIGatewayProxyEven
         15,
         async () => {
             const pk = Keys.tenantPK(auth.tenantId);
-            const tables = await queryItems<Record<string, any>>(pk, 'RESTOTABLE#', {
+            const tables = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.TABLE, {
                 filterExpression: 'isActive = :true AND (attribute_not_exists(isDeleted) OR isDeleted = :false)',
                 expressionAttributeValues: { ':true': true, ':false': false },
             });
             const result = await Promise.all(
                 tables.items.map(async (t: any) => {
                     const floor = t.floorId
-                        ? await getItem<Record<string, any>>(pk, `RESTOFLOOR#${t.floorId}`)
+                        ? await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.FLOOR}${t.floorId}`)
                         : null;
                     return {
                         id: t.id,
@@ -343,11 +344,11 @@ export const getMenu = authorizedHandler([], async (event: APIGatewayProxyEventV
         async () => {
             const pk = Keys.tenantPK(auth.tenantId);
             const [categories, menuItems] = await Promise.all([
-                queryItems<Record<string, any>>(pk, 'FOODCATEGORY#', {
+                queryItems<Record<string, any>>(pk, RestaurantSkPrefix.CATEGORY, {
                     filterExpression: 'isActive = :true AND (attribute_not_exists(isDeleted) OR isDeleted = :false)',
                     expressionAttributeValues: { ':true': true, ':false': false },
                 }),
-                queryItems<Record<string, any>>(pk, 'FOODMENUITEM#', {
+                queryItems<Record<string, any>>(pk, RestaurantSkPrefix.MENU_ITEM, {
                     filterExpression: 'isActive = :true AND (attribute_not_exists(isDeleted) OR isDeleted = :false)',
                     expressionAttributeValues: { ':true': true, ':false': false },
                 }),
@@ -364,7 +365,7 @@ export const listCombos = authorizedHandler(
     [UserRole.OWNER, UserRole.ADMIN, UserRole.MANAGER, UserRole.CASHIER, UserRole.STAFF],
     async (_event: APIGatewayProxyEventV2, _context: Context, auth: AuthContext) => {
         const pk = Keys.tenantPK(auth.tenantId);
-        const combos = await queryItems<Record<string, any>>(pk, 'RESTOCOMBO#', {
+        const combos = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.COMBO, {
             filterExpression: '(attribute_not_exists(isDeleted) OR isDeleted = :false)',
             expressionAttributeValues: { ':false': false },
         });
@@ -396,11 +397,11 @@ export const createKOT = authorizedHandler(
             // -- 1. Resolve menu items and snapshot prices
             const menuItemKeys = body.items.map((item: any) => ({
                 PK: pk,
-                SK: `FOODMENUITEM#${item.menuItemId}`,
+                SK: `${RestaurantSkPrefix.MENU_ITEM}${item.menuItemId}`,
             }));
             const menuItems = await batchGetItems<Record<string, any>>(menuItemKeys);
             const menuMap = new Map(
-                menuItems.map((m: any) => [m.id || m.SK?.replace('FOODMENUITEM#', ''), m]),
+                menuItems.map((m: any) => [m.id || m.SK?.replace(RestaurantSkPrefix.MENU_ITEM, ''), m]),
             );
 
             const enrichedItems: Array<any> = [];
@@ -470,7 +471,7 @@ export const createKOT = authorizedHandler(
             }
 
             // -- 2. Apply combo pricing
-            const comboRows = await queryItems<Record<string, any>>(pk, 'RESTOCOMBO#', {
+            const comboRows = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.COMBO, {
                 filterExpression:
                     '(attribute_not_exists(isDeleted) OR isDeleted = :false) AND isActive = :true',
                 expressionAttributeValues: { ':false': false, ':true': true },
@@ -495,7 +496,7 @@ export const createKOT = authorizedHandler(
             
             const comboPricing = applyComboPricing(expandedUnits, comboRows.items, now);
             
-            const happyHourRows = await queryItems<Record<string, any>>(pk, 'RESTOHAPPYHOUR#', {
+            const happyHourRows = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.HAPPY_HOUR, {
                 filterExpression:
                     '(attribute_not_exists(isDeleted) OR isDeleted = :false) AND isActive = :true',
                 expressionAttributeValues: { ':false': false, ':true': true },
@@ -530,7 +531,7 @@ export const createKOT = authorizedHandler(
             const tableId = isDineIn ? body.tableId! : null;
 
             if (isDineIn) {
-                const table = await getItem<Record<string, any>>(pk, `RESTOTABLE#${tableId}`);
+                const table = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.TABLE}${tableId}`);
                 if (!table || table.isDeleted) {
                     return response.badRequest('Table not found');
                 }
@@ -538,7 +539,7 @@ export const createKOT = authorizedHandler(
                 if (table.currentBillId) {
                     const existingBill = await getItem<Record<string, any>>(
                         pk,
-                        `RESTOBILL#${table.currentBillId}`,
+                        `${RestaurantSkPrefix.BILL}${table.currentBillId}`,
                     );
                     if (!existingBill || existingBill.status !== 'open') {
                         return response.badRequest('Table has a non-open bill. Release the table first.');
@@ -556,7 +557,7 @@ export const createKOT = authorizedHandler(
                                     TableName: TABLE_NAME,
                                     Item: {
                                         PK: pk,
-                                        SK: `RESTOBILL#${billId}`,
+                                        SK: `${RestaurantSkPrefix.BILL}${billId}`,
                                         entityType: 'RESTAURANT_BILL',
                                         id: billId,
                                         tenantId: auth.tenantId,
@@ -577,7 +578,7 @@ export const createKOT = authorizedHandler(
                             {
                                 Update: {
                                     TableName: TABLE_NAME,
-                                    Key: { PK: pk, SK: `RESTOTABLE#${tableId}` },
+                                    Key: { PK: pk, SK: `${RestaurantSkPrefix.TABLE}${tableId}` },
                                     UpdateExpression:
                                         'SET #s = :occupied, currentBillId = :bid, updatedAt = :now',
                                     ConditionExpression: '#s = :available',
@@ -609,7 +610,7 @@ export const createKOT = authorizedHandler(
                 isNewBill = true;
                 await putItem({
                     PK: pk,
-                    SK: `RESTOBILL#${billId}`,
+                    SK: `${RestaurantSkPrefix.BILL}${billId}`,
                     entityType: 'RESTAURANT_BILL',
                     id: billId,
                     tenantId: auth.tenantId,
@@ -635,7 +636,7 @@ export const createKOT = authorizedHandler(
             const kotId = crypto.randomUUID();
             await putItem({
                 PK: pk,
-                SK: `KOT#${kotId}`,
+                SK: `${RestaurantSkPrefix.KOT}${kotId}`,
                 entityType: 'KOT',
                 id: kotId,
                 tenantId: auth.tenantId,
@@ -654,7 +655,7 @@ export const createKOT = authorizedHandler(
                 type: 'put' as const,
                 item: {
                     PK: pk,
-                    SK: `KOTITEM#${crypto.randomUUID()}`,
+                    SK: `${RestaurantSkPrefix.KOT_ITEM}${crypto.randomUUID()}`,
                     entityType: 'KOT_ITEM',
                     tenantId: auth.tenantId,
                     billId,
@@ -684,12 +685,12 @@ export const createKOT = authorizedHandler(
 
             // -- 5. Update bill total
             if (!isNewBill) {
-                await updateItem(pk, `RESTOBILL#${billId}`, {
+                await updateItem(pk, `${RestaurantSkPrefix.BILL}${billId}`, {
                     updateExpression: 'SET totalAmountCents = totalAmountCents + :kotTotal, updatedAt = :now',
                     expressionAttributeValues: { ':kotTotal': kotTotalCents, ':now': now },
                 });
             } else {
-                await updateItem(pk, `RESTOBILL#${billId}`, {
+                await updateItem(pk, `${RestaurantSkPrefix.BILL}${billId}`, {
                     updateExpression: 'SET totalAmountCents = :kotTotal, updatedAt = :now',
                     expressionAttributeValues: { ':kotTotal': kotTotalCents, ':now': now },
                 });
@@ -783,14 +784,14 @@ export const checkoutTable = authorizedHandler(
         const now = new Date().toISOString();
 
         try {
-            const table = await getItem<Record<string, any>>(pk, `RESTOTABLE#${tableId}`);
+            const table = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.TABLE}${tableId}`);
             if (!table?.currentBillId) return response.badRequest('No active open bill on this table');
 
             const billId = table.currentBillId;
-            const bill = await getItem<Record<string, any>>(pk, `RESTOBILL#${billId}`);
+            const bill = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.BILL}${billId}`);
             if (!bill || bill.status !== 'open') return response.badRequest('No active open bill on this table');
 
-            await updateItem(pk, `RESTOBILL#${billId}`, {
+            await updateItem(pk, `${RestaurantSkPrefix.BILL}${billId}`, {
                 updateExpression: 'SET #s = :pending, updatedAt = :now',
                 conditionExpression: '#s = :open',
                 expressionAttributeNames: { '#s': 'status' },
@@ -835,7 +836,7 @@ export const settleBill = authorizedHandler(
 
         try {
             // -- 1. Validate bill
-            const bill = await getItem<Record<string, any>>(pk, `RESTOBILL#${billId}`);
+            const bill = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.BILL}${billId}`);
             if (!bill) return response.badRequest('Bill not found');
             if (bill.status !== 'open' && bill.status !== 'payment_pending') {
                 return response.badRequest(`Bill is already '${bill.status}'. Cannot settle.`);
@@ -845,7 +846,7 @@ export const settleBill = authorizedHandler(
             }
 
             // -- 2. Query all non-cancelled KOT items
-            const kotItems = await queryItems<Record<string, any>>(pk, 'KOTITEM#', {
+            const kotItems = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.KOT_ITEM, {
                 filterExpression:
                     'billId = :billId AND (attribute_not_exists(itemStatus) OR itemStatus <> :cancelled)',
                 expressionAttributeValues: { ':billId': billId, ':cancelled': 'cancelled' },
@@ -954,7 +955,7 @@ export const settleBill = authorizedHandler(
             );
 
             // -- 5. Stamp invoice onto bill
-            await updateItem(pk, `RESTOBILL#${billId}`, {
+            await updateItem(pk, `${RestaurantSkPrefix.BILL}${billId}`, {
                 updateExpression: 'SET #s = :settled, invoiceId = :invId, totalAmountCents = :total, updatedAt = :now',
                 conditionExpression: '#s = :open OR #s = :pending',
                 expressionAttributeNames: { '#s': 'status' },
@@ -1064,7 +1065,7 @@ export const releaseTable = authorizedHandler(
         const now = new Date().toISOString();
 
         try {
-            const table = await getItem<Record<string, any>>(pk, `RESTOTABLE#${tableId}`);
+            const table = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.TABLE}${tableId}`);
             if (!table) return response.badRequest('Table not found');
 
             if (!table.currentBillId) {
@@ -1072,9 +1073,9 @@ export const releaseTable = authorizedHandler(
             }
 
             const billId = table.currentBillId;
-            const bill = await getItem<Record<string, any>>(pk, `RESTOBILL#${billId}`);
+            const bill = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.BILL}${billId}`);
             if (!bill) {
-                await updateItem(pk, `RESTOTABLE#${tableId}`, {
+                await updateItem(pk, `${RestaurantSkPrefix.TABLE}${tableId}`, {
                     updateExpression: 'SET #s = :available, currentBillId = :null, updatedAt = :now',
                     expressionAttributeNames: { '#s': 'status' },
                     expressionAttributeValues: { ':available': 'available', ':null': null, ':now': now },
@@ -1096,7 +1097,7 @@ export const releaseTable = authorizedHandler(
                 {
                     Update: {
                         TableName: TABLE_NAME,
-                        Key: { PK: pk, SK: `RESTOBILL#${billId}` },
+                        Key: { PK: pk, SK: `${RestaurantSkPrefix.BILL}${billId}` },
                         UpdateExpression: 'SET #s = :closed, updatedAt = :now',
                         ConditionExpression: '#s = :settled',
                         ExpressionAttributeNames: { '#s': 'status' },
@@ -1106,7 +1107,7 @@ export const releaseTable = authorizedHandler(
                 {
                     Update: {
                         TableName: TABLE_NAME,
-                        Key: { PK: pk, SK: `RESTOTABLE#${tableId}` },
+                        Key: { PK: pk, SK: `${RestaurantSkPrefix.TABLE}${tableId}` },
                         UpdateExpression: 'SET #s = :available, currentBillId = :null, updatedAt = :now',
                         ConditionExpression: 'currentBillId = :bid',
                         ExpressionAttributeNames: { '#s': 'status' },
@@ -1175,10 +1176,10 @@ export const updateKotItemStatus = authorizedHandler(
         const now = new Date().toISOString();
 
         try {
-            const kot = await getItem<Record<string, any>>(pk, `KOT#${kotId}`);
+            const kot = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.KOT}${kotId}`);
             if (!kot) return response.badRequest('KOT not found');
 
-            const kotItem = await getItem<Record<string, any>>(pk, `KOTITEM#${itemId}`);
+            const kotItem = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.KOT_ITEM}${itemId}`);
             if (!kotItem || kotItem.kotId !== kotId) {
                 return response.badRequest('KOT item not found or does not belong to this KOT');
             }
@@ -1199,7 +1200,7 @@ export const updateKotItemStatus = authorizedHandler(
                 );
             }
 
-            await updateItem(pk, `KOTITEM#${itemId}`, {
+            await updateItem(pk, `${RestaurantSkPrefix.KOT_ITEM}${itemId}`, {
                 updateExpression: 'SET itemStatus = :status, updatedAt = :now, updatedBy = :user',
                 conditionExpression: 'kotId = :kotId',
                 expressionAttributeValues: { ':status': itemStatus, ':now': now, ':user': auth.sub, ':kotId': kotId },
@@ -1262,10 +1263,10 @@ export const cancelKotItem = authorizedHandler(
         const now = new Date().toISOString();
 
         try {
-            const kot = await getItem<Record<string, any>>(pk, `KOT#${kotId}`);
+            const kot = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.KOT}${kotId}`);
             if (!kot) return response.badRequest('KOT not found');
 
-            const kotItem = await getItem<Record<string, any>>(pk, `KOTITEM#${itemId}`);
+            const kotItem = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.KOT_ITEM}${itemId}`);
             if (!kotItem || kotItem.kotId !== kotId) {
                 return response.badRequest('KOT item not found or does not belong to this KOT');
             }
@@ -1282,7 +1283,7 @@ export const cancelKotItem = authorizedHandler(
                 {
                     Update: {
                         TableName: TABLE_NAME,
-                        Key: { PK: pk, SK: `KOTITEM#${itemId}` },
+                        Key: { PK: pk, SK: `${RestaurantSkPrefix.KOT_ITEM}${itemId}` },
                         UpdateExpression:
                             'SET itemStatus = :cancelled, cancellationReason = :reason, cancelledBy = :user, cancelledAt = :now, updatedAt = :now',
                         ConditionExpression: 'kotId = :kotId AND itemStatus <> :cancelled',
@@ -1298,7 +1299,7 @@ export const cancelKotItem = authorizedHandler(
                 {
                     Update: {
                         TableName: TABLE_NAME,
-                        Key: { PK: pk, SK: `RESTOBILL#${kot.billId}` },
+                        Key: { PK: pk, SK: `${RestaurantSkPrefix.BILL}${kot.billId}` },
                         UpdateExpression: 'SET totalAmountCents = totalAmountCents - :amount, updatedAt = :now',
                         ExpressionAttributeValues: { ':amount': lineTotalCents, ':now': now },
                     },
@@ -1378,13 +1379,13 @@ export const listActiveKots = authorizedHandler(
         const station = event.queryStringParameters?.station?.trim() || null;
 
         const pk = Keys.tenantPK(auth.tenantId);
-        const kots = await queryItems<Record<string, any>>(pk, 'KOT#', {
+        const kots = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.KOT, {
             filterExpression:
                 '(attribute_not_exists(kotStatus) OR kotStatus <> :done) AND (attribute_not_exists(kotStatus) OR kotStatus <> :cancelled)',
             expressionAttributeValues: { ':done': 'done', ':cancelled': 'cancelled' },
         });
 
-        const items = await queryItems<Record<string, any>>(pk, 'KOTITEM#', {
+        const items = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.KOT_ITEM, {
             filterExpression:
                 '(attribute_not_exists(itemStatus) OR itemStatus <> :served) AND (attribute_not_exists(itemStatus) OR itemStatus <> :cancelled)',
             expressionAttributeValues: { ':served': 'served', ':cancelled': 'cancelled' },
@@ -1406,7 +1407,7 @@ export const listActiveKots = authorizedHandler(
             })
             .filter((k: any) => !station || String(k.station || '') === station)
             .map((k: any) => {
-                const kotId = String(k.SK || '').replace('KOT#', '');
+                const kotId = String(k.SK || '').replace(RestaurantSkPrefix.KOT, '');
                 const kotItems = itemsByKot.get(kotId) || [];
                 const ageSeconds = k.createdAt ? now.diff(dayjs(k.createdAt), 'second') : 0;
 
@@ -1425,7 +1426,7 @@ export const listActiveKots = authorizedHandler(
                     ageSeconds,
                     ageMinutes: Number((ageSeconds / 60).toFixed(2)),
                     items: kotItems.map((i: any) => ({
-                        itemId: String(i.SK || '').replace('KOTITEM#', ''),
+                        itemId: String(i.SK || '').replace(RestaurantSkPrefix.KOT_ITEM, ''),
                         menuItemId: i.menuItemId || null,
                         menuItemName: i.menuItemName || 'Unknown',
                         quantity: i.quantity || 1,
@@ -1455,8 +1456,8 @@ export const transferTable = authorizedHandler(
         if (fromTableId === toTableId) return response.error(400, 'SAME_TABLE', 'Source and target table cannot be same');
 
         const pk = Keys.tenantPK(auth.tenantId);
-        const fromTable = await getItem<Record<string, any>>(pk, `RESTOTABLE#${fromTableId}`);
-        const toTable = await getItem<Record<string, any>>(pk, `RESTOTABLE#${toTableId}`);
+        const fromTable = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.TABLE}${fromTableId}`);
+        const toTable = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.TABLE}${toTableId}`);
 
         if (!fromTable || fromTable.isDeleted) return response.error(404, 'SOURCE_TABLE_NOT_FOUND', 'Source table not found');
         if (!toTable || toTable.isDeleted) return response.error(404, 'TARGET_TABLE_NOT_FOUND', 'Target table not found');
@@ -1466,7 +1467,7 @@ export const transferTable = authorizedHandler(
         }
 
         const billId = String(fromTable.currentBillId);
-        const bill = await getItem<Record<string, any>>(pk, `RESTOBILL#${billId}`);
+        const bill = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.BILL}${billId}`);
         if (!bill || bill.isDeleted) return response.error(404, 'BILL_NOT_FOUND', 'Active bill not found');
         if (!['open', 'payment_pending'].includes(String(bill.status || ''))) {
             return response.error(409, 'INVALID_BILL_STATUS', `Cannot transfer bill in status '${bill.status}'`);
@@ -1477,7 +1478,7 @@ export const transferTable = authorizedHandler(
             {
                 Update: {
                     TableName: TABLE_NAME,
-                    Key: { PK: pk, SK: `RESTOTABLE#${fromTableId}` },
+                    Key: { PK: pk, SK: `${RestaurantSkPrefix.TABLE}${fromTableId}` },
                     UpdateExpression: 'SET #s = :available, currentBillId = :null, updatedAt = :now',
                     ExpressionAttributeNames: { '#s': 'status' },
                     ExpressionAttributeValues: { ':available': 'available', ':null': null, ':now': now, ':billId': billId },
@@ -1487,7 +1488,7 @@ export const transferTable = authorizedHandler(
             {
                 Update: {
                     TableName: TABLE_NAME,
-                    Key: { PK: pk, SK: `RESTOTABLE#${toTableId}` },
+                    Key: { PK: pk, SK: `${RestaurantSkPrefix.TABLE}${toTableId}` },
                     UpdateExpression: 'SET #s = :occupied, currentBillId = :billId, updatedAt = :now',
                     ExpressionAttributeNames: { '#s': 'status' },
                     ExpressionAttributeValues: { ':occupied': 'occupied', ':billId': billId, ':available': 'available', ':now': now },
@@ -1497,7 +1498,7 @@ export const transferTable = authorizedHandler(
             {
                 Update: {
                     TableName: TABLE_NAME,
-                    Key: { PK: pk, SK: `RESTOBILL#${billId}` },
+                    Key: { PK: pk, SK: `${RestaurantSkPrefix.BILL}${billId}` },
                     UpdateExpression: 'SET tableId = :toTableId, updatedAt = :now, transferReason = :reason',
                     ExpressionAttributeValues: { ':toTableId': toTableId, ':now': now, ':reason': reason || null },
                 },
@@ -1530,8 +1531,8 @@ export const mergeTables = authorizedHandler(
         if (primaryTableId === secondaryTableId) return response.error(400, 'SAME_TABLE', 'Cannot merge same table');
 
         const pk = Keys.tenantPK(auth.tenantId);
-        const primary = await getItem<Record<string, any>>(pk, `RESTOTABLE#${primaryTableId}`);
-        const secondary = await getItem<Record<string, any>>(pk, `RESTOTABLE#${secondaryTableId}`);
+        const primary = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.TABLE}${primaryTableId}`);
+        const secondary = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.TABLE}${secondaryTableId}`);
 
         if (!primary || primary.isDeleted) return response.error(404, 'PRIMARY_TABLE_NOT_FOUND', 'Primary table not found');
         if (!secondary || secondary.isDeleted) return response.error(404, 'SECONDARY_TABLE_NOT_FOUND', 'Secondary table not found');
@@ -1544,8 +1545,8 @@ export const mergeTables = authorizedHandler(
 
         const primaryBillId = String(primary.currentBillId);
         const secondaryBillId = String(secondary.currentBillId);
-        const primaryBill = await getItem<Record<string, any>>(pk, `RESTOBILL#${primaryBillId}`);
-        const secondaryBill = await getItem<Record<string, any>>(pk, `RESTOBILL#${secondaryBillId}`);
+        const primaryBill = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.BILL}${primaryBillId}`);
+        const secondaryBill = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.BILL}${secondaryBillId}`);
 
         if (!primaryBill || !secondaryBill) return response.error(404, 'BILL_NOT_FOUND', 'One or more bills not found');
         if (
@@ -1555,7 +1556,7 @@ export const mergeTables = authorizedHandler(
             return response.error(409, 'INVALID_BILL_STATUS', 'Only open/payment_pending bills can be merged');
         }
 
-        const secondaryItems = await queryItems<Record<string, any>>(pk, 'KOTITEM#', {
+        const secondaryItems = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.KOT_ITEM, {
             filterExpression: 'billId = :billId AND (attribute_not_exists(itemStatus) OR itemStatus <> :cancelled)',
             expressionAttributeValues: { ':billId': secondaryBillId, ':cancelled': 'cancelled' },
         });
@@ -1573,7 +1574,7 @@ export const mergeTables = authorizedHandler(
             {
                 Update: {
                     TableName: TABLE_NAME,
-                    Key: { PK: pk, SK: `RESTOBILL#${primaryBillId}` },
+                    Key: { PK: pk, SK: `${RestaurantSkPrefix.BILL}${primaryBillId}` },
                     UpdateExpression:
                         'SET totalAmountCents = :mergedTotal, mergedFromBillIds = list_append(if_not_exists(mergedFromBillIds, :empty), :src), updatedAt = :now',
                     ExpressionAttributeValues: { ':mergedTotal': mergedTotal, ':src': [secondaryBillId], ':empty': [], ':now': now },
@@ -1582,7 +1583,7 @@ export const mergeTables = authorizedHandler(
             {
                 Update: {
                     TableName: TABLE_NAME,
-                    Key: { PK: pk, SK: `RESTOBILL#${secondaryBillId}` },
+                    Key: { PK: pk, SK: `${RestaurantSkPrefix.BILL}${secondaryBillId}` },
                     UpdateExpression: 'SET #s = :merged, mergedIntoBillId = :target, mergeReason = :reason, updatedAt = :now',
                     ExpressionAttributeNames: { '#s': 'status' },
                     ExpressionAttributeValues: { ':merged': 'merged', ':target': primaryBillId, ':reason': reason || null, ':now': now },
@@ -1591,7 +1592,7 @@ export const mergeTables = authorizedHandler(
             {
                 Update: {
                     TableName: TABLE_NAME,
-                    Key: { PK: pk, SK: `RESTOTABLE#${secondaryTableId}` },
+                    Key: { PK: pk, SK: `${RestaurantSkPrefix.TABLE}${secondaryTableId}` },
                     UpdateExpression: 'SET #s = :available, currentBillId = :null, updatedAt = :now',
                     ExpressionAttributeNames: { '#s': 'status' },
                     ExpressionAttributeValues: { ':available': 'available', ':null': null, ':now': now },
@@ -1636,13 +1637,13 @@ export const splitBill = authorizedHandler(
         if (!valid.success) return valid.error;
 
         const pk = Keys.tenantPK(auth.tenantId);
-        const bill = await getItem<Record<string, any>>(pk, `RESTOBILL#${billId}`);
+        const bill = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.BILL}${billId}`);
         if (!bill || bill.isDeleted) return response.notFound('Bill not found');
         if (bill.status === 'closed' || bill.status === 'settled') {
             return response.error(409, 'BILL_FINALIZED', 'Cannot split finalized bill');
         }
 
-        const kotItems = await queryItems<Record<string, any>>(pk, 'KOTITEM#', {
+        const kotItems = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.KOT_ITEM, {
             filterExpression: 'billId = :billId AND (attribute_not_exists(itemStatus) OR itemStatus <> :cancelled)',
             expressionAttributeValues: { ':billId': billId, ':cancelled': 'cancelled' },
         });
@@ -1663,7 +1664,7 @@ export const splitBill = authorizedHandler(
             }
         } else if (mode === 'by_item') {
             const personItemMap = new Map<string, { amountCents: number; itemIds: string[] }>();
-            const itemMap = new Map(kotItems.items.map((x: any) => [String(x.SK || '').replace('KOTITEM#', ''), x]));
+            const itemMap = new Map(kotItems.items.map((x: any) => [String(x.SK || '').replace(RestaurantSkPrefix.KOT_ITEM, ''), x]));
             for (const a of valid.data.assignments || []) {
                 const itemId = a.itemId!;
                 const item = itemMap.get(itemId);
@@ -1695,7 +1696,7 @@ export const splitBill = authorizedHandler(
         const splitPlanId = crypto.randomUUID();
         const now = new Date().toISOString();
 
-        await updateItem(pk, `RESTOBILL#${billId}`, {
+        await updateItem(pk, `${RestaurantSkPrefix.BILL}${billId}`, {
             updateExpression: 'SET splitBillPlan = :plan, updatedAt = :now',
             expressionAttributeValues: {
                 ':plan': {
@@ -1760,7 +1761,7 @@ export const createMenuItem = authorizedHandler(
         if (!valid.success) return valid.error;
 
         const pk = Keys.tenantPK(auth.tenantId);
-        const category = await getItem<Record<string, any>>(pk, `FOODCATEGORY#${valid.data.categoryId}`);
+        const category = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.CATEGORY}${valid.data.categoryId}`);
         if (!category || category.isDeleted || category.isActive === false) {
             return response.badRequest('Category not found or inactive');
         }
@@ -1770,7 +1771,7 @@ export const createMenuItem = authorizedHandler(
 
         await putItem({
             PK: pk,
-            SK: `FOODMENUITEM#${itemId}`,
+            SK: `${RestaurantSkPrefix.MENU_ITEM}${itemId}`,
             entityType: 'FOOD_MENU_ITEM',
             id: itemId,
             tenantId: auth.tenantId,
@@ -1814,11 +1815,11 @@ export const updateMenuItem = authorizedHandler(
         if (!valid.success) return valid.error;
 
         const pk = Keys.tenantPK(auth.tenantId);
-        const existing = await getItem<Record<string, any>>(pk, `FOODMENUITEM#${itemId}`);
+        const existing = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.MENU_ITEM}${itemId}`);
         if (!existing || existing.isDeleted) return response.notFound('Menu item not found');
 
         if (valid.data.categoryId) {
-            const category = await getItem<Record<string, any>>(pk, `FOODCATEGORY#${valid.data.categoryId}`);
+            const category = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.CATEGORY}${valid.data.categoryId}`);
             if (!category || category.isDeleted || category.isActive === false) {
                 return response.badRequest('Category not found or inactive');
             }
@@ -1847,7 +1848,7 @@ export const updateMenuItem = authorizedHandler(
         if (valid.data.imageUrl !== undefined) mapField('imageUrl', 'imageUrl', valid.data.imageUrl || null);
         if (valid.data.isActive !== undefined) mapField('isActive', 'isActive', valid.data.isActive);
 
-        await updateItem(pk, `FOODMENUITEM#${itemId}`, {
+        await updateItem(pk, `${RestaurantSkPrefix.MENU_ITEM}${itemId}`, {
             updateExpression: `SET ${setParts.join(', ')}`,
             expressionAttributeNames: Object.keys(names).length > 0 ? names : undefined,
             expressionAttributeValues: values,
@@ -1874,10 +1875,10 @@ export const deleteMenuItem = authorizedHandler(
         if (!itemId) return response.badRequest('Missing menu item ID');
 
         const pk = Keys.tenantPK(auth.tenantId);
-        const item = await getItem<Record<string, any>>(pk, `FOODMENUITEM#${itemId}`);
+        const item = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.MENU_ITEM}${itemId}`);
         if (!item || item.isDeleted) return response.notFound('Menu item not found');
 
-        await updateItem(pk, `FOODMENUITEM#${itemId}`, {
+        await updateItem(pk, `${RestaurantSkPrefix.MENU_ITEM}${itemId}`, {
             updateExpression: 'SET isDeleted = :true, isActive = :false, updatedAt = :now',
             expressionAttributeValues: { ':true': true, ':false': false, ':now': new Date().toISOString() },
         });
@@ -1912,12 +1913,12 @@ export const kdsAnalytics = authorizedHandler(
         const end = `${toDate}T23:59:59.999Z`;
 
         const pk = Keys.tenantPK(auth.tenantId);
-        const kots = await queryItems<Record<string, any>>(pk, 'KOT#', {
+        const kots = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.KOT, {
             filterExpression: 'createdAt >= :from AND createdAt <= :to',
             expressionAttributeValues: { ':from': start, ':to': end },
         });
 
-        const kotItems = await queryItems<Record<string, any>>(pk, 'KOTITEM#', {
+        const kotItems = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.KOT_ITEM, {
             filterExpression: 'createdAt >= :from AND createdAt <= :to',
             expressionAttributeValues: { ':from': start, ':to': end },
         });
@@ -1985,7 +1986,7 @@ export const kdsAgingAlerts = authorizedHandler(
         const slaMinutes = Math.max(1, Math.min(240, Number(event.queryStringParameters?.slaMinutes || 20)));
         const pk = Keys.tenantPK(auth.tenantId);
 
-        const items = await queryItems<Record<string, any>>(pk, 'KOTITEM#', {
+        const items = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.KOT_ITEM, {
             filterExpression:
                 '(attribute_not_exists(itemStatus) OR itemStatus <> :served) AND (attribute_not_exists(itemStatus) OR itemStatus <> :cancelled)',
             expressionAttributeValues: { ':served': 'served', ':cancelled': 'cancelled' },
@@ -2002,7 +2003,7 @@ export const kdsAgingAlerts = authorizedHandler(
             .map((i: any) => {
                 const ageSec = now.diff(dayjs(i.createdAt), 'second');
                 return {
-                    itemId: String(i.SK || '').replace('KOTITEM#', ''),
+                    itemId: String(i.SK || '').replace(RestaurantSkPrefix.KOT_ITEM, ''),
                     kotId: i.kotId || null,
                     billId: i.billId || null,
                     menuItemName: i.menuItemName || 'Unknown',
@@ -2042,11 +2043,11 @@ export const assignDeliveryRider = authorizedHandler(
             ? new Date(Date.now() + valid.data.etaMinutes * 60000).toISOString()
             : null;
 
-        const bill = await getItem<Record<string, any>>(pk, `RESTOBILL#${billId}`);
+        const bill = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.BILL}${billId}`);
         if (!bill || bill.isDeleted) return response.notFound('Bill not found');
         if (bill.orderType !== 'delivery') return response.error(400, 'NOT_DELIVERY_ORDER', 'Bill is not a delivery order');
 
-        await updateItem(pk, `RESTOBILL#${billId}`, {
+        await updateItem(pk, `${RestaurantSkPrefix.BILL}${billId}`, {
             updateExpression: 'SET riderId = :riderId, riderName = :riderName, riderPhone = :riderPhone, deliveryEtaAt = :etaAt, deliveryStatus = :status, deliveryAssignedAt = :now, updatedAt = :now',
             expressionAttributeValues: {
                 ':riderId': valid.data.riderId,
@@ -2095,7 +2096,7 @@ export const updateDeliveryStatus = authorizedHandler(
         const pk = Keys.tenantPK(auth.tenantId);
         const now = new Date().toISOString();
 
-        const bill = await getItem<Record<string, any>>(pk, `RESTOBILL#${billId}`);
+        const bill = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.BILL}${billId}`);
         if (!bill || bill.isDeleted) return response.notFound('Bill not found');
         if (bill.orderType !== 'delivery') return response.error(400, 'NOT_DELIVERY_ORDER', 'Bill is not a delivery order');
 
@@ -2129,7 +2130,7 @@ export const updateDeliveryStatus = authorizedHandler(
             setParts.push('deliveryClosedAt = :now');
         }
 
-        await updateItem(pk, `RESTOBILL#${billId}`, {
+        await updateItem(pk, `${RestaurantSkPrefix.BILL}${billId}`, {
             updateExpression: `SET ${setParts.join(', ')}`,
             expressionAttributeValues: values,
         });
@@ -2179,10 +2180,10 @@ export const exportKotReceipt = authorizedHandler(
         if (!kotId) return response.badRequest('Missing kotId');
 
         const pk = Keys.tenantPK(auth.tenantId);
-        const kot = await getItem<Record<string, any>>(pk, `KOT#${kotId}`);
+        const kot = await getItem<Record<string, any>>(pk, `${RestaurantSkPrefix.KOT}${kotId}`);
         if (!kot || kot.isDeleted) return response.notFound('KOT not found');
 
-        const kotItems = await queryItems<Record<string, any>>(pk, 'KOTITEM#', {
+        const kotItems = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.KOT_ITEM, {
             filterExpression: 'kotId = :kotId',
             expressionAttributeValues: { ':kotId': kotId },
         });
@@ -2222,7 +2223,7 @@ export const getSalesSummary = authorizedHandler(
         const end = `${toDate}T23:59:59.999Z`;
 
         const pk = Keys.tenantPK(auth.tenantId);
-        const bills = await queryItems<Record<string, any>>(pk, 'RESTOBILL#', {
+        const bills = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.BILL, {
             filterExpression: 'createdAt >= :from AND createdAt <= :to',
             expressionAttributeValues: { ':from': start, ':to': end },
         });
@@ -2239,12 +2240,12 @@ export const getSalesSummary = authorizedHandler(
             byOrderType.set(type, current);
         }
 
-        const kots = await queryItems<Record<string, any>>(pk, 'KOT#', {
+        const kots = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.KOT, {
             filterExpression: 'createdAt >= :from AND createdAt <= :to',
             expressionAttributeValues: { ':from': start, ':to': end },
         });
 
-        const cancelledItems = await queryItems<Record<string, any>>(pk, 'KOTITEM#', {
+        const cancelledItems = await queryItems<Record<string, any>>(pk, RestaurantSkPrefix.KOT_ITEM, {
             filterExpression: 'itemStatus = :cancelled AND createdAt >= :from AND createdAt <= :to',
             expressionAttributeValues: { ':cancelled': 'cancelled', ':from': start, ':to': end },
         });

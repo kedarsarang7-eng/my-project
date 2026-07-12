@@ -411,71 +411,83 @@ class _RestaurantDailySummaryScreenState
       );
     }
 
+    // Compute busiest hour for the Semantics label
+    final maxHourEntry = _ordersPerHour.entries.reduce(
+      (a, b) => a.value >= b.value ? a : b,
+    );
+    final maxHour = maxHourEntry.key;
+    final maxCount = maxHourEntry.value;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: SizedBox(
-          height: 200,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              maxY: (_ordersPerHour.values.reduce((a, b) => a > b ? a : b) + 2)
-                  .toDouble(),
-              barTouchData: BarTouchData(
-                enabled: true,
-                touchTooltipData: BarTouchTooltipData(
-                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    return BarTooltipItem(
-                      '${rod.toY.toInt()} orders',
-                      const TextStyle(color: Colors.white),
-                    );
-                  },
-                ),
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    getTitlesWidget: (value, meta) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                          '${value.toInt()}:00',
-                          style: const TextStyle(fontSize: 10),
-                        ),
+        child: Semantics(
+          label:
+              'Orders by hour bar chart: busiest hour $maxHour:00 with $maxCount orders',
+          child: SizedBox(
+            height: 200,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY:
+                    (_ordersPerHour.values.reduce((a, b) => a > b ? a : b) + 2)
+                        .toDouble(),
+                barTouchData: BarTouchData(
+                  enabled: true,
+                  touchTooltipData: BarTouchTooltipData(
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      return BarTooltipItem(
+                        '${rod.toY.toInt()} orders',
+                        const TextStyle(color: Colors.white),
                       );
                     },
-                    reservedSize: 30,
                   ),
                 ),
-                leftTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                topTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                rightTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-              ),
-              borderData: FlBorderData(show: false),
-              barGroups: _ordersPerHour.entries.map((entry) {
-                return BarChartGroupData(
-                  x: entry.key,
-                  barRods: [
-                    BarChartRodData(
-                      toY: entry.value.toDouble(),
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 16,
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(4),
-                      ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            '${value.toInt()}:00',
+                            style: const TextStyle(fontSize: 10),
+                          ),
+                        );
+                      },
+                      reservedSize: 30,
                     ),
-                  ],
-                );
-              }).toList(),
-              gridData: const FlGridData(show: false),
+                  ),
+                  leftTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                ),
+                borderData: FlBorderData(show: false),
+                barGroups: _ordersPerHour.entries.map((entry) {
+                  return BarChartGroupData(
+                    x: entry.key,
+                    barRods: [
+                      BarChartRodData(
+                        toY: entry.value.toDouble(),
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 16,
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(4),
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList(),
+                gridData: const FlGridData(show: false),
+              ),
             ),
           ),
         ),
@@ -506,49 +518,58 @@ class _RestaurantDailySummaryScreenState
       );
     }
 
+    final dineInPct = ((_dineInCount / total) * 100).toStringAsFixed(0);
+    final takeawayPct = ((_takeawayCount / total) * 100).toStringAsFixed(0);
+    final deliveryPct = ((_deliveryCount / total) * 100).toStringAsFixed(0);
+    final parcelPct = ((_parcelCount / total) * 100).toStringAsFixed(0);
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
             // Pie chart
-            SizedBox(
-              width: 100,
-              height: 100,
-              child: PieChart(
-                PieChartData(
-                  sectionsSpace: 2,
-                  centerSpaceRadius: 20,
-                  sections: [
-                    if (_dineInCount > 0)
-                      PieChartSectionData(
-                        value: _dineInCount.toDouble(),
-                        color: Colors.blue,
-                        title: '',
-                        radius: 30,
-                      ),
-                    if (_takeawayCount > 0)
-                      PieChartSectionData(
-                        value: _takeawayCount.toDouble(),
-                        color: Colors.orange,
-                        title: '',
-                        radius: 30,
-                      ),
-                    if (_deliveryCount > 0)
-                      PieChartSectionData(
-                        value: _deliveryCount.toDouble(),
-                        color: Colors.green,
-                        title: '',
-                        radius: 30,
-                      ),
-                    if (_parcelCount > 0)
-                      PieChartSectionData(
-                        value: _parcelCount.toDouble(),
-                        color: Colors.purple,
-                        title: '',
-                        radius: 30,
-                      ),
-                  ],
+            Semantics(
+              label:
+                  'Order type pie chart: Dine-In $_dineInCount ($dineInPct%), Takeaway $_takeawayCount ($takeawayPct%), Delivery $_deliveryCount ($deliveryPct%), Parcel $_parcelCount ($parcelPct%)',
+              child: SizedBox(
+                width: 100,
+                height: 100,
+                child: PieChart(
+                  PieChartData(
+                    sectionsSpace: 2,
+                    centerSpaceRadius: 20,
+                    sections: [
+                      if (_dineInCount > 0)
+                        PieChartSectionData(
+                          value: _dineInCount.toDouble(),
+                          color: Colors.blue,
+                          title: '',
+                          radius: 30,
+                        ),
+                      if (_takeawayCount > 0)
+                        PieChartSectionData(
+                          value: _takeawayCount.toDouble(),
+                          color: Colors.orange,
+                          title: '',
+                          radius: 30,
+                        ),
+                      if (_deliveryCount > 0)
+                        PieChartSectionData(
+                          value: _deliveryCount.toDouble(),
+                          color: Colors.green,
+                          title: '',
+                          radius: 30,
+                        ),
+                      if (_parcelCount > 0)
+                        PieChartSectionData(
+                          value: _parcelCount.toDouble(),
+                          color: Colors.purple,
+                          title: '',
+                          radius: 30,
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),

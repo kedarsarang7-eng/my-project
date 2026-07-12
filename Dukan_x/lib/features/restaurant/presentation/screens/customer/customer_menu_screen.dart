@@ -41,9 +41,16 @@ class _CustomerMenuScreenState extends State<CustomerMenuScreen> {
   String? _selectedCategoryId;
   bool _isLoading = true;
 
+  /// User-selectable order type. Defaults to dineIn when a table is assigned,
+  /// takeaway when no table. The user can override by selecting a different type.
+  late OrderType _selectedOrderType;
+
   @override
   void initState() {
     super.initState();
+    _selectedOrderType = widget.tableNumber != null
+        ? OrderType.dineIn
+        : OrderType.takeaway;
     _loadData();
   }
 
@@ -84,62 +91,64 @@ class _CustomerMenuScreenState extends State<CustomerMenuScreen> {
       body: BoundedBox(
         maxWidth: 800,
         child: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : CustomScrollView(
-              slivers: [
-                // App bar with restaurant info
-                SliverAppBar(
-                  expandedHeight: 150,
-                  pinned: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    title: Text(
-                      widget.tableNumber != null
-                          ? 'Table ${widget.tableNumber}'
-                          : 'Menu',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    background: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Theme.of(context).colorScheme.primary,
-                            Theme.of(context).colorScheme.primaryContainer,
-                          ],
+            ? const Center(child: CircularProgressIndicator())
+            : CustomScrollView(
+                slivers: [
+                  // App bar with restaurant info
+                  SliverAppBar(
+                    expandedHeight: 150,
+                    pinned: true,
+                    flexibleSpace: FlexibleSpaceBar(
+                      title: Text(
+                        widget.tableNumber != null
+                            ? 'Table ${widget.tableNumber}'
+                            : 'Menu',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      background: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Theme.of(context).colorScheme.primary,
+                              Theme.of(context).colorScheme.primaryContainer,
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                // Categories
-                SliverToBoxAdapter(child: _buildCategoryChips()),
-                // Popular section
-                if (_selectedCategoryId == null)
-                  SliverToBoxAdapter(child: _buildPopularSection()),
-                // Menu items grid
-                SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 200,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 0.75,
-                        ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) =>
-                          _buildMenuItemCard(_filteredItems[index]),
-                      childCount: _filteredItems.length,
+                  // Order type selector
+                  SliverToBoxAdapter(child: _buildOrderTypeSelector()),
+                  // Categories
+                  SliverToBoxAdapter(child: _buildCategoryChips()),
+                  // Popular section
+                  if (_selectedCategoryId == null)
+                    SliverToBoxAdapter(child: _buildPopularSection()),
+                  // Menu items grid
+                  SliverPadding(
+                    padding: const EdgeInsets.all(16),
+                    sliver: SliverGrid(
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 200,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 0.75,
+                          ),
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) =>
+                            _buildMenuItemCard(_filteredItems[index]),
+                        childCount: _filteredItems.length,
+                      ),
                     ),
                   ),
-                ),
-                // Bottom padding for cart button
-                const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
-              ],
-            ),
-      // Cart button
+                  // Bottom padding for cart button
+                  const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
+                ],
+              ),
+        // Cart button
       ),
 
       floatingActionButton: _cartItemCount > 0
@@ -153,6 +162,49 @@ class _CustomerMenuScreenState extends State<CustomerMenuScreen> {
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget _buildOrderTypeSelector() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Order Type', style: Theme.of(context).textTheme.titleSmall),
+          const SizedBox(height: 8),
+          SegmentedButton<OrderType>(
+            segments: const [
+              ButtonSegment<OrderType>(
+                value: OrderType.dineIn,
+                label: Text('Dine In'),
+                icon: Icon(Icons.restaurant),
+              ),
+              ButtonSegment<OrderType>(
+                value: OrderType.takeaway,
+                label: Text('Takeaway'),
+                icon: Icon(Icons.takeout_dining),
+              ),
+              ButtonSegment<OrderType>(
+                value: OrderType.delivery,
+                label: Text('Delivery'),
+                icon: Icon(Icons.delivery_dining),
+              ),
+              ButtonSegment<OrderType>(
+                value: OrderType.parcel,
+                label: Text('Parcel'),
+                icon: Icon(Icons.inventory_2),
+              ),
+            ],
+            selected: {_selectedOrderType},
+            onSelectionChanged: (Set<OrderType> selection) {
+              setState(() {
+                _selectedOrderType = selection.first;
+              });
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -504,9 +556,7 @@ class _CustomerMenuScreenState extends State<CustomerMenuScreen> {
     final result = await _orderRepo.createOrder(
       vendorId: widget.vendorId,
       customerId: widget.customerId,
-      orderType: widget.tableNumber != null
-          ? OrderType.dineIn
-          : OrderType.takeaway,
+      orderType: _selectedOrderType,
       items: orderItems,
       tableId: widget.tableId,
       tableNumber: widget.tableNumber,

@@ -619,6 +619,9 @@ class _FoodMenuManagementScreenState extends State<FoodMenuManagementScreen>
                       if (parsed <= 0) {
                         return 'Please enter a valid price greater than ₹0';
                       }
+                      if (parsed > 999999) {
+                        return 'Price cannot exceed ₹9,99,999';
+                      }
                       return null;
                     },
                   ),
@@ -734,6 +737,9 @@ class _FoodMenuManagementScreenState extends State<FoodMenuManagementScreen>
                       }
                       if (parsed <= 0) {
                         return 'Please enter a valid price greater than ₹0';
+                      }
+                      if (parsed > 999999) {
+                        return 'Price cannot exceed ₹9,99,999';
                       }
                       return null;
                     },

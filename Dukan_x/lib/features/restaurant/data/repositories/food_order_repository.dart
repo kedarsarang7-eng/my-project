@@ -252,13 +252,36 @@ class FoodOrderRepository {
   // ORDER STATUS UPDATES
   // ============================================================================
 
-  /// Update order status
+  /// Update order status with last-write-wins guard.
+  ///
+  /// Reads the existing record's `updatedAt` first and only writes the new
+  /// status if the incoming timestamp is later than the existing one. This
+  /// implements deterministic last-write-wins conflict resolution at the
+  /// local DB layer (Property 19 / Requirement 2.26).
   Future<RepositoryResult<void>> updateOrderStatus(
     String orderId,
-    FoodOrderStatus status,
-  ) async {
+    FoodOrderStatus status, [
+    DateTime? incomingUpdatedAt,
+  ]) async {
     return await _errorHandler.runSafe<void>(() async {
-      final now = DateTime.now();
+      final now = incomingUpdatedAt ?? DateTime.now();
+
+      // Last-write-wins guard: read existing updatedAt and only proceed if
+      // the incoming timestamp is later (or equal — same-time writes are
+      // accepted to avoid stalling).
+      final existing = await (_db.select(
+        _db.foodOrders,
+      )..where((t) => t.id.equals(orderId))).getSingleOrNull();
+
+      if (existing != null) {
+        final existingUpdatedAt = existing.updatedAt;
+        if (existingUpdatedAt.millisecondsSinceEpoch >
+            now.millisecondsSinceEpoch) {
+          // Existing record is newer — skip this write (last-write-wins).
+          return;
+        }
+      }
+
       final companion = FoodOrdersCompanion(
         orderStatus: Value(status.value),
         updatedAt: Value(now),
@@ -303,7 +326,7 @@ class FoodOrderRepository {
 
       await _syncManager.enqueue(
         SyncQueueItem.create(
-          userId: entity.vendorId, // Assuming we have vendorId in entity
+          userId: entity.vendorId,
           operationType: SyncOperationType.update,
           targetCollection: 'food_orders',
           documentId: orderId,
@@ -362,7 +385,9 @@ class FoodOrderRepository {
         _db.foodOrders,
       )..where((t) => t.id.equals(orderId))).write(
         FoodOrdersCompanion(
+          cancellationReason: Value(reason),
           orderStatus: Value(FoodOrderStatus.cancelled.value),
+          cancelledAt: Value(now),
           updatedAt: Value(now),
           isSynced: const Value(false),
         ),

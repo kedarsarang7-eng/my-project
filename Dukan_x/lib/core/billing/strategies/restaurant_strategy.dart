@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../models/bill.dart';
 import '../../billing/business_type_config.dart';
 import 'base_business_strategy.dart';
+import '../../../features/restaurant/presentation/widgets/modifier_picker_sheet.dart';
 
 class RestaurantStrategy extends BaseBusinessStrategy {
   @override
@@ -53,6 +54,8 @@ class RestaurantStrategy extends BaseBusinessStrategy {
             ],
           ],
         ),
+        const SizedBox(height: 8),
+        _buildModifierRow(context, item, onUpdate, isDark, accentColor),
       ],
     );
   }
@@ -141,6 +144,81 @@ class RestaurantStrategy extends BaseBusinessStrategy {
         onUpdate(item.copyWith(tableNo: val.isEmpty ? null : val));
       },
       isDark: isDark,
+    );
+  }
+
+  Widget _buildModifierRow(
+    BuildContext context,
+    BillItem item,
+    Function(BillItem) onUpdate,
+    bool isDark,
+    Color accentColor,
+  ) {
+    final hasModifiers =
+        item.modifierIds != null && item.modifierIds!.isNotEmpty;
+
+    return GestureDetector(
+      onTap: () async {
+        final result = await showModifierPickerSheet(
+          context: context,
+          itemId: item.productId,
+          itemName: item.productName,
+          basePrice: item.price,
+          currentModifierIds: item.modifierIds,
+        );
+        if (result != null) {
+          final ids = result.modifierIds.isEmpty ? null : result.modifierIds;
+          final delta = result.modifierPriceDelta == 0
+              ? null
+              : result.modifierPriceDelta;
+          onUpdate(item.copyWith(modifierIds: ids, modifierPriceDelta: delta));
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: hasModifiers
+              ? accentColor.withOpacity(0.1)
+              : (isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade50),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: hasModifiers
+                ? accentColor.withOpacity(0.4)
+                : (isDark ? Colors.white12 : Colors.grey.shade200),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.tune,
+              size: 16,
+              color: hasModifiers
+                  ? accentColor
+                  : (isDark ? Colors.white54 : Colors.grey),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                hasModifiers
+                    ? '${item.modifierIds!.length} modifier(s) · +₹${(item.modifierPriceDelta ?? 0).toStringAsFixed(0)}'
+                    : 'Add Modifiers',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: hasModifiers ? FontWeight.w600 : FontWeight.w400,
+                  color: hasModifiers
+                      ? accentColor
+                      : (isDark ? Colors.white54 : Colors.grey),
+                ),
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              size: 16,
+              color: isDark ? Colors.white38 : Colors.grey.shade400,
+            ),
+          ],
+        ),
+      ),
     );
   }
 

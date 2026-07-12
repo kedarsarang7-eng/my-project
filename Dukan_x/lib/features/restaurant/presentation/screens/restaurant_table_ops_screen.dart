@@ -3,18 +3,21 @@ import '../../../../core/theme/futuristic_colors.dart';
 import '../../../../widgets/glass_morphism.dart';
 import '../../../../widgets/modern_ui_components.dart';
 import '../../data/repositories/restaurant_ops_repository.dart';
+import '../../data/repositories/food_order_repository.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
 
 class RestaurantTableOpsScreen extends StatefulWidget {
   const RestaurantTableOpsScreen({super.key});
 
   @override
-  State<RestaurantTableOpsScreen> createState() => _RestaurantTableOpsScreenState();
+  State<RestaurantTableOpsScreen> createState() =>
+      _RestaurantTableOpsScreenState();
 }
 
 class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
     with SingleTickerProviderStateMixin {
   final RestaurantOpsRepository _repo = RestaurantOpsRepository();
+  final FoodOrderRepository _orderRepo = FoodOrderRepository();
   late final TabController _tab;
 
   List<Map<String, dynamic>> _reservations = const [];
@@ -54,15 +57,31 @@ class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(controller: guest, decoration: const InputDecoration(labelText: 'Guest name')),
-              TextField(controller: phone, decoration: const InputDecoration(labelText: 'Phone')),
-              TextField(controller: people, decoration: const InputDecoration(labelText: 'People'), keyboardType: TextInputType.number),
-              TextField(controller: notes, decoration: const InputDecoration(labelText: 'Notes')),
+              TextField(
+                controller: guest,
+                decoration: const InputDecoration(labelText: 'Guest name'),
+              ),
+              TextField(
+                controller: phone,
+                decoration: const InputDecoration(labelText: 'Phone'),
+              ),
+              TextField(
+                controller: people,
+                decoration: const InputDecoration(labelText: 'People'),
+                keyboardType: TextInputType.number,
+              ),
+              TextField(
+                controller: notes,
+                decoration: const InputDecoration(labelText: 'Notes'),
+              ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () async {
               await _repo.createReservation(
@@ -96,15 +115,31 @@ class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(controller: guest, decoration: const InputDecoration(labelText: 'Guest name')),
-              TextField(controller: phone, decoration: const InputDecoration(labelText: 'Phone')),
-              TextField(controller: people, decoration: const InputDecoration(labelText: 'People'), keyboardType: TextInputType.number),
-              TextField(controller: notes, decoration: const InputDecoration(labelText: 'Notes')),
+              TextField(
+                controller: guest,
+                decoration: const InputDecoration(labelText: 'Guest name'),
+              ),
+              TextField(
+                controller: phone,
+                decoration: const InputDecoration(labelText: 'Phone'),
+              ),
+              TextField(
+                controller: people,
+                decoration: const InputDecoration(labelText: 'People'),
+                keyboardType: TextInputType.number,
+              ),
+              TextField(
+                controller: notes,
+                decoration: const InputDecoration(labelText: 'Notes'),
+              ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () async {
               await _repo.addToWaitlist(
@@ -140,26 +175,67 @@ class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(controller: from, decoration: const InputDecoration(labelText: 'Transfer from tableId')),
-              TextField(controller: to, decoration: const InputDecoration(labelText: 'Transfer to tableId')),
-              TextField(controller: mergeSources, decoration: const InputDecoration(labelText: 'Merge source tableIds (comma)')),
-              TextField(controller: splitTable, decoration: const InputDecoration(labelText: 'Split tableId')),
-              TextField(controller: splitCount, decoration: const InputDecoration(labelText: 'Split count'), keyboardType: TextInputType.number),
-              TextField(controller: billId, decoration: const InputDecoration(labelText: 'Bill ID (split bill)')),
-              TextField(controller: people, decoration: const InputDecoration(labelText: 'People count'), keyboardType: TextInputType.number),
+              TextField(
+                controller: from,
+                decoration: const InputDecoration(
+                  labelText: 'Transfer from tableId',
+                ),
+              ),
+              TextField(
+                controller: to,
+                decoration: const InputDecoration(
+                  labelText: 'Transfer to tableId',
+                ),
+              ),
+              TextField(
+                controller: mergeSources,
+                decoration: const InputDecoration(
+                  labelText: 'Merge source tableIds (comma)',
+                ),
+              ),
+              TextField(
+                controller: splitTable,
+                decoration: const InputDecoration(labelText: 'Split tableId'),
+              ),
+              TextField(
+                controller: splitCount,
+                decoration: const InputDecoration(labelText: 'Split count'),
+                keyboardType: TextInputType.number,
+              ),
+              TextField(
+                controller: billId,
+                decoration: const InputDecoration(
+                  labelText: 'Bill ID (split bill)',
+                ),
+              ),
+              TextField(
+                controller: people,
+                decoration: const InputDecoration(labelText: 'People count'),
+                keyboardType: TextInputType.number,
+              ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
           ElevatedButton(
             onPressed: () async {
               if (from.text.isNotEmpty && to.text.isNotEmpty) {
-                await _repo.transferTable(fromTableId: from.text.trim(), toTableId: to.text.trim());
+                await _repo.transferTable(
+                  fromTableId: from.text.trim(),
+                  toTableId: to.text.trim(),
+                );
               }
               if (mergeSources.text.isNotEmpty && to.text.isNotEmpty) {
                 await _repo.mergeTables(
-                  sourceTableIds: mergeSources.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList(),
+                  sourceTableIds: mergeSources.text
+                      .split(',')
+                      .map((e) => e.trim())
+                      .where((e) => e.isNotEmpty)
+                      .toList(),
                   targetTableId: to.text.trim(),
                 );
               }
@@ -186,6 +262,55 @@ class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
     );
   }
 
+  /// Shows a reason-capture dialog and cancels the specified order.
+  Future<void> _cancelOrder(String orderId) async {
+    final reasonController = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Cancel Order'),
+        content: TextField(
+          controller: reasonController,
+          decoration: const InputDecoration(
+            labelText: 'Cancellation reason',
+            hintText: 'e.g. Customer left, kitchen issue',
+          ),
+          maxLines: 3,
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Back'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Cancel Order'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      final cancellationReason = reasonController.text.trim();
+      await _orderRepo.cancelOrder(
+        orderId,
+        reason: cancellationReason.isNotEmpty ? cancellationReason : null,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Order cancelled'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        await _refresh();
+      }
+    }
+    reasonController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -204,7 +329,11 @@ class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
                 gradient: AppGradients.secondaryGradient,
                 borderRadius: BorderRadius.circular(AppBorderRadius.md),
               ),
-              child: const Icon(Icons.table_restaurant, color: Colors.white, size: 18),
+              child: const Icon(
+                Icons.table_restaurant,
+                color: Colors.white,
+                size: 18,
+              ),
             ),
             const SizedBox(width: AppSpacing.md),
             Text(
@@ -227,12 +356,17 @@ class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
           ],
         ),
         actions: [
-          IconButton(onPressed: _showTableOperations, icon: const Icon(Icons.swap_horiz), tooltip: 'Transfer/Merge/Split'),
+          IconButton(
+            onPressed: _showTableOperations,
+            icon: const Icon(Icons.swap_horiz),
+            tooltip: 'Transfer/Merge/Split',
+          ),
           IconButton(onPressed: _refresh, icon: const Icon(Icons.refresh)),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _tab.index == 0 ? _createReservation() : _addWaitlist(),
+        onPressed: () =>
+            _tab.index == 0 ? _createReservation() : _addWaitlist(),
         backgroundColor: FuturisticColors.primary,
         icon: const Icon(Icons.add),
         label: Text(_tab.index == 0 ? 'Reservation' : 'Waitlist'),
@@ -249,10 +383,7 @@ class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
                     width: maxWidth,
                     child: TabBarView(
                       controller: _tab,
-                      children: [
-                        _buildReservationList(),
-                        _buildWaitlist(),
-                      ],
+                      children: [_buildReservationList(), _buildWaitlist()],
                     ),
                   ),
                 );
@@ -262,7 +393,8 @@ class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
   }
 
   Widget _buildReservationList() {
-    if (_reservations.isEmpty) return const Center(child: Text('No reservations'));
+    if (_reservations.isEmpty)
+      return const Center(child: Text('No reservations'));
     return ListView.builder(
       itemCount: _reservations.length,
       itemBuilder: (_, i) {
@@ -279,13 +411,65 @@ class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
             child: ListTile(
               title: Text(
                 '${item['guestName'] ?? 'Guest'} (${item['peopleCount'] ?? '-'})',
-                style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.w600),
+                style: AppTypography.bodyLarge.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              subtitle: Text('Phone: ${item['phone'] ?? '-'} | Status: $status'),
+              subtitle: Text(
+                'Phone: ${item['phone'] ?? '-'} | Status: $status',
+              ),
               trailing: PopupMenuButton<String>(
                 onSelected: (value) async {
-                  await _repo.updateReservationStatus(reservationId: id, status: value);
-                  await _refresh();
+                  if (value == 'cancelled') {
+                    // Show reason-capture dialog for cancellation
+                    final reasonController = TextEditingController();
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: const Text('Cancel Reservation'),
+                        content: TextField(
+                          controller: reasonController,
+                          decoration: const InputDecoration(
+                            labelText: 'Cancellation reason',
+                            hintText: 'e.g. No-show, customer request',
+                          ),
+                          maxLines: 3,
+                          autofocus: true,
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(ctx, false),
+                            child: const Text('Back'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.pop(ctx, true),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                            child: const Text('Confirm Cancel'),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (confirmed == true) {
+                      final cancellationReason = reasonController.text.trim();
+                      await _repo.updateReservationStatus(
+                        reservationId: id,
+                        status: 'cancelled',
+                        reason: cancellationReason.isNotEmpty
+                            ? cancellationReason
+                            : null,
+                      );
+                      await _refresh();
+                    }
+                    reasonController.dispose();
+                  } else {
+                    await _repo.updateReservationStatus(
+                      reservationId: id,
+                      status: value,
+                    );
+                    await _refresh();
+                  }
                 },
                 itemBuilder: (_) => const [
                   PopupMenuItem(value: 'confirmed', child: Text('Confirm')),
@@ -301,7 +485,8 @@ class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
   }
 
   Widget _buildWaitlist() {
-    if (_waitlist.isEmpty) return const Center(child: Text('No waitlist entries'));
+    if (_waitlist.isEmpty)
+      return const Center(child: Text('No waitlist entries'));
     return ListView.builder(
       itemCount: _waitlist.length,
       itemBuilder: (_, i) {
@@ -316,11 +501,16 @@ class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
             child: ListTile(
               title: Text(
                 '${item['guestName'] ?? 'Guest'} (${item['peopleCount'] ?? '-'})',
-                style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.w600),
+                style: AppTypography.bodyLarge.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               subtitle: Text('Phone: ${item['phone'] ?? '-'}'),
               trailing: IconButton(
-                icon: const Icon(Icons.event_seat, color: FuturisticColors.primary),
+                icon: const Icon(
+                  Icons.event_seat,
+                  color: FuturisticColors.primary,
+                ),
                 onPressed: () async {
                   final table = TextEditingController();
                   await showDialog(
@@ -329,10 +519,15 @@ class _RestaurantTableOpsScreenState extends State<RestaurantTableOpsScreen>
                       title: const Text('Seat Waitlist'),
                       content: TextField(
                         controller: table,
-                        decoration: const InputDecoration(labelText: 'Table ID'),
+                        decoration: const InputDecoration(
+                          labelText: 'Table ID',
+                        ),
                       ),
                       actions: [
-                        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cancel'),
+                        ),
                         ElevatedButton(
                           onPressed: () async {
                             await _repo.seatWaitlist(

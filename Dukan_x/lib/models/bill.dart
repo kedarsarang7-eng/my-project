@@ -62,6 +62,10 @@ class BillItem {
   double? marketFee;
   String? lotId;
 
+  // Restaurant Modifier/Add-on fields
+  List<String>? modifierIds; // Selected variation IDs for persistence/auditing
+  double? modifierPriceDelta; // Additive price delta from selected modifiers
+
   // Medical Compliance
   String? drugSchedule; // H, H1, X, etc.
   String? presignedImageUrl; // S3 image url
@@ -117,6 +121,8 @@ class BillItem {
     this.lotId,
     this.drugSchedule,
     this.presignedImageUrl,
+    this.modifierIds,
+    this.modifierPriceDelta,
     double? totalOverride,
   }) : total =
            totalOverride ??
@@ -221,6 +227,9 @@ class BillItem {
     if (lotId != null) 'lotId': lotId,
     if (drugSchedule != null) 'drugSchedule': drugSchedule,
     if (presignedImageUrl != null) 'presignedImageUrl': presignedImageUrl,
+    if (modifierIds != null && modifierIds!.isNotEmpty)
+      'modifierIds': modifierIds,
+    if (modifierPriceDelta != null) 'modifierPriceDelta': modifierPriceDelta,
     // Legacy fields for backward compatibility
     'vegId': productId,
     'vegName': productName,
@@ -321,6 +330,12 @@ class BillItem {
       lotId: m['lotId']?.toString(),
       drugSchedule: m['drugSchedule']?.toString(),
       presignedImageUrl: m['presignedImageUrl']?.toString(),
+      modifierIds: m['modifierIds'] != null
+          ? List<String>.from(m['modifierIds'])
+          : null,
+      modifierPriceDelta: m['modifierPriceDelta'] != null
+          ? DataGuard.safeDouble(m['modifierPriceDelta'])
+          : null,
     );
   }
 
@@ -375,6 +390,8 @@ class BillItem {
     Object? lotId = const _Unset(),
     Object? drugSchedule = const _Unset(),
     Object? presignedImageUrl = const _Unset(),
+    Object? modifierIds = const _Unset(),
+    Object? modifierPriceDelta = const _Unset(),
     // Legacy support for copyWith (optional, maps to new fields)
     String? vegId,
     String? itemName,
@@ -463,6 +480,12 @@ class BillItem {
       presignedImageUrl: presignedImageUrl is _Unset
           ? this.presignedImageUrl
           : presignedImageUrl as String?,
+      modifierIds: modifierIds is _Unset
+          ? this.modifierIds
+          : modifierIds as List<String>?,
+      modifierPriceDelta: modifierPriceDelta is _Unset
+          ? this.modifierPriceDelta
+          : modifierPriceDelta as double?,
       totalOverride: total is _Unset ? null : total as double?,
     );
   }

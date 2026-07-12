@@ -1,0 +1,4861 @@
+openapi: 3.0.3
+info:
+  title: DukanX Backend API
+  version: 1.0.0
+  description: Auto-generated from serverless.yml. Do not hand-edit.
+paths:
+  /ac/academic-years:
+    get:
+      operationId: acListAcademicYears
+      summary: List all academic years with terms
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateAcademicYear
+      summary: Create a new academic year
+      responses:
+        '200':
+          description: Success
+  /ac/academic-years/{yearId}:
+    delete:
+      operationId: acDeleteAcademicYear
+      summary: Delete an academic year
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateAcademicYear
+      summary: Update academic year name
+      responses:
+        '200':
+          description: Success
+  /ac/academic-years/{yearId}/set-active:
+    post:
+      operationId: acSetActiveAcademicYear
+      summary: Set the active academic year
+      responses:
+        '200':
+          description: Success
+  /ac/academic-years/{yearId}/terms:
+    post:
+      operationId: acAddTerm
+      summary: Add a term to an academic year
+      responses:
+        '200':
+          description: Success
+  /ac/admissions/applications:
+    get:
+      operationId: acListApplications
+      summary: List all admission applications
+      responses:
+        '200':
+          description: Success
+  /ac/admissions/applications/{id}:
+    delete:
+      operationId: acDeleteApplication
+      summary: Delete application
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetApplication
+      summary: Get application details
+      responses:
+        '200':
+          description: Success
+  /ac/admissions/applications/{id}/documents:
+    post:
+      operationId: acAddApplicationDocument
+      summary: Add document to application
+      responses:
+        '200':
+          description: Success
+  /ac/admissions/applications/{id}/status:
+    post:
+      operationId: acUpdateApplicationStatus
+      summary: Update application status (workflow)
+      responses:
+        '200':
+          description: Success
+  /ac/admissions/dashboard:
+    get:
+      operationId: acGetAdmissionsDashboard
+      summary: Admission dashboard stats
+      responses:
+        '200':
+          description: Success
+  /ac/admissions/public/apply:
+    post:
+      operationId: acSubmitApplication
+      summary: Public endpoint for admission applications
+      responses:
+        '200':
+          description: Success
+  /ac/admissions/public/status/{applicationId}:
+    get:
+      operationId: acCheckApplicationStatus
+      summary: Check application status (public)
+      responses:
+        '200':
+          description: Success
+  /ac/analytics/at-risk-students:
+    get:
+      operationId: acGetAtRiskStudents
+      summary: Get at-risk students with risk scores and factors
+      responses:
+        '200':
+          description: Success
+  /ac/attendance:
+    post:
+      operationId: acMarkAttendance
+      summary: Mark attendance for a batch
+      responses:
+        '200':
+          description: Success
+  /ac/attendance/correction/{id}/review:
+    post:
+      operationId: acReviewCorrection
+      summary: Review correction request
+      responses:
+        '200':
+          description: Success
+  /ac/attendance/defaulters:
+    get:
+      operationId: acGetDefaulters
+      summary: Get low attendance students
+      responses:
+        '200':
+          description: Success
+  /ac/attendance/period:
+    get:
+      operationId: acGetPeriodAttendance
+      summary: Get period-wise attendance
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acMarkPeriodAttendance
+      summary: Mark attendance for specific period
+      responses:
+        '200':
+          description: Success
+  /ac/attendance/period/{id}/correction:
+    post:
+      operationId: acRequestCorrection
+      summary: Request attendance correction
+      responses:
+        '200':
+          description: Success
+  /ac/attendance/report:
+    get:
+      operationId: acGetAttendanceReport
+      summary: Get attendance report by batch or student
+      responses:
+        '200':
+          description: Success
+  /ac/attendance/student/{studentId}/periods:
+    get:
+      operationId: acGetStudentPeriodAttendance
+      summary: Get period attendance for student
+      responses:
+        '200':
+          description: Success
+  /ac/batches:
+    get:
+      operationId: acListBatches
+      summary: List all batches
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateBatch
+      summary: Create a new batch
+      responses:
+        '200':
+          description: Success
+  /ac/batches/{batchId}/progress-comparison:
+    get:
+      operationId: acGetBatchProgressComparison
+      summary: Compare batch progress
+      responses:
+        '200':
+          description: Success
+  /ac/batches/{id}:
+    delete:
+      operationId: acDeleteBatch
+      summary: Delete batch (if no enrolled students)
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetBatch
+      summary: Get batch details
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateBatch
+      summary: Update batch details
+      responses:
+        '200':
+          description: Success
+  /ac/batches/{id}/seats:
+    get:
+      operationId: acGetBatchSeats
+      summary: Get real-time seat availability for a batch
+      responses:
+        '200':
+          description: Success
+  /ac/bulk/certificates:
+    post:
+      operationId: acBulkGenerateCertificates
+      summary: Bulk generate certificates for multiple students
+      responses:
+        '200':
+          description: Success
+  /ac/bulk/generate-invoices:
+    post:
+      operationId: acBulkGenerateInvoices
+      summary: Generate invoices for entire batch or course
+      responses:
+        '200':
+          description: Success
+  /ac/bulk/student-import:
+    post:
+      operationId: acBulkImportStudents
+      summary: Bulk import students from CSV/JSON
+      responses:
+        '200':
+          description: Success
+  /ac/certificates:
+    get:
+      operationId: acListCertificates
+      summary: List all certificates
+      responses:
+        '200':
+          description: Success
+  /ac/certificates/generate:
+    post:
+      operationId: acGenerateCertificate
+      summary: Generate certificate for a student
+      responses:
+        '200':
+          description: Success
+  /ac/certificates/{id}/download:
+    get:
+      operationId: acDownloadCertificate
+      summary: Download certificate PDF
+      responses:
+        '200':
+          description: Success
+  /ac/classes:
+    get:
+      operationId: acListClasses
+      summary: List all classes with sections
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateClass
+      summary: Create a new class
+      responses:
+        '200':
+          description: Success
+  /ac/classes/{classId}:
+    delete:
+      operationId: acDeleteClass
+      summary: Delete a class
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateClass
+      summary: Update a class
+      responses:
+        '200':
+          description: Success
+  /ac/classes/{classId}/sections:
+    post:
+      operationId: acAddSection
+      summary: Add a section to a class
+      responses:
+        '200':
+          description: Success
+  /ac/classes/{classId}/sections/{sectionId}:
+    delete:
+      operationId: acDeleteSection
+      summary: Delete a section
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateSection
+      summary: Update a section
+      responses:
+        '200':
+          description: Success
+  /ac/concessions:
+    get:
+      operationId: acListConcessions
+      summary: List concessions
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acApplyConcession
+      summary: Apply for fee concession
+      responses:
+        '200':
+          description: Success
+  /ac/concessions/auto-apply:
+    post:
+      operationId: acAutoApplyConcessions
+      summary: Auto-apply sibling/staff concessions
+      responses:
+        '200':
+          description: Success
+  /ac/concessions/student/{studentId}/active:
+    get:
+      operationId: acGetActiveConcession
+      summary: Get active concession for student
+      responses:
+        '200':
+          description: Success
+  /ac/concessions/summary:
+    get:
+      operationId: acGetConcessionSummary
+      summary: Concession summary
+      responses:
+        '200':
+          description: Success
+  /ac/concessions/types:
+    get:
+      operationId: acGetConcessionTypes
+      summary: List concession types
+      responses:
+        '200':
+          description: Success
+  /ac/concessions/{id}/approve:
+    post:
+      operationId: acApproveConcession
+      summary: Approve/reject concession
+      responses:
+        '200':
+          description: Success
+  /ac/courses:
+    get:
+      operationId: acListCourses
+      summary: List all courses
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateCourse
+      summary: Create a new course with subjects
+      responses:
+        '200':
+          description: Success
+  /ac/courses/{id}:
+    delete:
+      operationId: acDeleteCourse
+      summary: Delete course (if no active batches)
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetCourse
+      summary: Get course details
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateCourse
+      summary: Update course details
+      responses:
+        '200':
+          description: Success
+  /ac/dashboard:
+    get:
+      operationId: acGetDashboard
+      summary: AC dashboard KPIs and analytics
+      responses:
+        '200':
+          description: Success
+  /ac/demo-classes:
+    get:
+      operationId: acListDemoClasses
+      summary: List all demo classes
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateDemoClass
+      summary: Schedule a new demo class
+      responses:
+        '200':
+          description: Success
+  /ac/demo-classes/{id}:
+    put:
+      operationId: acUpdateDemoClass
+      summary: Update demo class status or outcome
+      responses:
+        '200':
+          description: Success
+  /ac/demo-classes/{id}/convert:
+    post:
+      operationId: acConvertDemoToEnrollment
+      summary: Convert demo class prospect to enrolled student
+      responses:
+        '200':
+          description: Success
+  /ac/departments:
+    get:
+      operationId: acListDepartments
+      summary: List departments
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateDepartment
+      summary: Create department
+      responses:
+        '200':
+          description: Success
+  /ac/departments/summary:
+    get:
+      operationId: acGetDepartmentSummary
+      summary: Department summary
+      responses:
+        '200':
+          description: Success
+  /ac/departments/{id}:
+    delete:
+      operationId: acDeleteDepartment
+      summary: Delete department
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateDepartment
+      summary: Update department
+      responses:
+        '200':
+          description: Success
+  /ac/departments/{id}/assign-head:
+    post:
+      operationId: acAssignDepartmentHead
+      summary: Assign department head
+      responses:
+        '200':
+          description: Success
+  /ac/departments/{id}/staff:
+    get:
+      operationId: acGetDepartmentStaff
+      summary: Get department staff
+      responses:
+        '200':
+          description: Success
+  /ac/documents:
+    get:
+      operationId: acListDocuments
+      summary: List documents
+      responses:
+        '200':
+          description: Success
+  /ac/documents/stats:
+    get:
+      operationId: acGetDocumentStats
+      summary: Document statistics
+      responses:
+        '200':
+          description: Success
+  /ac/documents/types:
+    get:
+      operationId: acGetDocumentTypes
+      summary: List document types
+      responses:
+        '200':
+          description: Success
+  /ac/documents/upload:
+    post:
+      operationId: acUploadDocument
+      summary: Upload document (get presigned URL)
+      responses:
+        '200':
+          description: Success
+  /ac/documents/{id}:
+    delete:
+      operationId: acDeleteDocument
+      summary: Delete document
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetDocument
+      summary: Get document with download URL
+      responses:
+        '200':
+          description: Success
+  /ac/documents/{id}/confirm:
+    post:
+      operationId: acConfirmDocumentUpload
+      summary: Confirm document upload
+      responses:
+        '200':
+          description: Success
+  /ac/documents/{id}/verify:
+    put:
+      operationId: acVerifyDocument
+      summary: Verify/reject document
+      responses:
+        '200':
+          description: Success
+  /ac/exams:
+    get:
+      operationId: acListExams
+      summary: List all exams
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateExam
+      summary: Schedule a new exam
+      responses:
+        '200':
+          description: Success
+  /ac/exams/hall-tickets/{id}:
+    get:
+      operationId: acGetHallTicket
+      summary: Get hall ticket
+      responses:
+        '200':
+          description: Success
+  /ac/exams/hall-tickets/{id}/download:
+    post:
+      operationId: acDownloadHallTicket
+      summary: Download hall ticket PDF
+      responses:
+        '200':
+          description: Success
+  /ac/exams/seating-arrangement:
+    post:
+      operationId: acCreateSeatingArrangement
+      summary: Create seating arrangement
+      responses:
+        '200':
+          description: Success
+  /ac/exams/seating-arrangement/{id}/download:
+    get:
+      operationId: acDownloadSeatingArrangement
+      summary: Download seating PDF
+      responses:
+        '200':
+          description: Success
+  /ac/exams/{examId}/hall-tickets:
+    post:
+      operationId: acGenerateHallTickets
+      summary: Generate hall tickets for exam
+      responses:
+        '200':
+          description: Success
+  /ac/exams/{examId}/seating-arrangement:
+    get:
+      operationId: acGetSeatingArrangement
+      summary: Get seating arrangement
+      responses:
+        '200':
+          description: Success
+  /ac/exams/{id}:
+    delete:
+      operationId: acDeleteExam
+      summary: Delete exam (if no results uploaded)
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetExam
+      summary: Get exam details
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateExam
+      summary: Update exam details
+      responses:
+        '200':
+          description: Success
+  /ac/exams/{id}/results:
+    get:
+      operationId: acGetExamResults
+      summary: Get results for an exam with statistics
+      responses:
+        '200':
+          description: Success
+  /ac/faculty:
+    get:
+      operationId: acListFaculty
+      summary: List all faculty members
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateFaculty
+      summary: Create a new faculty profile
+      responses:
+        '200':
+          description: Success
+  /ac/faculty/{id}:
+    delete:
+      operationId: acDeleteFaculty
+      summary: Deactivate faculty (soft delete)
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetFaculty
+      summary: Get faculty details
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateFaculty
+      summary: Update faculty details
+      responses:
+        '200':
+          description: Success
+  /ac/faculty/{id}/assign-department:
+    post:
+      operationId: acAssignFacultyToDepartment
+      summary: Assign faculty to department
+      responses:
+        '200':
+          description: Success
+  /ac/faculty/{id}/attendance:
+    post:
+      operationId: acMarkFacultyAttendance
+      summary: Mark faculty attendance
+      responses:
+        '200':
+          description: Success
+  /ac/faculty/{id}/payroll:
+    get:
+      operationId: acGetFacultyPayroll
+      summary: Calculate faculty payroll for a month
+      responses:
+        '200':
+          description: Success
+  /ac/faculty/{id}/payroll-dev:
+    get:
+      operationId: acCalculatePayroll
+      summary: Calculate payroll for faculty
+      responses:
+        '200':
+          description: Success
+  /ac/faculty/{id}/payslip:
+    post:
+      operationId: acGeneratePayslip
+      summary: Generate payslip
+      responses:
+        '200':
+          description: Success
+  /ac/faculty/{id}/payslips:
+    get:
+      operationId: acListPayslips
+      summary: List payslips for faculty
+      responses:
+        '200':
+          description: Success
+  /ac/families:
+    get:
+      operationId: acListFamilies
+      summary: List all families
+      responses:
+        '200':
+          description: Success
+  /ac/families/{familyGroupId}:
+    get:
+      operationId: acGetFamilyMembers
+      summary: Get all family members
+      responses:
+        '200':
+          description: Success
+  /ac/fee-structure:
+    get:
+      operationId: acListFeeStructures
+      summary: List fee heads for a class
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateFeeStructure
+      summary: Add a fee head to a class
+      responses:
+        '200':
+          description: Success
+  /ac/fee-structure/{structureId}:
+    delete:
+      operationId: acDeleteFeeStructure
+      summary: Delete a fee head
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateFeeStructure
+      summary: Update a fee head
+      responses:
+        '200':
+          description: Success
+  /ac/fees/pending:
+    get:
+      operationId: acGetPendingFees
+      summary: Consolidated list of all students with outstanding fee balances
+      responses:
+        '200':
+          description: Success
+  /ac/fees/student/{studentId}:
+    get:
+      operationId: acGetStudentFees
+      summary: Get fee history for a student
+      responses:
+        '200':
+          description: Success
+  /ac/homework:
+    get:
+      operationId: acListHomework
+      summary: List homework assignments
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateHomework
+      summary: Create homework assignment
+      responses:
+        '200':
+          description: Success
+  /ac/homework/student/{studentId}:
+    get:
+      operationId: acGetStudentHomework
+      summary: Get all homework for a student
+      responses:
+        '200':
+          description: Success
+  /ac/homework/submissions:
+    get:
+      operationId: acListHomeworkSubmissions
+      summary: List homework submissions
+      responses:
+        '200':
+          description: Success
+  /ac/homework/submissions/{id}/grade:
+    post:
+      operationId: acGradeSubmission
+      summary: Grade a homework submission
+      responses:
+        '200':
+          description: Success
+  /ac/homework/{id}:
+    delete:
+      operationId: acDeleteHomework
+      summary: Delete homework
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetHomework
+      summary: Get homework details with submissions
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateHomework
+      summary: Update homework
+      responses:
+        '200':
+          description: Success
+  /ac/homework/{id}/submit:
+    post:
+      operationId: acSubmitHomework
+      summary: Submit homework (student)
+      responses:
+        '200':
+          description: Success
+  /ac/hostels:
+    get:
+      operationId: acListHostels
+      summary: List hostels
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateHostel
+      summary: Create hostel
+      responses:
+        '200':
+          description: Success
+  /ac/hostels/allocate:
+    post:
+      operationId: acAllocateStudent
+      summary: Allocate student to room
+      responses:
+        '200':
+          description: Success
+  /ac/hostels/allocations:
+    get:
+      operationId: acListAllocations
+      summary: List allocations
+      responses:
+        '200':
+          description: Success
+  /ac/hostels/dashboard:
+    get:
+      operationId: acGetHostelDashboard
+      summary: Hostel dashboard
+      responses:
+        '200':
+          description: Success
+  /ac/hostels/deallocate/{id}:
+    post:
+      operationId: acDeallocateStudent
+      summary: Deallocate student
+      responses:
+        '200':
+          description: Success
+  /ac/hostels/rooms:
+    get:
+      operationId: acListRooms
+      summary: List rooms
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateRoom
+      summary: Create room
+      responses:
+        '200':
+          description: Success
+  /ac/hostels/{id}:
+    put:
+      operationId: acUpdateHostel
+      summary: Update hostel
+      responses:
+        '200':
+          description: Success
+  /ac/id-cards:
+    get:
+      operationId: acListIdCards
+      summary: List all ID cards
+      responses:
+        '200':
+          description: Success
+  /ac/id-cards/generate:
+    post:
+      operationId: acGenerateIdCard
+      summary: Generate ID card record and presigned upload URL
+      responses:
+        '200':
+          description: Success
+  /ac/id-cards/{id}/download:
+    get:
+      operationId: acDownloadIdCard
+      summary: Get presigned download URL for ID card
+      responses:
+        '200':
+          description: Success
+  /ac/inventory/dashboard:
+    get:
+      operationId: acGetInventoryDashboard
+      summary: Inventory dashboard
+      responses:
+        '200':
+          description: Success
+  /ac/inventory/items:
+    get:
+      operationId: acListInventoryItems
+      summary: List inventory items
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateInventoryItem
+      summary: Create inventory item
+      responses:
+        '200':
+          description: Success
+  /ac/inventory/items/{id}:
+    put:
+      operationId: acUpdateInventoryItem
+      summary: Update inventory item
+      responses:
+        '200':
+          description: Success
+  /ac/inventory/purchase-orders:
+    get:
+      operationId: acListPurchaseOrders
+      summary: List purchase orders
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreatePurchaseOrder
+      summary: Create purchase order
+      responses:
+        '200':
+          description: Success
+  /ac/inventory/purchase-orders/{id}/status:
+    post:
+      operationId: acUpdatePOStatus
+      summary: Update PO status
+      responses:
+        '200':
+          description: Success
+  /ac/inventory/stock/adjust:
+    post:
+      operationId: acAdjustStock
+      summary: Adjust stock level
+      responses:
+        '200':
+          description: Success
+  /ac/inventory/stock/movements:
+    get:
+      operationId: acListStockMovements
+      summary: List stock movements
+      responses:
+        '200':
+          description: Success
+  /ac/inventory/vendors:
+    get:
+      operationId: acListVendors
+      summary: List vendors
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateVendor
+      summary: Create vendor
+      responses:
+        '200':
+          description: Success
+  /ac/inventory/vendors/{id}:
+    put:
+      operationId: acUpdateVendor
+      summary: Update vendor
+      responses:
+        '200':
+          description: Success
+  /ac/invoices:
+    post:
+      operationId: acCreateInvoice
+      summary: Create a fee invoice for a student
+      responses:
+        '200':
+          description: Success
+  /ac/leave:
+    get:
+      operationId: acListLeaveApplications
+      summary: List leave applications
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acApplyLeave
+      summary: Apply for leave
+      responses:
+        '200':
+          description: Success
+  /ac/leave/balance/{personType}/{personId}:
+    get:
+      operationId: acGetLeaveBalance
+      summary: Get leave balance
+      responses:
+        '200':
+          description: Success
+  /ac/leave/pending:
+    get:
+      operationId: acGetPendingLeaves
+      summary: Get pending leave applications
+      responses:
+        '200':
+          description: Success
+  /ac/leave/person/{personType}/{personId}:
+    get:
+      operationId: acGetPersonLeaveHistory
+      summary: Get leave history for a person
+      responses:
+        '200':
+          description: Success
+  /ac/leave/{id}:
+    get:
+      operationId: acGetLeaveApplication
+      summary: Get leave application details
+      responses:
+        '200':
+          description: Success
+  /ac/leave/{id}/approve:
+    post:
+      operationId: acApproveLeave
+      summary: Approve or reject leave
+      responses:
+        '200':
+          description: Success
+  /ac/lesson-plans:
+    get:
+      operationId: acListLessonPlans
+      summary: List lesson plans with filters
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateLessonPlan
+      summary: Create lesson plan
+      responses:
+        '200':
+          description: Success
+  /ac/lesson-plans/calendar:
+    get:
+      operationId: acGetLessonPlanCalendar
+      summary: Get lesson plans in calendar format
+      responses:
+        '200':
+          description: Success
+  /ac/lesson-plans/{id}:
+    delete:
+      operationId: acDeleteLessonPlan
+      summary: Delete lesson plan
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetLessonPlan
+      summary: Get lesson plan details
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateLessonPlan
+      summary: Update lesson plan
+      responses:
+        '200':
+          description: Success
+  /ac/lesson-plans/{id}/approve:
+    post:
+      operationId: acApproveLessonPlan
+      summary: Approve/reject lesson plan
+      responses:
+        '200':
+          description: Success
+  /ac/library/books:
+    get:
+      operationId: acListBooks
+      summary: List all library books
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acAddBook
+      summary: Add a book to the library
+      responses:
+        '200':
+          description: Success
+  /ac/library/books-dev:
+    get:
+      operationId: acLibListBooks
+      summary: List books with filters
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateBook
+      summary: Add new book
+      responses:
+        '200':
+          description: Success
+  /ac/library/books-dev/{id}:
+    delete:
+      operationId: acLibDeleteBook
+      summary: Delete book
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetBook
+      summary: Get book details
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateBook
+      summary: Update book
+      responses:
+        '200':
+          description: Success
+  /ac/library/books/{bookId}:
+    delete:
+      operationId: acDeleteBook
+      summary: Remove a book from the library
+      responses:
+        '200':
+          description: Success
+  /ac/library/dashboard:
+    get:
+      operationId: acGetLibraryDashboard
+      summary: Library dashboard stats
+      responses:
+        '200':
+          description: Success
+  /ac/library/issues:
+    get:
+      operationId: acListBookIssues
+      summary: List active or overdue book issues
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acIssueBook
+      summary: Issue a book to a student
+      responses:
+        '200':
+          description: Success
+  /ac/library/issues-dev:
+    get:
+      operationId: acListIssues
+      summary: List book issues
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acLibIssueBook
+      summary: Issue book to member
+      responses:
+        '200':
+          description: Success
+  /ac/library/issues-dev/{id}/return:
+    post:
+      operationId: acLibReturnBook
+      summary: Return issued book
+      responses:
+        '200':
+          description: Success
+  /ac/library/issues/{issueId}/return:
+    post:
+      operationId: acReturnBook
+      summary: Return a book and record fine
+      responses:
+        '200':
+          description: Success
+  /ac/library/reservations:
+    post:
+      operationId: acReserveBook
+      summary: Reserve a book
+      responses:
+        '200':
+          description: Success
+  /ac/materials:
+    get:
+      operationId: acListMaterials
+      summary: List study materials
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateMaterial
+      summary: Upload a study material
+      responses:
+        '200':
+          description: Success
+  /ac/materials/{id}:
+    delete:
+      operationId: acDeleteMaterial
+      summary: Delete material
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetMaterial
+      summary: Get material details
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateMaterial
+      summary: Update material details
+      responses:
+        '200':
+          description: Success
+  /ac/materials/{id}/download:
+    get:
+      operationId: acGetMaterialDownloadUrl
+      summary: Generate download URL for a material
+      responses:
+        '200':
+          description: Success
+  /ac/messages:
+    post:
+      operationId: acSendMessage
+      summary: Send message
+      responses:
+        '200':
+          description: Success
+  /ac/messages/broadcast:
+    post:
+      operationId: acBroadcastMessage
+      summary: Broadcast message
+      responses:
+        '200':
+          description: Success
+  /ac/messages/inbox:
+    get:
+      operationId: acGetInbox
+      summary: Get inbox messages
+      responses:
+        '200':
+          description: Success
+  /ac/messages/sent:
+    get:
+      operationId: acGetSentMessages
+      summary: Get sent messages
+      responses:
+        '200':
+          description: Success
+  /ac/messages/unread-count:
+    get:
+      operationId: acGetUnreadCount
+      summary: Get unread message count
+      responses:
+        '200':
+          description: Success
+  /ac/messages/{id}:
+    delete:
+      operationId: acDeleteMessage
+      summary: Delete/archive message
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetMessage
+      summary: Get message details
+      responses:
+        '200':
+          description: Success
+  /ac/messages/{id}/reply:
+    post:
+      operationId: acReplyToMessage
+      summary: Reply to message
+      responses:
+        '200':
+          description: Success
+  /ac/notifications/fee-reminders:
+    post:
+      operationId: acSendFeeReminders
+      summary: Auto-send fee reminders to all defaulters
+      responses:
+        '200':
+          description: Success
+  /ac/notifications/send:
+    post:
+      operationId: acSendNotification
+      summary: Send notifications to students/parents
+      responses:
+        '200':
+          description: Success
+  /ac/notifications/templates:
+    get:
+      operationId: acListNotificationTemplates
+      summary: List notification templates
+      responses:
+        '200':
+          description: Success
+  /ac/payments:
+    post:
+      operationId: acRecordPayment
+      summary: Record a fee payment
+      responses:
+        '200':
+          description: Success
+  /ac/payments/create-order:
+    post:
+      operationId: acCreatePaymentOrder
+      summary: Create Razorpay order for fee payment
+      responses:
+        '200':
+          description: Success
+  /ac/payments/history/{studentId}:
+    get:
+      operationId: acGetPaymentHistory
+      summary: Get payment history for a student
+      responses:
+        '200':
+          description: Success
+  /ac/payments/retry/{orderId}:
+    get:
+      operationId: acGetRetryPayment
+      summary: Get retry details for failed payment
+      responses:
+        '200':
+          description: Success
+  /ac/payments/verify:
+    post:
+      operationId: acVerifyPayment
+      summary: Verify Razorpay payment signature
+      responses:
+        '200':
+          description: Success
+  /ac/payroll/summary:
+    get:
+      operationId: acGetPayrollSummary
+      summary: Payroll summary for month
+      responses:
+        '200':
+          description: Success
+  /ac/payslips/bulk-generate:
+    post:
+      operationId: acBulkGeneratePayslips
+      summary: Bulk generate payslips
+      responses:
+        '200':
+          description: Success
+  /ac/payslips/{id}:
+    get:
+      operationId: acGetPayslip
+      summary: Get payslip details
+      responses:
+        '200':
+          description: Success
+  /ac/refunds:
+    get:
+      operationId: acListRefunds
+      summary: List refunds
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acRequestRefund
+      summary: Request fee refund
+      responses:
+        '200':
+          description: Success
+  /ac/refunds/pending:
+    get:
+      operationId: acGetPendingRefunds
+      summary: Get pending refunds
+      responses:
+        '200':
+          description: Success
+  /ac/refunds/summary:
+    get:
+      operationId: acGetRefundSummary
+      summary: Refund summary
+      responses:
+        '200':
+          description: Success
+  /ac/refunds/{id}/approve:
+    post:
+      operationId: acApproveRefund
+      summary: Approve/reject refund
+      responses:
+        '200':
+          description: Success
+  /ac/refunds/{id}/process:
+    post:
+      operationId: acProcessRefund
+      summary: Process approved refund
+      responses:
+        '200':
+          description: Success
+  /ac/report-cards:
+    get:
+      operationId: acListReportCards
+      summary: List report cards filtered by class or exam
+      responses:
+        '200':
+          description: Success
+  /ac/report-cards/generate:
+    post:
+      operationId: acGenerateReportCards
+      summary: Auto-generate report cards from exam results for a class
+      responses:
+        '200':
+          description: Success
+  /ac/report-cards/{reportCardId}/pdf:
+    get:
+      operationId: acGetReportCardPdf
+      summary: Get PDF download URL for a report card
+      responses:
+        '200':
+          description: Success
+  /ac/report-cards/{reportCardId}/share:
+    post:
+      operationId: acShareReportCard
+      summary: Share report card with parent via WhatsApp/email
+      responses:
+        '200':
+          description: Success
+  /ac/reports/dashboard-summary:
+    get:
+      operationId: acGetDashboardSummary
+      summary: Quick dashboard summary
+      responses:
+        '200':
+          description: Success
+  /ac/reports/execute:
+    post:
+      operationId: acExecuteReport
+      summary: Execute custom report
+      responses:
+        '200':
+          description: Success
+  /ac/reports/executions:
+    get:
+      operationId: acListReportExecutions
+      summary: List report execution history
+      responses:
+        '200':
+          description: Success
+  /ac/reports/financial:
+    get:
+      operationId: acGetFinancialReports
+      summary: Get P&L, batch profitability, outstanding fees
+      responses:
+        '200':
+          description: Success
+  /ac/reports/schedule:
+    post:
+      operationId: acScheduleReport
+      summary: Schedule recurring report
+      responses:
+        '200':
+          description: Success
+  /ac/reports/summary:
+    get:
+      operationId: acGetReportsSummary
+      summary: Get AC reports summary (fee collection, attendance, enrollment)
+      responses:
+        '200':
+          description: Success
+  /ac/reports/templates:
+    get:
+      operationId: acGetReportTemplates
+      summary: Get report templates
+      responses:
+        '200':
+          description: Success
+  /ac/results:
+    post:
+      operationId: acUploadResults
+      summary: Upload exam results for students
+      responses:
+        '200':
+          description: Success
+  /ac/students:
+    get:
+      operationId: acListStudents
+      summary: List students with filters and search
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateStudent
+      summary: Create a new student enrollment
+      responses:
+        '200':
+          description: Success
+  /ac/students/birthdays:
+    get:
+      operationId: acGetUpcomingBirthdays
+      summary: Get upcoming student birthdays for reminders
+      responses:
+        '200':
+          description: Success
+  /ac/students/{id}:
+    delete:
+      operationId: acDeleteStudent
+      summary: Soft-delete a student
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetStudent
+      summary: Get student profile with fee and attendance summary
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateStudent
+      summary: Update student profile
+      responses:
+        '200':
+          description: Success
+  /ac/students/{id}/photo:
+    get:
+      operationId: acGetStudentPhotoUrl
+      summary: Get presigned S3 URL to view student photo
+      responses:
+        '200':
+          description: Success
+  /ac/students/{id}/photo-upload:
+    post:
+      operationId: acGetStudentPhotoUploadUrl
+      summary: Get presigned S3 URL to upload student photo
+      responses:
+        '200':
+          description: Success
+  /ac/students/{id}/siblings:
+    get:
+      operationId: acGetSiblings
+      summary: Get siblings of student
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acLinkSiblings
+      summary: Link siblings to student
+      responses:
+        '200':
+          description: Success
+  /ac/students/{id}/siblings/{siblingId}:
+    delete:
+      operationId: acUnlinkSibling
+      summary: Remove sibling link
+      responses:
+        '200':
+          description: Success
+  /ac/students/{id}/transfer:
+    post:
+      operationId: acTransferStudent
+      summary: Transfer student between batches
+      responses:
+        '200':
+          description: Success
+  /ac/students/{studentId}/hall-tickets:
+    get:
+      operationId: acGetStudentHallTickets
+      summary: Get student hall tickets
+      responses:
+        '200':
+          description: Success
+  /ac/students/{studentId}/progress-chart:
+    get:
+      operationId: acGetProgressChart
+      summary: Get academic progress chart
+      responses:
+        '200':
+          description: Success
+  /ac/timetable:
+    get:
+      operationId: acGetTimetable
+      summary: Get timetable slots
+      responses:
+        '200':
+          description: Success
+  /ac/timetable/slots:
+    post:
+      operationId: acCreateTimetableSlot
+      summary: Create a timetable slot with conflict detection
+      responses:
+        '200':
+          description: Success
+  /ac/transport/assignments:
+    post:
+      operationId: acAssignStudent
+      summary: Assign student to route
+      responses:
+        '200':
+          description: Success
+  /ac/transport/assignments/{id}:
+    delete:
+      operationId: acRemoveAssignment
+      summary: Remove student from route
+      responses:
+        '200':
+          description: Success
+  /ac/transport/dashboard:
+    get:
+      operationId: acGetTransportDashboard
+      summary: Transport dashboard stats
+      responses:
+        '200':
+          description: Success
+  /ac/transport/drivers:
+    get:
+      operationId: acListDrivers
+      summary: List drivers
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateDriver
+      summary: Create driver
+      responses:
+        '200':
+          description: Success
+  /ac/transport/drivers/{id}:
+    delete:
+      operationId: acDeleteDriver
+      summary: Delete driver
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateDriver
+      summary: Update driver
+      responses:
+        '200':
+          description: Success
+  /ac/transport/routes:
+    get:
+      operationId: acListTransportRoutes
+      summary: List all transport routes with stops
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateTransportRoute
+      summary: Create a new transport route
+      responses:
+        '200':
+          description: Success
+  /ac/transport/routes-dev:
+    get:
+      operationId: acListRoutes
+      summary: List transport routes
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateRoute
+      summary: Create route
+      responses:
+        '200':
+          description: Success
+  /ac/transport/routes-dev/{id}:
+    delete:
+      operationId: acDeleteRoute
+      summary: Delete route
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: acGetRoute
+      summary: Get route details
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateRoute
+      summary: Update route
+      responses:
+        '200':
+          description: Success
+  /ac/transport/routes/{routeId}:
+    delete:
+      operationId: acDeleteTransportRoute
+      summary: Delete a transport route
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateTransportRoute
+      summary: Update a transport route
+      responses:
+        '200':
+          description: Success
+  /ac/transport/routes/{routeId}/stops:
+    post:
+      operationId: acAddTransportStop
+      summary: Add a stop to a transport route
+      responses:
+        '200':
+          description: Success
+  /ac/transport/student/{studentId}:
+    get:
+      operationId: acGetStudentTransport
+      summary: Get student transport details
+      responses:
+        '200':
+          description: Success
+  /ac/transport/vehicles:
+    get:
+      operationId: acListVehicles
+      summary: List all vehicles
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acCreateVehicle
+      summary: Register a new vehicle
+      responses:
+        '200':
+          description: Success
+  /ac/transport/vehicles-dev:
+    get:
+      operationId: acTransListVehicles
+      summary: List vehicles
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: acTransCreateVehicle
+      summary: Create vehicle
+      responses:
+        '200':
+          description: Success
+  /ac/transport/vehicles-dev/{id}:
+    delete:
+      operationId: acDeleteVehicle
+      summary: Delete vehicle
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: acUpdateVehicle
+      summary: Update vehicle
+      responses:
+        '200':
+          description: Success
+  /admin/analytics:
+    get:
+      operationId: adminAnalytics
+      summary: Aggregate analytics summary for admin dashboard (todaySales, monthlySales, totalDues, customerCount, lowStockCount)
+      responses:
+        '200':
+          description: Success
+  /admin/audit:
+    get:
+      operationId: adminAuditQuery
+      summary: |
+      responses:
+        '200':
+          description: Success
+  /admin/audit/summary:
+    get:
+      operationId: adminAuditSummary
+      summary: Aggregated audit statistics for Super Admin dashboard
+      responses:
+        '200':
+          description: Success
+  /admin/hsn-seed:
+    post:
+      operationId: hsnMasterSeed
+      summary: One-time seed of HSN master table with standard Indian GST codes
+      responses:
+        '200':
+          description: Success
+  /admin/license/{key}/features:
+    post:
+      operationId: adminLicenseUpdateFeatures
+      summary: |
+      responses:
+        '200':
+          description: Success
+  /admin/plan/downgrade:
+    post:
+      operationId: adminPlanDowngrade
+      summary: Downgrade a tenant's plan (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /admin/plan/history/{tenantId}:
+    get:
+      operationId: adminPlanHistory
+      summary: Plan change history for a tenant (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /admin/plan/status/{tenantId}:
+    get:
+      operationId: adminPlanStatus
+      summary: Get a tenant's plan status (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /admin/plan/tenants:
+    get:
+      operationId: adminPlanListTenants
+      summary: List all tenants with plan info (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /admin/plan/upgrade:
+    post:
+      operationId: adminPlanUpgrade
+      summary: Upgrade a tenant's plan (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /admin/plans:
+    get:
+      operationId: adminPlanConfigList
+      summary: List effective plan configs (code + DB overlay) (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /admin/plans/{plan}:
+    get:
+      operationId: adminPlanConfigGet
+      summary: Get single plan effective config (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: adminPlanConfigUpdate
+      summary: Update plan DB overrides (add/remove features, patch limits) (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /admin/plans/{plan}/reset:
+    post:
+      operationId: adminPlanConfigReset
+      summary: Reset plan to code defaults (delete DB row) (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /ai/chat:
+    post:
+      operationId: aiChat
+      summary: Natural language hybrid AI chat endpoint (Ollama + Cloud)
+      responses:
+        '200':
+          description: Success
+  /ai/settings:
+    get:
+      operationId: aiGetSettings
+      summary: Fetch Tenant AI execution mode and configs
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: aiUpdateSettings
+      summary: Update Tenant AI config (store API key via KMS in DB)
+      responses:
+        '200':
+          description: Success
+  /analytics/daily-trend:
+    get:
+      operationId: paymentAnalytics
+      summary: Payment analytics and reporting endpoints
+      responses:
+        '200':
+          description: Success
+  /api/v1/billing/{proxy+}:
+    any:
+      operationId: billingHandler
+      summary: Billing operations - events, analytics, login tracking
+      responses:
+        '200':
+          description: Success
+  /api/v1/bills:
+    get:
+      operationId: v1BillsList
+      summary: List bills for active business
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: v1BillsCreate
+      summary: Create a new bill
+      responses:
+        '200':
+          description: Success
+  /api/v1/bills/count:
+    get:
+      operationId: v1BillsCount
+      summary: Get bill count for date range
+      responses:
+        '200':
+          description: Success
+  /api/v1/bills/cross-business:
+    get:
+      operationId: v1BillsCrossBusiness
+      summary: List bills across all businesses (owner only)
+      responses:
+        '200':
+          description: Success
+  /api/v1/bills/{id}:
+    delete:
+      operationId: v1BillsDelete
+      summary: Soft-delete a bill
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: v1BillsGet
+      summary: Get a single bill by ID
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: v1BillsUpdate
+      summary: Update an existing bill (optimistic locking)
+      responses:
+        '200':
+          description: Success
+  /api/v1/connections:
+    get:
+      operationId: v1EntityList
+      summary: List entities by type (generic CRUD)
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: v1EntityCreate
+      summary: Create entity by type
+      responses:
+        '200':
+          description: Success
+  /api/v1/connections/{id}:
+    delete:
+      operationId: v1EntityDelete
+      summary: Soft-delete entity by type + ID
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: v1EntityGet
+      summary: Get single entity by type + ID
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: v1EntityUpdate
+      summary: Update entity by type + ID
+      responses:
+        '200':
+          description: Success
+  /api/v1/customer/{proxy+}:
+    any:
+      operationId: customerHandler
+      summary: Customer-facing shop, products, orders
+      responses:
+        '200':
+          description: Success
+  /api/v1/feature-flags/{proxy+}:
+    any:
+      operationId: featureFlagHandler
+      summary: Feature flag management and resolution
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/dsr:
+    get:
+      operationId: v1PetrolDsr
+      summary: Generate Daily Sales Report
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/fuel-receipt:
+    post:
+      operationId: v1PetrolFuelReceipt
+      summary: Record fuel receipt (oil company delivery)
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/fuel-types:
+    get:
+      operationId: v1PetrolFuelTypes
+      summary: List fuel types
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/fuel-types/rate:
+    post:
+      operationId: v1PetrolUpdateRate
+      summary: Update fuel rate with audit trail
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/nozzles:
+    get:
+      operationId: v1PetrolNozzles
+      summary: List nozzles
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/shifts:
+    get:
+      operationId: v1PetrolShiftsList
+      summary: List petrol pump shifts
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: v1PetrolShiftOpen
+      summary: Open a new shift
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/shifts/close:
+    post:
+      operationId: v1PetrolShiftClose
+      summary: Close a shift with reconciliation
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/shifts/{id}:
+    get:
+      operationId: v1PetrolShiftGet
+      summary: Get a single shift by ID
+      responses:
+        '200':
+          description: Success
+  /api/v1/petrol/tanks:
+    get:
+      operationId: v1PetrolTanks
+      summary: List fuel tanks
+      responses:
+        '200':
+          description: Success
+  /auth/change-password:
+    post:
+      operationId: authChangePassword
+      summary: Change password and revoke all sessions
+      responses:
+        '200':
+          description: Success
+  /auth/confirm-reset-password:
+    post:
+      operationId: authConfirmResetPassword
+      summary: Confirm password reset with verification code
+      responses:
+        '200':
+          description: Success
+  /auth/forgot-password:
+    post:
+      operationId: authForgotPassword
+      summary: Initiate password reset via email verification code
+      responses:
+        '200':
+          description: Success
+  /auth/login:
+    post:
+      operationId: authLogin
+      summary: Authenticate user, return Cognito tokens
+      responses:
+        '200':
+          description: Success
+  /auth/logout:
+    post:
+      operationId: authLogout
+      summary: Logout and revoke all refresh tokens (globalSignOut)
+      responses:
+        '200':
+          description: Success
+  /auth/mfa/confirm-setup:
+    post:
+      operationId: authMfaSetupConfirm
+      summary: Verify first-time MFA setup code
+      responses:
+        '200':
+          description: Success
+  /auth/mfa/setup:
+    post:
+      operationId: authMfaSetup
+      summary: Get setup code for Authenticator App
+      responses:
+        '200':
+          description: Success
+  /auth/mfa/verify:
+    post:
+      operationId: authMfaVerify
+      summary: Respond to MFA challenge with TOTP code
+      responses:
+        '200':
+          description: Success
+  /auth/refresh:
+    post:
+      operationId: authRefresh
+      summary: Refresh expired access tokens
+      responses:
+        '200':
+          description: Success
+  /billing/payment/create-order:
+    post:
+      operationId: createPaymentOrder
+      summary: Create Razorpay order with per-tenant credentials (returns merchant key)
+      responses:
+        '200':
+          description: Success
+  /billing/payment/refund:
+    post:
+      operationId: processRefund
+      summary: Process full or partial refunds for paid bills (Admin/Manager only)
+      responses:
+        '200':
+          description: Success
+  /billing/payment/refunds:
+    get:
+      operationId: getRefunds
+      summary: Fetch refund history for a bill or business
+      responses:
+        '200':
+          description: Success
+  /billing/payment/verify:
+    post:
+      operationId: verifyPayment
+      summary: Server-side payment verification before marking bill paid
+      responses:
+        '200':
+          description: Success
+  /book-store/books:
+    get:
+      operationId: bookStoreGetBooks
+      summary: List book inventory with ISBN/title/author search
+      responses:
+        '200':
+          description: Success
+  /book-store/customer-loyalty:
+    get:
+      operationId: bookStoreCustomerLoyalty
+      summary: Lookup customer loyalty points by phone
+      responses:
+        '200':
+          description: Success
+  /book-store/isbn/{isbn}:
+    get:
+      operationId: bookStoreLookupIsbn
+      summary: Auto-fill book metadata from ISBN barcode scan
+      responses:
+        '200':
+          description: Success
+  /book-store/low-stock:
+    get:
+      operationId: bookStoreGetLowStock
+      summary: Books below reorder threshold
+      responses:
+        '200':
+          description: Success
+  /book-store/returns:
+    get:
+      operationId: bookStoreListReturns
+      summary: List publisher returns with status filter
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: bookStoreCreateReturn
+      summary: Create publisher return for unsold/dead stock
+      responses:
+        '200':
+          description: Success
+  /books/consignments:
+    get:
+      operationId: bookStoreGetConsignments
+      summary: Get list of consignments
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: bookStoreCreateConsignment
+      summary: Create consignment intake record
+      responses:
+        '200':
+          description: Success
+  /books/consignments/{id}/settle:
+    post:
+      operationId: bookStoreSettleConsignment
+      summary: Settle a consignment cycle
+      responses:
+        '200':
+          description: Success
+  /books/school-orders:
+    get:
+      operationId: bookStoreGetSchoolOrders
+      summary: Get list of school orders
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: bookStoreInstitutionalOrder
+      summary: Create institutional bulk order cycle
+      responses:
+        '200':
+          description: Success
+  /books/school-orders/{id}/fulfill:
+    post:
+      operationId: bookStoreFulfillSchoolOrder
+      summary: Fulfill a school order
+      responses:
+        '200':
+          description: Success
+  /businesses/my-access:
+    get:
+      operationId: getMyBusinesses
+      summary: Retrieves the list of businesses the accessible to the user
+      responses:
+        '200':
+          description: Success
+  /challans:
+    get:
+      operationId: challanList
+      summary: List delivery challans
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: challanCreate
+      summary: Create delivery challan for material dispatch
+      responses:
+        '200':
+          description: Success
+  /challans/{id}:
+    get:
+      operationId: challanGet
+      summary: Get a single delivery challan
+      responses:
+        '200':
+          description: Success
+  /challans/{id}/delivered:
+    post:
+      operationId: challanDelivered
+      summary: Mark challan as delivered (goods received at site)
+      responses:
+        '200':
+          description: Success
+  /clinic/appointments:
+    get:
+      operationId: clinicListAppointments
+      summary: List appointments with date/status filters
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: clinicCreateAppointment
+      summary: Book a new appointment
+      responses:
+        '200':
+          description: Success
+  /clinic/appointments/{id}:
+    delete:
+      operationId: clinicCancelAppointment
+      summary: Cancel an appointment (soft-delete)
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: clinicGetAppointment
+      summary: Get single appointment
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: clinicUpdateAppointment
+      summary: Update or reschedule appointment
+      responses:
+        '200':
+          description: Success
+  /clinic/billing:
+    post:
+      operationId: clinicCreateBill
+      summary: Create a clinic bill
+      responses:
+        '200':
+          description: Success
+  /clinic/billing/{id}:
+    get:
+      operationId: clinicGetBill
+      summary: Get a clinic bill
+      responses:
+        '200':
+          description: Success
+  /clinic/billing/{id}/payments:
+    get:
+      operationId: clinicGetBillPayments
+      summary: Get payments for a bill
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: clinicCollectPayment
+      summary: Collect payment for a bill
+      responses:
+        '200':
+          description: Success
+  /clinic/billing/{id}/pdf:
+    get:
+      operationId: clinicInvoicePDF
+      summary: Generate invoice/receipt PDF
+      responses:
+        '200':
+          description: Success
+  /clinic/consultation:
+    post:
+      operationId: clinicCreateSoapNote
+      summary: Save a SOAP EMR note and close the appointment
+      responses:
+        '200':
+          description: Success
+  /clinic/dashboard/stats:
+    get:
+      operationId: clinicDashboardStats
+      summary: Get clinic dashboard statistics
+      responses:
+        '200':
+          description: Success
+  /clinic/doctors:
+    post:
+      operationId: clinicRegisterDoctor
+      summary: Register a doctor profile
+      responses:
+        '200':
+          description: Success
+  /clinic/doctors/me:
+    get:
+      operationId: clinicGetDoctorProfile
+      summary: Get own doctor profile
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: clinicUpdateDoctorProfile
+      summary: Update own doctor profile
+      responses:
+        '200':
+          description: Success
+  /clinic/drugs/search:
+    get:
+      operationId: clinicSearchDrugs
+      summary: Search drug database
+      responses:
+        '200':
+          description: Success
+  /clinic/follow-ups:
+    get:
+      operationId: clinicListFollowUps
+      summary: List follow-ups
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: clinicCreateFollowUp
+      summary: Schedule a follow-up visit and add EMR note
+      responses:
+        '200':
+          description: Success
+  /clinic/follow-ups/{id}/status:
+    put:
+      operationId: clinicUpdateFollowUpStatus
+      summary: Update follow-up status
+      responses:
+        '200':
+          description: Success
+  /clinic/icd10/search:
+    get:
+      operationId: clinicSearchICD10
+      summary: Search ICD-10 diagnosis codes
+      responses:
+        '200':
+          description: Success
+  /clinic/labs/orders:
+    get:
+      operationId: clinicListLabOrders
+      summary: List lab orders with status filter
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: clinicCreateLabOrder
+      summary: Create a lab order from consultation
+      responses:
+        '200':
+          description: Success
+  /clinic/labs/orders/{id}:
+    get:
+      operationId: clinicGetLabOrder
+      summary: Get single lab order with result
+      responses:
+        '200':
+          description: Success
+  /clinic/labs/orders/{id}/results:
+    post:
+      operationId: clinicAttachLabResult
+      summary: Attach lab results and complete the order
+      responses:
+        '200':
+          description: Success
+  /clinic/patients:
+    get:
+      operationId: clinicListPatients
+      summary: List and search patients
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: clinicRegisterPatient
+      summary: Register a new patient
+      responses:
+        '200':
+          description: Success
+  /clinic/patients/{id}:
+    get:
+      operationId: clinicGetPatient
+      summary: Get a single patient by ID
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: clinicUpdatePatient
+      summary: Update patient demographics
+      responses:
+        '200':
+          description: Success
+  /clinic/patients/{id}/history:
+    get:
+      operationId: clinicGetPatientHistory
+      summary: Fetch chronological visit history
+      responses:
+        '200':
+          description: Success
+  /clinic/portal/appointments:
+    get:
+      operationId: clinicPatientPortalAppointments
+      summary: Patient portal - get own appointments
+      responses:
+        '200':
+          description: Success
+  /clinic/portal/profile:
+    get:
+      operationId: clinicPatientPortalProfile
+      summary: Patient portal - get own profile
+      responses:
+        '200':
+          description: Success
+  /clinic/portal/records:
+    get:
+      operationId: clinicPatientPortalRecords
+      summary: Patient portal - get own medical records
+      responses:
+        '200':
+          description: Success
+  /clinic/prescriptions:
+    get:
+      operationId: clinicListPrescriptions
+      summary: List prescriptions
+      responses:
+        '200':
+          description: Success
+  /clinic/prescriptions/{id}:
+    delete:
+      operationId: clinicDeletePrescription
+      summary: Soft-delete a prescription
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: clinicGetPrescription
+      summary: Get single prescription with items
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: clinicUpdatePrescription
+      summary: Update prescription
+      responses:
+        '200':
+          description: Success
+  /clinic/prescriptions/{id}/pdf:
+    get:
+      operationId: clinicPrescriptionPDF
+      summary: Generate prescription PDF
+      responses:
+        '200':
+          description: Success
+  /clinic/queue/{id}/status:
+    put:
+      operationId: clinicUpdateQueueStatus
+      summary: Update appointment status
+      responses:
+        '200':
+          description: Success
+  /clinic/refills:
+    get:
+      operationId: clinicListRefills
+      summary: List refill requests
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: clinicCreateRefill
+      summary: Create a prescription refill request
+      responses:
+        '200':
+          description: Success
+  /clinic/soap-notes/{id}:
+    get:
+      operationId: clinicGetSoapNote
+      summary: Get single SOAP note
+      responses:
+        '200':
+          description: Success
+  /clinic/visits:
+    get:
+      operationId: clinicListVisits
+      summary: List visits with filters
+      responses:
+        '200':
+          description: Success
+  /clinic/visits/{id}:
+    delete:
+      operationId: clinicDeleteVisit
+      summary: Soft-delete a visit
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: clinicGetVisit
+      summary: Get single visit
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: clinicUpdateVisit
+      summary: Update visit details
+      responses:
+        '200':
+          description: Success
+  /clothing/barcode/{barcode}:
+    get:
+      operationId: clothingGetVariantByBarcode
+      summary: Find variant by barcode
+      responses:
+        '200':
+          description: Success
+  /clothing/tailoring-notes:
+    get:
+      operationId: clothingListTailoringNotes
+      summary: List all tailoring notes with filters
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: clothingCreateTailoringNote
+      summary: Create a new tailoring note
+      responses:
+        '200':
+          description: Success
+  /clothing/tailoring-notes/{tailoringId}:
+    get:
+      operationId: clothingGetTailoringNote
+      summary: Get a specific tailoring note
+      responses:
+        '200':
+          description: Success
+  /clothing/tailoring-notes/{tailoringId}/measurements:
+    put:
+      operationId: clothingUpdateTailoringMeasurements
+      summary: Update tailoring measurements
+      responses:
+        '200':
+          description: Success
+  /clothing/tailoring-notes/{tailoringId}/status:
+    put:
+      operationId: clothingUpdateTailoringStatus
+      summary: Update tailoring status
+      responses:
+        '200':
+          description: Success
+  /clothing/variants/bulk:
+    put:
+      operationId: clothingBulkUpdateVariants
+      summary: Bulk update clothing variants
+      responses:
+        '200':
+          description: Success
+  /clothing/variants/{productId}:
+    get:
+      operationId: clothingGetVariants
+      summary: Get variants for a clothing product
+      responses:
+        '200':
+          description: Success
+  /clothing/variants/{variantId}/barcode:
+    put:
+      operationId: clothingAssignBarcodeToVariant
+      summary: Assign barcode to clothing variant
+      responses:
+        '200':
+          description: Success
+  /computer/checkout:
+    post:
+      operationId: computerCheckout
+      summary: Atomic PC build checkout with serial tracking (TransactWrite)
+      responses:
+        '200':
+          description: Success
+  /computer/job-cards:
+    get:
+      operationId: computerGetJobCards
+      summary: List computer job cards
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: computerCreateJobCard
+      summary: Create a computer service job card
+      responses:
+        '200':
+          description: Success
+  /computer/job-cards/{id}/assign:
+    patch:
+      operationId: computerAssignTechnician
+      summary: Assign technician to job (Owner/Admin/Manager only)
+      responses:
+        '200':
+          description: Success
+  /computer/job-cards/{id}/convert-to-invoice:
+    post:
+      operationId: computerConvertJobToInvoice
+      summary: Convert completed job to invoice with labor + parts
+      responses:
+        '200':
+          description: Success
+  /computer/job-cards/{id}/labor:
+    patch:
+      operationId: computerUpdateLaborCost
+      summary: Update labor costs and diagnosis on job card
+      responses:
+        '200':
+          description: Success
+  /computer/job-cards/{id}/parts:
+    get:
+      operationId: computerGetJobParts
+      summary: List parts used on a job card
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: computerAddJobPart
+      summary: Add parts to job and deduct inventory (atomic TransactWrite)
+      responses:
+        '200':
+          description: Success
+  /computer/job-cards/{id}/status:
+    patch:
+      operationId: computerUpdateJobCardStatus
+      summary: Update computer job card status
+      responses:
+        '200':
+          description: Success
+  /computer/products/multi-unit:
+    post:
+      operationId: computerSetMultiUnitConversion
+      summary: Configure Box/Pcs multi-unit conversion for a product
+      responses:
+        '200':
+          description: Success
+  /computer/rma:
+    post:
+      operationId: computerCreateRma
+      summary: Create RMA (Return Merchandise Authorization)
+      responses:
+        '200':
+          description: Success
+  /computer/rma/{id}/status:
+    patch:
+      operationId: computerUpdateRmaStatus
+      summary: Update RMA status
+      responses:
+        '200':
+          description: Success
+  /computer/serials:
+    get:
+      operationId: computerGetSerials
+      summary: List component serials with optional invoice filter
+      responses:
+        '200':
+          description: Success
+  /computer/serials/{serial}/history:
+    get:
+      operationId: computerGetSerialHistory
+      summary: Get complete service history for a serial (jobs, RMAs, warranty)
+      responses:
+        '200':
+          description: Success
+  /computer/stock/convert-unit:
+    post:
+      operationId: computerConvertStockUnit
+      summary: Convert between units (e.g., box to pcs) for stock calculations
+      responses:
+        '200':
+          description: Success
+  /computer/warranty:
+    get:
+      operationId: computerGetWarranty
+      summary: Query warranty by serial number or warranty ID
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: computerRegisterWarranty
+      summary: Register warranty for a serial number
+      responses:
+        '200':
+          description: Success
+  /customer/fuel-fills:
+    get:
+      operationId: customerGetFuelFills
+      summary: Linked customer pump fill history (volume) for mobile app
+      responses:
+        '200':
+          description: Success
+  /customer/invoices:
+    get:
+      operationId: customerGetInvoices
+      summary: Customer-app — list the calling customer's own invoices + dues (Part 4)
+      responses:
+        '200':
+          description: Success
+  /customer/invoices/{id}/pdf:
+    get:
+      operationId: customerGetInvoicePdf
+      summary: Customer-app — short-lived pre-signed URL for own invoice PDF (ownership-checked, Part 4)
+      responses:
+        '200':
+          description: Success
+  /customers/credit/reminder-candidates:
+    get:
+      operationId: getCreditReminderCandidates
+      summary: Udhar/credit parties with aged open balances (p20 data for reminders)
+      responses:
+        '200':
+          description: Success
+  /customers/recovery-visits:
+    get:
+      operationId: listRecoveryRegister
+      summary: Recovery register report by date range (p21)
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: recordRecoveryVisit
+      summary: Log credit recovery visit / follow-up (p21)
+      responses:
+        '200':
+          description: Success
+  /dashboard/v2/cashflow-forecast:
+    get:
+      operationId: getDashboardV2CashflowForecast
+      summary: Cash flow forecast (rolling 3 months)
+      responses:
+        '200':
+          description: Success
+  /dashboard/v2/invoice-distribution:
+    get:
+      operationId: getDashboardV2InvoiceDistribution
+      summary: Paid/Pending/Overdue donut chart data
+      responses:
+        '200':
+          description: Success
+  /dashboard/v2/license-validate:
+    get:
+      operationId: getDashboardV2LicenseValidate
+      summary: License validation with allowed business types
+      responses:
+        '200':
+          description: Success
+  /dashboard/v2/notifications-count:
+    get:
+      operationId: getDashboardV2NotificationsCount
+      summary: Unread notification badge count
+      responses:
+        '200':
+          description: Success
+  /dashboard/v2/recent-invoices:
+    get:
+      operationId: getDashboardV2RecentInvoices
+      summary: Recent invoices table (last 10 days)
+      responses:
+        '200':
+          description: Success
+  /dashboard/v2/revenue-chart:
+    get:
+      operationId: getDashboardV2RevenueChart
+      summary: 6-month billed vs collected revenue chart data
+      responses:
+        '200':
+          description: Success
+  /dc/dashboard:
+    get:
+      operationId: dcGetDashboard
+      summary: DC dashboard KPIs and upcoming events
+      responses:
+        '200':
+          description: Success
+  /dc/events:
+    get:
+      operationId: dcListEvents
+      summary: List event bookings with filters
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcCreateEvent
+      summary: Create a new event booking
+      responses:
+        '200':
+          description: Success
+  /dc/events/{id}:
+    delete:
+      operationId: dcDeleteEvent
+      summary: Delete an event booking
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: dcGetEvent
+      summary: Get a single event booking
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: dcUpdateEvent
+      summary: Update an event booking
+      responses:
+        '200':
+          description: Success
+  /dc/events/{id}/kot:
+    get:
+      operationId: dcListKots
+      summary: List all KOTs for a DC event
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcCreateKot
+      summary: Create a kitchen order ticket (KOT) for a DC event
+      responses:
+        '200':
+          description: Success
+  /dc/events/{id}/notes:
+    post:
+      operationId: dcAppendEventNote
+      summary: Append a timestamped note to an event timeline
+      responses:
+        '200':
+          description: Success
+  /dc/events/{id}/payments:
+    post:
+      operationId: dcRecordEventPayment
+      summary: Record advance/partial payment against a DC event booking
+      responses:
+        '200':
+          description: Success
+  /dc/events/{id}/profitability:
+    get:
+      operationId: dcGetEventProfitability
+      summary: Get per-event profitability (revenue vs expenses)
+      responses:
+        '200':
+          description: Success
+  /dc/events/{id}/shopping-list:
+    get:
+      operationId: dcGetShoppingList
+      summary: Auto-generate raw material shopping list for an event
+      responses:
+        '200':
+          description: Success
+  /dc/expenses:
+    get:
+      operationId: dcListExpenses
+      summary: List DC expenses
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcCreateExpense
+      summary: Create a DC expense record
+      responses:
+        '200':
+          description: Success
+  /dc/expenses/{id}:
+    delete:
+      operationId: dcDeleteExpense
+      summary: Delete a DC expense record
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: dcGetExpense
+      summary: Get a single DC expense record
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: dcUpdateExpense
+      summary: Update a DC expense record
+      responses:
+        '200':
+          description: Success
+  /dc/inventory:
+    get:
+      operationId: dcListInventory
+      summary: List DC inventory items
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcCreateInventoryItem
+      summary: Create a DC inventory item
+      responses:
+        '200':
+          description: Success
+  /dc/inventory/{id}:
+    delete:
+      operationId: dcDeleteInventoryItem
+      summary: Soft-delete a DC inventory item
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: dcUpdateInventoryItem
+      summary: Update a DC inventory item
+      responses:
+        '200':
+          description: Success
+  /dc/invoices:
+    get:
+      operationId: dcListInvoices
+      summary: List DC invoices
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcCreateInvoice
+      summary: Create a DC event invoice
+      responses:
+        '200':
+          description: Success
+  /dc/invoices/{id}/payment:
+    post:
+      operationId: dcRecordPayment
+      summary: Record a payment against a DC invoice
+      responses:
+        '200':
+          description: Success
+  /dc/kot/{id}:
+    put:
+      operationId: dcUpdateKot
+      summary: Update KOT or individual item status (pending/preparing/ready/served)
+      responses:
+        '200':
+          description: Success
+  /dc/menu:
+    get:
+      operationId: dcListMenuItems
+      summary: List catering menu items
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcCreateMenuItem
+      summary: Create a catering menu item
+      responses:
+        '200':
+          description: Success
+  /dc/menu/{id}:
+    delete:
+      operationId: dcDeleteMenuItem
+      summary: Delete a catering menu item
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: dcUpdateMenuItem
+      summary: Update a catering menu item
+      responses:
+        '200':
+          description: Success
+  /dc/packages:
+    get:
+      operationId: dcListPackages
+      summary: List catering packages
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcCreatePackage
+      summary: Create a catering package
+      responses:
+        '200':
+          description: Success
+  /dc/packages/{id}:
+    delete:
+      operationId: dcDeletePackage
+      summary: Delete a catering package
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: dcUpdatePackage
+      summary: Update a catering package
+      responses:
+        '200':
+          description: Success
+  /dc/quotes:
+    get:
+      operationId: dcListQuotes
+      summary: List DC quotations
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcCreateQuote
+      summary: Create a DC quotation
+      responses:
+        '200':
+          description: Success
+  /dc/quotes/{id}:
+    delete:
+      operationId: dcDeleteQuote
+      summary: Delete a DC quotation
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: dcGetQuote
+      summary: Get a single DC quotation
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: dcUpdateQuote
+      summary: Update a DC quotation (status, convert to booking)
+      responses:
+        '200':
+          description: Success
+  /dc/reports/summary:
+    get:
+      operationId: dcGetReportsSummary
+      summary: DC reports summary with revenue and expense breakdown
+      responses:
+        '200':
+          description: Success
+  /dc/staff:
+    get:
+      operationId: dcListStaff
+      summary: List DC staff
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcCreateStaff
+      summary: Create a DC staff member
+      responses:
+        '200':
+          description: Success
+  /dc/staff/attendance:
+    get:
+      operationId: dcGetAttendance
+      summary: Get DC staff attendance for a given date
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcMarkAttendance
+      summary: Mark daily attendance for DC staff members
+      responses:
+        '200':
+          description: Success
+  /dc/staff/{id}:
+    delete:
+      operationId: dcDeleteStaff
+      summary: Soft-delete a DC staff member
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: dcUpdateStaff
+      summary: Update a DC staff member
+      responses:
+        '200':
+          description: Success
+  /dc/themes:
+    get:
+      operationId: dcListThemes
+      summary: List decoration themes
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcCreateTheme
+      summary: Create a decoration theme
+      responses:
+        '200':
+          description: Success
+  /dc/themes/{id}:
+    delete:
+      operationId: dcDeleteTheme
+      summary: Delete a decoration theme
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: dcUpdateTheme
+      summary: Update a decoration theme
+      responses:
+        '200':
+          description: Success
+  /dc/vendors:
+    get:
+      operationId: dcListVendors
+      summary: List DC vendors
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcCreateVendor
+      summary: Create a DC vendor
+      responses:
+        '200':
+          description: Success
+  /dc/vendors/{id}:
+    delete:
+      operationId: dcDeleteVendor
+      summary: Soft-delete a DC vendor
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: dcUpdateVendor
+      summary: Update a DC vendor
+      responses:
+        '200':
+          description: Success
+  /dc/vendors/{id}/payments:
+    get:
+      operationId: dcListVendorPayments
+      summary: List payments made to a vendor
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: dcRecordVendorPayment
+      summary: Record a payment made to a vendor
+      responses:
+        '200':
+          description: Success
+  /estimates:
+    get:
+      operationId: estimateList
+      summary: List estimates with optional status filter
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: estimateCreate
+      summary: Create a new estimate/quotation (hardware)
+      responses:
+        '200':
+          description: Success
+  /estimates/{id}:
+    get:
+      operationId: estimateGet
+      summary: Get a single estimate with line items
+      responses:
+        '200':
+          description: Success
+  /estimates/{id}/convert:
+    post:
+      operationId: estimateConvert
+      summary: Convert estimate to invoice (atomic)
+      responses:
+        '200':
+          description: Success
+  /estimates/{id}/void:
+    post:
+      operationId: estimateVoid
+      summary: Void an estimate
+      responses:
+        '200':
+          description: Success
+  /grocery/batches:
+    get:
+      operationId: groceryBatchList
+      summary: List grocery batches for a product
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: groceryBatchCreate
+      summary: Create grocery batch lot with expiry and quantity
+      responses:
+        '200':
+          description: Success
+  /hardware/deposits:
+    get:
+      operationId: hardwareDepositList
+      summary: List returnable deposit records
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwareDepositCreate
+      summary: Create deposit liability for returnable goods
+      responses:
+        '200':
+          description: Success
+  /hardware/deposits/{id}/settle:
+    post:
+      operationId: hardwareDepositSettle
+      summary: Settle returnable deposit and refund
+      responses:
+        '200':
+          description: Success
+  /hardware/grn:
+    post:
+      operationId: hardwareCreateGrn
+      summary: Hardware Phase1+2 create GRN
+      responses:
+        '200':
+          description: Success
+  /hardware/indents:
+    get:
+      operationId: hardwareIndentList
+      summary: List hardware indents with optional project filter
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwareIndentCreate
+      summary: Create hardware indent/custom order request
+      responses:
+        '200':
+          description: Success
+  /hardware/indents/{id}/close:
+    post:
+      operationId: hardwareIndentClose
+      summary: Close hardware indent
+      responses:
+        '200':
+          description: Success
+  /hardware/invoice-profiles:
+    get:
+      operationId: hardwareGetInvoiceProfiles
+      summary: Hardware invoice format profile fetch
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: hardwareSaveInvoiceProfiles
+      summary: Hardware invoice format profile save
+      responses:
+        '200':
+          description: Success
+  /hardware/parties:
+    get:
+      operationId: hardwareListParties
+      summary: Hardware Phase1+2 list parties
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwareCreateParty
+      summary: Hardware Phase1+2 create party
+      responses:
+        '200':
+          description: Success
+  /hardware/parties-aging:
+    get:
+      operationId: hardwareGetPartyAging
+      summary: Hardware Phase1+2 party aging buckets
+      responses:
+        '200':
+          description: Success
+  /hardware/parties/{id}/ledger:
+    get:
+      operationId: hardwareGetPartyLedger
+      summary: Hardware Phase1+2 get party ledger
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwarePostPartyLedger
+      summary: Hardware Phase1+2 post party ledger entry
+      responses:
+        '200':
+          description: Success
+  /hardware/pos/quick-invoice:
+    post:
+      operationId: hardwareQuickCreateInvoice
+      summary: Hardware fast POS quick invoice create
+      responses:
+        '200':
+          description: Success
+  /hardware/projects:
+    get:
+      operationId: hardwareProjectList
+      summary: List hardware projects
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwareProjectCreate
+      summary: Create hardware project for contractor/site billing
+      responses:
+        '200':
+          description: Success
+  /hardware/projects/{id}/close:
+    post:
+      operationId: hardwareProjectClose
+      summary: Close hardware project
+      responses:
+        '200':
+          description: Success
+  /hardware/purchase-bills:
+    post:
+      operationId: hardwareCreatePurchaseBill
+      summary: Hardware Phase1+2 create purchase bill
+      responses:
+        '200':
+          description: Success
+  /hardware/purchase-orders:
+    get:
+      operationId: hardwareListPurchaseOrders
+      summary: Hardware Phase1+2 list purchase orders
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwareCreatePurchaseOrder
+      summary: Hardware Phase1+2 create purchase order
+      responses:
+        '200':
+          description: Success
+  /hardware/purchase-orders/pending:
+    get:
+      operationId: hardwarePendingPurchaseOrders
+      summary: Hardware pending purchase order tracker
+      responses:
+        '200':
+          description: Success
+  /hardware/purchase-orders/{id}/status:
+    post:
+      operationId: hardwareUpdatePurchaseOrderStatus
+      summary: Hardware Phase1+2 update purchase order status
+      responses:
+        '200':
+          description: Success
+  /hardware/rate-comparison:
+    get:
+      operationId: hardwareSupplierRateComparison
+      summary: Hardware best supplier rate comparison
+      responses:
+        '200':
+          description: Success
+  /hardware/reports/dead-stock:
+    get:
+      operationId: hardwareDeadStockReport
+      summary: Hardware dead stock report
+      responses:
+        '200':
+          description: Success
+  /hardware/reports/item-velocity:
+    get:
+      operationId: hardwareItemVelocityReport
+      summary: Hardware fast and slow moving item report
+      responses:
+        '200':
+          description: Success
+  /hardware/sales-orders:
+    get:
+      operationId: hardwareListSalesOrders
+      summary: Hardware sales order list
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: hardwareCreateSalesOrder
+      summary: Hardware sales order create
+      responses:
+        '200':
+          description: Success
+  /hardware/sales-orders/{id}/status:
+    post:
+      operationId: hardwareUpdateSalesOrderStatus
+      summary: Hardware sales order status update
+      responses:
+        '200':
+          description: Success
+  /health:
+    get:
+      operationId: health
+      summary: System health status for Flutter connectivity checks
+      responses:
+        '200':
+          description: Success
+  /health/live:
+    get:
+      operationId: healthLive
+      summary: Kubernetes-style liveness probe
+      responses:
+        '200':
+          description: Success
+  /health/ready:
+    get:
+      operationId: healthReady
+      summary: Kubernetes-style readiness probe
+      responses:
+        '200':
+          description: Success
+  /in-store/orders/today:
+    get:
+      operationId: inStoreListTodayOrders
+      summary: Operator panel — list all in-store orders placed today
+      responses:
+        '200':
+          description: Success
+  /in-store/products/barcode/{barcode}:
+    get:
+      operationId: inStoreBarcodeProductLookup
+      summary: Fetch product details by barcode for in-store scanning
+      responses:
+        '200':
+          description: Success
+  /in-store/session/start:
+    post:
+      operationId: inStoreStartSession
+      summary: Start a new in-store self-scan session for a customer
+      responses:
+        '200':
+          description: Success
+  /in-store/session/{sessionId}:
+    get:
+      operationId: inStoreGetSession
+      summary: Get session state and cart for recovery
+      responses:
+        '200':
+          description: Success
+  /in-store/session/{sessionId}/abandon:
+    post:
+      operationId: inStoreAbandonSession
+      summary: Mark a session as abandoned
+      responses:
+        '200':
+          description: Success
+  /in-store/session/{sessionId}/cart:
+    patch:
+      operationId: inStoreUpdateCart
+      summary: Sync cart items to server for a session
+      responses:
+        '200':
+          description: Success
+  /in-store/session/{sessionId}/checkout:
+    post:
+      operationId: inStoreCheckout
+      summary: Re-validate stock and create Razorpay order for in-store checkout
+      responses:
+        '200':
+          description: Success
+  /in-store/session/{sessionId}/exit-qr/refresh:
+    post:
+      operationId: inStoreRefreshExitQR
+      summary: Regenerate exit QR when it expires before staff scan
+      responses:
+        '200':
+          description: Success
+  /in-store/sessions/active:
+    get:
+      operationId: inStoreListActiveSessions
+      summary: Admin monitor — list all active sessions for a store
+      responses:
+        '200':
+          description: Success
+  /in-store/verify-exit:
+    post:
+      operationId: inStoreVerifyExit
+      summary: Staff exit QR verification — HMAC check + one-time use enforcement
+      responses:
+        '200':
+          description: Success
+  /inventory/expiry-alerts:
+    get:
+      operationId: groceryExpiryAlerts
+      summary: Grocery product expiry alerts grouped by urgency (expired/7d/30d)
+      responses:
+        '200':
+          description: Success
+  /inventory/import:
+    get:
+      operationId: listImportJobs
+      summary: List recent import jobs for tenant
+      responses:
+        '200':
+          description: Success
+  /inventory/import/init:
+    post:
+      operationId: importProductFileInit
+      summary: Initialize import job — idempotency check + presigned S3 URL
+      responses:
+        '200':
+          description: Success
+  /inventory/import/{jobId}:
+    get:
+      operationId: getImportJobStatus
+      summary: Get import job status, counts and error details
+      responses:
+        '200':
+          description: Success
+  /inventory/labels:
+    post:
+      operationId: barcodeBatchLabels
+      summary: Batch generate label data for multiple products
+      responses:
+        '200':
+          description: Success
+  /inventory/{id}/adjust:
+    post:
+      operationId: adjustStock
+      summary: Categorized stock adjustment (wastage, damage, theft, correction, expiry)
+      responses:
+        '200':
+          description: Success
+  /inventory/{id}/label:
+    post:
+      operationId: barcodeLabel
+      summary: Generate label data for a single product
+      responses:
+        '200':
+          description: Success
+  /invoices/{id}/einvoice:
+    get:
+      operationId: einvoiceStatus
+      summary: Get e-invoice status and IRN details
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: einvoiceGenerate
+      summary: Generate e-invoice (IRN) via NIC API
+      responses:
+        '200':
+          description: Success
+  /invoices/{id}/einvoice/cancel:
+    post:
+      operationId: einvoiceCancel
+      summary: Cancel e-invoice IRN (within 24h window)
+      responses:
+        '200':
+          description: Success
+  /invoices/{id}/ewaybill:
+    post:
+      operationId: ewaybillGenerate
+      summary: Generate e-way bill via NIC API
+      responses:
+        '200':
+          description: Success
+  /invoices/{id}/return:
+    post:
+      operationId: returnInvoice
+      summary: Process return/refund and create credit note
+      responses:
+        '200':
+          description: Success
+  /jewellery/gold-rate-alerts:
+    get:
+      operationId: jewelleryListGoldRateAlerts
+      summary: List user's gold rate alerts
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: jewelleryCreateGoldRateAlert
+      summary: Create gold rate alert for monitoring
+      responses:
+        '200':
+          description: Success
+  /jewellery/gold-rate-alerts/{id}:
+    delete:
+      operationId: jewelleryDeleteGoldRateAlert
+      summary: Delete gold rate alert
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: jewelleryUpdateGoldRateAlert
+      summary: Update gold rate alert
+      responses:
+        '200':
+          description: Success
+  /jewellery/gold-schemes:
+    get:
+      operationId: jewelleryListGoldSchemes
+      summary: List gold schemes with optional filters
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: jewelleryCreateGoldScheme
+      summary: Create gold savings scheme for customer
+      responses:
+        '200':
+          description: Success
+  /jewellery/gold-schemes/{id}:
+    get:
+      operationId: jewelleryGetGoldScheme
+      summary: Get single gold scheme details
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: jewelleryUpdateGoldScheme
+      summary: Update gold scheme status
+      responses:
+        '200':
+          description: Success
+  /jewellery/gold-schemes/{id}/payments:
+    post:
+      operationId: jewelleryRecordSchemePayment
+      summary: Record installment payment for gold scheme
+      responses:
+        '200':
+          description: Success
+  /jewellery/gold-schemes/{id}/redeem:
+    post:
+      operationId: jewelleryRedeemGoldScheme
+      summary: Redeem gold scheme for jewellery/cash/gold
+      responses:
+        '200':
+          description: Success
+  /jewellery/making-charges-configs:
+    get:
+      operationId: jewelleryListMakingChargesConfigs
+      summary: List making charges configurations
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: jewelleryCreateMakingChargesConfig
+      summary: Create making charges configuration
+      responses:
+        '200':
+          description: Success
+  /jewellery/making-charges-configs/{id}:
+    delete:
+      operationId: jewelleryDeleteMakingChargesConfig
+      summary: Delete making charges configuration
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: jewelleryUpdateMakingChargesConfig
+      summary: Update making charges configuration
+      responses:
+        '200':
+          description: Success
+  /jewellery/repairs:
+    get:
+      operationId: jewelleryListRepairJobs
+      summary: List repair jobs with optional filters
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: jewelleryCreateRepairJob
+      summary: Create jewellery repair job
+      responses:
+        '200':
+          description: Success
+  /jewellery/repairs/statistics:
+    get:
+      operationId: jewelleryGetRepairStatistics
+      summary: Get repair job statistics and KPIs
+      responses:
+        '200':
+          description: Success
+  /jewellery/repairs/{id}:
+    delete:
+      operationId: jewelleryDeleteRepairJob
+      summary: Cancel/soft-delete repair job
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: jewelleryGetRepairJob
+      summary: Get single repair job details
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: jewelleryUpdateRepairJob
+      summary: Update repair job details
+      responses:
+        '200':
+          description: Success
+  /jewellery/repairs/{id}/status:
+    post:
+      operationId: jewelleryUpdateRepairStatus
+      summary: Update repair job status with workflow tracking
+      responses:
+        '200':
+          description: Success
+  /jewellery/reports/hallmark-register:
+    get:
+      operationId: jewelleryHallmarkRegister
+      summary: BIS Hallmark compliance register (HUID, purity, weight, article)
+      responses:
+        '200':
+          description: Success
+  /jewellery/reports/old-gold-register:
+    get:
+      operationId: jewelleryOldGoldRegister
+      summary: Old gold purchase register (PML Act compliance)
+      responses:
+        '200':
+          description: Success
+  /license/activate:
+    post:
+      operationId: licenseActivate
+      summary: Activate a license key for the tenant
+      responses:
+        '200':
+          description: Success
+  /license/activate-offline:
+    post:
+      operationId: licenseActivateOffline
+      summary: Machine-bound offline activation — returns a signed License_Token
+      responses:
+        '200':
+          description: Success
+  /license/convert:
+    post:
+      operationId: licenseConvert
+      summary: Convert license plan type (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /license/extend:
+    post:
+      operationId: licenseExtend
+      summary: Extend license duration (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /license/generate:
+    post:
+      operationId: licenseGenerate
+      summary: Generate a new license key (admin only)
+      responses:
+        '200':
+          description: Success
+  /license/list:
+    get:
+      operationId: licenseList
+      summary: List all licenses (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /license/manage:
+    post:
+      operationId: licenseManage
+      summary: Deactivate/suspend/revoke a license key (admin only)
+      responses:
+        '200':
+          description: Success
+  /license/status:
+    get:
+      operationId: licenseStatus
+      summary: Get current license status
+      responses:
+        '200':
+          description: Success
+  /license/transfer:
+    post:
+      operationId: licenseTransfer
+      summary: Transfer license to a new tenant (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /license/upgrade:
+    post:
+      operationId: licenseUpgrade
+      summary: Upgrade license plan (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /license/validate:
+    post:
+      operationId: licenseValidate
+      summary: Public license key validation (pre-auth, no JWT required)
+      responses:
+        '200':
+          description: Success
+  /license/{key}:
+    get:
+      operationId: licenseGetDetails
+      summary: Get license details by key (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /license/{key}/business-type:
+    patch:
+      operationId: licenseUpdateBusinessType
+      summary: Update license primary business type (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /license/{key}/business-types:
+    patch:
+      operationId: licenseUpdateBusinessTypes
+      summary: Update allowed business types (multi-business) (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /license/{key}/devices:
+    patch:
+      operationId: licenseUpdateDevices
+      summary: Update max activated devices (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /license/{key}/history:
+    get:
+      operationId: licenseHistory
+      summary: License audit history timeline (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /license/{key}/notes:
+    patch:
+      operationId: licenseUpdateNotes
+      summary: Update license notes (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /license/{key}/owner:
+    patch:
+      operationId: licenseUpdateOwner
+      summary: Update license owner details (SuperAdmin only)
+      responses:
+        '200':
+          description: Success
+  /loyalty/earn:
+    post:
+      operationId: loyaltyEarn
+      summary: Award loyalty points after invoice finalization
+      responses:
+        '200':
+          description: Success
+  /loyalty/history/{customerId}:
+    get:
+      operationId: loyaltyHistory
+      summary: Get loyalty point transaction history
+      responses:
+        '200':
+          description: Success
+  /loyalty/redeem:
+    post:
+      operationId: loyaltyRedeem
+      summary: Redeem loyalty points for bill discount
+      responses:
+        '200':
+          description: Success
+  /loyalty/{customerId}:
+    get:
+      operationId: loyaltyGetBalance
+      summary: Get loyalty points balance for a customer
+      responses:
+        '200':
+          description: Success
+  /manifest:
+    get:
+      operationId: manifestGet
+      summary: Get current user's signed feature manifest
+      responses:
+        '200':
+          description: Success
+  /manifest/refresh:
+    post:
+      operationId: manifestRefresh
+      summary: Force refresh current user's feature manifest (Owner/Admin)
+      responses:
+        '200':
+          description: Success
+  /migration/cutover:
+    post:
+      operationId: migrationCutover
+      summary: Convert offline license + mark migration complete (point of no return)
+      responses:
+        '200':
+          description: Success
+  /migration/identity:
+    post:
+      operationId: migrationIdentity
+      summary: Provision Cognito identity record for migrating offline user
+      responses:
+        '200':
+          description: Success
+  /migration/import:
+    post:
+      operationId: migrationImport
+      summary: Batch-write offline records into DynamoDB (max 25/request)
+      responses:
+        '200':
+          description: Success
+  /migration/rollback:
+    post:
+      operationId: migrationRollback
+      summary: Purge all cloud data from a failed migration run (safe rollback)
+      responses:
+        '200':
+          description: Success
+  /migration/upload:
+    post:
+      operationId: migrationUpload
+      summary: Return S3 presigned PUT URL for offline blob upload
+      responses:
+        '200':
+          description: Success
+  /migration/verify:
+    post:
+      operationId: migrationVerify
+      summary: Verify record counts match offline audit report
+      responses:
+        '200':
+          description: Success
+  /notifications/register-device:
+    post:
+      operationId: registerDevice
+      summary: Register device FCM token for push notifications
+      responses:
+        '200':
+          description: Success
+  /notifications/retention-config:
+    get:
+      operationId: getNotificationRetentionConfig
+      summary: Read the current notification retention (Archive_Period) configuration
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: updateNotificationRetentionConfig
+      summary: Update the notification retention (Archive_Period) configuration (admin only)
+      responses:
+        '200':
+          description: Success
+  /owner/dashboard:
+    get:
+      operationId: getDashboardV2Summary
+      summary: Performance card KPIs (revenue, overdue, pending, collection period)
+      responses:
+        '200':
+          description: Success
+  /owner/register:
+    post:
+      operationId: authSignup
+      summary: Register new tenant + owner account
+      responses:
+        '200':
+          description: Success
+  /owner/staff/{staffId}/transactions:
+    get:
+      operationId: ownerStaffTransactions
+      summary: List all staff transactions (owner/admin view)
+      responses:
+        '200':
+          description: Success
+  /payment-config:
+    get:
+      operationId: paymentConfigGet
+      summary: List gateway configs (status only, no secrets)
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: paymentConfigSave
+      summary: Save KMS-encrypted gateway credentials for tenant
+      responses:
+        '200':
+          description: Success
+  /payment-config/verify:
+    post:
+      operationId: paymentConfigVerify
+      summary: Verify and activate gateway credentials
+      responses:
+        '200':
+          description: Success
+  /payment-config/{gateway}:
+    delete:
+      operationId: paymentConfigDelete
+      summary: Remove gateway config for tenant
+      responses:
+        '200':
+          description: Success
+  /payment/initiate:
+    post:
+      operationId: initiatePayment
+      summary: Create payment order and generate QR code
+      responses:
+        '200':
+          description: Success
+  /payment/reconcile:
+    post:
+      operationId: reconcilePayments
+      summary: Cron job to sync pending payments with gateway
+      responses:
+        '200':
+          description: Success
+  /payment/status/{orderId}:
+    get:
+      operationId: getPaymentStatus
+      summary: Check payment order status
+      responses:
+        '200':
+          description: Success
+  /payment/webhook/phonepe:
+    post:
+      operationId: phonePeWebhook
+      summary: PhonePe Webhook endpoint
+      responses:
+        '200':
+          description: Success
+  /payment/webhook/razorpay:
+    post:
+      operationId: razorpayWebhook
+      summary: Razorpay Webhook endpoint
+      responses:
+        '200':
+          description: Success
+  /pharmacy/batch-intake:
+    post:
+      operationId: pharmacyBatchIntake
+      summary: Record medicine batch intake (GRN/purchase)
+      responses:
+        '200':
+          description: Success
+  /pharmacy/cds/screen:
+    post:
+      operationId: pharmacyCdsScreen
+      summary: Run interaction/allergy/contraindication CDS screening
+      responses:
+        '200':
+          description: Success
+  /pharmacy/claims:
+    get:
+      operationId: pharmacyClaimList
+      summary: List pharmacy claims with status and COB filters
+      responses:
+        '200':
+          description: Success
+  /pharmacy/claims/transmit:
+    post:
+      operationId: pharmacyClaimTransmit
+      summary: Transmit NCPDP D.0 claim payload
+      responses:
+        '200':
+          description: Success
+  /pharmacy/claims/{id}:
+    get:
+      operationId: pharmacyClaimGet
+      summary: Get pharmacy claim details by id
+      responses:
+        '200':
+          description: Success
+  /pharmacy/claims/{id}/adjudicate:
+    post:
+      operationId: pharmacyClaimAdjudicate
+      summary: Capture real-time payer adjudication outcome
+      responses:
+        '200':
+          description: Success
+  /pharmacy/claims/{id}/cob/next:
+    post:
+      operationId: pharmacyClaimCobNext
+      summary: Generate secondary or tertiary COB claim
+      responses:
+        '200':
+          description: Success
+  /pharmacy/drug-master/mappings:
+    get:
+      operationId: pharmacyDrugMasterList
+      summary: List drug master mappings and India brand bridge
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyDrugMasterUpsert
+      summary: Upsert NDC RxNorm ATC and India brand bridge mapping
+      responses:
+        '200':
+          description: Success
+  /pharmacy/fefo-override/authorize:
+    post:
+      operationId: pharmacyFefoOverrideAuthorize
+      summary: Backend-verified FEFO override authorization (replaces hardcoded PIN)
+      responses:
+        '200':
+          description: Success
+  /pharmacy/formulary:
+    get:
+      operationId: pharmacyFormularyList
+      summary: List payer formularies
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyFormularyUpsert
+      summary: Upsert payer formulary and utilization controls
+      responses:
+        '200':
+          description: Success
+  /pharmacy/h1-register:
+    get:
+      operationId: pharmacyH1List
+      summary: List Schedule H1 register entries (paginated)
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyH1Create
+      summary: Create Schedule H1 register entry (CDSCO H1 Rule)
+      responses:
+        '200':
+          description: Success
+  /pharmacy/h1-register/export:
+    get:
+      operationId: pharmacyH1Export
+      summary: Export Schedule H1 register rows for Drug Inspector audit
+      responses:
+        '200':
+          description: Success
+  /pharmacy/narcotic-register:
+    get:
+      operationId: pharmacyNarcoticList
+      summary: List Schedule X narcotic register entries (paginated)
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyNarcoticCreate
+      summary: Create Schedule X narcotic register entry
+      responses:
+        '200':
+          description: Success
+  /pharmacy/narcotic-register/export:
+    get:
+      operationId: pharmacyNarcoticExport
+      summary: Export Schedule X narcotic register rows for compliance filing
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/evidence:
+    get:
+      operationId: pharmacyPrescriptionEvidenceList
+      summary: List prescription evidence records
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyPrescriptionEvidenceUpload
+      summary: Upload prescription evidence metadata for compliance trail
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/partial-fills:
+    post:
+      operationId: pharmacyPartialFillCreate
+      summary: Record partial fill ledger entry for prescription
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/refills:
+    get:
+      operationId: pharmacyRefillList
+      summary: List prescription refill requests
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyRefillCreate
+      summary: Create prescription refill request
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/refills/backfill:
+    post:
+      operationId: pharmacyRefillBackfill
+      summary: Backfill legacy refill rows with product traceability fields
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/refills/backfill/bulk:
+    post:
+      operationId: pharmacyRefillBulkBackfill
+      summary: Bulk backfill legacy refill rows with product traceability fields
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/refills/incomplete:
+    get:
+      operationId: pharmacyRefillIncompleteList
+      summary: List legacy refill rows missing product traceability fields
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prescriptions/refills/{id}/status:
+    post:
+      operationId: pharmacyRefillStatusUpdate
+      summary: Update refill workflow status (approve/reject/dispense)
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prior-auth:
+    get:
+      operationId: pharmacyPriorAuthList
+      summary: List prior authorization workflows
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pharmacyPriorAuthCreate
+      summary: Create prior authorization workflow request
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prior-auth/{id}:
+    get:
+      operationId: pharmacyPriorAuthGet
+      summary: Get prior authorization details by id
+      responses:
+        '200':
+          description: Success
+  /pharmacy/prior-auth/{id}/status:
+    post:
+      operationId: pharmacyPriorAuthUpdate
+      summary: Update prior authorization decision status
+      responses:
+        '200':
+          description: Success
+  /pharmacy/program-track/events:
+    post:
+      operationId: pharmacyProgramTrackRecord
+      summary: Record optional 340B PBM tracking event
+      responses:
+        '200':
+          description: Success
+  /pharmacy/return-policy/evaluate:
+    post:
+      operationId: pharmacyReturnPolicyEvaluate
+      summary: Evaluate medicine return policy by state and schedule
+      responses:
+        '200':
+          description: Success
+  /prescriptions:
+    post:
+      operationId: sharedPrescriptionUpload
+      summary: Upload shared clinic prescription
+      responses:
+        '200':
+          description: Success
+  /prescriptions/check/{rxId}:
+    get:
+      operationId: sharedPrescriptionCheck
+      summary: Check shared prescription dispense status
+      responses:
+        '200':
+          description: Success
+  /prescriptions/{rxId}:
+    get:
+      operationId: sharedPrescriptionGet
+      summary: Fetch shared prescription by id
+      responses:
+        '200':
+          description: Success
+  /prescriptions/{rxId}/dispense:
+    patch:
+      operationId: sharedPrescriptionDispense
+      summary: Mark shared prescription as dispensed
+      responses:
+        '200':
+          description: Success
+  /products:
+    get:
+      operationId: getProducts
+      summary: List products with filters and pagination (pharmacy & other types)
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: createProduct
+      summary: Create new product (with S3 image coordination)
+      responses:
+        '200':
+          description: Success
+  /products/detail/{productId}:
+    get:
+      operationId: productGet
+      summary: Get single product by ID
+      responses:
+        '200':
+          description: Success
+  /products/low-stock:
+    get:
+      operationId: getLowStockProducts
+      summary: Get low-stock products for reorder alerts
+      responses:
+        '200':
+          description: Success
+  /products/search:
+    get:
+      operationId: productSearch
+      summary: Search products by name with relevance scoring
+      responses:
+        '200':
+          description: Success
+  /products/search/barcode:
+    get:
+      operationId: searchProductByBarcode
+      summary: Search product by barcode (pharmacy use case)
+      responses:
+        '200':
+          description: Success
+  /products/top-selling:
+    get:
+      operationId: getTopSellingProducts
+      summary: Get top-selling products for dashboard
+      responses:
+        '200':
+          description: Success
+  /products/{id}:
+    delete:
+      operationId: deleteProduct
+      summary: Delete product from catalog
+      responses:
+        '200':
+          description: Success
+    get:
+      operationId: getProductById
+      summary: Get single product by ID with presigned image URLs
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: updateProduct
+      summary: Update product details and metadata
+      responses:
+        '200':
+          description: Success
+  /products/{id}/image-upload-url:
+    post:
+      operationId: getProductImageUploadUrl
+      summary: Get presigned S3 URL for product image upload
+      responses:
+        '200':
+          description: Success
+  /pump/atg/ingest:
+    post:
+      operationId: pumpAtgIngest
+      summary: Ingest ATG tank readings (connector-gated)
+      responses:
+        '200':
+          description: Success
+  /pump/atg/poll:
+    post:
+      operationId: pumpAtgPoll
+      summary: Poll configured ATG connector now and persist TANKATG rows
+      responses:
+        '200':
+          description: Success
+  /pump/cash-drop:
+    post:
+      operationId: pumpCashDrop
+      summary: PP-001 FIX — Cash drop with computed expected amount
+      responses:
+        '200':
+          description: Success
+  /pump/dip-chart/convert:
+    get:
+      operationId: pumpDipConvert
+      summary: Convert dip millimeters to liters using active chart
+      responses:
+        '200':
+          description: Success
+  /pump/dip-chart/upload:
+    post:
+      operationId: pumpDipChartUpload
+      summary: Upload tank dip chart points (mm to liters)
+      responses:
+        '200':
+          description: Success
+  /pump/fleet/authorize:
+    post:
+      operationId: pumpFleetAuthorize
+      summary: Fleet card authorization (provider-gated)
+      responses:
+        '200':
+          description: Success
+  /pump/fuel-prices:
+    get:
+      operationId: pumpFuelPriceHistory
+      summary: Get fuel price change history by fuel type
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: pumpUpdateFuelPrice
+      summary: Update fuel price with effective timestamp and audit log
+      responses:
+        '200':
+          description: Success
+  /pump/ppm-reading:
+    post:
+      operationId: pumpPpmReading
+      summary: Record PPM impurity reading (density sync entity)
+      responses:
+        '200':
+          description: Success
+  /pump/reports/atg-readings:
+    get:
+      operationId: pumpAtgReadingsReport
+      summary: ATG reading register (volume, water, temp, leak flags)
+      responses:
+        '200':
+          description: Success
+  /pump/reports/cashier-collection:
+    get:
+      operationId: pumpCashierCollectionReport
+      summary: Cashier-wise collection summary report
+      responses:
+        '200':
+          description: Success
+  /pump/reports/dip-variance:
+    get:
+      operationId: pumpDipVarianceReport
+      summary: Tank/nozzle dip variance trend and exception report
+      responses:
+        '200':
+          description: Success
+  /pump/reports/dsr:
+    get:
+      operationId: pumpDsrReport
+      summary: Daily sales report (DSR) for fuel station
+      responses:
+        '200':
+          description: Success
+  /pump/reports/nozzle-sales:
+    get:
+      operationId: pumpNozzleSalesReport
+      summary: Nozzle-wise sale and variance report
+      responses:
+        '200':
+          description: Success
+  /pump/reports/rate-variation:
+    get:
+      operationId: pumpRateVariationReport
+      summary: Fuel rate variation trend with estimated value impact
+      responses:
+        '200':
+          description: Success
+  /pump/reports/shift-collection:
+    get:
+      operationId: pumpShiftCollectionReport
+      summary: Shift-wise collection report
+      responses:
+        '200':
+          description: Success
+  /pump/reports/stock-valuation:
+    get:
+      operationId: pumpStockValuationReport
+      summary: Stock valuation report (fifo/purchase/sale/density-adjusted)
+      responses:
+        '200':
+          description: Success
+  /pump/reports/tank-stock:
+    get:
+      operationId: pumpTankStockReport
+      summary: Canonical tank stock report from dip/ATG readings
+      responses:
+        '200':
+          description: Success
+  /pump/reports/tanker-receipts:
+    get:
+      operationId: pumpTankerReceiptReport
+      summary: Tanker receipt register with dip-short summary
+      responses:
+        '200':
+          description: Success
+  /pump/reports/vehicle-ledger:
+    get:
+      operationId: pumpVehicleLedgerReport
+      summary: Vehicle-wise fuel sale history and outstanding (udhar) balance
+      responses:
+        '200':
+          description: Success
+  /pump/shift/approve-dsr:
+    post:
+      operationId: pumpShiftDsrApprove
+      summary: Manager approval and immutable lock for shift DSR snapshot
+      responses:
+        '200':
+          description: Success
+  /pump/shift/close:
+    post:
+      operationId: pumpShiftClose
+      summary: PP-004/PP-006 FIX — Close shift with reconciliation summary
+      responses:
+        '200':
+          description: Success
+  /pump/shift/handover-ack:
+    post:
+      operationId: pumpShiftHandoverAck
+      summary: Shift handover acknowledgement by receiving staff/manager
+      responses:
+        '200':
+          description: Success
+  /pump/shift/open:
+    post:
+      operationId: pumpShiftOpen
+      summary: PP-004 FIX — Open a new shift (creates SHIFT# entity)
+      responses:
+        '200':
+          description: Success
+  /pump/tank-dip:
+    post:
+      operationId: pumpTankDipRecord
+      summary: Record manual tank dip readings
+      responses:
+        '200':
+          description: Success
+  /pump/tanker-receipts:
+    post:
+      operationId: pumpTankerReceiptRecord
+      summary: Record tanker/bowser fuel receipt with dip-short detection
+      responses:
+        '200':
+          description: Success
+  /purchase/entries:
+    get:
+      operationId: scanBillListEntries
+      summary: List purchase entries with filters
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: scanBillCreateEntry
+      summary: Create confirmed purchase entry with stock update (TransactWrite)
+      responses:
+        '200':
+          description: Success
+  /purchase/entries/{rid}:
+    get:
+      operationId: scanBillGetEntry
+      summary: Get single purchase entry with presigned image URL
+      responses:
+        '200':
+          description: Success
+  /purchase/scan-bill/check-duplicate:
+    post:
+      operationId: scanBillCheckDuplicate
+      summary: Check if bill has already been processed
+      responses:
+        '200':
+          description: Success
+  /purchase/scan-bill/extract:
+    post:
+      operationId: scanBillExtract
+      summary: Upload image, run Textract OCR, parse bill lines
+      responses:
+        '200':
+          description: Success
+  /purchase/scan-bill/match:
+    post:
+      operationId: scanBillMatch
+      summary: Match parsed OCR lines to tenant product catalog
+      responses:
+        '200':
+          description: Success
+  /purchase/scan-bill/match-po:
+    post:
+      operationId: scanBillMatchPO
+      summary: Match bill items against open purchase orders
+      responses:
+        '200':
+          description: Success
+  /purchase/scan-bill/verify:
+    post:
+      operationId: scanBillVerify
+      summary: AI-powered bill verification with OCR error detection
+      responses:
+        '200':
+          description: Success
+  /reports/balance-sheet:
+    get:
+      operationId: balanceSheetReport
+      summary: Simplified balance sheet snapshot (AR, inventory, collections register)
+      responses:
+        '200':
+          description: Success
+  /reports/cash-flow:
+    get:
+      operationId: cashFlowReport
+      summary: Operating cash flow from PAYMENT and EXPENSE rows
+      responses:
+        '200':
+          description: Success
+  /reports/expense-register:
+    get:
+      operationId: expenseRegisterReport
+      summary: Expense register with optional category filter
+      responses:
+        '200':
+          description: Success
+  /reports/export:
+    get:
+      operationId: csvExport
+      summary: CSV export for any report type
+      responses:
+        '200':
+          description: Success
+  /reports/fund-flow:
+    get:
+      operationId: fundFlowReport
+      summary: Fund sources vs applications (same window as cash-flow)
+      responses:
+        '200':
+          description: Success
+  /reports/gstr3b:
+    get:
+      operationId: gstr3bReport
+      summary: GSTR-3B summary report
+      responses:
+        '200':
+          description: Success
+  /reports/petty-cash:
+    get:
+      operationId: pettyCashReport
+      summary: Petty cash subset of expenses
+      responses:
+        '200':
+          description: Success
+  /reports/pnl:
+    get:
+      operationId: pnlReport
+      summary: Profit & Loss report
+      responses:
+        '200':
+          description: Success
+  /reports/share:
+    post:
+      operationId: reportShareCreate
+      summary: Queue or schedule report email/WhatsApp dispatch job
+      responses:
+        '200':
+          description: Success
+  /reports/share-dispatches/{id}/mark-attempt:
+    post:
+      operationId: reportShareDispatchMarkAttempt
+      summary: Internal worker marks dispatch attempt (x-internal-secret)
+      responses:
+        '200':
+          description: Success
+  /reports/stock-adjustments:
+    get:
+      operationId: stockAdjustmentsReport
+      summary: Stock adjustment / wastage report for reconciliation
+      responses:
+        '200':
+          description: Success
+  /resto/kot:
+    get:
+      operationId: restoListActiveKots
+      summary: Active KOT list for KDS (status=pending|preparing|ready). P0-03 fix.
+      responses:
+        '200':
+          description: Success
+  /service/jobs:
+    get:
+      operationId: serviceGetMyJobs
+      summary: Active repair jobs for logged-in technician
+      responses:
+        '200':
+          description: Success
+  /service/jobs/{id}/parts:
+    post:
+      operationId: serviceAddJobParts
+      summary: Consume inventory parts for a repair job
+      responses:
+        '200':
+          description: Success
+  /service/jobs/{id}/status:
+    put:
+      operationId: serviceUpdateJobStatus
+      summary: Update repair job status
+      responses:
+        '200':
+          description: Success
+  /settings/einvoice:
+    get:
+      operationId: einvoiceSettingsGet
+      summary: Get NIC e-invoice/e-way bill integration settings
+      responses:
+        '200':
+          description: Success
+    put:
+      operationId: einvoiceSettingsUpsert
+      summary: Save NIC e-invoice/e-way bill integration settings
+      responses:
+        '200':
+          description: Success
+  /staff/profile:
+    get:
+      operationId: authMe
+      summary: Validate token and return user with permissions
+      responses:
+        '200':
+          description: Success
+  /staff/qr/generate:
+    post:
+      operationId: staffSaleGenerateQr
+      summary: Generate payment QR for online fuel sale
+      responses:
+        '200':
+          description: Success
+  /staff/sale:
+    post:
+      operationId: staffSaleCreate
+      summary: Record a fuel sale (cash or online) by staff member
+      responses:
+        '200':
+          description: Success
+  /staff/sale/daily-summary:
+    get:
+      operationId: staffSaleDailySummary
+      summary: Staff daily sale totals
+      responses:
+        '200':
+          description: Success
+  /staff/sale/history:
+    get:
+      operationId: staffSaleHistory
+      summary: Staff self-service sale history
+      responses:
+        '200':
+          description: Success
+  /staff/transactions/summary:
+    get:
+      operationId: ownerStaffTransactionSummary
+      summary: Aggregated staff sale totals per-staff/per-product
+      responses:
+        '200':
+          description: Success
+  /staff/transactions/{id}:
+    get:
+      operationId: ownerStaffTransactionDetail
+      summary: Single staff transaction detail
+      responses:
+        '200':
+          description: Success
+  /stock-count:
+    get:
+      operationId: stockCountList
+      summary: List all stock count sessions
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: stockCountStart
+      summary: Start a new physical stock count session
+      responses:
+        '200':
+          description: Success
+  /stock-count/{id}:
+    get:
+      operationId: stockCountGet
+      summary: Get stock count details and items
+      responses:
+        '200':
+          description: Success
+  /stock-count/{id}/finalize:
+    post:
+      operationId: stockCountFinalize
+      summary: Finalize stock count, calculate variance report
+      responses:
+        '200':
+          description: Success
+  /stock-count/{id}/items:
+    post:
+      operationId: stockCountSubmitItems
+      summary: Submit counted quantities for a stock count session
+      responses:
+        '200':
+          description: Success
+  /storage/signed-url:
+    get:
+      operationId: getSignedUrl
+      summary: Generate pre-signed S3 URL for upload/download
+      responses:
+        '200':
+          description: Success
+  /suppliers:
+    get:
+      operationId: supplierList
+      summary: List supplier masters
+      responses:
+        '200':
+          description: Success
+    post:
+      operationId: supplierCreate
+      summary: Create supplier master for hardware payables
+      responses:
+        '200':
+          description: Success
+  /suppliers/payables/ageing:
+    get:
+      operationId: supplierPayablesAgeing
+      summary: Supplier payable ageing buckets
+      responses:
+        '200':
+          description: Success
+  /suppliers/payables/reminder-candidates:
+    get:
+      operationId: supplierReminderCandidates
+      summary: Supplier payable reminder candidate list
+      responses:
+        '200':
+          description: Success
+  /suppliers/payables/reminders/trigger:
+    post:
+      operationId: supplierRemindersTrigger
+      summary: Trigger supplier payable reminders
+      responses:
+        '200':
+          description: Success
+  /suppliers/payables/summary:
+    get:
+      operationId: supplierPayablesSummary
+      summary: Supplier payable outstanding summary
+      responses:
+        '200':
+          description: Success
+  /suppliers/payments:
+    post:
+      operationId: supplierRecordPayment
+      summary: Record supplier payable settlement
+      responses:
+        '200':
+          description: Success
+  /suppliers/{id}:
+    put:
+      operationId: supplierUpdate
+      summary: Update supplier master
+      responses:
+        '200':
+          description: Success
+  /suppliers/{id}/ledger:
+    get:
+      operationId: supplierLedger
+      summary: Supplier purchase and payment ledger
+      responses:
+        '200':
+          description: Success
+  /tenant/config:
+    get:
+      operationId: tenantConfig
+      summary: Returns bootstrap payload (plan, features, businessType, limits, signedToken) Flutter needs on login.
+      responses:
+        '200':
+          description: Success
+  /weighscale/read:
+    post:
+      operationId: weighScaleRead
+      summary: Receive weight reading from USB/serial scale, calculate line total
+      responses:
+        '200':
+          description: Success

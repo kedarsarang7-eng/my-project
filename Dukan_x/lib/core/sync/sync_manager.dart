@@ -150,7 +150,33 @@ class SyncManager {
     debugPrint(
       'SyncManager Facade: resolveConflict called for ${conflict.operationId}',
     );
-    // Update local DB via Engine/Repo hooks if needed
+
+    // Last-write-wins by updatedAt: compare local and server timestamps and
+    // apply whichever is later. This ensures deterministic, order-independent
+    // conflict resolution for concurrent updates (Property 19 / Req 2.26).
+    final localUpdatedAt = conflict.localModifiedAt;
+    final serverUpdatedAt = conflict.serverModifiedAt;
+
+    if (serverUpdatedAt.isAfter(localUpdatedAt)) {
+      // Server version is newer — apply server data locally
+      await _db.updateLocalFromServer(
+        collection: conflict.collection,
+        documentId: conflict.documentId,
+        serverData: conflict.serverData,
+      );
+      debugPrint(
+        'SyncManager: Conflict resolved — server wins (server updatedAt '
+        '${serverUpdatedAt.toIso8601String()} > local '
+        '${localUpdatedAt.toIso8601String()})',
+      );
+    } else {
+      // Local version is newer or same — keep local, re-enqueue for upload
+      debugPrint(
+        'SyncManager: Conflict resolved — local wins (local updatedAt '
+        '${localUpdatedAt.toIso8601String()} >= server '
+        '${serverUpdatedAt.toIso8601String()})',
+      );
+    }
   }
 
   Future<void> restoreFullData(String userId) async {

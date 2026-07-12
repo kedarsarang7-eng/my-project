@@ -13,6 +13,7 @@
 // ============================================================================
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:dartproptest/dartproptest.dart';
 import 'package:dukanx/features/restaurant/utils/restaurant_business_rules.dart';
 import 'package:dukanx/models/bill.dart';
 import 'package:dukanx/core/billing/business_type_config.dart';
@@ -570,6 +571,263 @@ void main() {
         expect(bill.serviceCharge, equals(28.0));
         expect(bill.tipAmount, equals(50.0));
         expect(bill.businessType, equals('restaurant'));
+      },
+    );
+  });
+
+  // ==========================================================================
+  // 7. Property 9: Preservation — Split-Bill Parts Sum Correctly Client-Side
+  //
+  // **Validates: Requirements 2.9**
+  //
+  // For randomized positive totals (1.00 to 50000.00) and split counts (1 to
+  // 20), RestaurantBusinessRules.splitBill(total, n) produces parts that:
+  //   a) Have length exactly equal to the split count
+  //   b) Sum to the original total within 1-paisa (0.01) tolerance
+  //   c) Are all positive (no zero or negative parts)
+  //
+  // This is a preservation test — the client-side computation is already
+  // correct. Purpose: lock the behavior so backend wiring in 17.3 does not
+  // accidentally regress the arithmetic.
+  //
+  // PBT library: dartproptest ^0.2.1.
+  // ==========================================================================
+  group('Property 9 (Preservation): Split-Bill Parts Sum Correctly', () {
+    test('PBT Property 9a: parts.length == splitCount AND sum == total '
+        '(within 1-paisa tolerance) for randomized totals and counts', () {
+      final held = forAll(
+        (int totalSeed, int countSeed) {
+          // Generate a positive total between 1.00 and 50000.00 (in paise)
+          final total = ((totalSeed.abs() % 4999900) + 100) / 100.0;
+          // Generate a split count between 1 and 20
+          final splitCount = (countSeed.abs() % 20) + 1;
+
+          final parts = RestaurantBusinessRules.splitBill(total, splitCount);
+
+          // (a) Parts count must equal split count
+          if (parts.length != splitCount) return false;
+
+          // (b) Sum of parts must equal original total within 1 paisa
+          final sum = parts.fold<double>(0.0, (a, b) => a + b);
+          if ((sum - total).abs() > 0.01) return false;
+
+          // (c) Every part must be positive (> 0)
+          for (final part in parts) {
+            if (part <= 0) return false;
+          }
+
+          return true;
+        },
+        [
+          Gen.interval(100, 5000000), // totalSeed: covers 1.00 to 50000.00
+          Gen.interval(0, 1000), // countSeed: covers 1 to 20
+        ],
+        numRuns: 300,
+      );
+      expect(
+        held,
+        isTrue,
+        reason:
+            'Property 9 Preservation: splitBill(total, n) must produce '
+            'exactly n parts that sum to the original total (within 0.01) '
+            'and are all positive.',
+      );
+    });
+  });
+
+  // ==========================================================================
+  // 8. Property 17: Tip Amount Round-Trips Without Affecting Taxable Subtotal
+  //    (Regression Lock)
+  //
+  // **Validates: Requirements 2.24**
+  //
+  // For randomized non-negative tip amounts, Bill.tipAmount after save (toMap/
+  // fromMap round-trip) equals the entered amount; taxable subtotal/GST
+  // calculation is unaffected by tip value (tip is additive to final payable
+  // only, never included in the taxable base).
+  //
+  // PBT library: dartproptest ^0.2.1.
+  // ==========================================================================
+  group('Property 17: Tip Round-Trip Regression Lock', () {
+    /// Creates a restaurant Bill with the given tip, items, and subtotal.
+    /// Uses fixed item data to isolate the tip variable.
+    Bill _buildBillWithTip({
+      required double tipAmount,
+      required double itemPrice,
+      required double itemQty,
+    }) {
+      final gstRate = 5.0;
+      final subtotal = itemPrice * itemQty;
+      final totalTax = subtotal * gstRate / 100;
+      final grandTotal = subtotal + totalTax;
+
+      return Bill(
+        id: 'bill_pbt_tip',
+        invoiceNumber: 'INV-PBT-TIP',
+        customerId: 'cust_pbt',
+        customerName: 'PBT Customer',
+        customerPhone: '1234567890',
+        customerAddress: '',
+        customerGst: '',
+        date: DateTime(2024, 9, 1),
+        items: [
+          BillItem(
+            productId: 'item_pbt',
+            productName: 'PBT Dish',
+            qty: itemQty,
+            price: itemPrice,
+            gstRate: gstRate,
+            cgst: totalTax / 2,
+            sgst: totalTax / 2,
+          ),
+        ],
+        subtotal: subtotal,
+        totalTax: totalTax,
+        grandTotal: grandTotal,
+        paidAmount: grandTotal + tipAmount,
+        cashPaid: grandTotal + tipAmount,
+        onlinePaid: 0,
+        status: 'Paid',
+        paymentType: 'Cash',
+        discountApplied: 0,
+        marketTicket: 0,
+        ownerId: 'owner_pbt',
+        shopName: 'PBT Restaurant',
+        shopAddress: '100 PBT Ln',
+        shopGst: '',
+        shopContact: '9876543210',
+        source: 'app',
+        marketCess: 0,
+        commissionAmount: 0,
+        isInterState: false,
+        businessType: 'restaurant',
+        tipAmount: tipAmount,
+      );
+    }
+
+    test('PBT Property 17a: tipAmount round-trips through toMap/fromMap for '
+        'any non-negative value', () {
+      final held = forAll(
+        (int tipSeed) {
+          // Generate a non-negative tip in paise precision (0 to 9999.99)
+          final tipAmount = (tipSeed.abs() % 1000000) / 100.0;
+
+          final bill = _buildBillWithTip(
+            tipAmount: tipAmount,
+            itemPrice: 250.0,
+            itemQty: 2.0,
+          );
+
+          // Serialize
+          final map = bill.toMap();
+
+          // For tip > 0 the key must be present; for tip == 0 it's omitted
+          if (tipAmount > 0) {
+            if (map['tipAmount'] != tipAmount) return false;
+          } else {
+            if (map.containsKey('tipAmount')) return false;
+          }
+
+          // Deserialize
+          final restored = Bill.fromMap('bill_pbt_tip', map);
+
+          // Round-trip: restored tipAmount must equal original
+          if ((restored.tipAmount - tipAmount).abs() > 1e-9) return false;
+
+          return true;
+        },
+        [Gen.interval(0, 1000000)],
+        numRuns: 200,
+      );
+      expect(
+        held,
+        isTrue,
+        reason:
+            'Property 17a: Bill.tipAmount must round-trip through '
+            'toMap/fromMap for any non-negative tip value.',
+      );
+    });
+
+    test(
+      'PBT Property 17b: taxable subtotal and GST are independent of tip value',
+      () {
+        final held = forAll(
+          (int tipSeed, int priceSeed, int qtySeed) {
+            // Generate randomized inputs
+            final tipAmount = (tipSeed.abs() % 1000000) / 100.0;
+            final itemPrice =
+                ((priceSeed.abs() % 99900) + 100) / 100.0; // 1.00 to 999.00
+            final itemQty = (qtySeed.abs() % 10) + 1.0; // 1 to 10
+
+            // Build bill with the tip
+            final billWithTip = _buildBillWithTip(
+              tipAmount: tipAmount,
+              itemPrice: itemPrice,
+              itemQty: itemQty,
+            );
+
+            // Build the same bill with zero tip
+            final billNoTip = _buildBillWithTip(
+              tipAmount: 0.0,
+              itemPrice: itemPrice,
+              itemQty: itemQty,
+            );
+
+            // Subtotal must be identical regardless of tip
+            if ((billWithTip.subtotal - billNoTip.subtotal).abs() > 1e-9) {
+              return false;
+            }
+
+            // Total tax (GST) must be identical regardless of tip
+            if ((billWithTip.totalTax - billNoTip.totalTax).abs() > 1e-9) {
+              return false;
+            }
+
+            // Grand total (subtotal + tax, before tip) must be identical
+            if ((billWithTip.grandTotal - billNoTip.grandTotal).abs() > 1e-9) {
+              return false;
+            }
+
+            // Verify after round-trip too
+            final mapWithTip = billWithTip.toMap();
+            final mapNoTip = billNoTip.toMap();
+
+            final restoredWithTip = Bill.fromMap('bill_pbt_tip', mapWithTip);
+            final restoredNoTip = Bill.fromMap('bill_pbt_tip', mapNoTip);
+
+            // Restored subtotal unchanged
+            if ((restoredWithTip.subtotal - restoredNoTip.subtotal).abs() >
+                1e-9) {
+              return false;
+            }
+            // Restored totalTax unchanged
+            if ((restoredWithTip.totalTax - restoredNoTip.totalTax).abs() >
+                1e-9) {
+              return false;
+            }
+            // Restored grandTotal unchanged
+            if ((restoredWithTip.grandTotal - restoredNoTip.grandTotal).abs() >
+                1e-9) {
+              return false;
+            }
+
+            return true;
+          },
+          [
+            Gen.interval(0, 1000000),
+            Gen.interval(1, 100000),
+            Gen.interval(0, 100),
+          ],
+          numRuns: 200,
+        );
+        expect(
+          held,
+          isTrue,
+          reason:
+              'Property 17b: Taxable subtotal and GST calculation must be '
+              'completely independent of the tip value — tip is additive to '
+              'final payable only.',
+        );
       },
     );
   });

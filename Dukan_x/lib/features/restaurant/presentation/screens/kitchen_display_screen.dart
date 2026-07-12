@@ -17,6 +17,7 @@ import '../../../../widgets/glass_morphism.dart';
 import '../../../../core/theme/futuristic_colors.dart';
 import '../../data/models/food_order_model.dart';
 import '../../data/repositories/food_order_repository.dart';
+import '../../domain/services/restaurant_notification_service.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
 
 class KitchenDisplayScreen extends StatefulWidget {
@@ -267,14 +268,14 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: isActive
-              ? FuturisticColors.primary.withOpacity(0.15)
+              ? FuturisticColors.primary.withOpacity(0.3)
               : (isDark
                     ? FuturisticColors.darkSurfaceVariant
                     : FuturisticColors.surfaceVariant),
           borderRadius: BorderRadius.circular(AppBorderRadius.md),
           border: Border.all(
             color: isActive
-                ? FuturisticColors.primary.withOpacity(0.3)
+                ? FuturisticColors.primary.withOpacity(0.8)
                 : Colors.transparent,
             width: 1.5,
           ),
@@ -559,7 +560,7 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
                     child: Text(
                       'No orders',
                       style: AppTypography.bodyMedium.copyWith(
-                        color: accentColor.withOpacity(0.6),
+                        color: accentColor.withOpacity(0.9),
                       ),
                     ),
                   )
@@ -647,14 +648,14 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
                 ),
                 decoration: BoxDecoration(
                   color: isUrgent
-                      ? FuturisticColors.error.withOpacity(0.15)
+                      ? FuturisticColors.error.withOpacity(0.3)
                       : (isDark
                             ? FuturisticColors.darkSurfaceVariant
                             : FuturisticColors.surfaceVariant),
                   borderRadius: BorderRadius.circular(AppBorderRadius.sm),
                   border: isUrgent
                       ? Border.all(
-                          color: FuturisticColors.error.withOpacity(0.5),
+                          color: FuturisticColors.error.withOpacity(0.85),
                         )
                       : null,
                 ),
@@ -702,7 +703,7 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
                     height: 24,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: accentColor.withOpacity(0.5),
+                        color: accentColor.withOpacity(0.9),
                         width: 1.5,
                       ),
                       borderRadius: BorderRadius.circular(AppBorderRadius.sm),
@@ -738,10 +739,10 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
             Container(
               padding: const EdgeInsets.all(AppSpacing.sm),
               decoration: BoxDecoration(
-                color: FuturisticColors.warning.withOpacity(0.15),
+                color: FuturisticColors.warning.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(AppBorderRadius.sm),
                 border: Border.all(
-                  color: FuturisticColors.warning.withOpacity(0.3),
+                  color: FuturisticColors.warning.withOpacity(0.7),
                 ),
               ),
               child: Row(
@@ -785,6 +786,19 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
               gradient: AppGradients.primaryGradient,
               onPressed: () => _markServed(order.id),
             ),
+          // Cancel order action with reason capture
+          const SizedBox(height: AppSpacing.xs),
+          _buildActionButton(
+            label: 'CANCEL',
+            icon: Icons.cancel_outlined,
+            gradient: LinearGradient(
+              colors: [
+                FuturisticColors.error,
+                FuturisticColors.error.withOpacity(0.8),
+              ],
+            ),
+            onPressed: () => _cancelOrder(order.id),
+          ),
         ],
       ),
     );
@@ -806,8 +820,59 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
   }
 
   // ============================================================================
-  // PRESERVED FUNCTIONALITY - NO CHANGES TO BUSINESS LOGIC
+  // ORDER ACTIONS
   // ============================================================================
+
+  /// Shows a reason-capture dialog and cancels the order with the entered reason.
+  Future<void> _cancelOrder(String orderId) async {
+    final reasonController = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Cancel Order'),
+        content: TextField(
+          controller: reasonController,
+          decoration: const InputDecoration(
+            labelText: 'Cancellation reason',
+            hintText: 'e.g. Customer changed mind',
+          ),
+          maxLines: 3,
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Back'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: FuturisticColors.error,
+            ),
+            child: const Text('Cancel Order'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      final cancellationReason = reasonController.text.trim();
+      await _orderRepo.cancelOrder(
+        orderId,
+        reason: cancellationReason.isNotEmpty ? cancellationReason : null,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Order cancelled'),
+            duration: const Duration(seconds: 2),
+            backgroundColor: FuturisticColors.error,
+          ),
+        );
+      }
+    }
+    reasonController.dispose();
+  }
 
   Future<void> _acceptOrder(String orderId) async {
     await _orderRepo.acceptOrder(orderId);
@@ -827,7 +892,7 @@ class _KitchenDisplayScreenState extends State<KitchenDisplayScreen> {
 
   Future<void> _markReady(String orderId) async {
     await _orderRepo.markReady(orderId);
-    // TODO: Invoke notification service to actually notify customer when available
+    await RestaurantNotificationService().notifyOrderReady(orderId, null);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

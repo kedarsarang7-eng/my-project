@@ -68,6 +68,10 @@ import '../../features/restaurant/presentation/screens/kot_report_screen.dart';
 import '../../features/restaurant/presentation/screens/recipe_management_screen.dart';
 import '../../features/restaurant/presentation/screens/restaurant_delivery_ops_screen.dart';
 import '../../features/restaurant/presentation/screens/restaurant_owner_command_screen.dart';
+import '../../features/restaurant/presentation/screens/restaurant_inventory_screen.dart';
+import '../../features/restaurant/presentation/screens/restaurant_pricing_admin_screen.dart';
+import '../../features/restaurant/presentation/screens/restaurant_table_ops_screen.dart';
+import '../../features/restaurant/utils/restaurant_tenant_scope.dart';
 
 // Customers & Ledger
 import '../../features/customers/presentation/screens/customers_list_screen.dart';
@@ -561,53 +565,47 @@ class SidebarNavigationHandler {
 
       // ========== Restaurant ==========
       case 'restaurant_tables':
-        final vendorId =
-            sl<SessionManager>().currentBusinessId ??
-            sl<SessionManager>().userId ??
-            'SYSTEM';
-        return TableManagementScreen(vendorId: vendorId);
+        return _resolveRestaurantScreen(
+          (vendorId) => TableManagementScreen(vendorId: vendorId),
+        );
       case 'kitchen_display':
-        final vendorId =
-            sl<SessionManager>().currentBusinessId ??
-            sl<SessionManager>().userId ??
-            'SYSTEM';
-        return KitchenDisplayScreen(vendorId: vendorId);
+        return _resolveRestaurantScreen(
+          (vendorId) => KitchenDisplayScreen(vendorId: vendorId),
+        );
       case 'menu_management':
-        final vendorId =
-            sl<SessionManager>().currentBusinessId ??
-            sl<SessionManager>().userId ??
-            'SYSTEM';
-        return FoodMenuManagementScreen(vendorId: vendorId);
+        return _resolveRestaurantScreen(
+          (vendorId) => FoodMenuManagementScreen(vendorId: vendorId),
+        );
       case 'daily_summary':
-        final vendorId =
-            sl<SessionManager>().currentBusinessId ??
-            sl<SessionManager>().userId ??
-            'SYSTEM';
-        return RestaurantDailySummaryScreen(vendorId: vendorId);
+        return _resolveRestaurantScreen(
+          (vendorId) => RestaurantDailySummaryScreen(vendorId: vendorId),
+        );
 
       // ========== Restaurant — Advanced Operations (Task 5.2) ==========
       case 'floor_management':
-        final vendorId =
-            sl<SessionManager>().currentBusinessId ??
-            sl<SessionManager>().userId ??
-            'SYSTEM';
-        return FloorManagementScreen(vendorId: vendorId);
+        return _resolveRestaurantScreen(
+          (vendorId) => FloorManagementScreen(vendorId: vendorId),
+        );
       case 'kot_report':
-        final vendorId =
-            sl<SessionManager>().currentBusinessId ??
-            sl<SessionManager>().userId ??
-            'SYSTEM';
-        return KotReportScreen(vendorId: vendorId);
+        return _resolveRestaurantScreen(
+          (vendorId) => KotReportScreen(vendorId: vendorId),
+        );
       case 'recipe_management':
-        final vendorId =
-            sl<SessionManager>().currentBusinessId ??
-            sl<SessionManager>().userId ??
-            'SYSTEM';
-        return RecipeManagementScreen(vendorId: vendorId);
+        return _resolveRestaurantScreen(
+          (vendorId) => RecipeManagementScreen(vendorId: vendorId),
+        );
       case 'delivery_ops':
         return const RestaurantDeliveryOpsScreen();
       case 'restaurant_command_center':
         return const RestaurantOwnerCommandScreen();
+      case 'restaurant_inventory':
+        return _resolveRestaurantScreen(
+          (vendorId) => RestaurantInventoryScreen(vendorId: vendorId),
+        );
+      case 'pricing_admin':
+        return const RestaurantPricingAdminScreen();
+      case 'table_ops':
+        return const RestaurantTableOpsScreen();
 
       // ============================================================
       // HIDDEN FEATURES MADE VISIBLE (per audit)
@@ -1115,6 +1113,35 @@ class SidebarNavigationHandler {
     }
   }
 
+  /// Resolves a restaurant screen by obtaining the tenant-scoped vendorId via
+  /// [RestaurantTenantScope.require()].
+  ///
+  /// In debug builds, a [TenantScopeError] is allowed to propagate (via
+  /// `assert(false, ...)`), surfacing the programming error immediately.
+  /// In release builds, the error is caught and a user-visible blocking error
+  /// screen is returned instead of the intended widget — fail-closed semantics
+  /// per Requirement 2.2.
+  static Widget _resolveRestaurantScreen(
+    Widget Function(String vendorId) builder,
+  ) {
+    try {
+      final vendorId = RestaurantTenantScope().require();
+      return builder(vendorId);
+    } on TenantScopeError catch (e) {
+      assert(false, 'RestaurantTenantScope: ${e.message}');
+      return _buildTenantErrorScreen();
+    }
+  }
+
+  /// Build a blocking error screen when tenant scope cannot be resolved.
+  ///
+  /// Unlike `_buildPlaceholderScreen` (which indicates a missing/unknown
+  /// feature), this communicates a session-level error: the user's business
+  /// context is unavailable and the screen cannot load tenant-scoped data.
+  static Widget _buildTenantErrorScreen() {
+    return const _TenantErrorScreen();
+  }
+
   /// Build a placeholder screen for features not yet implemented
   static Widget _buildPlaceholderScreen(String title, IconData icon) {
     return _PlaceholderScreen(title: title, icon: icon);
@@ -1205,6 +1232,112 @@ class _PlaceholderScreen extends StatelessWidget {
             const SizedBox(height: 40),
             Text(
               'This screen could not be located. Please select from the sidebar.',
+              style: TextStyle(
+                fontSize: 14,
+                color: theme.hintColor.withOpacity(0.6),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Error screen displayed when tenant scope cannot be resolved in release
+/// builds. Unlike [_PlaceholderScreen], this communicates a session-level error
+/// rather than a missing feature — the user's business context is unavailable.
+class _TenantErrorScreen extends StatelessWidget {
+  const _TenantErrorScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      color: theme.scaffoldBackgroundColor,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.errorContainer,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: theme.colorScheme.error.withOpacity(0.3),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: theme.colorScheme.error.withOpacity(0.2),
+                    blurRadius: 20,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.business_center_outlined,
+                size: 36,
+                color: theme.colorScheme.error,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Business Context Unavailable',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.onSurface,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.errorContainer,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: theme.colorScheme.error.withOpacity(0.3),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.error,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.error.withOpacity(0.5),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Session Error',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: theme.colorScheme.onErrorContainer,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 40),
+            Text(
+              'Unable to load this screen because no active business\n'
+              'could be resolved from your session. Please sign in again\n'
+              'or select a business to continue.',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
                 color: theme.hintColor.withOpacity(0.6),

@@ -77,6 +77,13 @@ import '../../../../widgets/ui/shortcut_pill.dart';
 import '../../../dashboard/v2/providers/dashboard_v2_providers.dart';
 import 'package:go_router/go_router.dart';
 import '../../../hardware/utils/credit_limit_validator.dart';
+// Restaurant modifier/variation picker (Requirement 2.10)
+import '../../../restaurant/data/models/food_item_variation_model.dart';
+import '../../../restaurant/presentation/widgets/modifier_picker_sheet.dart';
+// Restaurant split-bill backend persistence (Requirement 2.9, 2.14)
+import '../../../restaurant/data/repositories/restaurant_ops_repository.dart';
+// Restaurant split-payment multi-tender sheet (Requirement 2.14 — backend splitPayments array)
+import '../widgets/split_payment_sheet.dart';
 
 class BillCreationScreenV2 extends ConsumerStatefulWidget {
   final Customer? initialCustomer;
@@ -241,7 +248,14 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
 
   // Payment State
   String _paymentMode = 'Cash';
-  double get _paidAmount => _paymentMode == 'Unpaid' ? 0.0 : _grandTotal;
+  double get _paidAmount {
+    if (_paymentMode == 'Unpaid') return 0.0;
+    // Split payment: total is fully covered by the tender lines
+    return _grandTotal;
+  }
+
+  // Split Payment State (restaurant only — multi-tender split)
+  SplitPaymentResult? _splitPaymentResult;
 
   @override
   void initState() {
@@ -2545,6 +2559,19 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
                       ),
                     ),
                   ],
+                  // Split Payment option (restaurant only — multi-tender)
+                  if (_isRestaurantBill) ...[
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: _PaymentModeChip(
+                        label: 'Split',
+                        icon: Icons.call_split,
+                        isSelected: _paymentMode == 'Split',
+                        onTap: _showSplitPayment,
+                        palette: palette,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -2598,6 +2625,31 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
         ),
       ),
     );
+  }
+
+  /// Show the split payment (multi-tender) sheet for restaurant bills.
+  /// When the cashier confirms, sets payment mode to 'Split' and stores
+  /// the result. The bill save path uses the split data for cashPaid/onlinePaid.
+  Future<void> _showSplitPayment() async {
+    if (_items.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Add items before splitting payment')),
+      );
+      return;
+    }
+
+    final result = await showSplitPaymentSheet(
+      context: context,
+      totalRupees: _grandTotal,
+      initialLines: _splitPaymentResult?.lines,
+    );
+
+    if (!mounted || result == null) return;
+
+    setState(() {
+      _splitPaymentResult = result;
+      _paymentMode = 'Split';
+    });
   }
 
   Future<void> _handleSave() async {
@@ -2981,8 +3033,12 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
         grandTotal: _grandTotal,
         paidAmount:
             _paidAmount, // This is calculated via get _paidAmount which checks _paymentMode
-        cashPaid: _paymentMode == 'Cash' ? _paidAmount : 0,
-        onlinePaid: _paymentMode == 'Online' ? _paidAmount : 0,
+        cashPaid: _paymentMode == 'Split'
+            ? (_splitPaymentResult?.cashRupees ?? 0)
+            : (_paymentMode == 'Cash' ? _paidAmount : 0),
+        onlinePaid: _paymentMode == 'Split'
+            ? (_splitPaymentResult?.nonCashRupees ?? 0)
+            : (_paymentMode == 'Online' ? _paidAmount : 0),
         status: _paidAmount >= _grandTotal ? 'Paid' : 'Unpaid',
         paymentType: _paymentMode,
         prescriptionId: _prescriptionId,
@@ -3798,10 +3854,11 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
   }
 
   /// Shows a dialog to split the current bill total among multiple guests.
-  /// Informational only — does not create separate bills.
+  /// Computes split amounts client-side and persists via the backend on confirm.
   void _showSplitBillDialog() {
     final controller = TextEditingController(text: '2');
     List<double>? splitAmounts;
+    bool isSaving = false;
 
     showDialog(
       context: context,
@@ -3906,6 +3963,53 @@ class _BillCreationScreenV2State extends ConsumerState<BillCreationScreenV2>
                 onPressed: () => Navigator.pop(ctx),
                 child: const Text('Close'),
               ),
+              if (splitAmounts != null && splitAmounts!.isNotEmpty)
+                ElevatedButton(
+                  onPressed: isSaving
+                      ? null
+                      : () async {
+                          final splitCount = int.tryParse(controller.text) ?? 2;
+                          setDialogState(() => isSaving = true);
+                          try {
+                            final billId = const Uuid().v4();
+                            final restoOpsRepo = RestaurantOpsRepository();
+                            await restoOpsRepo.splitBill(
+                              billId: billId,
+                              mode: 'equal',
+                              peopleCount: splitCount,
+                            );
+                            if (!ctx.mounted) return;
+                            Navigator.pop(ctx);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Bill split saved successfully',
+                                  ),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            setDialogState(() => isSaving = false);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Failed to split bill: $e'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                  child: isSaving
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Confirm Split'),
+                ),
             ],
           );
         },

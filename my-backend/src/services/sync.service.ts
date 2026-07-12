@@ -17,6 +17,7 @@ import {
 import { safeDynamoDbOperation } from '../utils/dynamodb-errors';
 import { logger } from '../utils/logger';
 import { recordRevision } from './revision-history.service';
+import { RESTAURANT_SYNC_TABLE_TO_SK_PREFIX } from '../config/restaurant-keys';
 
 // ---- Types ----
 
@@ -156,17 +157,16 @@ const TABLE_TO_SK_PREFIX: Record<string, string> = {
     membership_cards: 'MEMBERCARD#',
 
     // Restaurant / Hotel
-    food_categories: 'FOODCAT#',
-    food_menu_items: 'FOODITEM#',
+    // Prefixes for entities also written by resto.ts's live REST path
+    // (tables, floors, bills, KOT, menu items, categories) are sourced from
+    // the single shared restaurant-keys.ts module so the two paths cannot
+    // drift apart again (Phase 1 fix — see restaurant-keys.ts header comment).
+    ...RESTAURANT_SYNC_TABLE_TO_SK_PREFIX,
     food_item_variations: 'FOODVAR#',
     food_addons: 'FOODADDON#',
     food_item_addon_links: 'FOODADDONLINK#',
-    restaurant_tables: 'RESTTABLE#',
-    restaurant_floors: 'RESTFLOOR#',
     food_orders: 'FOODORDER#',
     food_order_items: 'FOODORDERITEM#',
-    restaurant_bills: 'RESTBILL#',
-    restaurant_kots: 'RESTKOT#',
     restaurant_inventory_items: 'RESTINV#',
     item_recipes: 'RECIPE#',
     restaurant_loyalty_transactions: 'RESTLOYALTY#',

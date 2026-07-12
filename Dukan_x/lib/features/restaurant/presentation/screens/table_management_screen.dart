@@ -350,7 +350,7 @@ class _TableManagementScreenState extends ConsumerState<TableManagementScreen> {
                   Container(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.1),
+                      color: statusColor.withOpacity(0.25),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(

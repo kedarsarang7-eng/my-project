@@ -4,6 +4,7 @@ import '../../core/theme/futuristic_colors.dart';
 import '../../providers/app_state_providers.dart';
 import '../../core/isolation/business_capability.dart';
 import '../../core/isolation/feature_resolver.dart';
+import '../../core/isolation/role_capability_binding.dart';
 import '../../core/session/session_manager.dart';
 
 /// Sidebar mode enum for expand/collapse/mini states
@@ -91,6 +92,11 @@ final sidebarSectionsProvider = Provider<List<SidebarSection>>((ref) {
           // Check Capability (FeatureResolver gates — applied BEFORE RBAC)
           if (item.capability != null) {
             if (!FeatureResolver.canAccess(typeStr, item.capability!)) {
+              return false;
+            }
+            // Role-Capability Binding gate (Req 2.12): if this capability has
+            // a role binding, check that the current user's role is allowed.
+            if (!RoleCapabilityBinding.canAccess(item.capability!, userRole)) {
               return false;
             }
           }
@@ -1728,6 +1734,12 @@ List<SidebarSection> _getRetailSections() {
 }
 
 List<SidebarSection> _getRestaurantSections() {
+  // EXCLUSION LIST (Property 22): The following restaurant screens are
+  // intentionally absent from the sidebar — they are customer-facing screens
+  // reached via table QR code / _navigateToMenu, not owner-nav concerns:
+  //   - customer_menu (CustomerMenuScreen)
+  //   - order_tracking (OrderTrackingScreen)
+  //   - rate_review (RateReviewScreen)
   return [
     SidebarSection(
       index: 0,
@@ -1751,16 +1763,19 @@ List<SidebarSection> _getRestaurantSections() {
           id: 'kitchen_display',
           icon: Icons.soup_kitchen_outlined,
           label: 'Kitchen / KOT View',
+          capability: BusinessCapability.useKitchenDisplay,
         ),
         SidebarMenuItem(
           id: 'menu_management',
           icon: Icons.restaurant_menu_outlined,
           label: 'Menu Management',
+          capability: BusinessCapability.useKOT,
         ),
         SidebarMenuItem(
           id: 'daily_summary',
           icon: Icons.summarize_outlined,
           label: 'Daily Summary',
+          capability: BusinessCapability.useKOT,
         ),
       ],
     ),
@@ -1846,6 +1861,24 @@ List<SidebarSection> _getRestaurantSections() {
           id: 'restaurant_command_center',
           icon: Icons.hub_outlined,
           label: 'Command Center',
+          capability: BusinessCapability.useWaiterLinking,
+        ),
+        SidebarMenuItem(
+          id: 'restaurant_inventory',
+          icon: Icons.inventory_outlined,
+          label: 'Raw Material Inventory',
+          capability: BusinessCapability.useInventoryList,
+        ),
+        SidebarMenuItem(
+          id: 'pricing_admin',
+          icon: Icons.price_change_outlined,
+          label: 'Pricing & Combos',
+        ),
+        SidebarMenuItem(
+          id: 'table_ops',
+          icon: Icons.event_seat_outlined,
+          label: 'Reservations & Waitlist',
+          capability: BusinessCapability.useTableManagement,
         ),
       ],
     ),

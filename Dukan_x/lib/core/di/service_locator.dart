@@ -998,6 +998,9 @@ Future<void> initializeDependencies() async {
   // ============================================
   sl.registerLazySingleton<FoodMenuRepository>(() => FoodMenuRepository());
   sl.registerLazySingleton<FoodOrderRepository>(() => FoodOrderRepository());
+  sl.registerLazySingleton<FoodItemVariationRepository>(
+    () => FoodItemVariationRepository(),
+  );
   sl.registerLazySingleton<RestaurantTableRepository>(
     () => RestaurantTableRepository(),
   );
