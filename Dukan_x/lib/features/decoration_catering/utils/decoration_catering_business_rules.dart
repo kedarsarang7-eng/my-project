@@ -8,6 +8,7 @@
 
 import 'package:decimal/decimal.dart';
 import '../../../core/accounting/money_math.dart';
+import '../data/models/dc_models.dart';
 import 'dc_money_math.dart';
 
 // ---------------------------------------------------------------------------
@@ -185,17 +186,41 @@ class DecorationCateringBusinessRules {
     );
   }
 
+  /// Validates [guestCount] against [pkg.minGuests] before billing
+  /// (Requirement 3.6).
+  ///
+  /// Returns null when [guestCount] meets or exceeds the package minimum,
+  /// or a user-facing advisory message when it falls short. Callers surface
+  /// the message via a non-blocking banner and still allow billing to
+  /// proceed at the actual guest count — blocking billing entirely for an
+  /// already-confirmed event would be a worse outcome than a warned-but-
+  /// permitted invoice. This check is advisory only: it must never disable
+  /// invoice generation nor alter the computed invoice total.
+  static String? validateMinGuests({
+    required int guestCount,
+    required CateringPackage pkg,
+  }) {
+    if (guestCount < pkg.minGuests) {
+      return 'This booking has $guestCount guests, below the '
+          '${pkg.name} package minimum of ${pkg.minGuests}. '
+          'Billing will proceed at the actual guest count.';
+    }
+    return null;
+  }
+
   /// Advance booking lock-in window: a customer-side cancellation within
   /// [lockInDays] of the event date forfeits their advance. `forfeit` is
   /// true if the cancellation is inside the window.
   ///
-  /// DISPOSITION (Phase 8 / Req 14.4–14.7): This method awaits sign-off to
-  /// determine whether it should be wired into the cancellation flow or
-  /// removed. Code is unchanged until explicit recorded sign-off is obtained.
-  /// Decision options:
-  ///   • Wire: integrate into booking-cancellation handler so advance
-  ///     forfeiture is evaluated automatically on cancel.
-  ///   • Remove: delete this method and its tests (requires sign-off first).
+  /// WIRED (Requirement 4.1): called from `dc_bookings_screen.dart`'s
+  /// cancellation flow (`_handleCancellation`). When this returns `true`
+  /// and `booking.advancePaid > 0`, the caller shows a confirmation dialog
+  /// before changing the booking status; declining leaves the status
+  /// unchanged. Forfeiture is implicit — `advancePaid` is left untouched
+  /// (no refund ledger entry is recorded; that remains out of scope, see
+  /// OQ-8). Note: wiring this pure calculation into the cancellation UI was
+  /// an inferred product decision based on the existing model shape, not a
+  /// confirmed product sign-off (see OQ-6).
   static bool advanceForfeitedOnCancel(
     DateTime eventDate,
     DateTime cancelDate, {

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../data/models/dc_models.dart';
 import '../../data/repositories/dc_repository.dart';
+import '../../utils/dc_error_utils.dart';
 
 class DcBookingForm extends ConsumerStatefulWidget {
   final EventBooking? existing;
@@ -998,6 +999,21 @@ class _DcBookingFormState extends ConsumerState<DcBookingForm>
       }
       widget.onSaved(booking);
       if (mounted) Navigator.pop(context);
+    } catch (e) {
+      // Existing try/catch UI error path (Requirement 2.6 AC7) — wording
+      // mentions connectivity when the underlying error indicates one (see
+      // `DcRepository`'s `_ensureSuccess`, which surfaces
+      // `ApiResponse.userMessage`'s connectivity-specific text for
+      // network-layer failures). No offline write queuing/retry is added
+      // here — the user must retry manually once back online.
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(dcWriteErrorMessage('save booking', e)),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }

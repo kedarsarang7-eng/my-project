@@ -5,7 +5,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/dc_models.dart';
+import '../../data/models/event_rental.dart';
 import '../../data/repositories/dc_repository.dart';
+import '../../utils/dc_money_math.dart';
+import '../widgets/dc_ui_kit.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
 
 class DcInventoryScreen extends ConsumerStatefulWidget {
@@ -23,6 +26,7 @@ class _DcInventoryScreenState extends ConsumerState<DcInventoryScreen> {
   @override
   Widget build(BuildContext context) {
     final inventoryAsync = ref.watch(dcInventoryProvider);
+    final isStale = ref.watch(dcInventoryStaleProvider);
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FB),
       body: BoundedBox(
@@ -30,6 +34,7 @@ class _DcInventoryScreenState extends ConsumerState<DcInventoryScreen> {
         child: Column(
           children: [
             _buildHeader(context),
+            if (isStale) const DcStaleDataBanner(),
             _buildFilters(),
             Expanded(
               child: inventoryAsync.when(
@@ -77,29 +82,39 @@ class _DcInventoryScreenState extends ConsumerState<DcInventoryScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Inventory Management',
-                style: TextStyle(
-                  fontSize: responsiveValue<double>(
-                    context,
-                    mobile: 18,
-                    tablet: 20,
-                    desktop: 22,
+          // Wrapped in Expanded so the title shrinks/wraps instead of forcing
+          // the action button out of the available width (Requirement 1.1
+          // AC5 regression discovered by DcReachabilityGateTest: at the
+          // screen's own BoundedBox(maxWidth: 800) constraint, the title's
+          // unbounded intrinsic width plus the button overflowed the Row).
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Inventory Management',
+                  style: TextStyle(
+                    fontSize: responsiveValue<double>(
+                      context,
+                      mobile: 18,
+                      tablet: 20,
+                      desktop: 22,
+                    ),
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF1A1A2E),
                   ),
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1A1A2E),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'Track chairs, tables, flowers, lights & equipment',
-                style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
-              ),
-            ],
+                const SizedBox(height: 4),
+                const Text(
+                  'Track chairs, tables, flowers, lights & equipment',
+                  style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
+          const SizedBox(width: 12),
           ElevatedButton.icon(
             onPressed: () => _addItemDialog(context),
             icon: const Icon(Icons.add_rounded),
@@ -354,7 +369,7 @@ class _DcInventoryScreenState extends ConsumerState<DcInventoryScreen> {
                     ),
                   ),
                   SizedBox(
-                    width: 100,
+                    width: 180,
                     child: Text(
                       'Actions',
                       style: TextStyle(
@@ -506,7 +521,7 @@ class _DcInventoryScreenState extends ConsumerState<DcInventoryScreen> {
                                 ),
                         ),
                         SizedBox(
-                          width: 100,
+                          width: 180,
                           child: Row(
                             children: [
                               _actionIcon(
@@ -528,6 +543,20 @@ class _DcInventoryScreenState extends ConsumerState<DcInventoryScreen> {
                                 const Color(0xFF6B7280),
                                 () {},
                                 'Edit item',
+                              ),
+                              const SizedBox(width: 4),
+                              _actionIcon(
+                                Icons.local_shipping_rounded,
+                                const Color(0xFF2563EB),
+                                () => _rentOutDialog(context, i),
+                                'Rent Out',
+                              ),
+                              const SizedBox(width: 4),
+                              _actionIcon(
+                                Icons.assignment_return_rounded,
+                                const Color(0xFF7C3AED),
+                                () => _returnDialog(context, i),
+                                'Return',
                               ),
                             ],
                           ),
@@ -574,6 +603,283 @@ class _DcInventoryScreenState extends ConsumerState<DcInventoryScreen> {
   Future<void> _adjustStock(DcInventoryItem item, int delta) async {
     await ref.read(dcRepositoryProvider).adjustInventory(item.id, delta);
     ref.invalidate(dcInventoryProvider);
+  }
+
+  // ──────────────────────────────────────────────────────────────────────
+  // Rent-out / Return wiring (Requirement 2.5 AC5-7)
+  //
+  // Both actions validate the entered quantity locally via EventRental's
+  // pure bounds-check transitions (rentOut/returnItem) BEFORE calling the
+  // repository. A locally-rejected quantity never reaches the network —
+  // the repository call sits behind `if (result.isSuccess)`.
+  // ──────────────────────────────────────────────────────────────────────
+
+  void _rentOutDialog(BuildContext context, DcInventoryItem item) {
+    final eventIdCtrl = TextEditingController();
+    final qtyCtrl = TextEditingController();
+    String? error;
+    showDialog(
+      context: context,
+      builder: (_) => StatefulBuilder(
+        builder: (ctx, setS) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Text('Rent Out "${item.name}"'),
+          content: SizedBox(
+            width: 360,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Available: ${item.availableQty} ${item.unit}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF6B7280),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _field(eventIdCtrl, 'Event ID'),
+                const SizedBox(height: 12),
+                _field(
+                  qtyCtrl,
+                  'Quantity to rent out',
+                  keyboard: TextInputType.number,
+                ),
+                if (error != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    error!,
+                    style: const TextStyle(fontSize: 12, color: Colors.red),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final eventId = eventIdCtrl.text.trim();
+                final qty = int.tryParse(qtyCtrl.text.trim()) ?? -1;
+
+                if (eventId.isEmpty) {
+                  setS(() => error = 'Event ID is required.');
+                  return;
+                }
+
+                // Local bounds validation via EventRental.rentOut() — no
+                // network call happens unless this succeeds.
+                final localRental = EventRental.create(
+                  id: 'local',
+                  eventId: eventId,
+                  inventoryItemId: item.id,
+                  rentalPricePerUnitPaise: DcMoneyMath.rupeesToPaise(
+                    item.rentalPrice,
+                  ),
+                );
+                final result = localRental.rentOut(
+                  quantity: qty,
+                  availableOnHand: item.availableQty,
+                );
+
+                if (result.isRejected) {
+                  setS(() => error = result.error);
+                  return;
+                }
+
+                Navigator.pop(ctx);
+                await _submitRentOut(
+                  context,
+                  item: item,
+                  eventId: eventId,
+                  quantity: qty,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2563EB),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Rent Out'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submitRentOut(
+    BuildContext context, {
+    required DcInventoryItem item,
+    required String eventId,
+    required int quantity,
+  }) async {
+    try {
+      await ref
+          .read(dcRepositoryProvider)
+          .rentOut(itemId: item.id, eventId: eventId, quantity: quantity);
+      ref.invalidate(dcInventoryProvider);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Rented out $quantity ${item.unit} of "${item.name}"',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Rent-out failed: $e')));
+      }
+    }
+  }
+
+  void _returnDialog(BuildContext context, DcInventoryItem item) {
+    final rentalIdCtrl = TextEditingController();
+    final rentedQtyCtrl = TextEditingController();
+    final damagedQtyCtrl = TextEditingController();
+    String? error;
+    showDialog(
+      context: context,
+      builder: (_) => StatefulBuilder(
+        builder: (ctx, setS) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Text('Return "${item.name}"'),
+          content: SizedBox(
+            width: 360,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _field(rentalIdCtrl, 'Rental ID'),
+                const SizedBox(height: 12),
+                _field(
+                  rentedQtyCtrl,
+                  'Originally rented quantity',
+                  keyboard: TextInputType.number,
+                ),
+                const SizedBox(height: 12),
+                _field(
+                  damagedQtyCtrl,
+                  'Damaged/lost quantity',
+                  keyboard: TextInputType.number,
+                ),
+                if (error != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    error!,
+                    style: const TextStyle(fontSize: 12, color: Colors.red),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final rentalId = rentalIdCtrl.text.trim();
+                final rentedQty = int.tryParse(rentedQtyCtrl.text.trim()) ?? -1;
+                final damagedQty =
+                    int.tryParse(damagedQtyCtrl.text.trim()) ?? -1;
+
+                if (rentalId.isEmpty) {
+                  setS(() => error = 'Rental ID is required.');
+                  return;
+                }
+                if (rentedQty < 1) {
+                  setS(
+                    () => error =
+                        'Originally rented quantity must be at least 1.',
+                  );
+                  return;
+                }
+
+                // Local bounds validation via EventRental.returnItem() —
+                // no network call happens unless this succeeds.
+                final localRental = EventRental.create(
+                  id: 'local',
+                  eventId: '',
+                  inventoryItemId: item.id,
+                  rentalPricePerUnitPaise: DcMoneyMath.rupeesToPaise(
+                    item.rentalPrice,
+                  ),
+                );
+                final rentedResult = localRental.rentOut(
+                  quantity: rentedQty,
+                  availableOnHand: rentedQty,
+                );
+                if (rentedResult.isRejected) {
+                  setS(() => error = rentedResult.error);
+                  return;
+                }
+
+                final result = rentedResult.rental!.returnItem(
+                  damagedQty: damagedQty,
+                );
+
+                if (result.isRejected) {
+                  setS(() => error = result.error);
+                  return;
+                }
+
+                Navigator.pop(ctx);
+                await _submitReturn(
+                  context,
+                  item: item,
+                  rentalId: rentalId,
+                  damagedQty: damagedQty,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2563EB),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Return'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submitReturn(
+    BuildContext context, {
+    required DcInventoryItem item,
+    required String rentalId,
+    required int damagedQty,
+  }) async {
+    try {
+      await ref
+          .read(dcRepositoryProvider)
+          .returnRental(
+            itemId: item.id,
+            rentalId: rentalId,
+            damagedQty: damagedQty,
+          );
+      ref.invalidate(dcInventoryProvider);
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Returned item "${item.name}"')));
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Return failed: $e')));
+      }
+    }
   }
 
   Widget _buildEmpty() {

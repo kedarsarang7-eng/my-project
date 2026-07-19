@@ -11,6 +11,7 @@ import 'package:printing/printing.dart';
 import '../../data/models/dc_models.dart';
 import '../../data/repositories/dc_repository.dart';
 import '../../services/dc_pdf_service.dart';
+import '../../utils/dc_error_utils.dart';
 import '../../utils/dc_money_math.dart';
 import '../../utils/decoration_catering_business_rules.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
@@ -33,6 +34,7 @@ class _DcBillingScreenState extends ConsumerState<DcBillingScreen> {
   String? _savedInvoiceNo;
   Map<String, dynamic>? _savedInvoiceData;
   String? _discountError;
+  String? _minGuestsWarning;
 
   final _discCtrl = TextEditingController(text: '0');
   final _gstCtrl = TextEditingController(text: '18');
@@ -456,7 +458,7 @@ class _DcBillingScreenState extends ConsumerState<DcBillingScreen> {
                           child: Text(
                             status[0].toUpperCase() + status.substring(1),
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 12,
                               color: statusColor,
                               fontWeight: FontWeight.bold,
                             ),
@@ -530,6 +532,7 @@ class _DcBillingScreenState extends ConsumerState<DcBillingScreen> {
               setState(() {
                 _selectedBooking = booking;
                 _savedInvoiceNo = null;
+                _minGuestsWarning = null;
                 _items.clear();
               });
               _addDefaultItems(booking);
@@ -565,6 +568,37 @@ class _DcBillingScreenState extends ConsumerState<DcBillingScreen> {
               ),
             ),
           ],
+          if (_minGuestsWarning != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFFBEB),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFFDE68A)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.warning_amber_rounded,
+                    size: 16,
+                    color: Color(0xFFB45309),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _minGuestsWarning!,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFFB45309),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -591,6 +625,7 @@ class _DcBillingScreenState extends ConsumerState<DcBillingScreen> {
       _items.add(_BillItem(description: themeDesc, qty: 1, rate: themePrice));
     }
 
+    String? minGuestsWarning;
     if (booking.includesCatering) {
       double plateRate = 0;
       String pkgDesc = 'Catering Services (${booking.guestCount} plates)';
@@ -603,6 +638,13 @@ class _DcBillingScreenState extends ConsumerState<DcBillingScreen> {
           if (pkg != null) {
             plateRate = pkg.pricePerPlate;
             pkgDesc = '${pkg.name} (${booking.guestCount} plates)';
+            // Advisory-only check (Requirement 3.6) — never blocks billing
+            // and never alters qty/rate/computed totals below.
+            minGuestsWarning =
+                DecorationCateringBusinessRules.validateMinGuests(
+                  guestCount: booking.guestCount,
+                  pkg: pkg,
+                );
           }
         } catch (_) {}
       }
@@ -619,7 +661,7 @@ class _DcBillingScreenState extends ConsumerState<DcBillingScreen> {
     _items.add(
       _BillItem(description: 'Transportation & Logistics', qty: 1, rate: 0),
     );
-    if (mounted) setState(() {});
+    if (mounted) setState(() => _minGuestsWarning = minGuestsWarning);
   }
 
   Widget _buildLineItems(BuildContext context) {
@@ -720,16 +762,17 @@ class _DcBillingScreenState extends ConsumerState<DcBillingScreen> {
                     flex: 4,
                     child: TextField(
                       controller: item.descCtrl,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
                         isDense: true,
-                        contentPadding: EdgeInsets.symmetric(
+                        contentPadding: const EdgeInsets.symmetric(
                           horizontal: 10,
                           vertical: 8,
                         ),
+                        errorText: item.descError,
                       ),
                       style: const TextStyle(fontSize: 13),
-                      onChanged: (_) => setState(() {}),
+                      onChanged: (v) => _onDescriptionChanged(item, v),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -1025,6 +1068,18 @@ class _DcBillingScreenState extends ConsumerState<DcBillingScreen> {
     });
   }
 
+  /// Validates line-item description input (Requirement 2.3).
+  ///
+  /// A blank or whitespace-only description sets `descError` to a non-null
+  /// validation message, which both disables "Generate Invoice" (Requirement
+  /// 2.3 AC2) and blocks submission (Requirement 2.3 AC4). A non-blank
+  /// description clears the error (Requirement 2.3 AC3).
+  void _onDescriptionChanged(_BillItem item, String v) {
+    setState(() {
+      item.descError = v.trim().isEmpty ? 'Required' : null;
+    });
+  }
+
   Widget _buildSummaryPanel(BuildContext context) {
     final fmt = NumberFormat('#,##,###');
     return Column(
@@ -1187,7 +1242,10 @@ class _DcBillingScreenState extends ConsumerState<DcBillingScreen> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed:
-                      (_selectedBooking == null || _items.isEmpty || _isSaving)
+                      (_selectedBooking == null ||
+                          _items.isEmpty ||
+                          _isSaving ||
+                          !_items.every((i) => i.description.trim().isNotEmpty))
                       ? null
                       : _generateAndSaveInvoice,
                   icon: _isSaving
@@ -1235,6 +1293,17 @@ class _DcBillingScreenState extends ConsumerState<DcBillingScreen> {
   }
 
   Future<void> _generateAndSaveInvoice() async {
+    if (_items.any((i) => i.description.trim().isEmpty)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('All line items must have a description.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
     setState(() => _isSaving = true);
     try {
       final booking = _selectedBooking;
@@ -1277,10 +1346,14 @@ class _DcBillingScreenState extends ConsumerState<DcBillingScreen> {
       _loadInvoiceHistory();
     } catch (e) {
       setState(() => _isSaving = false);
+      // Existing try/catch UI error path (Requirement 2.6 AC7) — wording
+      // mentions connectivity when the underlying error indicates one. No
+      // offline write queuing/retry is added (AC8) — the user retries
+      // manually once back online.
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to save invoice: $e'),
+            content: Text(dcWriteErrorMessage('save invoice', e)),
             backgroundColor: Colors.red,
           ),
         );
@@ -1750,6 +1823,7 @@ class _BillItem {
   double rate;
   String? qtyError;
   String? rateError;
+  String? descError;
   String get description => descCtrl.text;
 
   _BillItem({

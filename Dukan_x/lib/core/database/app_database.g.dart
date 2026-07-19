@@ -123361,6 +123361,1235 @@ class ComputerSerialsCacheCompanion
   }
 }
 
+class $DcEventsTableTable extends DcEventsTable
+    with TableInfo<$DcEventsTableTable, DcEventEntity> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DcEventsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _customerNameMeta = const VerificationMeta(
+    'customerName',
+  );
+  @override
+  late final GeneratedColumn<String> customerName = GeneratedColumn<String>(
+    'customer_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _customerPhoneMeta = const VerificationMeta(
+    'customerPhone',
+  );
+  @override
+  late final GeneratedColumn<String> customerPhone = GeneratedColumn<String>(
+    'customer_phone',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _eventTitleMeta = const VerificationMeta(
+    'eventTitle',
+  );
+  @override
+  late final GeneratedColumn<String> eventTitle = GeneratedColumn<String>(
+    'event_title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _eventDateMeta = const VerificationMeta(
+    'eventDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> eventDate = GeneratedColumn<DateTime>(
+    'event_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _eventEndDateMeta = const VerificationMeta(
+    'eventEndDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> eventEndDate = GeneratedColumn<DateTime>(
+    'event_end_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _venueMeta = const VerificationMeta('venue');
+  @override
+  late final GeneratedColumn<String> venue = GeneratedColumn<String>(
+    'venue',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _guestCountMeta = const VerificationMeta(
+    'guestCount',
+  );
+  @override
+  late final GeneratedColumn<int> guestCount = GeneratedColumn<int>(
+    'guest_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _quotedAmountPaisaMeta = const VerificationMeta(
+    'quotedAmountPaisa',
+  );
+  @override
+  late final GeneratedColumn<int> quotedAmountPaisa = GeneratedColumn<int>(
+    'quoted_amount_paisa',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _advancePaidPaisaMeta = const VerificationMeta(
+    'advancePaidPaisa',
+  );
+  @override
+  late final GeneratedColumn<int> advancePaidPaisa = GeneratedColumn<int>(
+    'advance_paid_paisa',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastSyncedAtMeta = const VerificationMeta(
+    'lastSyncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastSyncedAt = GeneratedColumn<DateTime>(
+    'last_synced_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    customerName,
+    customerPhone,
+    eventTitle,
+    eventDate,
+    eventEndDate,
+    venue,
+    guestCount,
+    status,
+    quotedAmountPaisa,
+    advancePaidPaisa,
+    lastSyncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'dc_events_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DcEventEntity> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('customer_name')) {
+      context.handle(
+        _customerNameMeta,
+        customerName.isAcceptableOrUnknown(
+          data['customer_name']!,
+          _customerNameMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_customerNameMeta);
+    }
+    if (data.containsKey('customer_phone')) {
+      context.handle(
+        _customerPhoneMeta,
+        customerPhone.isAcceptableOrUnknown(
+          data['customer_phone']!,
+          _customerPhoneMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_customerPhoneMeta);
+    }
+    if (data.containsKey('event_title')) {
+      context.handle(
+        _eventTitleMeta,
+        eventTitle.isAcceptableOrUnknown(data['event_title']!, _eventTitleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_eventTitleMeta);
+    }
+    if (data.containsKey('event_date')) {
+      context.handle(
+        _eventDateMeta,
+        eventDate.isAcceptableOrUnknown(data['event_date']!, _eventDateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_eventDateMeta);
+    }
+    if (data.containsKey('event_end_date')) {
+      context.handle(
+        _eventEndDateMeta,
+        eventEndDate.isAcceptableOrUnknown(
+          data['event_end_date']!,
+          _eventEndDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('venue')) {
+      context.handle(
+        _venueMeta,
+        venue.isAcceptableOrUnknown(data['venue']!, _venueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_venueMeta);
+    }
+    if (data.containsKey('guest_count')) {
+      context.handle(
+        _guestCountMeta,
+        guestCount.isAcceptableOrUnknown(data['guest_count']!, _guestCountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_guestCountMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('quoted_amount_paisa')) {
+      context.handle(
+        _quotedAmountPaisaMeta,
+        quotedAmountPaisa.isAcceptableOrUnknown(
+          data['quoted_amount_paisa']!,
+          _quotedAmountPaisaMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_quotedAmountPaisaMeta);
+    }
+    if (data.containsKey('advance_paid_paisa')) {
+      context.handle(
+        _advancePaidPaisaMeta,
+        advancePaidPaisa.isAcceptableOrUnknown(
+          data['advance_paid_paisa']!,
+          _advancePaidPaisaMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_advancePaidPaisaMeta);
+    }
+    if (data.containsKey('last_synced_at')) {
+      context.handle(
+        _lastSyncedAtMeta,
+        lastSyncedAt.isAcceptableOrUnknown(
+          data['last_synced_at']!,
+          _lastSyncedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastSyncedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DcEventEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DcEventEntity(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      customerName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}customer_name'],
+      )!,
+      customerPhone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}customer_phone'],
+      )!,
+      eventTitle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}event_title'],
+      )!,
+      eventDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}event_date'],
+      )!,
+      eventEndDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}event_end_date'],
+      ),
+      venue: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}venue'],
+      )!,
+      guestCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}guest_count'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      quotedAmountPaisa: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quoted_amount_paisa'],
+      )!,
+      advancePaidPaisa: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}advance_paid_paisa'],
+      )!,
+      lastSyncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_synced_at'],
+      )!,
+    );
+  }
+
+  @override
+  $DcEventsTableTable createAlias(String alias) {
+    return $DcEventsTableTable(attachedDatabase, alias);
+  }
+}
+
+class DcEventEntity extends DataClass implements Insertable<DcEventEntity> {
+  /// Same id as the remote `EventBooking.id`.
+  final String id;
+  final String customerName;
+  final String customerPhone;
+  final String eventTitle;
+  final DateTime eventDate;
+  final DateTime? eventEndDate;
+  final String venue;
+  final int guestCount;
+
+  /// Mirrors `EventBooking.status.name` (e.g. `inquiry`, `confirmed`).
+  final String status;
+
+  /// Integer-paise mirror of `EventBooking.quotedAmount` (rupees).
+  final int quotedAmountPaisa;
+
+  /// Integer-paise mirror of `EventBooking.advancePaid` (rupees).
+  final int advancePaidPaisa;
+
+  /// Timestamp of the last successful write-through sync for this row.
+  final DateTime lastSyncedAt;
+  const DcEventEntity({
+    required this.id,
+    required this.customerName,
+    required this.customerPhone,
+    required this.eventTitle,
+    required this.eventDate,
+    this.eventEndDate,
+    required this.venue,
+    required this.guestCount,
+    required this.status,
+    required this.quotedAmountPaisa,
+    required this.advancePaidPaisa,
+    required this.lastSyncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['customer_name'] = Variable<String>(customerName);
+    map['customer_phone'] = Variable<String>(customerPhone);
+    map['event_title'] = Variable<String>(eventTitle);
+    map['event_date'] = Variable<DateTime>(eventDate);
+    if (!nullToAbsent || eventEndDate != null) {
+      map['event_end_date'] = Variable<DateTime>(eventEndDate);
+    }
+    map['venue'] = Variable<String>(venue);
+    map['guest_count'] = Variable<int>(guestCount);
+    map['status'] = Variable<String>(status);
+    map['quoted_amount_paisa'] = Variable<int>(quotedAmountPaisa);
+    map['advance_paid_paisa'] = Variable<int>(advancePaidPaisa);
+    map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    return map;
+  }
+
+  DcEventsTableCompanion toCompanion(bool nullToAbsent) {
+    return DcEventsTableCompanion(
+      id: Value(id),
+      customerName: Value(customerName),
+      customerPhone: Value(customerPhone),
+      eventTitle: Value(eventTitle),
+      eventDate: Value(eventDate),
+      eventEndDate: eventEndDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(eventEndDate),
+      venue: Value(venue),
+      guestCount: Value(guestCount),
+      status: Value(status),
+      quotedAmountPaisa: Value(quotedAmountPaisa),
+      advancePaidPaisa: Value(advancePaidPaisa),
+      lastSyncedAt: Value(lastSyncedAt),
+    );
+  }
+
+  factory DcEventEntity.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DcEventEntity(
+      id: serializer.fromJson<String>(json['id']),
+      customerName: serializer.fromJson<String>(json['customerName']),
+      customerPhone: serializer.fromJson<String>(json['customerPhone']),
+      eventTitle: serializer.fromJson<String>(json['eventTitle']),
+      eventDate: serializer.fromJson<DateTime>(json['eventDate']),
+      eventEndDate: serializer.fromJson<DateTime?>(json['eventEndDate']),
+      venue: serializer.fromJson<String>(json['venue']),
+      guestCount: serializer.fromJson<int>(json['guestCount']),
+      status: serializer.fromJson<String>(json['status']),
+      quotedAmountPaisa: serializer.fromJson<int>(json['quotedAmountPaisa']),
+      advancePaidPaisa: serializer.fromJson<int>(json['advancePaidPaisa']),
+      lastSyncedAt: serializer.fromJson<DateTime>(json['lastSyncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'customerName': serializer.toJson<String>(customerName),
+      'customerPhone': serializer.toJson<String>(customerPhone),
+      'eventTitle': serializer.toJson<String>(eventTitle),
+      'eventDate': serializer.toJson<DateTime>(eventDate),
+      'eventEndDate': serializer.toJson<DateTime?>(eventEndDate),
+      'venue': serializer.toJson<String>(venue),
+      'guestCount': serializer.toJson<int>(guestCount),
+      'status': serializer.toJson<String>(status),
+      'quotedAmountPaisa': serializer.toJson<int>(quotedAmountPaisa),
+      'advancePaidPaisa': serializer.toJson<int>(advancePaidPaisa),
+      'lastSyncedAt': serializer.toJson<DateTime>(lastSyncedAt),
+    };
+  }
+
+  DcEventEntity copyWith({
+    String? id,
+    String? customerName,
+    String? customerPhone,
+    String? eventTitle,
+    DateTime? eventDate,
+    Value<DateTime?> eventEndDate = const Value.absent(),
+    String? venue,
+    int? guestCount,
+    String? status,
+    int? quotedAmountPaisa,
+    int? advancePaidPaisa,
+    DateTime? lastSyncedAt,
+  }) => DcEventEntity(
+    id: id ?? this.id,
+    customerName: customerName ?? this.customerName,
+    customerPhone: customerPhone ?? this.customerPhone,
+    eventTitle: eventTitle ?? this.eventTitle,
+    eventDate: eventDate ?? this.eventDate,
+    eventEndDate: eventEndDate.present ? eventEndDate.value : this.eventEndDate,
+    venue: venue ?? this.venue,
+    guestCount: guestCount ?? this.guestCount,
+    status: status ?? this.status,
+    quotedAmountPaisa: quotedAmountPaisa ?? this.quotedAmountPaisa,
+    advancePaidPaisa: advancePaidPaisa ?? this.advancePaidPaisa,
+    lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+  );
+  DcEventEntity copyWithCompanion(DcEventsTableCompanion data) {
+    return DcEventEntity(
+      id: data.id.present ? data.id.value : this.id,
+      customerName: data.customerName.present
+          ? data.customerName.value
+          : this.customerName,
+      customerPhone: data.customerPhone.present
+          ? data.customerPhone.value
+          : this.customerPhone,
+      eventTitle: data.eventTitle.present
+          ? data.eventTitle.value
+          : this.eventTitle,
+      eventDate: data.eventDate.present ? data.eventDate.value : this.eventDate,
+      eventEndDate: data.eventEndDate.present
+          ? data.eventEndDate.value
+          : this.eventEndDate,
+      venue: data.venue.present ? data.venue.value : this.venue,
+      guestCount: data.guestCount.present
+          ? data.guestCount.value
+          : this.guestCount,
+      status: data.status.present ? data.status.value : this.status,
+      quotedAmountPaisa: data.quotedAmountPaisa.present
+          ? data.quotedAmountPaisa.value
+          : this.quotedAmountPaisa,
+      advancePaidPaisa: data.advancePaidPaisa.present
+          ? data.advancePaidPaisa.value
+          : this.advancePaidPaisa,
+      lastSyncedAt: data.lastSyncedAt.present
+          ? data.lastSyncedAt.value
+          : this.lastSyncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DcEventEntity(')
+          ..write('id: $id, ')
+          ..write('customerName: $customerName, ')
+          ..write('customerPhone: $customerPhone, ')
+          ..write('eventTitle: $eventTitle, ')
+          ..write('eventDate: $eventDate, ')
+          ..write('eventEndDate: $eventEndDate, ')
+          ..write('venue: $venue, ')
+          ..write('guestCount: $guestCount, ')
+          ..write('status: $status, ')
+          ..write('quotedAmountPaisa: $quotedAmountPaisa, ')
+          ..write('advancePaidPaisa: $advancePaidPaisa, ')
+          ..write('lastSyncedAt: $lastSyncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    customerName,
+    customerPhone,
+    eventTitle,
+    eventDate,
+    eventEndDate,
+    venue,
+    guestCount,
+    status,
+    quotedAmountPaisa,
+    advancePaidPaisa,
+    lastSyncedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DcEventEntity &&
+          other.id == this.id &&
+          other.customerName == this.customerName &&
+          other.customerPhone == this.customerPhone &&
+          other.eventTitle == this.eventTitle &&
+          other.eventDate == this.eventDate &&
+          other.eventEndDate == this.eventEndDate &&
+          other.venue == this.venue &&
+          other.guestCount == this.guestCount &&
+          other.status == this.status &&
+          other.quotedAmountPaisa == this.quotedAmountPaisa &&
+          other.advancePaidPaisa == this.advancePaidPaisa &&
+          other.lastSyncedAt == this.lastSyncedAt);
+}
+
+class DcEventsTableCompanion extends UpdateCompanion<DcEventEntity> {
+  final Value<String> id;
+  final Value<String> customerName;
+  final Value<String> customerPhone;
+  final Value<String> eventTitle;
+  final Value<DateTime> eventDate;
+  final Value<DateTime?> eventEndDate;
+  final Value<String> venue;
+  final Value<int> guestCount;
+  final Value<String> status;
+  final Value<int> quotedAmountPaisa;
+  final Value<int> advancePaidPaisa;
+  final Value<DateTime> lastSyncedAt;
+  final Value<int> rowid;
+  const DcEventsTableCompanion({
+    this.id = const Value.absent(),
+    this.customerName = const Value.absent(),
+    this.customerPhone = const Value.absent(),
+    this.eventTitle = const Value.absent(),
+    this.eventDate = const Value.absent(),
+    this.eventEndDate = const Value.absent(),
+    this.venue = const Value.absent(),
+    this.guestCount = const Value.absent(),
+    this.status = const Value.absent(),
+    this.quotedAmountPaisa = const Value.absent(),
+    this.advancePaidPaisa = const Value.absent(),
+    this.lastSyncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DcEventsTableCompanion.insert({
+    required String id,
+    required String customerName,
+    required String customerPhone,
+    required String eventTitle,
+    required DateTime eventDate,
+    this.eventEndDate = const Value.absent(),
+    required String venue,
+    required int guestCount,
+    required String status,
+    required int quotedAmountPaisa,
+    required int advancePaidPaisa,
+    required DateTime lastSyncedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       customerName = Value(customerName),
+       customerPhone = Value(customerPhone),
+       eventTitle = Value(eventTitle),
+       eventDate = Value(eventDate),
+       venue = Value(venue),
+       guestCount = Value(guestCount),
+       status = Value(status),
+       quotedAmountPaisa = Value(quotedAmountPaisa),
+       advancePaidPaisa = Value(advancePaidPaisa),
+       lastSyncedAt = Value(lastSyncedAt);
+  static Insertable<DcEventEntity> custom({
+    Expression<String>? id,
+    Expression<String>? customerName,
+    Expression<String>? customerPhone,
+    Expression<String>? eventTitle,
+    Expression<DateTime>? eventDate,
+    Expression<DateTime>? eventEndDate,
+    Expression<String>? venue,
+    Expression<int>? guestCount,
+    Expression<String>? status,
+    Expression<int>? quotedAmountPaisa,
+    Expression<int>? advancePaidPaisa,
+    Expression<DateTime>? lastSyncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (customerName != null) 'customer_name': customerName,
+      if (customerPhone != null) 'customer_phone': customerPhone,
+      if (eventTitle != null) 'event_title': eventTitle,
+      if (eventDate != null) 'event_date': eventDate,
+      if (eventEndDate != null) 'event_end_date': eventEndDate,
+      if (venue != null) 'venue': venue,
+      if (guestCount != null) 'guest_count': guestCount,
+      if (status != null) 'status': status,
+      if (quotedAmountPaisa != null) 'quoted_amount_paisa': quotedAmountPaisa,
+      if (advancePaidPaisa != null) 'advance_paid_paisa': advancePaidPaisa,
+      if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DcEventsTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? customerName,
+    Value<String>? customerPhone,
+    Value<String>? eventTitle,
+    Value<DateTime>? eventDate,
+    Value<DateTime?>? eventEndDate,
+    Value<String>? venue,
+    Value<int>? guestCount,
+    Value<String>? status,
+    Value<int>? quotedAmountPaisa,
+    Value<int>? advancePaidPaisa,
+    Value<DateTime>? lastSyncedAt,
+    Value<int>? rowid,
+  }) {
+    return DcEventsTableCompanion(
+      id: id ?? this.id,
+      customerName: customerName ?? this.customerName,
+      customerPhone: customerPhone ?? this.customerPhone,
+      eventTitle: eventTitle ?? this.eventTitle,
+      eventDate: eventDate ?? this.eventDate,
+      eventEndDate: eventEndDate ?? this.eventEndDate,
+      venue: venue ?? this.venue,
+      guestCount: guestCount ?? this.guestCount,
+      status: status ?? this.status,
+      quotedAmountPaisa: quotedAmountPaisa ?? this.quotedAmountPaisa,
+      advancePaidPaisa: advancePaidPaisa ?? this.advancePaidPaisa,
+      lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (customerName.present) {
+      map['customer_name'] = Variable<String>(customerName.value);
+    }
+    if (customerPhone.present) {
+      map['customer_phone'] = Variable<String>(customerPhone.value);
+    }
+    if (eventTitle.present) {
+      map['event_title'] = Variable<String>(eventTitle.value);
+    }
+    if (eventDate.present) {
+      map['event_date'] = Variable<DateTime>(eventDate.value);
+    }
+    if (eventEndDate.present) {
+      map['event_end_date'] = Variable<DateTime>(eventEndDate.value);
+    }
+    if (venue.present) {
+      map['venue'] = Variable<String>(venue.value);
+    }
+    if (guestCount.present) {
+      map['guest_count'] = Variable<int>(guestCount.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (quotedAmountPaisa.present) {
+      map['quoted_amount_paisa'] = Variable<int>(quotedAmountPaisa.value);
+    }
+    if (advancePaidPaisa.present) {
+      map['advance_paid_paisa'] = Variable<int>(advancePaidPaisa.value);
+    }
+    if (lastSyncedAt.present) {
+      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DcEventsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('customerName: $customerName, ')
+          ..write('customerPhone: $customerPhone, ')
+          ..write('eventTitle: $eventTitle, ')
+          ..write('eventDate: $eventDate, ')
+          ..write('eventEndDate: $eventEndDate, ')
+          ..write('venue: $venue, ')
+          ..write('guestCount: $guestCount, ')
+          ..write('status: $status, ')
+          ..write('quotedAmountPaisa: $quotedAmountPaisa, ')
+          ..write('advancePaidPaisa: $advancePaidPaisa, ')
+          ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DcInventoryTableTable extends DcInventoryTable
+    with TableInfo<$DcInventoryTableTable, DcInventoryEntity> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DcInventoryTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryMeta = const VerificationMeta(
+    'category',
+  );
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+    'category',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _totalQtyMeta = const VerificationMeta(
+    'totalQty',
+  );
+  @override
+  late final GeneratedColumn<int> totalQty = GeneratedColumn<int>(
+    'total_qty',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _availableQtyMeta = const VerificationMeta(
+    'availableQty',
+  );
+  @override
+  late final GeneratedColumn<int> availableQty = GeneratedColumn<int>(
+    'available_qty',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _rentalPricePaisaMeta = const VerificationMeta(
+    'rentalPricePaisa',
+  );
+  @override
+  late final GeneratedColumn<int> rentalPricePaisa = GeneratedColumn<int>(
+    'rental_price_paisa',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastSyncedAtMeta = const VerificationMeta(
+    'lastSyncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastSyncedAt = GeneratedColumn<DateTime>(
+    'last_synced_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    category,
+    totalQty,
+    availableQty,
+    rentalPricePaisa,
+    lastSyncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'dc_inventory_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DcInventoryEntity> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(
+        _categoryMeta,
+        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
+    }
+    if (data.containsKey('total_qty')) {
+      context.handle(
+        _totalQtyMeta,
+        totalQty.isAcceptableOrUnknown(data['total_qty']!, _totalQtyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_totalQtyMeta);
+    }
+    if (data.containsKey('available_qty')) {
+      context.handle(
+        _availableQtyMeta,
+        availableQty.isAcceptableOrUnknown(
+          data['available_qty']!,
+          _availableQtyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_availableQtyMeta);
+    }
+    if (data.containsKey('rental_price_paisa')) {
+      context.handle(
+        _rentalPricePaisaMeta,
+        rentalPricePaisa.isAcceptableOrUnknown(
+          data['rental_price_paisa']!,
+          _rentalPricePaisaMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_rentalPricePaisaMeta);
+    }
+    if (data.containsKey('last_synced_at')) {
+      context.handle(
+        _lastSyncedAtMeta,
+        lastSyncedAt.isAcceptableOrUnknown(
+          data['last_synced_at']!,
+          _lastSyncedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastSyncedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DcInventoryEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DcInventoryEntity(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      category: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category'],
+      )!,
+      totalQty: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_qty'],
+      )!,
+      availableQty: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}available_qty'],
+      )!,
+      rentalPricePaisa: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rental_price_paisa'],
+      )!,
+      lastSyncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_synced_at'],
+      )!,
+    );
+  }
+
+  @override
+  $DcInventoryTableTable createAlias(String alias) {
+    return $DcInventoryTableTable(attachedDatabase, alias);
+  }
+}
+
+class DcInventoryEntity extends DataClass
+    implements Insertable<DcInventoryEntity> {
+  /// Same id as the remote `DcInventoryItem.id`.
+  final String id;
+  final String name;
+
+  /// Mirrors `DcInventoryItem.category.name` (e.g. `furniture`, `lighting`).
+  final String category;
+  final int totalQty;
+  final int availableQty;
+
+  /// Integer-paise mirror of `DcInventoryItem.rentalPrice` (rupees).
+  final int rentalPricePaisa;
+
+  /// Timestamp of the last successful write-through sync for this row.
+  final DateTime lastSyncedAt;
+  const DcInventoryEntity({
+    required this.id,
+    required this.name,
+    required this.category,
+    required this.totalQty,
+    required this.availableQty,
+    required this.rentalPricePaisa,
+    required this.lastSyncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    map['category'] = Variable<String>(category);
+    map['total_qty'] = Variable<int>(totalQty);
+    map['available_qty'] = Variable<int>(availableQty);
+    map['rental_price_paisa'] = Variable<int>(rentalPricePaisa);
+    map['last_synced_at'] = Variable<DateTime>(lastSyncedAt);
+    return map;
+  }
+
+  DcInventoryTableCompanion toCompanion(bool nullToAbsent) {
+    return DcInventoryTableCompanion(
+      id: Value(id),
+      name: Value(name),
+      category: Value(category),
+      totalQty: Value(totalQty),
+      availableQty: Value(availableQty),
+      rentalPricePaisa: Value(rentalPricePaisa),
+      lastSyncedAt: Value(lastSyncedAt),
+    );
+  }
+
+  factory DcInventoryEntity.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DcInventoryEntity(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      category: serializer.fromJson<String>(json['category']),
+      totalQty: serializer.fromJson<int>(json['totalQty']),
+      availableQty: serializer.fromJson<int>(json['availableQty']),
+      rentalPricePaisa: serializer.fromJson<int>(json['rentalPricePaisa']),
+      lastSyncedAt: serializer.fromJson<DateTime>(json['lastSyncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'category': serializer.toJson<String>(category),
+      'totalQty': serializer.toJson<int>(totalQty),
+      'availableQty': serializer.toJson<int>(availableQty),
+      'rentalPricePaisa': serializer.toJson<int>(rentalPricePaisa),
+      'lastSyncedAt': serializer.toJson<DateTime>(lastSyncedAt),
+    };
+  }
+
+  DcInventoryEntity copyWith({
+    String? id,
+    String? name,
+    String? category,
+    int? totalQty,
+    int? availableQty,
+    int? rentalPricePaisa,
+    DateTime? lastSyncedAt,
+  }) => DcInventoryEntity(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    category: category ?? this.category,
+    totalQty: totalQty ?? this.totalQty,
+    availableQty: availableQty ?? this.availableQty,
+    rentalPricePaisa: rentalPricePaisa ?? this.rentalPricePaisa,
+    lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+  );
+  DcInventoryEntity copyWithCompanion(DcInventoryTableCompanion data) {
+    return DcInventoryEntity(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      category: data.category.present ? data.category.value : this.category,
+      totalQty: data.totalQty.present ? data.totalQty.value : this.totalQty,
+      availableQty: data.availableQty.present
+          ? data.availableQty.value
+          : this.availableQty,
+      rentalPricePaisa: data.rentalPricePaisa.present
+          ? data.rentalPricePaisa.value
+          : this.rentalPricePaisa,
+      lastSyncedAt: data.lastSyncedAt.present
+          ? data.lastSyncedAt.value
+          : this.lastSyncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DcInventoryEntity(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('category: $category, ')
+          ..write('totalQty: $totalQty, ')
+          ..write('availableQty: $availableQty, ')
+          ..write('rentalPricePaisa: $rentalPricePaisa, ')
+          ..write('lastSyncedAt: $lastSyncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    category,
+    totalQty,
+    availableQty,
+    rentalPricePaisa,
+    lastSyncedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DcInventoryEntity &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.category == this.category &&
+          other.totalQty == this.totalQty &&
+          other.availableQty == this.availableQty &&
+          other.rentalPricePaisa == this.rentalPricePaisa &&
+          other.lastSyncedAt == this.lastSyncedAt);
+}
+
+class DcInventoryTableCompanion extends UpdateCompanion<DcInventoryEntity> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String> category;
+  final Value<int> totalQty;
+  final Value<int> availableQty;
+  final Value<int> rentalPricePaisa;
+  final Value<DateTime> lastSyncedAt;
+  final Value<int> rowid;
+  const DcInventoryTableCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.category = const Value.absent(),
+    this.totalQty = const Value.absent(),
+    this.availableQty = const Value.absent(),
+    this.rentalPricePaisa = const Value.absent(),
+    this.lastSyncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DcInventoryTableCompanion.insert({
+    required String id,
+    required String name,
+    required String category,
+    required int totalQty,
+    required int availableQty,
+    required int rentalPricePaisa,
+    required DateTime lastSyncedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name),
+       category = Value(category),
+       totalQty = Value(totalQty),
+       availableQty = Value(availableQty),
+       rentalPricePaisa = Value(rentalPricePaisa),
+       lastSyncedAt = Value(lastSyncedAt);
+  static Insertable<DcInventoryEntity> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? category,
+    Expression<int>? totalQty,
+    Expression<int>? availableQty,
+    Expression<int>? rentalPricePaisa,
+    Expression<DateTime>? lastSyncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (category != null) 'category': category,
+      if (totalQty != null) 'total_qty': totalQty,
+      if (availableQty != null) 'available_qty': availableQty,
+      if (rentalPricePaisa != null) 'rental_price_paisa': rentalPricePaisa,
+      if (lastSyncedAt != null) 'last_synced_at': lastSyncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DcInventoryTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String>? category,
+    Value<int>? totalQty,
+    Value<int>? availableQty,
+    Value<int>? rentalPricePaisa,
+    Value<DateTime>? lastSyncedAt,
+    Value<int>? rowid,
+  }) {
+    return DcInventoryTableCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      category: category ?? this.category,
+      totalQty: totalQty ?? this.totalQty,
+      availableQty: availableQty ?? this.availableQty,
+      rentalPricePaisa: rentalPricePaisa ?? this.rentalPricePaisa,
+      lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (totalQty.present) {
+      map['total_qty'] = Variable<int>(totalQty.value);
+    }
+    if (availableQty.present) {
+      map['available_qty'] = Variable<int>(availableQty.value);
+    }
+    if (rentalPricePaisa.present) {
+      map['rental_price_paisa'] = Variable<int>(rentalPricePaisa.value);
+    }
+    if (lastSyncedAt.present) {
+      map['last_synced_at'] = Variable<DateTime>(lastSyncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DcInventoryTableCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('category: $category, ')
+          ..write('totalQty: $totalQty, ')
+          ..write('availableQty: $availableQty, ')
+          ..write('rentalPricePaisa: $rentalPricePaisa, ')
+          ..write('lastSyncedAt: $lastSyncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -123578,6 +124807,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $ComputerWarrantyCacheTable(this);
   late final $ComputerSerialsCacheTable computerSerialsCache =
       $ComputerSerialsCacheTable(this);
+  late final $DcEventsTableTable dcEventsTable = $DcEventsTableTable(this);
+  late final $DcInventoryTableTable dcInventoryTable = $DcInventoryTableTable(
+    this,
+  );
   late final Index idxBillsUserId = Index(
     'idx_bills_user_id',
     'CREATE INDEX idx_bills_user_id ON bills (user_id)',
@@ -123951,6 +125184,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     computerJobCardsCache,
     computerWarrantyCache,
     computerSerialsCache,
+    dcEventsTable,
+    dcInventoryTable,
     idxBillsUserId,
     idxBillsBillDate,
     idxBillsCustomerId,
@@ -182174,6 +183409,609 @@ typedef $$ComputerSerialsCacheTableProcessedTableManager =
       ComputerSerialCacheEntity,
       PrefetchHooks Function()
     >;
+typedef $$DcEventsTableTableCreateCompanionBuilder =
+    DcEventsTableCompanion Function({
+      required String id,
+      required String customerName,
+      required String customerPhone,
+      required String eventTitle,
+      required DateTime eventDate,
+      Value<DateTime?> eventEndDate,
+      required String venue,
+      required int guestCount,
+      required String status,
+      required int quotedAmountPaisa,
+      required int advancePaidPaisa,
+      required DateTime lastSyncedAt,
+      Value<int> rowid,
+    });
+typedef $$DcEventsTableTableUpdateCompanionBuilder =
+    DcEventsTableCompanion Function({
+      Value<String> id,
+      Value<String> customerName,
+      Value<String> customerPhone,
+      Value<String> eventTitle,
+      Value<DateTime> eventDate,
+      Value<DateTime?> eventEndDate,
+      Value<String> venue,
+      Value<int> guestCount,
+      Value<String> status,
+      Value<int> quotedAmountPaisa,
+      Value<int> advancePaidPaisa,
+      Value<DateTime> lastSyncedAt,
+      Value<int> rowid,
+    });
+
+class $$DcEventsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $DcEventsTableTable> {
+  $$DcEventsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get customerName => $composableBuilder(
+    column: $table.customerName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get customerPhone => $composableBuilder(
+    column: $table.customerPhone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get eventTitle => $composableBuilder(
+    column: $table.eventTitle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get eventDate => $composableBuilder(
+    column: $table.eventDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get eventEndDate => $composableBuilder(
+    column: $table.eventEndDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get venue => $composableBuilder(
+    column: $table.venue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get guestCount => $composableBuilder(
+    column: $table.guestCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get quotedAmountPaisa => $composableBuilder(
+    column: $table.quotedAmountPaisa,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get advancePaidPaisa => $composableBuilder(
+    column: $table.advancePaidPaisa,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DcEventsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $DcEventsTableTable> {
+  $$DcEventsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get customerName => $composableBuilder(
+    column: $table.customerName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get customerPhone => $composableBuilder(
+    column: $table.customerPhone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get eventTitle => $composableBuilder(
+    column: $table.eventTitle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get eventDate => $composableBuilder(
+    column: $table.eventDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get eventEndDate => $composableBuilder(
+    column: $table.eventEndDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get venue => $composableBuilder(
+    column: $table.venue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get guestCount => $composableBuilder(
+    column: $table.guestCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get quotedAmountPaisa => $composableBuilder(
+    column: $table.quotedAmountPaisa,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get advancePaidPaisa => $composableBuilder(
+    column: $table.advancePaidPaisa,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DcEventsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DcEventsTableTable> {
+  $$DcEventsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get customerName => $composableBuilder(
+    column: $table.customerName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get customerPhone => $composableBuilder(
+    column: $table.customerPhone,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get eventTitle => $composableBuilder(
+    column: $table.eventTitle,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get eventDate =>
+      $composableBuilder(column: $table.eventDate, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get eventEndDate => $composableBuilder(
+    column: $table.eventEndDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get venue =>
+      $composableBuilder(column: $table.venue, builder: (column) => column);
+
+  GeneratedColumn<int> get guestCount => $composableBuilder(
+    column: $table.guestCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get quotedAmountPaisa => $composableBuilder(
+    column: $table.quotedAmountPaisa,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get advancePaidPaisa => $composableBuilder(
+    column: $table.advancePaidPaisa,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
+    builder: (column) => column,
+  );
+}
+
+class $$DcEventsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DcEventsTableTable,
+          DcEventEntity,
+          $$DcEventsTableTableFilterComposer,
+          $$DcEventsTableTableOrderingComposer,
+          $$DcEventsTableTableAnnotationComposer,
+          $$DcEventsTableTableCreateCompanionBuilder,
+          $$DcEventsTableTableUpdateCompanionBuilder,
+          (
+            DcEventEntity,
+            BaseReferences<_$AppDatabase, $DcEventsTableTable, DcEventEntity>,
+          ),
+          DcEventEntity,
+          PrefetchHooks Function()
+        > {
+  $$DcEventsTableTableTableManager(_$AppDatabase db, $DcEventsTableTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DcEventsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DcEventsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DcEventsTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> customerName = const Value.absent(),
+                Value<String> customerPhone = const Value.absent(),
+                Value<String> eventTitle = const Value.absent(),
+                Value<DateTime> eventDate = const Value.absent(),
+                Value<DateTime?> eventEndDate = const Value.absent(),
+                Value<String> venue = const Value.absent(),
+                Value<int> guestCount = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> quotedAmountPaisa = const Value.absent(),
+                Value<int> advancePaidPaisa = const Value.absent(),
+                Value<DateTime> lastSyncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DcEventsTableCompanion(
+                id: id,
+                customerName: customerName,
+                customerPhone: customerPhone,
+                eventTitle: eventTitle,
+                eventDate: eventDate,
+                eventEndDate: eventEndDate,
+                venue: venue,
+                guestCount: guestCount,
+                status: status,
+                quotedAmountPaisa: quotedAmountPaisa,
+                advancePaidPaisa: advancePaidPaisa,
+                lastSyncedAt: lastSyncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String customerName,
+                required String customerPhone,
+                required String eventTitle,
+                required DateTime eventDate,
+                Value<DateTime?> eventEndDate = const Value.absent(),
+                required String venue,
+                required int guestCount,
+                required String status,
+                required int quotedAmountPaisa,
+                required int advancePaidPaisa,
+                required DateTime lastSyncedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => DcEventsTableCompanion.insert(
+                id: id,
+                customerName: customerName,
+                customerPhone: customerPhone,
+                eventTitle: eventTitle,
+                eventDate: eventDate,
+                eventEndDate: eventEndDate,
+                venue: venue,
+                guestCount: guestCount,
+                status: status,
+                quotedAmountPaisa: quotedAmountPaisa,
+                advancePaidPaisa: advancePaidPaisa,
+                lastSyncedAt: lastSyncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DcEventsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DcEventsTableTable,
+      DcEventEntity,
+      $$DcEventsTableTableFilterComposer,
+      $$DcEventsTableTableOrderingComposer,
+      $$DcEventsTableTableAnnotationComposer,
+      $$DcEventsTableTableCreateCompanionBuilder,
+      $$DcEventsTableTableUpdateCompanionBuilder,
+      (
+        DcEventEntity,
+        BaseReferences<_$AppDatabase, $DcEventsTableTable, DcEventEntity>,
+      ),
+      DcEventEntity,
+      PrefetchHooks Function()
+    >;
+typedef $$DcInventoryTableTableCreateCompanionBuilder =
+    DcInventoryTableCompanion Function({
+      required String id,
+      required String name,
+      required String category,
+      required int totalQty,
+      required int availableQty,
+      required int rentalPricePaisa,
+      required DateTime lastSyncedAt,
+      Value<int> rowid,
+    });
+typedef $$DcInventoryTableTableUpdateCompanionBuilder =
+    DcInventoryTableCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> category,
+      Value<int> totalQty,
+      Value<int> availableQty,
+      Value<int> rentalPricePaisa,
+      Value<DateTime> lastSyncedAt,
+      Value<int> rowid,
+    });
+
+class $$DcInventoryTableTableFilterComposer
+    extends Composer<_$AppDatabase, $DcInventoryTableTable> {
+  $$DcInventoryTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalQty => $composableBuilder(
+    column: $table.totalQty,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get availableQty => $composableBuilder(
+    column: $table.availableQty,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get rentalPricePaisa => $composableBuilder(
+    column: $table.rentalPricePaisa,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DcInventoryTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $DcInventoryTableTable> {
+  $$DcInventoryTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalQty => $composableBuilder(
+    column: $table.totalQty,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get availableQty => $composableBuilder(
+    column: $table.availableQty,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get rentalPricePaisa => $composableBuilder(
+    column: $table.rentalPricePaisa,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DcInventoryTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DcInventoryTableTable> {
+  $$DcInventoryTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
+
+  GeneratedColumn<int> get totalQty =>
+      $composableBuilder(column: $table.totalQty, builder: (column) => column);
+
+  GeneratedColumn<int> get availableQty => $composableBuilder(
+    column: $table.availableQty,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get rentalPricePaisa => $composableBuilder(
+    column: $table.rentalPricePaisa,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastSyncedAt => $composableBuilder(
+    column: $table.lastSyncedAt,
+    builder: (column) => column,
+  );
+}
+
+class $$DcInventoryTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DcInventoryTableTable,
+          DcInventoryEntity,
+          $$DcInventoryTableTableFilterComposer,
+          $$DcInventoryTableTableOrderingComposer,
+          $$DcInventoryTableTableAnnotationComposer,
+          $$DcInventoryTableTableCreateCompanionBuilder,
+          $$DcInventoryTableTableUpdateCompanionBuilder,
+          (
+            DcInventoryEntity,
+            BaseReferences<
+              _$AppDatabase,
+              $DcInventoryTableTable,
+              DcInventoryEntity
+            >,
+          ),
+          DcInventoryEntity,
+          PrefetchHooks Function()
+        > {
+  $$DcInventoryTableTableTableManager(
+    _$AppDatabase db,
+    $DcInventoryTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DcInventoryTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DcInventoryTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DcInventoryTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> category = const Value.absent(),
+                Value<int> totalQty = const Value.absent(),
+                Value<int> availableQty = const Value.absent(),
+                Value<int> rentalPricePaisa = const Value.absent(),
+                Value<DateTime> lastSyncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DcInventoryTableCompanion(
+                id: id,
+                name: name,
+                category: category,
+                totalQty: totalQty,
+                availableQty: availableQty,
+                rentalPricePaisa: rentalPricePaisa,
+                lastSyncedAt: lastSyncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                required String category,
+                required int totalQty,
+                required int availableQty,
+                required int rentalPricePaisa,
+                required DateTime lastSyncedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => DcInventoryTableCompanion.insert(
+                id: id,
+                name: name,
+                category: category,
+                totalQty: totalQty,
+                availableQty: availableQty,
+                rentalPricePaisa: rentalPricePaisa,
+                lastSyncedAt: lastSyncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DcInventoryTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DcInventoryTableTable,
+      DcInventoryEntity,
+      $$DcInventoryTableTableFilterComposer,
+      $$DcInventoryTableTableOrderingComposer,
+      $$DcInventoryTableTableAnnotationComposer,
+      $$DcInventoryTableTableCreateCompanionBuilder,
+      $$DcInventoryTableTableUpdateCompanionBuilder,
+      (
+        DcInventoryEntity,
+        BaseReferences<
+          _$AppDatabase,
+          $DcInventoryTableTable,
+          DcInventoryEntity
+        >,
+      ),
+      DcInventoryEntity,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -182467,4 +184305,8 @@ class $AppDatabaseManager {
       $$ComputerWarrantyCacheTableTableManager(_db, _db.computerWarrantyCache);
   $$ComputerSerialsCacheTableTableManager get computerSerialsCache =>
       $$ComputerSerialsCacheTableTableManager(_db, _db.computerSerialsCache);
+  $$DcEventsTableTableTableManager get dcEventsTable =>
+      $$DcEventsTableTableTableManager(_db, _db.dcEventsTable);
+  $$DcInventoryTableTableTableManager get dcInventoryTable =>
+      $$DcInventoryTableTableTableManager(_db, _db.dcInventoryTable);
 }

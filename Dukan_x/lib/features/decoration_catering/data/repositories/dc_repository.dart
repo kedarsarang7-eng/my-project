@@ -5,11 +5,16 @@
 // Amounts from the API are stored in paise (integer); models use double (₹).
 // ============================================================================
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../../../../core/api/api_client.dart';
 import '../../../../core/di/service_locator.dart';
+import '../../services/dc_sync_handler.dart';
 import '../models/dc_models.dart';
+import '../models/event_rental.dart';
 
 // ---------------------------------------------------------------------------
 // Providers
@@ -17,10 +22,44 @@ import '../models/dc_models.dart';
 
 final dcRepositoryProvider = Provider<DcRepository>((ref) => DcRepository());
 
+// ── Offline-read stale flags (Requirement 2.6 AC3-5) ────────────────────────
+//
+// Separate, lightweight `StateProvider<bool>` rather than changing
+// `dcBookingsProvider`/`dcInventoryProvider`'s return type: several screens
+// (dashboard, calendar, profitability, shopping list, reports, billing,
+// inventory) already watch `List<EventBooking>`/`List<DcInventoryItem>`
+// directly. Wrapping the return type in a record/class would require
+// touching every one of those call sites for no benefit — only the two
+// screens with a primary list view (`DcBookingsScreen`, `DcInventoryScreen`)
+// need to show the "showing last-synced data" banner, and they can opt in
+// by additionally watching the matching stale provider below.
+//
+// Set to `true` when `dcBookingsProvider`/`dcInventoryProvider` falls back
+// to cached rows after a live-fetch exception (AC3-4); reset to `false` on
+// the next successful live fetch (AC5) — including the very first
+// successful fetch after app start, so the flag never starts "stuck" true.
+final dcBookingsStaleProvider = StateProvider<bool>((ref) => false);
+final dcInventoryStaleProvider = StateProvider<bool>((ref) => false);
+
 final dcBookingsProvider = FutureProvider.autoDispose<List<EventBooking>>((
   ref,
 ) async {
-  return ref.read(dcRepositoryProvider).getBookings();
+  final repo = ref.read(dcRepositoryProvider);
+  try {
+    final bookings = await repo.getBookings();
+    // Live fetch succeeded — clear any previously-set stale flag (AC5).
+    ref.read(dcBookingsStaleProvider.notifier).state = false;
+    return bookings;
+  } catch (e) {
+    // Live fetch failed — fall back to the last-synced cache (AC3) and
+    // surface the stale banner (AC4). If no cache is registered/available
+    // (e.g. many unit tests) or the cache itself is empty/unreadable,
+    // rethrow the original error rather than masking it with an empty list.
+    final cached = await repo.getCachedBookingsOrNull();
+    if (cached == null) rethrow;
+    ref.read(dcBookingsStaleProvider.notifier).state = true;
+    return cached;
+  }
 });
 
 final dcStatsProvider = FutureProvider.autoDispose<DcDashboardStats>((
@@ -42,7 +81,21 @@ final dcVendorsProvider = FutureProvider.autoDispose<List<DcVendor>>((
 final dcInventoryProvider = FutureProvider.autoDispose<List<DcInventoryItem>>((
   ref,
 ) async {
-  return ref.read(dcRepositoryProvider).getInventory();
+  final repo = ref.read(dcRepositoryProvider);
+  try {
+    final items = await repo.getInventory();
+    // Live fetch succeeded — clear any previously-set stale flag (AC5).
+    ref.read(dcInventoryStaleProvider.notifier).state = false;
+    return items;
+  } catch (e) {
+    // Live fetch failed — fall back to the last-synced cache (AC3) and
+    // surface the stale banner (AC4). See dcBookingsProvider above for the
+    // no-cache-available rationale.
+    final cached = await repo.getCachedInventoryOrNull();
+    if (cached == null) rethrow;
+    ref.read(dcInventoryStaleProvider.notifier).state = true;
+    return cached;
+  }
 });
 
 final dcMenuItemsProvider = FutureProvider.autoDispose<List<CateringMenuItem>>((
@@ -87,6 +140,59 @@ final dcExpensesFilteredProvider = FutureProvider.autoDispose
 
 class DcRepository {
   ApiClient get _api => sl<ApiClient>();
+
+  // ── offline-read write-through cache (Requirement 2.6 AC2) ──────────────
+  //
+  // Best-effort: writing to the local cache must never cause getBookings()/
+  // getInventory() to fail or change their return value. If `DcSyncHandler`
+  // (and the `AppDatabase` it depends on) isn't registered in the current
+  // context — e.g. many existing unit tests only register a fake
+  // `ApiClient` — the cache write is silently skipped rather than throwing.
+  DcSyncHandler? _resolveSyncHandler() {
+    try {
+      if (sl.isRegistered<DcSyncHandler>()) return sl<DcSyncHandler>();
+    } catch (_) {
+      // Service locator unavailable in this context (e.g. some unit tests).
+    }
+    return null;
+  }
+
+  // ── offline-read fallback (Requirement 2.6 AC3-4) ───────────────────────
+  //
+  // Called by `dcBookingsProvider`/`dcInventoryProvider` only after a live
+  // `getBookings()`/`getInventory()` call has already thrown. Returns `null`
+  // (rather than an empty list) when no cache is reachable at all — e.g.
+  // `DcSyncHandler` isn't registered in this context, or the cache read
+  // itself fails — so the caller can distinguish "no cache available, must
+  // propagate the original error" from "cache is reachable and returned
+  // (possibly empty) last-synced rows".
+
+  /// Reads the last-synced bookings from `DcEventsTable` via `DcSyncHandler`.
+  /// Returns `null` if no sync handler/cache is reachable in this context.
+  Future<List<EventBooking>?> getCachedBookingsOrNull() async {
+    final syncHandler = _resolveSyncHandler();
+    if (syncHandler == null) return null;
+    try {
+      return await syncHandler.getCachedBookings();
+    } catch (e) {
+      debugPrint('[DcRepository] offline-read cacheBookings read failed: $e');
+      return null;
+    }
+  }
+
+  /// Reads the last-synced inventory from `DcInventoryTable` via
+  /// `DcSyncHandler`. Returns `null` if no sync handler/cache is reachable
+  /// in this context.
+  Future<List<DcInventoryItem>?> getCachedInventoryOrNull() async {
+    final syncHandler = _resolveSyncHandler();
+    if (syncHandler == null) return null;
+    try {
+      return await syncHandler.getCachedInventory();
+    } catch (e) {
+      debugPrint('[DcRepository] offline-read cacheInventory read failed: $e');
+      return null;
+    }
+  }
 
   // ── helpers ──────────────────────────────────────────────────────────────
 
@@ -396,6 +502,44 @@ class DcRepository {
     createdAt: DateTime.parse(j['createdAt'] as String),
   );
 
+  static RentalState _parseRentalState(String? s) {
+    switch (s) {
+      case 'rentedOut':
+        return RentalState.rentedOut;
+      case 'returned':
+        return RentalState.returned;
+      case 'returnedWithDamage':
+        return RentalState.returnedWithDamage;
+      default:
+        return RentalState.available;
+    }
+  }
+
+  /// Parses an [EventRental] record with null-safe defaults.
+  /// Field names follow the same `*Paisa`/camelCase convention used
+  /// elsewhere in this file; unconfirmed against a real backend response
+  /// (see design.md OQ-1).
+  static EventRental _eventRentalFromJson(Map<String, dynamic> j) {
+    final createdAt =
+        DateTime.tryParse(j['createdAt'] as String? ?? '') ?? DateTime.now();
+    final updatedAt =
+        DateTime.tryParse(j['updatedAt'] as String? ?? '') ?? createdAt;
+    return EventRental(
+      id: j['id'] as String,
+      eventId: j['eventId'] as String? ?? '',
+      inventoryItemId:
+          j['inventoryItemId'] as String? ?? j['itemId'] as String? ?? '',
+      rentedQty: (j['rentedQty'] as num?)?.toInt() ?? 0,
+      damagedOrLostQty: (j['damagedOrLostQty'] as num?)?.toInt() ?? 0,
+      state: _parseRentalState(j['state'] as String?),
+      rentalPricePerUnitPaise:
+          (j['rentalPricePerUnitPaisa'] as num?)?.toInt() ?? 0,
+      totalRentalPricePaise: (j['totalRentalPricePaisa'] as num?)?.toInt() ?? 0,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+    );
+  }
+
   static DcEventNote _noteFromJson(Map<String, dynamic> j) => DcEventNote(
     id: j['id'] as String,
     text: j['text'] as String,
@@ -534,6 +678,19 @@ class DcRepository {
     throw Exception('Unexpected response shape');
   }
 
+  /// Throws if [res] represents a failed request, using
+  /// `ApiResponse.userMessage` — which already renders connectivity-specific
+  /// wording ("No internet connection...", "Network error...", "Request
+  /// timed out...", "Connection failed...") for network-layer failures
+  /// (Requirement 2.6 AC7) — instead of falling through to
+  /// `_dataObject`'s generic "Unexpected response shape" for a response
+  /// that has no `data` because the request itself failed.
+  void _ensureSuccess(ApiResponse<Map<String, dynamic>> res, String action) {
+    if (!res.isSuccess) {
+      throw Exception('$action failed: ${res.userMessage}');
+    }
+  }
+
   // ── Bookings ──────────────────────────────────────────────────────────────
 
   Future<List<EventBooking>> getBookings({
@@ -546,7 +703,18 @@ class DcRepository {
     if (statusFilter != null) params['status'] = _statusStr(statusFilter);
     if (search != null && search.isNotEmpty) params['search'] = search;
     final res = await _api.get('/dc/events', queryParams: params);
-    return _dataList(res, _bookingFromJson);
+    final bookings = _dataList(res, _bookingFromJson);
+    // Write-through cache (Requirement 2.6 AC2): best-effort, never blocks
+    // or fails the caller. See DcSyncHandler for rationale.
+    final syncHandler = _resolveSyncHandler();
+    if (syncHandler != null) {
+      unawaited(
+        syncHandler.cacheBookings(bookings).catchError((e) {
+          debugPrint('[DcRepository] write-through cacheBookings failed: $e');
+        }),
+      );
+    }
+    return bookings;
   }
 
   Future<EventBooking?> getBookingById(String id) async {
@@ -562,6 +730,12 @@ class DcRepository {
       'customerEmail': booking.customerEmail,
       'eventType': booking.eventType.name,
       'eventTitle': booking.eventTitle,
+      // Intentional: eventDate is date-only. Time-of-day scheduling is
+      // tracked independently via setupTime/serviceStartTime/
+      // serviceEndTime/cleanupTime (see EventBooking). Locked in by
+      // test/features/decoration_catering/dc_repository_event_date_test.dart —
+      // do not "fix" this without updating that test and this comment
+      // together.
       'eventDate': booking.eventDate.toIso8601String().substring(0, 10),
       'venueName': booking.venue,
       'venueAddress': booking.venueAddress,
@@ -574,12 +748,17 @@ class DcRepository {
       'notes': booking.notes,
     };
     if (booking.eventEndDate != null) {
+      // Intentional: eventEndDate is date-only, same rationale as eventDate
+      // above. Locked in by the same
+      // dc_repository_event_date_test.dart — do not "fix" this without
+      // updating that test and this comment together.
       body['eventEndDate'] = booking.eventEndDate!.toIso8601String().substring(
         0,
         10,
       );
     }
     final res = await _api.post('/dc/events', body: body);
+    _ensureSuccess(res, 'Create booking');
     return _dataObject(res, _bookingFromJson);
   }
 
@@ -590,6 +769,12 @@ class DcRepository {
       'customerEmail': updated.customerEmail,
       'eventType': updated.eventType.name,
       'eventTitle': updated.eventTitle,
+      // Intentional: eventDate is date-only. Time-of-day scheduling is
+      // tracked independently via setupTime/serviceStartTime/
+      // serviceEndTime/cleanupTime (see EventBooking). Locked in by
+      // test/features/decoration_catering/dc_repository_event_date_test.dart —
+      // do not "fix" this without updating that test and this comment
+      // together.
       'eventDate': updated.eventDate.toIso8601String().substring(0, 10),
       'venueName': updated.venue,
       'venueAddress': updated.venueAddress,
@@ -605,12 +790,17 @@ class DcRepository {
       'assignedStaffIds': updated.assignedStaffIds,
     };
     if (updated.eventEndDate != null) {
+      // Intentional: eventEndDate is date-only, same rationale as eventDate
+      // above. Locked in by the same
+      // dc_repository_event_date_test.dart — do not "fix" this without
+      // updating that test and this comment together.
       body['eventEndDate'] = updated.eventEndDate!.toIso8601String().substring(
         0,
         10,
       );
     }
     final res = await _api.put('/dc/events/${updated.id}', body: body);
+    _ensureSuccess(res, 'Update booking');
     return _dataObject(res, _bookingFromJson);
   }
 
@@ -634,7 +824,7 @@ class DcRepository {
   }
 
   Future<void> recordPayment(DcPayment payment) async {
-    await _api.post(
+    final res = await _api.post(
       '/dc/events/${payment.eventId}/payments',
       body: {
         'amountPaisa': _toPaisa(payment.amount),
@@ -643,6 +833,7 @@ class DcRepository {
         'invoiceId': payment.invoiceId,
       },
     );
+    _ensureSuccess(res, 'Record payment');
   }
 
   // ── Staff ─────────────────────────────────────────────────────────────────
@@ -734,7 +925,18 @@ class DcRepository {
     if (category != null) params['category'] = category.name;
     if (lowStockOnly) params['lowStock'] = 'true';
     final res = await _api.get('/dc/inventory', queryParams: params);
-    return _dataList(res, _inventoryFromJson);
+    final items = _dataList(res, _inventoryFromJson);
+    // Write-through cache (Requirement 2.6 AC2): best-effort, never blocks
+    // or fails the caller. See DcSyncHandler for rationale.
+    final syncHandler = _resolveSyncHandler();
+    if (syncHandler != null) {
+      unawaited(
+        syncHandler.cacheInventory(items).catchError((e) {
+          debugPrint('[DcRepository] write-through cacheInventory failed: $e');
+        }),
+      );
+    }
+    return items;
   }
 
   Future<DcInventoryItem> createInventoryItem(DcInventoryItem item) async {
@@ -790,6 +992,68 @@ class DcRepository {
         'Stored quantity unchanged.',
       );
     }
+  }
+
+  // ────────────────────────────────────────────────────────────────────────
+  // BACKEND GAP (Requirement 2.5, OQ-1): deployment of the rent-out/return
+  // endpoints below is unconfirmed. These clients are written to the
+  // correct contract per design.md's Component 5; on HTTP 404 they throw an
+  // explicit, labeled error instead of silently mocking success. No local
+  // state is mutated on failure — mirrors the `adjustInventory` pattern
+  // above.
+  // ────────────────────────────────────────────────────────────────────────
+
+  /// Rents out [quantity] units of [itemId] for [eventId].
+  ///
+  /// Calls the (unverified) `POST /dc/inventory/{id}/rent-out` endpoint.
+  /// On 404, throws an explicit "BACKEND GAP" exception naming the
+  /// endpoint. No local state is mutated on failure.
+  Future<EventRental> rentOut({
+    required String itemId,
+    required String eventId,
+    required int quantity,
+  }) async {
+    final res = await _api.post(
+      '/dc/inventory/$itemId/rent-out',
+      body: {'eventId': eventId, 'quantity': quantity},
+    );
+    if (!res.isSuccess) {
+      if (res.statusCode == 404) {
+        throw Exception(
+          'Rent-out endpoint not available '
+          '(POST /dc/inventory/$itemId/rent-out returned 404). '
+          'BACKEND GAP: deploy the rent-out handler.',
+        );
+      }
+      throw Exception('Failed to rent out item $itemId: ${res.error}');
+    }
+    return _dataObject(res, _eventRentalFromJson);
+  }
+
+  /// Returns a rented item, recording [damagedQty] as damaged/lost.
+  ///
+  /// Calls the (unverified) `POST /dc/inventory/{id}/return` endpoint. Same
+  /// error-surfacing contract as [rentOut].
+  Future<EventRental> returnRental({
+    required String itemId,
+    required String rentalId,
+    required int damagedQty,
+  }) async {
+    final res = await _api.post(
+      '/dc/inventory/$itemId/return',
+      body: {'rentalId': rentalId, 'damagedQty': damagedQty},
+    );
+    if (!res.isSuccess) {
+      if (res.statusCode == 404) {
+        throw Exception(
+          'Return endpoint not available '
+          '(POST /dc/inventory/$itemId/return returned 404). '
+          'BACKEND GAP: deploy the return handler.',
+        );
+      }
+      throw Exception('Failed to return item $itemId: ${res.error}');
+    }
+    return _dataObject(res, _eventRentalFromJson);
   }
 
   // ── Menu Items ────────────────────────────────────────────────────────────
@@ -927,6 +1191,7 @@ class DcRepository {
         'advancePaidPaisa': _toPaisa(advancePaid),
       },
     );
+    _ensureSuccess(res, 'Create invoice');
     return res.data?['data'] as Map<String, dynamic>? ?? {};
   }
 
@@ -960,12 +1225,15 @@ class DcRepository {
     if (raw is! List) return [];
     return raw.map((e) {
       final j = e as Map<String, dynamic>;
+      final rawMode =
+          j['paymentMode'] as String? ?? j['paymentMethod'] as String?;
+      final recordId = j['id'] as String?;
       return DcPayment(
         id: j['id'] as String,
         eventId: j['eventId'] as String? ?? '',
         customerName: j['customerName'] as String? ?? '',
         amount: _paisa(j['advancePaidPaisa']),
-        method: PaymentMethod.cash,
+        method: _parsePaymentMethod(rawMode, contextId: recordId),
         date: DateTime.parse(j['createdAt'] as String),
       );
     }).toList();

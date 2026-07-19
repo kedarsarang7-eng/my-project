@@ -9,8 +9,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../data/models/dc_models.dart';
 import '../../data/repositories/dc_repository.dart';
+import '../../utils/decoration_catering_business_rules.dart';
 import '../widgets/dc_booking_form.dart';
 import '../widgets/dc_status_badge.dart';
+import '../widgets/dc_ui_kit.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
 
 class DcBookingsScreen extends ConsumerStatefulWidget {
@@ -34,6 +36,7 @@ class _DcBookingsScreenState extends ConsumerState<DcBookingsScreen> {
   @override
   Widget build(BuildContext context) {
     final bookingsAsync = ref.watch(dcBookingsProvider);
+    final isStale = ref.watch(dcBookingsStaleProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FB),
@@ -43,6 +46,7 @@ class _DcBookingsScreenState extends ConsumerState<DcBookingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(context),
+            if (isStale) const DcStaleDataBanner(),
             _buildFilters(),
             Expanded(
               child: bookingsAsync.when(
@@ -636,6 +640,10 @@ class _DcBookingsScreenState extends ConsumerState<DcBookingsScreen> {
                   selected: booking.status == s,
                   onTap: () async {
                     Navigator.pop(context);
+                    if (s == EventStatus.cancelled) {
+                      await _handleCancellation(context, booking);
+                      return;
+                    }
                     await ref
                         .read(dcRepositoryProvider)
                         .updateBookingStatus(booking.id, s);
@@ -648,6 +656,67 @@ class _DcBookingsScreenState extends ConsumerState<DcBookingsScreen> {
         ),
       ),
     );
+  }
+
+  /// Handles the cancellation branch of [_changeStatus].
+  ///
+  /// If cancelling forfeits the advance under the 7-day lock-in policy
+  /// (Requirement 4.1 / `advanceForfeitedOnCancel`) and an advance was
+  /// actually paid, the user must confirm the forfeiture before the booking
+  /// status changes. Declining leaves the booking status unchanged. On
+  /// confirmation (or when no forfeiture applies), the booking is cancelled
+  /// immediately. `booking.advancePaid` is never modified here — forfeiture
+  /// is implicit (no refund/adjustment ledger entry; see OQ-8).
+  Future<void> _handleCancellation(
+    BuildContext context,
+    EventBooking booking,
+  ) async {
+    final forfeits =
+        DecorationCateringBusinessRules.advanceForfeitedOnCancel(
+          booking.eventDate,
+          DateTime.now(),
+        ) &&
+        booking.advancePaid > 0;
+
+    if (forfeits) {
+      final fmt = NumberFormat.currency(
+        locale: 'en_IN',
+        symbol: sl<CurrencyService>().symbol,
+        decimalDigits: 0,
+      );
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Cancel Booking?'),
+          content: Text(
+            'This event is within the 7-day cancellation lock-in window. '
+            'Cancelling now will forfeit the advance of '
+            '${fmt.format(booking.advancePaid)} — it will not be refunded.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Keep Booking'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Confirm Cancellation'),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true) return;
+    }
+
+    await ref
+        .read(dcRepositoryProvider)
+        .updateBookingStatus(booking.id, EventStatus.cancelled);
+    ref.invalidate(dcBookingsProvider);
+    ref.invalidate(dcStatsProvider);
   }
 
   void _recordPayment(BuildContext context, EventBooking booking) {

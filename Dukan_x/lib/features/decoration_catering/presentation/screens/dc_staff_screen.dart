@@ -88,29 +88,39 @@ class _DcStaffScreenState extends ConsumerState<DcStaffScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Staff & Vendor Management',
-                style: TextStyle(
-                  fontSize: responsiveValue<double>(
-                    context,
-                    mobile: 18,
-                    tablet: 20,
-                    desktop: 22,
+          // Wrapped in Expanded so the title shrinks/wraps instead of forcing
+          // the action buttons out of the available width (Requirement 1.1
+          // AC5 regression discovered by DcReachabilityGateTest: at the
+          // screen's own BoundedBox(maxWidth: 800) constraint, the title's
+          // unbounded intrinsic width plus both buttons overflowed the Row).
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Staff & Vendor Management',
+                  style: TextStyle(
+                    fontSize: responsiveValue<double>(
+                      context,
+                      mobile: 18,
+                      tablet: 20,
+                      desktop: 22,
+                    ),
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF1A1A2E),
                   ),
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1A1A2E),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'Workforce and supplier management',
-                style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
-              ),
-            ],
+                const SizedBox(height: 4),
+                const Text(
+                  'Workforce and supplier management',
+                  style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
+          const SizedBox(width: 12),
           Row(
             children: [
               OutlinedButton.icon(

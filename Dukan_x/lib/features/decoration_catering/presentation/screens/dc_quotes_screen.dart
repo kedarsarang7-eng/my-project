@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../data/models/dc_models.dart';
 import '../../data/repositories/dc_repository.dart';
+import '../../utils/dc_money_math.dart';
+import '../../utils/decoration_catering_business_rules.dart';
 import '../widgets/dc_ui_kit.dart';
 import 'package:dukanx/core/responsive/responsive.dart';
 
@@ -567,6 +569,13 @@ class _CreateQuoteDialogState extends ConsumerState<_CreateQuoteDialog> {
   final List<Map<String, dynamic>> _items = [];
   bool _saving = false;
 
+  /// Discount percentage in [0, 100] (Requirement 3.1 — unified with
+  /// DcBillingScreen's percentage-based discount model). This screen has no
+  /// GST input field, so GST stays fixed at 18% (matching the previous
+  /// hardcoded rate and DcBillingScreen's default).
+  double _discountPct = 0;
+  static const double _gstPct = 18;
+
   final _eventTypes = [
     'wedding',
     'birthday',
@@ -582,9 +591,45 @@ class _CreateQuoteDialogState extends ConsumerState<_CreateQuoteDialog> {
     0,
     (s, i) => s + (((i['qty'] as int?) ?? 1) * ((i['rate'] as double?) ?? 0)),
   );
-  double get _gst => _subtotal * 0.18;
-  double get _discount => double.tryParse(_discCtrl.text) ?? 0;
-  double get _total => _subtotal + _gst - _discount;
+
+  int get _subtotalPaise => DcMoneyMath.rupeesToPaise(_subtotal);
+
+  // ─── Unified percentage-based discount/tax model (Requirement 3.1) ───
+  // Identical to DecorationCateringBusinessRules.computeQuoteTotalPct used
+  // by DcBillingScreen/DcQuoteConversionScreen, so quote totals match
+  // billing totals to the paise for equivalent inputs.
+  ({int discountAmount, int postDiscount, int gstAmount, int grandTotal})
+  get _totals => DecorationCateringBusinessRules.computeQuoteTotalPct(
+    subtotalPaise: _subtotalPaise,
+    discountPct: _discountPct,
+    gstPct: _gstPct,
+  );
+
+  double get _discount => DcMoneyMath.paiseToRupees(_totals.discountAmount);
+  double get _gst => DcMoneyMath.paiseToRupees(_totals.gstAmount);
+  double get _total => DcMoneyMath.paiseToRupees(_totals.grandTotal);
+
+  /// Validates and clamps the discount percentage input, mirroring
+  /// DcBillingScreen._onDiscountChanged's clamping pattern (Requirement 3.1).
+  ///
+  /// Numeric values are clamped to [0, 100]: e.g. 150 → 100, -5 → 0.
+  void _onDiscountPctChanged(String v) {
+    final parsed = double.tryParse(v);
+    if (parsed == null) {
+      return;
+    }
+    final clamped = parsed.clamp(0.0, 100.0);
+    setState(() => _discountPct = clamped);
+    if (clamped != parsed) {
+      final text = clamped == clamped.roundToDouble()
+          ? clamped.toInt().toString()
+          : clamped.toStringAsFixed(2);
+      _discCtrl.text = text;
+      _discCtrl.selection = TextSelection.fromPosition(
+        TextPosition(offset: text.length),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -729,8 +774,9 @@ class _CreateQuoteDialogState extends ConsumerState<_CreateQuoteDialog> {
                       const SizedBox(height: 12),
                       _field(
                         _discCtrl,
-                        'Discount (₹)',
+                        'Discount (%)',
                         keyboard: TextInputType.number,
+                        onChanged: _onDiscountPctChanged,
                       ),
                       const SizedBox(height: 12),
                       _buildTotals(),
@@ -788,8 +834,14 @@ class _CreateQuoteDialogState extends ConsumerState<_CreateQuoteDialog> {
       child: Column(
         children: [
           _totalRow('Subtotal', '₹${fmt.format(_subtotal.round())}'),
-          _totalRow('GST (18%)', '₹${fmt.format(_gst.round())}'),
-          _totalRow('Discount', '- ₹${fmt.format(_discount.round())}'),
+          _totalRow(
+            'Discount (${_discountPct == _discountPct.roundToDouble() ? _discountPct.toInt() : _discountPct}%)',
+            '- ₹${fmt.format(_discount.round())}',
+          ),
+          _totalRow(
+            'GST (${_gstPct.toInt()}%)',
+            '₹${fmt.format(_gst.round())}',
+          ),
           const Divider(height: 12),
           _totalRow(
             'Total',
@@ -884,6 +936,7 @@ class _CreateQuoteDialogState extends ConsumerState<_CreateQuoteDialog> {
     TextInputType? keyboard,
     bool required = false,
     int maxLines = 1,
+    ValueChanged<String>? onChanged,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -899,6 +952,7 @@ class _CreateQuoteDialogState extends ConsumerState<_CreateQuoteDialog> {
         validator: required
             ? (v) => (v == null || v.trim().isEmpty) ? 'Required' : null
             : null,
+        onChanged: onChanged,
       ),
     );
   }
@@ -928,6 +982,7 @@ class _CreateQuoteDialogState extends ConsumerState<_CreateQuoteDialog> {
         guestCount: int.tryParse(_guestCtrl.text) ?? 0,
         lineItems: lineItems,
         subtotal: _subtotal,
+        gstPct: _gstPct,
         gstAmount: _gst,
         discount: _discount,
         total: _total,

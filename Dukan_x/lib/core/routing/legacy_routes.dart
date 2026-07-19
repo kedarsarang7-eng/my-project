@@ -1634,17 +1634,20 @@ abstract final class LegacyRoutes {
       ),
     ),
     // '/dc/bookings': (context) => VendorRoleGuard(
-    //       requiredPermission: Permissions.viewInvoices,
+    //       requiredPermission: Permissions.viewEvents,
     //       child: BusinessGuard(
     //         allowedTypes: const [BusinessType.decorationCatering],
     //         denialMessage: 'Only Decoration & Catering businesses can access Event Bookings.',
     //         child: const DcBookingsScreen(),
     //       ),
     //     ),
+    // Requirement 3.7 (AC2): uses the fine-grained `viewEvents` permission
+    // instead of the borrowed `viewInvoices`, so a role can be granted
+    // booking-viewing access without also granting invoice access.
     GoRoute(
       path: '/dc/bookings',
       builder: (BuildContext context, GoRouterState state) => VendorRoleGuard(
-        requiredPermission: Permissions.viewInvoices,
+        requiredPermission: Permissions.viewEvents,
         child: BusinessGuard(
           allowedTypes: const [BusinessType.decorationCatering],
           denialMessage:
@@ -1654,17 +1657,19 @@ abstract final class LegacyRoutes {
       ),
     ),
     // '/dc/bookings/new': (context) => VendorRoleGuard(
-    //       requiredPermission: Permissions.createInvoices,
+    //       requiredPermission: Permissions.createEvents,
     //       child: BusinessGuard(
     //         allowedTypes: const [BusinessType.decorationCatering],
     //         denialMessage: 'Only Decoration & Catering businesses can create bookings.',
     //         child: const DcBookingsScreen(),
     //       ),
     //     ),
+    // Requirement 3.7 (AC3): uses the fine-grained `createEvents` permission
+    // instead of the borrowed `createInvoices`.
     GoRoute(
       path: '/dc/bookings/new',
       builder: (BuildContext context, GoRouterState state) => VendorRoleGuard(
-        requiredPermission: Permissions.createInvoices,
+        requiredPermission: Permissions.createEvents,
         child: BusinessGuard(
           allowedTypes: const [BusinessType.decorationCatering],
           denialMessage:
@@ -2006,10 +2011,13 @@ abstract final class LegacyRoutes {
       },
     ),
     // '/dc/staff_attendance': registered per Phase 1 reachability (Task 3.11).
+    // Requirement 3.7 (AC4): uses `manageStaff` instead of the borrowed
+    // `viewInvoices` — attendance marking is a staff-management action, not
+    // an invoice action.
     GoRoute(
       path: '/dc/staff_attendance',
       builder: (BuildContext context, GoRouterState state) => VendorRoleGuard(
-        requiredPermission: Permissions.viewInvoices,
+        requiredPermission: Permissions.manageStaff,
         child: BusinessGuard(
           allowedTypes: const [BusinessType.decorationCatering],
           denialMessage:

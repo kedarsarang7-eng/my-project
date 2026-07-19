@@ -17,6 +17,8 @@ import 'connection.dart';
 import 'migrations/system_owner_backfill.dart';
 import '../sync/sync_manager.dart';
 import '../sync/sync_queue_state_machine.dart';
+import 'tables/dc_events_table.dart';
+import 'tables/dc_inventory_table.dart';
 
 part 'app_database.g.dart';
 
@@ -206,6 +208,10 @@ part 'app_database.g.dart';
     ComputerJobCardsCache,
     ComputerWarrantyCache,
     ComputerSerialsCache,
+    // Decoration & Catering remediation — offline-read cache (v61,
+    // Requirement 2.6 AC1). Mirrors EventBooking / DcInventoryItem fields.
+    DcEventsTable,
+    DcInventoryTable,
   ],
 )
 class AppDatabase extends _$AppDatabase implements SyncQueueLocalOperations {
@@ -219,7 +225,7 @@ class AppDatabase extends _$AppDatabase implements SyncQueueLocalOperations {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 60; // v60: hardware local-first tables (bugfix.md 2.1, 2.19, 2.25)
+  int get schemaVersion => 61; // v61: DC offline-read cache tables (decoration-catering-remediation task 8)
 
   // ==========================================================================
   // v46 SYSTEM-owner backfill resolver (clinic task 4.4)
@@ -1511,6 +1517,50 @@ class AppDatabase extends _$AppDatabase implements SyncQueueLocalOperations {
           'AppDatabase: v60 migration complete — hardware local-first '
           'tables created (projects, indents, deposits, POs, parties, '
           'sales orders)',
+        );
+      }
+
+      // ====================================================================
+      // v61: Decoration & Catering remediation — offline-read cache tables
+      // (decoration-catering-remediation task 8, Requirement 2.6 AC1).
+      // Two new tables mirroring EventBooking / DcInventoryItem fields plus
+      // a lastSyncedAt timestamp, used as a write-through cache and
+      // offline-read fallback. Purely additive — no existing table changed.
+      // ====================================================================
+      if (from < 61) {
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS dc_events_table (
+            id TEXT NOT NULL PRIMARY KEY,
+            customer_name TEXT NOT NULL,
+            customer_phone TEXT NOT NULL,
+            event_title TEXT NOT NULL,
+            event_date INTEGER NOT NULL,
+            event_end_date INTEGER,
+            venue TEXT NOT NULL,
+            guest_count INTEGER NOT NULL,
+            status TEXT NOT NULL,
+            quoted_amount_paisa INTEGER NOT NULL,
+            advance_paid_paisa INTEGER NOT NULL,
+            last_synced_at INTEGER NOT NULL
+          )
+        ''');
+
+        await customStatement('''
+          CREATE TABLE IF NOT EXISTS dc_inventory_table (
+            id TEXT NOT NULL PRIMARY KEY,
+            name TEXT NOT NULL,
+            category TEXT NOT NULL,
+            total_qty INTEGER NOT NULL,
+            available_qty INTEGER NOT NULL,
+            rental_price_paisa INTEGER NOT NULL,
+            last_synced_at INTEGER NOT NULL
+          )
+        ''');
+
+        debugPrint(
+          'AppDatabase: v61 migration complete — dc_events_table + '
+          'dc_inventory_table created (Decoration & Catering offline-read '
+          'cache)',
         );
       }
     },

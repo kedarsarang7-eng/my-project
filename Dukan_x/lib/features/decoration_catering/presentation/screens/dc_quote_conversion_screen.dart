@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../data/models/dc_models.dart';
 import '../../data/repositories/dc_repository.dart';
+import '../../utils/dc_error_utils.dart';
 import '../../utils/dc_money_math.dart';
 import '../../utils/decoration_catering_business_rules.dart';
 import '../widgets/dc_ui_kit.dart';
@@ -31,11 +32,35 @@ class _DcQuoteConversionScreenState
 
   static const _teal = Color(0xFF0D9488);
 
+  // ─── Unified percentage-based discount/tax model (Requirement 3.1) ───
+  // Recomputes the quote's grand total via computeQuoteTotalPct from the
+  // quote's own subtotal/discount%/GST% rather than trusting the stored
+  // `.total` field, so this screen stays consistent with DcBillingScreen
+  // even if a stored total is ever stale.
+  int get _quoteSubtotalPaise =>
+      DcMoneyMath.rupeesToPaise(widget.quote.subtotal);
+
+  /// The quote's discount as a percentage, derived from its stored absolute
+  /// discount amount and subtotal (DcQuote stores `discount` as an absolute
+  /// rupee amount, not a percentage).
+  double get _quoteDiscountPct => widget.quote.subtotal > 0
+      ? (widget.quote.discount / widget.quote.subtotal) * 100
+      : 0;
+
+  ({int discountAmount, int postDiscount, int gstAmount, int grandTotal})
+  get _quoteTotals => DecorationCateringBusinessRules.computeQuoteTotalPct(
+    subtotalPaise: _quoteSubtotalPaise,
+    discountPct: _quoteDiscountPct,
+    gstPct: widget.quote.gstPct,
+  );
+
+  double get _quoteTotal => DcMoneyMath.paiseToRupees(_quoteTotals.grandTotal);
+
   @override
   void initState() {
     super.initState();
     // Default advance = 50% of quote total (per Requirement 11.1)
-    final totalPaise = DcMoneyMath.rupeesToPaise(widget.quote.total);
+    final totalPaise = _quoteTotals.grandTotal;
     final advancePaise = _advanceConfig.computeAdvancePaise(totalPaise);
     if (advancePaise != null) {
       _advanceCtrl.text = DcMoneyMath.paiseToRupees(
@@ -121,7 +146,7 @@ class _DcQuoteConversionScreenState
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
-                '₹${fmt.format(widget.quote.total.round())}',
+                '₹${fmt.format(_quoteTotal.round())}',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -275,7 +300,7 @@ class _DcQuoteConversionScreenState
             setState(() {
               _advanceConfig = newConfig;
               // Recompute advance amount
-              final totalPaise = DcMoneyMath.rupeesToPaise(widget.quote.total);
+              final totalPaise = _quoteTotals.grandTotal;
               final advancePaise = _advanceConfig.computeAdvancePaise(
                 totalPaise,
               );
@@ -323,7 +348,7 @@ class _DcQuoteConversionScreenState
 
   Future<void> _convertToBooking() async {
     // --- Advance validation (Requirements 11.3, 11.4, 11.5) ---
-    final totalPaise = DcMoneyMath.rupeesToPaise(widget.quote.total);
+    final totalPaise = _quoteTotals.grandTotal;
     final advancePaise = _advanceConfig.computeAdvancePaise(totalPaise);
 
     if (advancePaise == null) {
@@ -369,7 +394,7 @@ class _DcQuoteConversionScreenState
         venueAddress: '',
         guestCount: widget.quote.guestCount,
         status: EventStatus.confirmed,
-        quotedAmount: widget.quote.total,
+        quotedAmount: _quoteTotal,
         advancePaid: advanceRupees,
         decorationThemeId: _selectedThemeId.isEmpty ? null : _selectedThemeId,
         cateringPackageId: _selectedPackageId.isEmpty
@@ -411,11 +436,20 @@ class _DcQuoteConversionScreenState
         }
 
         if (mounted) {
+          // Requirement 3.3 AC2's "Could not record advance payment..."
+          // wording is locked in by
+          // dc_advance_payment_rollback_test.dart (textContaining match) —
+          // kept verbatim as a prefix. Requirement 2.6 AC7 appends a
+          // connectivity-specific hint when the underlying failure looks
+          // like a connectivity issue, without changing that locked prefix.
+          final suffix = isDcConnectivityError(paymentError)
+              ? ' Check your internet connection and try again.'
+              : '';
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
                 'Could not record advance payment. '
-                'Conversion rejected — no booking created.',
+                'Conversion rejected — no booking created.$suffix',
               ),
               backgroundColor: Colors.red,
             ),
@@ -435,11 +469,12 @@ class _DcQuoteConversionScreenState
     } catch (e) {
       // Conversion failed at booking/quote-status level — quote is left
       // in pre-conversion state (if quote status update failed) or partially
-      // reverted. Present generic error.
+      // reverted. Present generic error, mentioning connectivity when the
+      // underlying error indicates one (Requirement 2.6 AC7).
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Conversion failed: $e'),
+            content: Text(dcWriteErrorMessage('convert quote', e)),
             backgroundColor: Colors.red,
           ),
         );

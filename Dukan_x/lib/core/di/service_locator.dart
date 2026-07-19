@@ -15,6 +15,7 @@
 // ============================================================================
 
 import '../../features/dashboard/data/dashboard_analytics_repository.dart';
+import '../../features/decoration_catering/services/dc_sync_handler.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:dukanx/core/compat/firebase_auth_compat.dart';
@@ -418,6 +419,13 @@ Future<void> initializeDependencies() async {
   sl.registerLazySingleton<BackgroundSyncService>(
     () => BackgroundSyncService.instance,
   );
+
+  // Decoration & Catering — offline-read write-through cache handler
+  // (decoration-catering-remediation Task 9, Requirement 2.6 AC2/AC6).
+  // Standalone singleton (not routed through SyncManager — see
+  // DcSyncHandler's header comment for why). Attaches its WebSocket
+  // listeners eagerly on first resolution.
+  sl.registerLazySingleton<DcSyncHandler>(() => DcSyncHandler());
 
   // Unified Notification Controller
   sl.registerLazySingleton<NotificationController>(

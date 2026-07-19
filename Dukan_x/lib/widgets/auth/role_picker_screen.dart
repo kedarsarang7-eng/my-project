@@ -184,6 +184,8 @@ class _RoleTile extends StatelessWidget {
         return Icons.assignment_ind_rounded;
       case UserRole.nurse:
         return Icons.health_and_safety_rounded;
+      case UserRole.attendant:
+        return Icons.local_gas_station_rounded;
       case UserRole.unknown:
         return Icons.help_outline_rounded;
     }
@@ -213,6 +215,8 @@ class _RoleTile extends StatelessWidget {
         return Colors.purple;
       case UserRole.nurse:
         return Colors.pink;
+      case UserRole.attendant:
+        return Colors.brown;
       case UserRole.unknown:
         return Colors.grey;
     }
@@ -242,6 +246,8 @@ class _RoleTile extends StatelessWidget {
         return 'Receptionist';
       case UserRole.nurse:
         return 'Nurse';
+      case UserRole.attendant:
+        return 'Attendant';
       case UserRole.unknown:
         return 'Unknown';
     }
