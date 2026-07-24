@@ -194,7 +194,7 @@ doing nothing for that requirement.
   - Depends on: Task 9 (Requirement 2.6), Task 1 (Requirement 1.1)
   - _Requirements: 2.6_
 
-- [~] 11. Checkpoint — Phase 2 complete
+- [x] 11. Checkpoint — Phase 2 complete
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 12. Write quote/invoice math parity regression-lock test
@@ -328,7 +328,7 @@ doing nothing for that requirement.
   - Depends on: Task 1 (Requirement 1.1)
   - _Requirements: 3.8_
 
-- [-] 20. Write billing-validation clamps regression-lock test
+- [x] 20. Write billing-validation clamps regression-lock test
   - Regression-lock only — no production code change expected unless this
     test surfaces an actual regression.
   - Write widget/unit tests locking in: discount input is clamped to
@@ -339,11 +339,11 @@ doing nothing for that requirement.
   - Depends on: Task 1 (Requirement 1.1)
   - _Requirements: 3.9_
 
-- [~] 21. Checkpoint — Phase 3 complete
+- [x] 21. Checkpoint — Phase 3 complete
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 22. Wire `advanceForfeitedOnCancel` into the cancellation flow
-  - [-] 22.1 In the booking cancellation flow, evaluate
+- [x] 22. Wire `advanceForfeitedOnCancel` into the cancellation flow
+  - [x] 22.1 In the booking cancellation flow, evaluate
     `DecorationCateringBusinessRules.advanceForfeitedOnCancel(booking.eventDate,
     now)`; when it returns `true` and `booking.advancePaid > 0`, show a
     confirmation dialog stating the advance will be forfeited before
@@ -363,8 +363,8 @@ doing nothing for that requirement.
   - Depends on: Task 1 (Requirement 1.1)
   - _Requirements: 4.1_
 
-- [ ] 23. Increase invoice-history status label font size for accessibility
-  - [-] 23.1 Update the invoice-history status label's `TextStyle` on
+- [x] 23. Increase invoice-history status label font size for accessibility
+  - [x] 23.1 Update the invoice-history status label's `TextStyle` on
     `DcBillingScreen` so `fontSize` is at least 12 (from the current 10),
     without altering the existing status color coding or text label
     - _Requirements: 4.2_
@@ -374,7 +374,7 @@ doing nothing for that requirement.
   - Depends on: Task 1 (Requirement 1.1)
   - _Requirements: 4.2_
 
-- [-] 24. Write delete-row icon tooltip regression-lock test
+- [x] 24. Write delete-row icon tooltip regression-lock test
   - Regression-lock only — no production code change expected unless this
     test surfaces an actual regression.
   - Write a widget test asserting the delete-row `IconButton` on
@@ -382,7 +382,7 @@ doing nothing for that requirement.
   - Depends on: Task 1 (Requirement 1.1)
   - _Requirements: 4.3_
 
-- [ ] 25. Write barrel-completeness regression-lock test
+- [x] 25. Write barrel-completeness regression-lock test
   - Regression-lock only — no production code change expected unless this
     test surfaces an actual regression.
   - Write a static/unit test importing `decoration_catering.dart` and
@@ -398,10 +398,10 @@ doing nothing for that requirement.
   - Depends on: Task 1 (Requirement 1.1)
   - _Requirements: 4.4_
 
-- [~] 26. Checkpoint — Phase 4 complete
+- [x] 26. Checkpoint — Phase 4 complete
   - Ensure all tests pass, ask the user if questions arise.
 
-- [~] 27. Verify every requirement specifies a verifying test type (GR-4)
+- [x] 27. Verify every requirement specifies a verifying test type (GR-4)
   - Review `requirements.md` and confirm every numbered requirement
     (1.1 through 4.4, and GR-1 through GR-3) states a "Verifying test type"
     (unit, widget, or integration), and that every DONE/regression-lock
@@ -413,7 +413,7 @@ doing nothing for that requirement.
     time; included here for completeness of coverage.
   - _Requirements: GR-4_
 
-- [~] 28. Audit new/changed monetary arithmetic for integer-paise compliance (GR-2)
+- [x] 28. Audit new/changed monetary arithmetic for integer-paise compliance (GR-2)
   - Review every monetary computation added or changed by Tasks 3, 6, 7,
     17, and 22 (the tasks most likely to touch money-adjacent logic) and
     confirm each uses `DcMoneyMath` on integer paise values rather than
@@ -427,7 +427,7 @@ doing nothing for that requirement.
     transitively on Task 1, Requirement 1.1)
   - _Requirements: GR-2_
 
-- [~] 29. Ensure BACKEND GAP failing test exists for `adjustInventory` endpoint (GR-3)
+- [x] 29. Ensure BACKEND GAP failing test exists for `adjustInventory` endpoint (GR-3)
   - `POST /dc/inventory/{id}/adjust` is an already-implemented client call
     (per design.md's Current State Assessment: "client is correct; endpoint
     deployment is unverified") that GR-3 explicitly names alongside
@@ -440,7 +440,7 @@ doing nothing for that requirement.
   - Depends on: Task 6 (Requirement 2.5), Task 1 (Requirement 1.1)
   - _Requirements: GR-3_
 
-- [~] 30. Final regression verification gate (GR-1)
+- [x] 30. Final regression verification gate (GR-1)
   - Run the existing retail and pharmacy sidebar/quick-actions/alerts/
     routing test suites unmodified and confirm they still pass; capture
     `getSectionsForBusinessType(retail)` and

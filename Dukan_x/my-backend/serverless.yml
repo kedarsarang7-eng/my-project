@@ -57,6 +57,10 @@ provider:
     S3_BUCKET_NAME: !Ref TenantStorageBucket
     S3_REGION: ${self:provider.region}
     PLATFORM_APPLICATION_ARN: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:app/GCM/DukanX-Customer-App'
+    # ── MobileShop DynamoDB ─────────────────────────────────────────────
+    MOBILE_SHOP_TABLE_NAME: ${self:custom.mobileShop.tableName}
+    MOBILE_SHOP_CONNECTIONS_TABLE_NAME: ${self:custom.mobileShop.connectionsTableName}
+    MOBILE_SHOP_TABLE_ARN: !GetAtt MobileShopTable.Arn
 
   # ── IAM Permissions ────────────────────────────────────────────────────
   iam:
@@ -84,6 +88,62 @@ provider:
             - sns:Publish
             - sns:DeleteEndpoint
           Resource: '*'
+        # DynamoDB — MobileShop Application Access
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:BatchWriteItem
+            - dynamodb:TransactWriteItems
+            - dynamodb:TransactGetItems
+          Resource:
+            - !GetAtt MobileShopTable.Arn
+            - !Join ['', [!GetAtt MobileShopTable.Arn, '/index/*']]
+        # DynamoDB — MobileShop Connections Table Access
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:DeleteItem
+          Resource:
+            - !GetAtt MobileShopConnectionsTable.Arn
+            - !Join ['', [!GetAtt MobileShopConnectionsTable.Arn, '/index/*']]
+        # DynamoDB Streams — MobileShop Stream Consumer
+        - Effect: Allow
+          Action:
+            - dynamodb:GetRecords
+            - dynamodb:GetShardIterator
+            - dynamodb:DescribeStream
+            - dynamodb:ListStreams
+          Resource:
+            - !GetAtt MobileShopTable.StreamArn
+        # SQS — MobileShop DLQ Access
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+          Resource:
+            - !GetAtt MobileShopStreamDLQ.Arn
+
+# ============================================================================
+# CUSTOM
+# ============================================================================
+custom:
+  # ── MobileShop DynamoDB Configuration ────────────────────────────────────
+  mobileShop:
+    tableName: ${self:service}-${sls:stage}-mobile-shop
+    connectionsTableName: ${self:service}-${sls:stage}-mobile-shop-connections
+  # ── Deletion Protection per Stage ────────────────────────────────────────
+  deletionProtection:
+    prod: true
+    dev: false
+    staging: false
 
 # ============================================================================
 # FUNCTIONS (Lambda Handlers)
@@ -644,6 +704,327 @@ resources:
                 - StorageClass: GLACIER
                   TransitionInDays: 90
 
+    # ══════════════════════════════════════════════════════════════════════
+    # MOBILE SHOP — DynamoDB Table (Single-Table Design)
+    # ══════════════════════════════════════════════════════════════════════
+    MobileShopTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:custom.mobileShop.tableName}
+        BillingMode: PAY_PER_REQUEST
+        # ── Primary Key ──────────────────────────────────────────────────
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+          - AttributeName: GSI1PK
+            AttributeType: S
+          - AttributeName: GSI1SK
+            AttributeType: S
+          - AttributeName: GSI2PK
+            AttributeType: S
+          - AttributeName: GSI2SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        # ── Global Secondary Indexes ─────────────────────────────────────
+        GlobalSecondaryIndexes:
+          - IndexName: GSI1
+            KeySchema:
+              - AttributeName: GSI1PK
+                KeyType: HASH
+              - AttributeName: GSI1SK
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: GSI2
+            KeySchema:
+              - AttributeName: GSI2PK
+                KeyType: HASH
+              - AttributeName: GSI2SK
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        # ── DynamoDB Streams ─────────────────────────────────────────────
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+        # ── Point-in-Time Recovery ───────────────────────────────────────
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        # ── Server-Side Encryption ───────────────────────────────────────
+        SSESpecification:
+          SSEEnabled: true
+          SSEType: KMS
+        # ── Time-to-Live ─────────────────────────────────────────────────
+        TimeToLiveSpecification:
+          AttributeName: expiresAt
+          Enabled: true
+        # ── Deletion Protection ──────────────────────────────────────────
+        DeletionProtectionEnabled: ${self:custom.deletionProtection.${sls:stage}, false}
+        # ── Tags ─────────────────────────────────────────────────────────
+        Tags:
+          - Key: stage
+            Value: ${sls:stage}
+          - Key: service
+            Value: ${self:service}
+          - Key: module
+            Value: mobile-shop
+
+    # ══════════════════════════════════════════════════════════════════════
+    # MOBILE SHOP — WebSocket Connections Table
+    # ══════════════════════════════════════════════════════════════════════
+    MobileShopConnectionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.mobileShop.connectionsTableName}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: connectionId
+            AttributeType: S
+          - AttributeName: tenantId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: connectionId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: TenantIndex
+            KeySchema:
+              - AttributeName: tenantId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        TimeToLiveSpecification:
+          AttributeName: expiresAt
+          Enabled: true
+        SSESpecification:
+          SSEEnabled: true
+        Tags:
+          - Key: stage
+            Value: ${sls:stage}
+          - Key: service
+            Value: ${self:service}
+          - Key: module
+            Value: mobile-shop
+
+    # ══════════════════════════════════════════════════════════════════════
+    # MOBILE SHOP — Stream Processing DLQ (SQS)
+    # ══════════════════════════════════════════════════════════════════════
+    MobileShopStreamDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:service}-${sls:stage}-mobile-shop-stream-dlq
+        MessageRetentionPeriod: 1209600  # 14 days
+        VisibilityTimeout: 300
+        Tags:
+          - Key: stage
+            Value: ${sls:stage}
+          - Key: service
+            Value: ${self:service}
+          - Key: module
+            Value: mobile-shop
+
+    # ══════════════════════════════════════════════════════════════════════
+    # MOBILE SHOP — EventBridge Pipe (DynamoDB Streams → Processing)
+    # ══════════════════════════════════════════════════════════════════════
+    MobileShopStreamPipeRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:service}-${sls:stage}-mobile-shop-pipe-role
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: pipes.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: MobileShopPipeSourcePolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:DescribeStream
+                    - dynamodb:GetRecords
+                    - dynamodb:GetShardIterator
+                    - dynamodb:ListStreams
+                  Resource:
+                    - !GetAtt MobileShopTable.StreamArn
+                - Effect: Allow
+                  Action:
+                    - sqs:SendMessage
+                  Resource:
+                    - !GetAtt MobileShopStreamDLQ.Arn
+
+    MobileShopStreamPipe:
+      Type: AWS::Pipes::Pipe
+      Properties:
+        Name: ${self:service}-${sls:stage}-mobile-shop-stream-pipe
+        RoleArn: !GetAtt MobileShopStreamPipeRole.Arn
+        Source: !GetAtt MobileShopTable.StreamArn
+        SourceParameters:
+          DynamoDBStreamParameters:
+            StartingPosition: LATEST
+            BatchSize: 10
+            MaximumBatchingWindowInSeconds: 5
+            MaximumRetryAttempts: 3
+            DeadLetterConfig:
+              Arn: !GetAtt MobileShopStreamDLQ.Arn
+        # Target can be extended to EventBridge bus or Lambda in later tasks
+        Target: !GetAtt MobileShopStreamDLQ.Arn
+        TargetParameters:
+          SqsQueueParameters: {}
+        Tags:
+          stage: ${sls:stage}
+          service: ${self:service}
+          module: mobile-shop
+
+    # ══════════════════════════════════════════════════════════════════════
+    # MOBILE SHOP — Migration Role (Broader Scoped Access)
+    # ══════════════════════════════════════════════════════════════════════
+    MobileShopMigrationRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:service}-${sls:stage}-mobile-shop-migration-role
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: lambda.amazonaws.com
+              Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        Policies:
+          - PolicyName: MobileShopMigrationPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:PutItem
+                    - dynamodb:GetItem
+                    - dynamodb:Query
+                    - dynamodb:Scan
+                    - dynamodb:UpdateItem
+                    - dynamodb:DeleteItem
+                    - dynamodb:BatchWriteItem
+                    - dynamodb:BatchGetItem
+                    - dynamodb:TransactWriteItems
+                    - dynamodb:TransactGetItems
+                    - dynamodb:DescribeTable
+                  Resource:
+                    - !GetAtt MobileShopTable.Arn
+                    - !Join ['', [!GetAtt MobileShopTable.Arn, '/index/*']]
+                - Effect: Allow
+                  Action:
+                    - dynamodb:DescribeStream
+                    - dynamodb:GetRecords
+                    - dynamodb:GetShardIterator
+                    - dynamodb:ListStreams
+                  Resource:
+                    - !GetAtt MobileShopTable.StreamArn
+
+    # ══════════════════════════════════════════════════════════════════════
+    # MOBILE SHOP — CloudWatch Alarms
+    # ══════════════════════════════════════════════════════════════════════
+    MobileShopDLQAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ${self:service}-${sls:stage}-mobile-shop-dlq-messages
+        AlarmDescription: MobileShop stream DLQ has messages — processing failures detected
+        Namespace: AWS/SQS
+        MetricName: ApproximateNumberOfMessagesVisible
+        Dimensions:
+          - Name: QueueName
+            Value: !GetAtt MobileShopStreamDLQ.QueueName
+        Statistic: Sum
+        Period: 60
+        EvaluationPeriods: 1
+        Threshold: 0
+        ComparisonOperator: GreaterThanThreshold
+        TreatMissingData: notBreaching
+        Tags:
+          - Key: stage
+            Value: ${sls:stage}
+          - Key: module
+            Value: mobile-shop
+
+    MobileShopTableThrottleAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ${self:service}-${sls:stage}-mobile-shop-table-throttle
+        AlarmDescription: MobileShop DynamoDB table is being throttled
+        Namespace: AWS/DynamoDB
+        MetricName: ThrottledRequests
+        Dimensions:
+          - Name: TableName
+            Value: ${self:custom.mobileShop.tableName}
+        Statistic: Sum
+        Period: 60
+        EvaluationPeriods: 1
+        Threshold: 0
+        ComparisonOperator: GreaterThanThreshold
+        TreatMissingData: notBreaching
+        Tags:
+          - Key: stage
+            Value: ${sls:stage}
+          - Key: module
+            Value: mobile-shop
+
+    MobileShopGSI1ThrottleAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ${self:service}-${sls:stage}-mobile-shop-gsi1-throttle
+        AlarmDescription: MobileShop GSI1 index is being throttled
+        Namespace: AWS/DynamoDB
+        MetricName: ThrottledRequests
+        Dimensions:
+          - Name: TableName
+            Value: ${self:custom.mobileShop.tableName}
+          - Name: GlobalSecondaryIndexName
+            Value: GSI1
+        Statistic: Sum
+        Period: 60
+        EvaluationPeriods: 1
+        Threshold: 0
+        ComparisonOperator: GreaterThanThreshold
+        TreatMissingData: notBreaching
+        Tags:
+          - Key: stage
+            Value: ${sls:stage}
+          - Key: module
+            Value: mobile-shop
+
+    MobileShopGSI2ThrottleAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ${self:service}-${sls:stage}-mobile-shop-gsi2-throttle
+        AlarmDescription: MobileShop GSI2 index is being throttled
+        Namespace: AWS/DynamoDB
+        MetricName: ThrottledRequests
+        Dimensions:
+          - Name: TableName
+            Value: ${self:custom.mobileShop.tableName}
+          - Name: GlobalSecondaryIndexName
+            Value: GSI2
+        Statistic: Sum
+        Period: 60
+        EvaluationPeriods: 1
+        Threshold: 0
+        ComparisonOperator: GreaterThanThreshold
+        TreatMissingData: notBreaching
+        Tags:
+          - Key: stage
+            Value: ${sls:stage}
+          - Key: module
+            Value: mobile-shop
+
   # ══════════════════════════════════════════════════════════════════════
   # OUTPUTS
   # ══════════════════════════════════════════════════════════════════════
@@ -683,6 +1064,35 @@ resources:
     ApiEndpoint:
       Value: !GetAtt HttpApi.ApiEndpoint
       Description: HTTP API Gateway endpoint URL
+
+    # ── MobileShop Outputs ─────────────────────────────────────────────────
+    MobileShopTableName:
+      Value: !Ref MobileShopTable
+      Description: MobileShop DynamoDB table name
+
+    MobileShopTableArn:
+      Value: !GetAtt MobileShopTable.Arn
+      Description: MobileShop DynamoDB table ARN
+
+    MobileShopTableStreamArn:
+      Value: !GetAtt MobileShopTable.StreamArn
+      Description: MobileShop DynamoDB Streams ARN
+
+    MobileShopConnectionsTableName:
+      Value: !Ref MobileShopConnectionsTable
+      Description: MobileShop WebSocket connections table name
+
+    MobileShopStreamDLQUrl:
+      Value: !Ref MobileShopStreamDLQ
+      Description: MobileShop stream processing DLQ URL
+
+    MobileShopStreamDLQArn:
+      Value: !GetAtt MobileShopStreamDLQ.Arn
+      Description: MobileShop stream processing DLQ ARN
+
+    MobileShopMigrationRoleArn:
+      Value: !GetAtt MobileShopMigrationRole.Arn
+      Description: MobileShop migration/backfill IAM role ARN
 
 # ============================================================================
 # PLUGINS

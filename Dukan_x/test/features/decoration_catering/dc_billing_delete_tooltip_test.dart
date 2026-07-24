@@ -27,6 +27,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
+import 'package:dukanx/core/services/currency_service.dart';
 import 'package:dukanx/features/decoration_catering/data/models/dc_models.dart';
 import 'package:dukanx/features/decoration_catering/data/repositories/dc_repository.dart';
 import 'package:dukanx/features/decoration_catering/presentation/screens/dc_billing_screen.dart';
@@ -40,6 +42,8 @@ class _MockDcRepository implements DcRepository {
   Future<List<EventBooking>> getBookings({
     EventStatus? statusFilter,
     String? search,
+    DateTime? dateFrom,
+    DateTime? dateTo,
   }) async => [];
 
   @override
@@ -47,7 +51,9 @@ class _MockDcRepository implements DcRepository {
     String? eventId,
     String? status,
     String? search,
-    int? limit,
+    String? invoiceNumber,
+    int page = 1,
+    int limit = 50,
   }) async => [];
 
   @override
@@ -55,6 +61,18 @@ class _MockDcRepository implements DcRepository {
 }
 
 void main() {
+  final sl = GetIt.instance;
+
+  setUp(() {
+    if (!sl.isRegistered<CurrencyService>()) {
+      sl.registerSingleton<CurrencyService>(CurrencyService());
+    }
+  });
+
+  tearDown(() async {
+    await sl.reset();
+  });
+
   group('Requirement 4.3 AC1-2 — delete-row IconButton tooltip', () {
     testWidgets("DcBillingScreen's delete-row IconButton has "
         "tooltip: 'Remove line item'", (WidgetTester tester) async {

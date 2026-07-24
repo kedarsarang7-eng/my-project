@@ -469,6 +469,12 @@ Future<void> initializeDependencies() async {
       imeiValidationService: IMEIValidationService(
         sl<AppDatabase>(),
       ), // Phase 1: activates IMEI pipeline
+      // Task 12.3: Consistency orchestrator for mobileShop sale/cancel/return.
+      // The orchestrator routes mobileShop bills through the outbox/sync
+      // infrastructure with authoritative confirmation semantics.
+      // Null for non-mobileShop tenants (they use existing Drift paths).
+      // Wired by registerMobileShopBillingDependencies() for mobileShop.
+      mobileSaleOrchestrator: null, // Wired later by mobile-shop DI bridge
     ),
   );
 

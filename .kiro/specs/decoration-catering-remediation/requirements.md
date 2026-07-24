@@ -154,7 +154,8 @@ production code.
    Requirement 4.4 (barrel-completeness regression lock); this requirement
    does not duplicate it.
 
-**Verifying test type:** widget test + routing/integration test.
+**Verifying test type:** widget + routing/integration locking test
+(regression-lock — no new production-code coverage).
 
 #### Requirement 2.2: Real payment-method parsing in `getPayments`
 
@@ -233,8 +234,9 @@ requirement.
    this test, preventing a silent reintroduction of the capability-bypass
    the original audit flagged.
 
-**Verifying test type:** unit/certification test on
-`businessCapabilityRegistry`.
+**Verifying test type:** unit/certification locking test on
+`businessCapabilityRegistry` (regression-lock — no new production-code
+coverage).
 
 #### Requirement 2.5: Rental lifecycle wiring — `EventRental` to UI and repository
 
@@ -346,8 +348,9 @@ back-compat. Regression-lock only.
    `@Deprecated` and SHALL NOT be called from any new code path introduced
    by this remediation.
 
-**Verifying test type:** unit test (parity test between quote-path and
-billing-path totals for equivalent inputs).
+**Verifying test type:** unit locking test (parity test between quote-path
+and billing-path totals for equivalent inputs; regression-lock — no new
+production-code coverage).
 
 #### Requirement 3.2: Advance default and bounds regression lock
 
@@ -374,8 +377,9 @@ Regression-lock only.
    DcQuoteConversionScreen SHALL reject the conversion and SHALL NOT create
    a booking or change quote status.
 
-**Verifying test type:** unit test/property test on `computeAdvancePaise`
-(see Correctness Properties in design.md).
+**Verifying test type:** unit/property locking test on
+`computeAdvancePaise` (see Correctness Properties in design.md;
+regression-lock — no new production-code coverage).
 
 #### Requirement 3.3: Advance recorded as a payment ledger entry, with rollback
 
@@ -401,8 +405,9 @@ Regression-lock only.
    DcQuoteConversionScreen SHALL navigate back and show a success
    indication.
 
-**Verifying test type:** unit test (mocked DcRepository, success and
-recordPayment-failure-with-rollback paths).
+**Verifying test type:** unit locking test (mocked DcRepository, success
+and recordPayment-failure-with-rollback paths; regression-lock — no new
+production-code coverage).
 
 #### Requirement 3.4: Multi-day event support regression lock
 
@@ -427,8 +432,9 @@ this requirement.
    SHALL treat this as invalid input consistent with existing validation
    behavior (locked in by a parsing test, not newly specified here).
 
-**Verifying test type:** unit test (parse fixtures with/without
-`eventEndDate`, and with an invalid end-before-start value).
+**Verifying test type:** unit locking test (parse fixtures with/without
+`eventEndDate`, and with an invalid end-before-start value;
+regression-lock — no new production-code coverage).
 
 #### Requirement 3.5: `_bookingFromJson` null-safety regression lock
 
@@ -452,8 +458,9 @@ Regression-lock only.
    `id`) records, THE bookings list SHALL contain all well-formed records
    and exclude only the malformed ones.
 
-**Verifying test type:** unit/property test (malformed-record generation
-missing various non-`id` fields, and missing-`id` records).
+**Verifying test type:** unit/property locking test (malformed-record
+generation missing various non-`id` fields, and missing-`id` records;
+regression-lock — no new production-code coverage).
 
 #### Requirement 3.6: `minGuests` enforcement at billing time
 
@@ -651,7 +658,8 @@ fix already made doesn't silently regress.
    tooltip is removed or its text changes without an accompanying,
    deliberate update to the test.
 
-**Verifying test type:** widget test (assert `tooltip` property).
+**Verifying test type:** widget locking test (assert `tooltip` property;
+regression-lock — no new production-code coverage).
 
 #### Requirement 4.4: Barrel-completeness regression lock
 
@@ -676,8 +684,9 @@ exported. Regression-lock only.
    these exports is removed from the barrel without a deliberate,
    accompanying update to the test.
 
-**Verifying test type:** static/unit test (import-list assertion, e.g. a
-test that imports the barrel and references each exported symbol).
+**Verifying test type:** static/unit locking test (import-list assertion,
+e.g. a test that imports the barrel and references each exported symbol;
+regression-lock — no new production-code coverage).
 
 ---
 
